@@ -1,0 +1,9 @@
+# App icon — regenerate after changing assets/branding/icon*.png:
+#   dart run flutter_launcher_icons
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/branding/icon.png
+  adaptive_icon_background: "#9A4A24"
+  adaptive_icon_foreground: assets/branding/icon_foreground.png
+  remove_alpha_ios: true

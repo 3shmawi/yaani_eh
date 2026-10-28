@@ -1,0 +1,133 @@
+name: CI
+
+on:
+  pull_request:
+  workflow_call:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Format · analyze · test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Flutter version from .fvmrc
+        id: fvm
+        run: echo "version=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm.outputs.version }}
+          cache: true
+
+      # Before pub get, so generated l10n files aren't checked.
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Install packages
+        run: |
+          flutter pub get
+          flutter gen-l10n
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Unit, widget & security tests
+        run: flutter test --coverage
+
+      - name: Coverage threshold
+        env:
+          COVERAGE_MIN: ${{ vars.COVERAGE_MIN || '60' }}
+        run: ./scripts/coverage_check.sh
+
+  security:
+    name: Security scan · secrets · dependencies · database
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Secrets in git history (gitleaks)
+        run: |
+          docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:v8.18.4 \
+            detect --source=/repo --no-banner --redact -v
+
+      - name: Vulnerable dependencies (OSV-Scanner)
+        run: |
+          docker run --rm -v "$PWD:/src" ghcr.io/google/osv-scanner:v1.9.2 \
+            --lockfile=/src/pubspec.lock
+
+      # Runs once `supabase init` has created supabase/config.toml.
+      # RLS tests run when a PR touches supabase/ (or on manual runs).
+      - name: Supabase changes?
+        id: supabase
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          if [ ! -f supabase/config.toml ]; then
+            echo "::notice::No supabase/config.toml — RLS tests skipped (run 'supabase init' once)."
+          elif [ -z "$BASE_REF" ] || git diff --name-only "origin/$BASE_REF...HEAD" | grep -q '^supabase/'; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No changes under supabase/ — RLS tests skipped."
+          fi
+
+      - uses: supabase/setup-cli@v1
+        if: steps.supabase.outputs.present == 'true'
+        with:
+          version: latest
+
+      - name: Database security tests (RLS, pgTAP)
+        if: steps.supabase.outputs.present == 'true'
+        run: |
+          supabase db start
+          supabase test db
+
+  integration:
+    name: Integration tests (Android emulator)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Flutter version from .fvmrc
+        id: fvm
+        run: echo "version=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm.outputs.version }}
+          cache: true
+
+      - name: Install packages
+        run: |
+          flutter pub get
+          flutter gen-l10n
+
+      - name: Run integration tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          disable-animations: true
+          script: flutter test integration_test  --dart-define-from-file=env/example.json
