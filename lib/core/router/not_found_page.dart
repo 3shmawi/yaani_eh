@@ -17,16 +17,16 @@ class NotFoundPage extends StatelessWidget {
     return AppScaffold(
       body: Center(
         child: Padding(
-          padding: EdgeInsets.all(AppDimens.lg),
+          padding: EdgeInsets.all(AppDimens.space6),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 l10n.notFoundTitle,
-                style: AppTextStyles.headline,
+                style: context.text(TextRole.title),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: AppDimens.lg),
+              SizedBox(height: AppDimens.space6),
               AdaptiveButton(
                 onPressed: () => context.go(AppRoutes.home),
                 child: Text(l10n.notFoundGoHome),

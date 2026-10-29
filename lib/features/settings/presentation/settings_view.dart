@@ -28,7 +28,7 @@ class SettingsView extends StatelessWidget {
       // Grouped sections on cards: readable on any background (glass or
       // not) and the familiar iOS settings layout.
       body: ListView(
-        padding: EdgeInsets.symmetric(horizontal: AppDimens.md),
+        padding: EdgeInsets.symmetric(horizontal: AppDimens.space4),
         children: [
           SettingsSectionHeader(l10n.settingsLanguage),
           AppCard(

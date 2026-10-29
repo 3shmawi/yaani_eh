@@ -39,7 +39,15 @@ flutter:
   assets:
     - assets/fonts/PlusJakartaSans/LICENSE.txt
     - assets/fonts/ReadexPro/LICENSE.txt
+    - assets/fonts/Phosphor/LICENSE.txt
   fonts:
+    # Phosphor Icons (MIT), Regular + Fill — see lib/core/theme/app_icons.dart
+    - family: PhosphorRegular
+      fonts:
+        - asset: assets/fonts/Phosphor/Phosphor.ttf
+    - family: PhosphorFill
+      fonts:
+        - asset: assets/fonts/Phosphor/Phosphor-Fill.ttf
     - family: Plus Jakarta Sans
       fonts:
         - asset: assets/fonts/PlusJakartaSans/PlusJakartaSans-400.ttf

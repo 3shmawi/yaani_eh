@@ -89,12 +89,16 @@ Feature layers — layered:
   contrast, large text, semantics labels, touch targets ≥ 48).
 - No hard-coded strings: add keys to `app_en.arb` **and** `app_ar.arb`, use
   `context.l10n.key`.
-- No hard-coded colors, text styles or sizes: use `Theme.of(context)`,
-  `AppTextStyles`, `AppDimens`, `AppColors`. New tokens go in those files.
+- No hard-coded colors, text styles, sizes or icons: use `context.palette`
+  / `AppColors`, `context.text(TextRole.x)` (UI copy) or
+  `AppTextStyles.forText(string, role)` (content: font by the string's
+  script), `AppDimens`, and `AppIcons` / `AppIconsFill` (Phosphor). New
+  tokens go in those files.
 - Sizes scale with flutter_screenutil (`.w`, `.h`, `.sp`, `.r`) — design frame
   375×812.
 - RTL-safe layout: `EdgeInsetsDirectional`, `AlignmentDirectional`,
-  `start`/`end` — never `left`/`right`.
+  `start`/`end` — never `left`/`right`. Number ranges and `0.75×` go through
+  `Bidi.range` / `Bidi.ltr` (otherwise RTL shows `150–70`).
 - Screens are built from `lib/core/ui/app_ui.dart` (`AppScaffold`, `AppCard`,
   `AppIconButton`, …) — never a style-specific widget directly. New shared
   building blocks go there, so the UI style can change in one file.
@@ -113,7 +117,10 @@ Feature layers — layered:
   retries network/timeout/server errors with backoff and reports unexpected
   ones to monitoring.
 - Screens render `LoadingView`, `EmptyView`, `ErrorView(failure, onRetry)`
-  from `lib/core/widgets/state_views.dart`; the offline banner is global.
+  from `lib/core/widgets/state_views.dart`. Connection state is global
+  (`ConnectionScope`): `AppScaffold` shows the `OfflineBanner` itself;
+  screens that open with a `HeaderBand` put `const OfflineBanner()` right
+  under it.
 - New failure kinds go in `app_failure.dart` + a message in both ARB files.
 
 **Data, errors, observability**

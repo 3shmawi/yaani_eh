@@ -1,11 +1,175 @@
 import 'package:flutter/material.dart';
 
-/// Brand and semantic colors. Widgets read colors from
-/// `Theme.of(context).colorScheme`; only use these directly for brand
-/// moments or semantic states.
+/// Colors that are the same in light and dark (Design System tokens).
+/// Everything that changes with the theme lives in [AppPalette].
 abstract final class AppColors {
-  static const primary = Color(0xFF9A4A24);
-  static const success = Color(0xFF2E7D32);
-  static const warning = Color(0xFFED6C02);
-  static const error = Color(0xFFD32F2F);
+  /// Material 3 seed: the light `brand` token (crema).
+  static const brand = Color(0xFF9A4A24);
+
+  static const espresso = Color(0xFF3B1F12);
+  static const headerTop = Color(0xFF5A2C17);
+  static const headerBottom = Color(0xFF24120A);
+  static const onHeader = Color(0xFFFFFFFF);
+  static const onHeaderMuted = Color(0xFFEBD9C6);
+
+  /// Clear glass for controls; the tone comes from what's behind it.
+  static const glassClearLight = Color(0x80FFFFFF);
+  static const glassClearDark = Color(0x8C18100C);
+  static const onGlassLight = Color(0xFF24170F);
+  static const onGlassDark = Color(0xFFFFFFFF);
+
+  /// Specular rim: bright corners fading to the soft middle.
+  static const glassRim = Color(0x99FFFFFF);
+  static const glassRimSoft = Color(0x1AFFFFFF);
+
+  /// A selected chip or tab over glass (solid, like an iOS toggle).
+  static const selected = Color(0xFFFFFFFF);
+  static const onSelected = Color(0xFF24170F);
+}
+
+/// Theme-dependent Design System colors. Read with `context.palette`.
+@immutable
+class AppPalette extends ThemeExtension<AppPalette> {
+  const new({
+    required this.surface,
+    required this.surfaceRaised,
+    required this.ink,
+    required this.inkMuted,
+    required this.inkMutedGlass,
+    required this.line,
+    required this.lineStrong,
+    required this.brand,
+    required this.onBrand,
+    required this.brandSoft,
+    required this.crema,
+    required this.milk,
+    required this.glassFill,
+    required this.glassFillLite,
+    required this.glassStroke,
+    required this.scrim,
+    required this.success,
+    required this.warning,
+    required this.danger,
+    required this.focus,
+    required this.glassShadow,
+    required this.cardShadow,
+  });
+
+  static const light = AppPalette(
+    surface: Color(0xFFF6EEE6),
+    surfaceRaised: Color(0xFFFFFCF9),
+    ink: Color(0xFF24170F),
+    inkMuted: Color(0xFF6B5647),
+    inkMutedGlass: Color(0xFF45352A),
+    line: Color(0xFFEADCCF),
+    lineStrong: Color(0xFF8C7564),
+    brand: Color(0xFF9A4A24),
+    onBrand: Color(0xFFFFFFFF),
+    brandSoft: Color(0xFFF5E4D7),
+    crema: Color(0xFFC9874F),
+    milk: Color(0xFFEBD9C6),
+    glassFill: Color(0xBDFFFAF5),
+    glassFillLite: Color(0xF0FFFAF5),
+    glassStroke: Color(0xB3FFFFFF),
+    scrim: Color(0x73140C08),
+    success: Color(0xFF2E6B3F),
+    warning: Color(0xFF7A5200),
+    danger: Color(0xFFB0301F),
+    focus: Color(0xFF9A4A24),
+    glassShadow: [
+      BoxShadow(
+        color: Color(0x293B1F12),
+        offset: Offset(0, 10),
+        blurRadius: 30,
+      ),
+    ],
+    cardShadow: [
+      BoxShadow(color: Color(0x0F3B1F12), offset: Offset(0, 1), blurRadius: 2),
+      BoxShadow(color: Color(0x143B1F12), offset: Offset(0, 8), blurRadius: 24),
+    ],
+  );
+
+  static const dark = AppPalette(
+    surface: Color(0xFF14100D),
+    surfaceRaised: Color(0xFF1F1814),
+    ink: Color(0xFFF6EDE5),
+    inkMuted: Color(0xFFBCA898),
+    inkMutedGlass: Color(0xFFDCCBBD),
+    line: Color(0xFF3A2D25),
+    lineStrong: Color(0xFF7D6656),
+    brand: Color(0xFFE5A178),
+    onBrand: Color(0xFF2A1409),
+    brandSoft: Color(0xFF3B2418),
+    crema: Color(0xFFA8683A),
+    milk: Color(0xFF4A3529),
+    glassFill: Color(0xC71C1511),
+    glassFillLite: Color(0xF21C1511),
+    glassStroke: Color(0x29FFFFFF),
+    scrim: Color(0x8C000000),
+    success: Color(0xFF8FD3A0),
+    warning: Color(0xFFF0C36A),
+    danger: Color(0xFFFFB4A8),
+    focus: Color(0xFFE5A178),
+    glassShadow: [
+      BoxShadow(
+        color: Color(0x73000000),
+        offset: Offset(0, 10),
+        blurRadius: 30,
+      ),
+    ],
+    cardShadow: [
+      BoxShadow(color: Color(0x66000000), offset: Offset(0, 4), blurRadius: 16),
+    ],
+  );
+
+  final Color surface;
+  final Color surfaceRaised;
+  final Color ink;
+
+  /// Secondary text on solid surfaces only.
+  final Color inkMuted;
+
+  /// Secondary text on frosted glass.
+  final Color inkMutedGlass;
+  final Color line;
+  final Color lineStrong;
+  final Color brand;
+  final Color onBrand;
+  final Color brandSoft;
+  final Color crema;
+  final Color milk;
+
+  /// Frosted glass, the material for reading.
+  final Color glassFill;
+
+  /// Glass without blur (lite mode, Reduce Transparency).
+  final Color glassFillLite;
+  final Color glassStroke;
+  final Color scrim;
+  final Color success;
+  final Color warning;
+  final Color danger;
+  final Color focus;
+  final List<BoxShadow> glassShadow;
+  final List<BoxShadow> cardShadow;
+
+  /// The gradient behind glass when there is no photo: espresso → crema → milk.
+  LinearGradient get brandGradient => LinearGradient(
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
+    colors: [AppColors.espresso, crema, milk],
+  );
+
+  @override
+  AppPalette copyWith() => this;
+
+  @override
+  AppPalette lerp(AppPalette? other, double t) =>
+      other == null || t < 0.5 ? this : other;
+}
+
+extension AppPaletteContext on BuildContext {
+  /// The Design System colors for the current theme.
+  AppPalette get palette =>
+      Theme.of(this).extension<AppPalette>() ?? AppPalette.light;
 }

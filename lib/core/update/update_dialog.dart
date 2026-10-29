@@ -43,7 +43,7 @@ class UpdateDialog extends StatelessWidget {
             children: [
               if (info.isForce) ...[
                 Text(l10n.updateForceMessage),
-                SizedBox(height: AppDimens.sm),
+                SizedBox(height: AppDimens.space2),
               ],
               Text(
                 l10n.updateVersions(
@@ -52,9 +52,9 @@ class UpdateDialog extends StatelessWidget {
                 ),
               ),
               if (changelog.isNotEmpty) ...[
-                SizedBox(height: AppDimens.md),
-                Text(l10n.updateWhatsNew, style: AppTextStyles.label),
-                SizedBox(height: AppDimens.xs),
+                SizedBox(height: AppDimens.space4),
+                Text(l10n.updateWhatsNew, style: context.text(TextRole.label)),
+                SizedBox(height: AppDimens.space1),
                 Text(changelog),
               ],
             ],

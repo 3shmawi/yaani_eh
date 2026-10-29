@@ -31,8 +31,11 @@ class AppShell extends StatelessWidget {
         locale: settings.locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        builder: (context, child) => AppUpdateListener(
-          child: OfflineBanner(child: child ?? const SizedBox.shrink()),
+        builder: (context, child) => AppTheme.localize(
+          context,
+          ConnectionScope(
+            child: AppUpdateListener(child: child ?? const SizedBox.shrink()),
+          ),
         ),
       ),
     );
