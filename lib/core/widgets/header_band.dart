@@ -13,6 +13,7 @@ class HeaderBand extends StatelessWidget {
     this.eyebrow,
     this.subtitle,
     this.bottom,
+    this.trailing,
     super.key,
   });
 
@@ -22,6 +23,9 @@ class HeaderBand extends StatelessWidget {
 
   /// Search field and chips, under the titles.
   final Widget? bottom;
+
+  /// A control at the end of the title row (clear glass, dark tone).
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -76,23 +80,36 @@ class HeaderBand extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (eyebrow != null)
-                Text(
-                  eyebrow!,
-                  style: context
-                      .text(TextRole.label)
-                      .copyWith(color: AppColors.onHeaderMuted),
-                ),
-              Semantics(
-                header: true,
-                child: Text(
-                  title,
-                  style: context
-                      .text(TextRole.largeTitle)
-                      .copyWith(color: AppColors.onHeader),
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (eyebrow != null)
+                          Text(
+                            eyebrow!,
+                            style: context
+                                .text(TextRole.label)
+                                .copyWith(color: AppColors.onHeaderMuted),
+                          ),
+                        Semantics(
+                          header: true,
+                          child: Text(
+                            title,
+                            style: context
+                                .text(TextRole.largeTitle)
+                                .copyWith(color: AppColors.onHeader),
+                          ),
+                        ),
+                        if (subtitle != null) Text(subtitle!, style: muted),
+                      ],
+                    ),
+                  ),
+                  ?trailing,
+                ],
               ),
-              if (subtitle != null) Text(subtitle!, style: muted),
               if (bottom != null) ...[
                 SizedBox(height: AppDimens.space4),
                 bottom!,

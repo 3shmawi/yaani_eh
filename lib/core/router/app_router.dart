@@ -4,6 +4,7 @@ import 'package:yaani_eh/core/analytics/analytics.dart';
 import 'package:yaani_eh/core/monitoring/monitoring.dart';
 import 'package:yaani_eh/core/router/app_routes.dart';
 import 'package:yaani_eh/core/router/not_found_page.dart';
+import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_page.dart';
 import 'package:yaani_eh/features/home/presentation/home_page.dart';
 import 'package:yaani_eh/features/settings/presentation/settings_page.dart';
 
@@ -21,7 +22,9 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(
       path: AppRoutes.home,
-      builder: (context, state) => const HomePage(),
+      // The menu, once the catalog is on the device (first launch downloads
+      // it; see docs/features/catalog_sync.md).
+      builder: (context, state) => const CatalogSyncPage(child: HomePage()),
     ),
     GoRoute(
       path: AppRoutes.settings,

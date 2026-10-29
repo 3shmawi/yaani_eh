@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yaani_eh/core/router/app_router.dart';
 import 'package:yaani_eh/core/router/not_found_page.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
+import 'package:yaani_eh/core/theme/app_theme.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
+import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
 import 'package:yaani_eh/features/home/presentation/home_page.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
+
+import '../helpers/fake_catalog_repository.dart';
 
 /// Deep links are untrusted input: unknown or crafted paths must land on a
 /// safe screen, never crash or open something unexpected.
@@ -17,13 +22,21 @@ void main() {
       ..devicePixelRatio = 3;
     addTearDown(tester.view.reset);
     await tester.pumpWidget(
-      AppUi.testWrap(
-        ScreenUtilInit(
-          designSize: AppDimens.designSize,
-          builder: (context, _) => MaterialApp.router(
-            routerConfig: appRouter,
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
+      ProviderScope(
+        overrides: [
+          catalogRepositoryProvider.overrideWithValue(
+            FakeCatalogRepository(has: true),
+          ),
+        ],
+        child: AppUi.testWrap(
+          ScreenUtilInit(
+            designSize: AppDimens.designSize,
+            builder: (context, _) => MaterialApp.router(
+              routerConfig: appRouter,
+              theme: AppTheme.light,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+            ),
           ),
         ),
       ),
