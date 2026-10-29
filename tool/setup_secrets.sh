@@ -62,15 +62,31 @@ PLAY_SERVICE_ACCOUNT_JSON_PATH=~/.app-secrets/play-service-account.json
 RELEASE_TOKEN=
 
 # Supabase personal access token (Account → Access Tokens): lets CI deploy
-# migrations and Edge Functions for every app. Per app, add to
+# migrations and Edge Functions for every app. Using several Supabase
+# accounts? Leave it empty here and set SUPABASE_ACCESS_TOKEN per app in
+# apps/<repo>/app.env (app.env is read after this file). Per app, add to
 # apps/<repo>/app.env:  SUPABASE_SECRET_KEY=sb_secret_…  (Project settings →
 # API Keys; used only by CI to announce updates — never put it in env/*.json)
 # and SUPABASE_DB_PASSWORD=… (the database password).
 SUPABASE_ACCESS_TOKEN=
 
-# Sentry (only for apps using Sentry): User settings → Auth Tokens (scope
-# project:releases + org:read) and your organization slug. The project slug
-# defaults to the repo name; override per app in apps/<repo>/app.env.
+# Optional: create each app's Supabase project automatically. A second access
+# token that never leaves this Mac, allowed to create projects and to read
+# API keys + API key secrets. When env/prod.json has no SUPABASE_URL, this
+# script creates (or reuses) a project named like the repo, with a random DB
+# password, and fills env/prod.json + app.env (SUPABASE_SECRET_KEY,
+# SUPABASE_DB_PASSWORD). SUPABASE_ORG = Organization settings → General →
+# slug. Free plan: 2 active projects per account.
+SUPABASE_ADMIN_TOKEN=
+SUPABASE_ORG=
+SUPABASE_REGION=eu-central-1
+
+# Sentry (only for apps using Sentry): User settings → Auth Tokens, scopes
+# org:read, team:read, project:read, project:write, project:releases -- this
+# script then creates each app's project and fills SENTRY_DSN in env/*.json.
+# The project slug defaults to the repo name; override per app with
+# SENTRY_PROJECT in apps/<repo>/app.env. Optional: SENTRY_TEAM (default: the
+# org's first team), SENTRY_URL (default https://sentry.io; EU: https://de.sentry.io).
 SENTRY_AUTH_TOKEN=
 SENTRY_ORG=
 
@@ -103,13 +119,38 @@ if [[ ! -f "$KEYSTORE" ]]; then
       -validity 10000 -alias upload -keystore "$KEYSTORE" \
       -storepass "$PASSWORD" -keypass "$PASSWORD" \
       -dname "${KEYSTORE_DNAME:-CN=Android Upload}" >/dev/null 2>&1
+    # Keep whatever app.env already holds (Supabase keys…); replace only the
+    # keystore lines, so filling app.env before the first run is safe.
+    touch "$APP_ENV"
+    grep -vE '^(ANDROID_KEY_ALIAS|ANDROID_STORE_PASSWORD|ANDROID_KEY_PASSWORD)=' "$APP_ENV" > "$APP_ENV.tmp" || true
     printf 'ANDROID_KEY_ALIAS=upload\nANDROID_STORE_PASSWORD=%s\nANDROID_KEY_PASSWORD=%s\n' \
-      "$PASSWORD" "$PASSWORD" > "$APP_ENV"
+      "$PASSWORD" "$PASSWORD" >> "$APP_ENV.tmp"
+    mv "$APP_ENV.tmp" "$APP_ENV"
     echo "created       $KEYSTORE -- back this folder up; Play needs the same key for every update"
   fi
 fi
 # shellcheck disable=SC1090
 [[ -f "$APP_ENV" ]] && source "$APP_ENV"
+
+# --- Supabase project: created once when env/prod.json has no SUPABASE_URL --
+# Needs SUPABASE_ADMIN_TOKEN + SUPABASE_ORG (shared.env, or app.env per app).
+# Fills env/prod.json and app.env, which are then read and uploaded below.
+if [[ -n "${SUPABASE_ADMIN_TOKEN:-}" ]]; then
+  if [[ ! -f env/prod.json && -f env/example.json ]] && ! $DRY_RUN; then
+    cp env/example.json env/prod.json
+  fi
+  if ! command -v python3 >/dev/null; then
+    echo "skip          Supabase project (python3 not installed)"
+  else
+    DRY_RUN=$DRY_RUN SUPABASE_ADMIN_TOKEN="$SUPABASE_ADMIN_TOKEN" \
+      SUPABASE_ORG="${SUPABASE_ORG:-}" SUPABASE_REGION="${SUPABASE_REGION:-}" \
+      SUPABASE_PROJECT="${SUPABASE_PROJECT:-${REPO#*/}}" APP_ENV="$APP_ENV" \
+      python3 "$(dirname "$0")/supabase_project.py" env/prod.json ||
+      echo "skip          Supabase project (see the message above)"
+    # shellcheck disable=SC1090
+    [[ -f "$APP_ENV" ]] && source "$APP_ENV"
+  fi
+fi
 
 # --- Push ------------------------------------------------------------------
 # Target: GitHub Actions secrets, or Codemagic when the repo has codemagic.yaml
@@ -169,6 +210,21 @@ set_value MACOS_DEVELOPER_ID_P12_PASSWORD  "${MACOS_DEVELOPER_ID_P12_PASSWORD:-}
 set_value RELEASE_TOKEN                    "${RELEASE_TOKEN:-}"
 
 # --- flutter-project-kit additions ------------------------------------------
+# Sentry: create this app's project if it's missing and fill SENTRY_DSN in
+# env/*.json where it's still empty (before the env files are uploaded below).
+if grep -q '^sentry:' pubspec.yaml 2>/dev/null; then
+  if [[ -z "${SENTRY_AUTH_TOKEN:-}" || -z "${SENTRY_ORG:-}" ]]; then
+    echo "skip          Sentry project (needs SENTRY_AUTH_TOKEN and SENTRY_ORG)"
+  elif ! command -v python3 >/dev/null; then
+    echo "skip          Sentry project (python3 not installed)"
+  else
+    DRY_RUN=$DRY_RUN SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" SENTRY_ORG="$SENTRY_ORG" \
+      SENTRY_PROJECT="${SENTRY_PROJECT:-${REPO#*/}}" SENTRY_TEAM="${SENTRY_TEAM:-}" \
+      SENTRY_URL="${SENTRY_URL:-https://sentry.io}" \
+      python3 "$(dirname "$0")/sentry_project.py" env/*.json ||
+      echo "skip          Sentry project (see the message above; set SENTRY_DSN by hand)"
+  fi
+fi
 # App config for the release build (Supabase/PostHog/Sentry keys).
 set_file  ENV_PROD_JSON                    "env/prod.json"
 set_file  ENV_STAGING_JSON                 "env/staging.json"
