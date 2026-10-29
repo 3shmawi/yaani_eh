@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
-# TEMPORARY: surfaces the integration test output as annotations.
+# TEMPORARY: surfaces the integration test output + device crash log as annotations.
+adb logcat -c || true
 flutter test integration_test --reporter expanded --dart-define-from-file=env/example.json > it.log 2>&1
 code=$?
 cat it.log
 if [ "$code" -ne 0 ]; then
-  echo "exit code: $code" > it_key.log
-  grep -v -E 'Unzipping|^\[=*' it.log | tail -n 120 >> it_key.log
-  # GitHub caps an annotation at 4096 chars: send ~3500-char chunks.
+  {
+    echo "exit code: $code"
+    grep -v -E 'Unzipping|^\[=*|available\)$' it.log | tail -n 25
+    echo "===== logcat (crash/errors) ====="
+    adb logcat -d -b crash 2>/dev/null | tail -n 60
+    adb logcat -d 2>/dev/null | grep -E ' F |FATAL|AndroidRuntime|E flutter|E/flutter|Impeller|DEBUG  |libc |SIGSEGV|SIGABRT|ANR in|Process .* died|has died' | tail -n 80
+  } > it_key.log
   split -C 3500 -d it_key.log chunk_
   n=0
   for c in chunk_*; do
