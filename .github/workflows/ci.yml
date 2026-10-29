@@ -131,4 +131,4 @@ jobs:
           arch: x86_64
           target: google_apis
           disable-animations: true
-          script: flutter test integration_test  --dart-define-from-file=env/example.json
+          script: ./scripts/_ci_it_diag.sh
