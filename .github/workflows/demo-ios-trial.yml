@@ -1,0 +1,81 @@
+# TEMPORARY trial: can a macOS runner record the integration test on an iOS
+# Simulator with full Liquid Glass (Metal), with no human involved?
+name: iOS demo trial
+
+on:
+  pull_request:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  record:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Flutter version from .fvmrc
+        id: fvm
+        run: echo "version=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm.outputs.version }}
+          cache: true
+
+      - name: Install packages
+        run: |
+          flutter pub get
+          flutter gen-l10n
+          cp -n env/example.json env/prod.json || true
+
+      - name: Boot an iPhone simulator
+        run: |
+          udid=$(xcrun simctl list devices available -j | jq -r '[.devices | to_entries[] | select(.key | test("iOS")) | .value[] | select(.name | test("^iPhone 1[5-9] Pro$|^iPhone 1[5-9]$"))] | last | .udid')
+          [ -n "$udid" ] && [ "$udid" != null ] || udid=$(xcrun simctl list devices available -j | jq -r '[.devices | to_entries[] | select(.key | test("iOS")) | .value[] | select(.name | test("^iPhone"))] | last | .udid')
+          name=$(xcrun simctl list devices -j | jq -r --arg u "$udid" '.devices[][] | select(.udid == $u) | .name')
+          xcrun simctl boot "$udid"
+          xcrun simctl bootstatus "$udid" -b
+          echo "UDID=$udid" >> "$GITHUB_ENV"
+          echo "::notice title=simulator::$name ($udid)"
+
+      - name: Build for the simulator (before recording)
+        run: |
+          start=$(date +%s)
+          flutter build ios --simulator --debug --dart-define-from-file=env/example.json --dart-define=DEMO=true 2>&1 | tail -n 5
+          echo "::notice title=build::$(( $(date +%s) - start ))s"
+
+      - name: Record the integration test (full glass)
+        run: |
+          mkdir -p build/demo
+          xcrun simctl io "$UDID" recordVideo --codec=h264 --force build/demo/raw.mp4 &
+          rec=$!
+          sleep 3
+          start=$(date +%s)
+          set +e
+          ( flutter test integration_test/app_test.dart -d "$UDID" \
+              --dart-define-from-file=env/example.json --dart-define=DEMO=true > it.log 2>&1 ) &
+          tpid=$!
+          ( sleep 900; kill "$tpid" 2>/dev/null ) & killer=$!
+          wait "$tpid"; code=$?
+          kill "$killer" 2>/dev/null
+          set -e
+          secs=$(( $(date +%s) - start ))
+          sleep 2
+          kill -INT "$rec"; wait "$rec" || true
+          size=$(stat -f%z build/demo/raw.mp4 2>/dev/null || echo 0)
+          echo "::notice title=result::exit $code after ${secs}s; video ${size} bytes"
+          body=$(grep -v -E 'available\)$' it.log | tail -n 40 | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
+          echo "::notice title=test log::$body"
+          cat it.log
+          exit "$code"
+
+      - name: Upload video
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-demo-trial
+          path: build/demo/raw.mp4
+          retention-days: 7
