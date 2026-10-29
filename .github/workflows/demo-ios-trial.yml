@@ -44,8 +44,19 @@ jobs:
       - name: Build for the simulator (before recording)
         run: |
           start=$(date +%s)
-          flutter build ios --simulator --debug --dart-define-from-file=env/example.json --dart-define=DEMO=true 2>&1 | tail -n 5
-          echo "::notice title=build::$(( $(date +%s) - start ))s"
+          set +e
+          flutter build ios --simulator --debug --dart-define-from-file=env/example.json --dart-define=DEMO=true > build.log 2>&1
+          code=$?
+          set -e
+          echo "::notice title=build::exit $code after $(( $(date +%s) - start ))s"
+          if [ "$code" -ne 0 ]; then
+            { grep -n -i -E 'error|failed|Could not|unable|requires|minimum|deployment target' build.log | head -n 40; echo '----- tail -----'; tail -n 40 build.log; } > build_key.log
+            split -b 3500 -d build_key.log part_
+            n=0; for c in part_*; do n=$((n+1)); [ "$n" -gt 8 ] && break
+              echo "::error title=build log part $n::$(sed 's/%/%25/g' "$c" | awk '{printf "%s%%0A", $0}')"; done
+            cat build.log
+            exit "$code"
+          fi
 
       - name: Record the integration test (full glass)
         run: |
