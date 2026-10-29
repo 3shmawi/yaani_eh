@@ -131,6 +131,6 @@ jobs:
           arch: x86_64
           target: google_apis
           disable-animations: true
-          # GLASS_LITE: the emulator has no real GPU and the glass shaders
-          # stall it; this draws the solid Reduce Transparency variant.
-          script: flutter test integration_test --dart-define-from-file=env/example.json --dart-define=GLASS_LITE=true
+          # GLASS_LITE: the emulator has no real GPU and glass shaders stall it
+          # (glass apps draw the solid variant; other apps ignore the define).
+          script: flutter test integration_test  --dart-define-from-file=env/example.json --dart-define=GLASS_LITE=true
