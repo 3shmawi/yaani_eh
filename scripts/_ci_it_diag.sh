@@ -6,7 +6,7 @@ note "script started; device: $(timeout 20 adb get-state 2>&1)"
 timeout 20 adb logcat -c || true
 timeout 900 adb logcat -v time > logcat.txt 2>&1 &
 logpid=$!
-timeout 480 flutter test integration_test --reporter expanded --dart-define-from-file=env/example.json > it.log 2>&1
+timeout 480 flutter test integration_test --reporter expanded --dart-define-from-file=env/example.json --dart-define=GLASS_LITE=true > it.log 2>&1
 code=$?
 note "flutter test finished with exit code $code (124 = killed by the 8-minute limit)"
 kill "$logpid" 2>/dev/null || true
