@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # TEMPORARY: surfaces the integration test output as annotations.
-flutter test integration_test --dart-define-from-file=env/example.json > it.log 2>&1
+flutter test integration_test --reporter expanded --dart-define-from-file=env/example.json > it.log 2>&1
 code=$?
 cat it.log
 if [ "$code" -ne 0 ]; then
