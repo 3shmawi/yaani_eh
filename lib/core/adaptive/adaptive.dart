@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:yaani_eh/core/theme/app_icons.dart';
 
 /// Platform-adaptive building blocks: Cupertino look on iOS/macOS,
 /// Material on Android. Prefer Flutter's own `.adaptive` constructors
@@ -63,14 +64,14 @@ class AdaptiveDialogAction extends StatelessWidget {
   }
 }
 
-/// Adaptive icons for the few icons that differ between platforms.
+/// Icons for the shared chrome. Yaani Eh uses one look (Phosphor, Liquid
+/// Glass) on iOS and Android, so these are the same on both; the getters
+/// stay so screens don't care.
 abstract final class AdaptiveIcons {
-  static IconData settings(BuildContext context) =>
-      context.isCupertino ? CupertinoIcons.settings : Icons.settings_outlined;
+  static IconData settings(BuildContext context) => AppIcons.settings;
 
-  static IconData check(BuildContext context) =>
-      context.isCupertino ? CupertinoIcons.check_mark : Icons.check;
+  static IconData check(BuildContext context) => AppIcons.check;
 
-  static IconData back(BuildContext context) =>
-      context.isCupertino ? CupertinoIcons.back : Icons.arrow_back;
+  /// Mirrors in RTL.
+  static IconData back(BuildContext context) => AppIcons.back;
 }

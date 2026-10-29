@@ -1,9 +1,12 @@
-# App icon — regenerate after changing assets/branding/icon*.png:
+# App icon (from the Icon / IconForeground artboards of the Design canvas).
+# Regenerate after changing assets/branding/icon*.png:
 #   dart run flutter_launcher_icons
 flutter_launcher_icons:
   android: true
   ios: true
   image_path: assets/branding/icon.png
-  adaptive_icon_background: "#9A4A24"
+  adaptive_icon_background: assets/branding/icon_background.png
   adaptive_icon_foreground: assets/branding/icon_foreground.png
+  # The foreground already sits in the safe zone (scaled 0.72 on the artboard).
+  adaptive_icon_foreground_inset: 0
   remove_alpha_ios: true

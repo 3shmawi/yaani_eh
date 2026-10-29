@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_theme.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
+import 'package:yaani_eh/core/widgets/offline_banner.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
 extension PumpApp on WidgetTester {
@@ -11,7 +12,12 @@ extension PumpApp on WidgetTester {
   /// and localizations.
   /// The screen is a 375×812 phone (the design frame), so screen-scaled
   /// sizes in tests match real devices.
-  Future<void> pumpApp(Widget widget, {Locale locale = const Locale('en')}) {
+  Future<void> pumpApp(
+    Widget widget, {
+    Locale locale = const Locale('en'),
+    ThemeMode themeMode = ThemeMode.light,
+    Stream<bool>? onlineChanges,
+  }) {
     view
       ..physicalSize = const Size(1125, 2436)
       ..devicePixelRatio = 3;
@@ -23,8 +29,17 @@ extension PumpApp on WidgetTester {
           builder: (context, _) => MaterialApp(
             locale: locale,
             theme: AppTheme.light,
+            darkTheme: AppTheme.dark,
+            themeMode: themeMode,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
+            builder: (context, child) => AppTheme.localize(
+              context,
+              ConnectionScope(
+                onlineChanges: onlineChanges ?? const Stream.empty(),
+                child: child!,
+              ),
+            ),
             home: widget,
           ),
         ),

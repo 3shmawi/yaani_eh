@@ -12,16 +12,16 @@ class SettingsSectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsetsDirectional.fromSTEB(
-        AppDimens.md,
-        AppDimens.lg,
-        AppDimens.md,
-        AppDimens.xs,
+        AppDimens.space4,
+        AppDimens.space6,
+        AppDimens.space4,
+        AppDimens.space1,
       ),
       child: Text(
         title,
-        style: AppTextStyles.label.copyWith(
-          color: Theme.of(context).colorScheme.primary,
-        ),
+        style: context
+            .text(TextRole.label)
+            .copyWith(color: Theme.of(context).colorScheme.primary),
       ),
     );
   }
@@ -48,10 +48,12 @@ class SettingsChoiceTile extends StatelessWidget {
     return ListTile(
       title: Text(
         label,
-        style: AppTextStyles.body.copyWith(
-          color: scheme.onSurface,
-          fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-        ),
+        style: context
+            .text(TextRole.body)
+            .copyWith(
+              color: scheme.onSurface,
+              fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+            ),
       ),
       trailing: selected
           ? Icon(AdaptiveIcons.check(context), color: scheme.primary)

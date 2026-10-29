@@ -12,6 +12,7 @@ abstract final class AppFonts {
   static const _licenseAssets = <String>[
     'assets/fonts/PlusJakartaSans/LICENSE.txt',
     'assets/fonts/ReadexPro/LICENSE.txt',
+    'assets/fonts/Phosphor/LICENSE.txt',
   ];
 
   static void registerLicenses() {

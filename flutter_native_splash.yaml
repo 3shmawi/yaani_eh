@@ -1,8 +1,10 @@
-# Native splash — regenerate after changing assets/branding/splash.png:
+# Native splash: the bubble mark on the header gradient (espresso).
+# Regenerate after changing assets/branding/splash*.png:
 #   dart run flutter_native_splash:create
 flutter_native_splash:
-  color: "#9A4A24"
+  color: "#3B1F12"
+  background_image: assets/branding/splash_background.png
   image: assets/branding/splash.png
   android_12:
-    color: "#9A4A24"
-    image: assets/branding/splash.png
+    color: "#3B1F12"
+    image: assets/branding/splash_android12.png

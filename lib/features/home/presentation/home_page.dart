@@ -29,17 +29,17 @@ class HomePage extends StatelessWidget {
       ],
       body: Center(
         child: Padding(
-          padding: EdgeInsets.all(AppDimens.lg),
+          padding: EdgeInsets.all(AppDimens.space6),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 l10n.homeWelcome,
-                style: AppTextStyles.headline,
+                style: context.text(TextRole.title),
                 textAlign: TextAlign.center,
               ),
               if (!flavor.isProd) ...[
-                SizedBox(height: AppDimens.md),
+                SizedBox(height: AppDimens.space4),
                 Chip(label: Text(flavor.name.toUpperCase())),
               ],
             ],
