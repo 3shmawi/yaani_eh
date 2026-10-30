@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:yaani_eh/core/theme/app_icons.dart';
 import 'package:yaani_eh/core/widgets/drink_card.dart';
 import 'package:yaani_eh/features/pronunciation/presentation/widgets/play_name_button.dart';
 import 'package:yaani_eh/features/pronunciation/presentation/widgets/pronounce_pill.dart';
@@ -25,9 +24,16 @@ void main() {
     await tester.pumpAndSettle();
     await beat(tester, 1200);
 
-    Future<void> listen(Finder playing) async {
-      await pumpUntil(tester, playing);
-      await pumpUntilGone(tester, playing);
+    // Waits on the player, not on the playing UI: in CI a name lasts
+    // 0.4 s and a slow simulator frame can skip the whole playing state.
+    Future<void> listen() async {
+      final before = app.player.played.length;
+      await waitFor(
+        tester,
+        () => app.player.played.length > before,
+        'a name to start playing',
+      );
+      await waitFor(tester, () => !app.player.isPlaying, 'the name to end');
       await tester.pumpAndSettle();
     }
 
@@ -38,7 +44,7 @@ void main() {
         matching: find.byType(PlayNameButton),
       ),
     );
-    await listen(find.byIcon(AppIconsFill.speaker));
+    await listen();
     await beat(tester);
     expect(app.player.played, hasLength(1));
 
@@ -59,7 +65,7 @@ void main() {
 
     // 3. Like the barista says it.
     await tester.tap(find.byKey(const Key('pronounce_barista')));
-    await listen(find.byType(SoundBars));
+    await listen();
     await beat(tester);
 
     // 4. Slower, then the original.
@@ -67,7 +73,7 @@ void main() {
     await tester.pumpAndSettle();
     await beat(tester, 600);
     await tester.tap(find.byKey(const Key('pronounce_original')));
-    await listen(find.byType(SoundBars));
+    await listen();
     await beat(tester);
     expect(app.player.played.last.speed, 0.75);
     expect(app.player.played.last.file, endsWith('flat_white.original.m4a'));
@@ -76,7 +82,7 @@ void main() {
     await app.setOnline(tester, online: false);
     await beat(tester);
     await tester.tap(find.byKey(const Key('pronounce_barista')));
-    await listen(find.byType(SoundBars));
+    await listen();
     await beat(tester);
 
     // 6. A drink never opened: it says why it can't play.
@@ -98,7 +104,7 @@ void main() {
     await app.setOnline(tester, online: true);
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('pronounce_barista')));
-    await listen(find.byType(SoundBars));
+    await listen();
     await beat(tester, 1200);
     expect(
       app.player.played.last.file,

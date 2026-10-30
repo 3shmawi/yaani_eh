@@ -68,19 +68,22 @@ class DemoApp {
   }
 }
 
-/// Pumps until [finder] is gone (a clip that ends), or fails.
-Future<void> pumpUntilGone(
+/// Waits in real time until [condition] holds, or fails with [what].
+/// Doesn't force frames while waiting (the app still draws its own
+/// animations), so a long wait can't trip Liquid Glass's frame budget the
+/// way a pump loop can.
+Future<void> waitFor(
   WidgetTester tester,
-  Finder finder, {
+  bool Function() condition,
+  String what, {
   Duration timeout = const Duration(seconds: 30),
 }) async {
   final end = DateTime.now().add(timeout);
-  while (finder.evaluate().isNotEmpty) {
-    if (DateTime.now().isAfter(end)) {
-      fail('Timed out waiting for $finder to go');
-    }
-    await tester.pump(const Duration(milliseconds: 100));
+  while (!condition()) {
+    if (DateTime.now().isAfter(end)) fail('Timed out waiting for $what');
+    await Future<void>.delayed(const Duration(milliseconds: 50));
   }
+  await tester.pump();
 }
 
 /// Pumps until [finder] shows up (async work like a sync), or fails.
