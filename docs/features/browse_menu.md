@@ -57,8 +57,8 @@ None.
   smoothly on mid-range Android; chips are clear glass on the header.
 - Not here yet, each comes with its feature: the search field
   (`smart_search`), hearts (`favorites`), the play button
-  (`pronunciation`), opening a drink (`item_details`) and the tab bar (once
-  a second tab exists).
+  (`pronunciation`) and the tab bar (once a second tab exists). Cards and
+  the drink of the day open the drink (`item_details`).
 - Calories and prices are labelled approximate at the end of the list.
 
 ## Demo & post

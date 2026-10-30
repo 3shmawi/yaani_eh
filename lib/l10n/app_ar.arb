@@ -55,5 +55,14 @@
   "priceRange": "{range} ج.م",
   "calories": "{count} سعر حراري",
   "categoryEmpty": "لسه مفيش حاجة هنا. مشروبات جاية قريب.",
-  "approximateNote": "السعرات والأسعار تقريبية."
+  "approximateNote": "السعرات والأسعار تقريبية.",
+  "drinkNotFoundTitle": "مش لاقيين المشروب ده",
+  "drinkNotFoundBody": "يمكن اتشال من المنيو.",
+  "priceAtCafes": "السعر في الكافيهات",
+  "priceChecked": "اتراجع {date}",
+  "priceMissing": "لسه بنجمع أسعار المشروب ده.",
+  "priceStale": "السعر ممكن يكون اتغيّر",
+  "similarDrinks": "مشروبات شبهه",
+  "kcal": "سعر حراري",
+  "currency": "ج.م"
 }
