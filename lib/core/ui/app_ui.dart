@@ -289,6 +289,9 @@ class AppScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     final canPop = Navigator.of(context).canPop();
     final hasBar = title != null || actions.isNotEmpty || canPop;
+    if (AppUi.isLite(context)) {
+      return _lite(context, canPop: canPop, hasBar: hasBar);
+    }
     return GlassScaffold(
       background: background ?? ColoredBox(color: context.palette.surface),
       appBar: hasBar
@@ -327,6 +330,71 @@ class AppScaffold extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Lite mode: no glass shaders and no background capture at all (the
+/// package scaffold re-captures the screen every frame, which slow devices
+/// and software-rendered emulators can't keep up with).
+extension on AppScaffold {
+  Widget _lite(
+    BuildContext context, {
+    required bool canPop,
+    required bool hasBar,
+  }) {
+    final p = context.palette;
+    return Material(
+      color: p.surface,
+      child: Stack(
+        children: [
+          if (background != null) Positioned.fill(child: background!),
+          SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (hasBar)
+                  Padding(
+                    padding: EdgeInsetsDirectional.symmetric(
+                      horizontal: AppDimens.space2,
+                      vertical: AppDimens.space1,
+                    ),
+                    child: Row(
+                      children: [
+                        if (canPop)
+                          AppIconButton(
+                            icon: AdaptiveIcons.back(context),
+                            tooltip: MaterialLocalizations.of(context)
+                                .backButtonTooltip,
+                            onPressed: () => Navigator.of(context).maybePop(),
+                          ),
+                        SizedBox(width: AppDimens.space2),
+                        Expanded(
+                          child: title == null
+                              ? const SizedBox.shrink()
+                              : Semantics(
+                                  header: true,
+                                  child: Text(
+                                    title!,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: context
+                                        .text(TextRole.headline)
+                                        .copyWith(color: p.ink),
+                                  ),
+                                ),
+                        ),
+                        ...actions,
+                      ],
+                    ),
+                  ),
+                const OfflineBanner(),
+                Expanded(child: body),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
