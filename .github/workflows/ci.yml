@@ -142,8 +142,11 @@ jobs:
         with:
           api-level: 34
           arch: x86_64
-          target: google_apis
+          # Plain AOSP image: no Google app / Gboard, which kept the
+          # software-rendered emulator busy until it froze after a test.
+          target: default
           ram-size: 3072M
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           disable-animations: true
           # GLASS_LITE: the emulator has no real GPU and glass shaders stall it
           # (glass apps draw the solid variant; other apps ignore the define).
