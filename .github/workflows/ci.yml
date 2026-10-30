@@ -148,12 +148,13 @@ jobs:
           # The log is kept so a failure shows its reason (next step).
           script: |
             adb logcat -c || true
-            (adb logcat -v time > logcat.txt 2>&1 &) || true
-            (while true; do date +%T >> host.txt; free -m | sed -n 2p >> host.txt; pgrep -a -f qemu-system | head -c 120 >> host.txt; echo >> host.txt; sleep 5; done &) || true
+            nohup sh -c 'adb logcat -v time > logcat.txt 2>&1' > /dev/null 2>&1 < /dev/null &
+            nohup sh -c 'for i in $(seq 1 400); do echo "$(date +%T) $(free -m | sed -n 2p) qemu=$(pgrep -c -f qemu-system)" >> host.txt; sleep 5; done' > /dev/null 2>&1 < /dev/null &
             bash -o pipefail -c "flutter test integration_test  --dart-define-from-file=env/example.json --dart-define=GLASS_LITE=true 2>&1 | tee integration.log"
+            pkill -f 'adb logcat' || true
 
       - name: Why the integration tests failed
-        if: failure()
+        if: failure() || cancelled()
         run: |
           [ -f integration.log ] || exit 0
           # Test failures and exceptions, as annotations on the run.
