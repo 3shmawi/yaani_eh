@@ -287,7 +287,10 @@ const _noAudio = {'affogato', 'iced_mocha'};
 /// sentence of their explanation.
 const _gists = {
   'espresso': ('فنجان قهوة صغير ومركّز', 'A tiny, strong cup of coffee'),
-  'flat_white': ('زي اللاتيه بس أقوى وأصغر', 'Like a latte, but stronger'),
+  'flat_white': (
+    'قهوة باللبن تقيلة في فنجان صغير',
+    'Strong milky coffee in a small cup',
+  ),
 };
 
 /// The Café section's traits, as in supabase/content/build_seed.py.

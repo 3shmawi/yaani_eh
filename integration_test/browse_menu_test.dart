@@ -8,9 +8,9 @@ import 'helpers/demo_app.dart';
 
 /// Demo: "A café menu… that finally makes sense."
 /// The cards rise in; each one says what the drink is in everyday words
-/// («فلات وايت يعني زي اللاتيه بس أقوى»). Open one (its photo flies into
-/// the page) and come back, filter by a category chip, then back to
-/// everything.
+/// («فلات وايت يعني قهوة باللبن تقيلة في فنجان صغير»). Open one (its
+/// photo flies into the page) and come back, filter by a category chip,
+/// then back to everything.
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -45,10 +45,10 @@ void main() {
     await tester.pumpAndSettle();
     await beat(tester);
 
-    // 3. Every card says what it is: Flat White, «يعني زي اللاتيه بس أقوى».
+    // 3. Every card says what it is: Flat White, «يعني قهوة باللبن تقيلة…».
     final meaning = either(
-      'Like a latte, but stronger',
-      'يعني زي اللاتيه بس أقوى وأصغر',
+      'Strong milky coffee in a small cup',
+      'يعني قهوة باللبن تقيلة في فنجان صغير',
     );
     await tester.dragUntilVisible(meaning, list, const Offset(0, -150));
     await tester.pumpAndSettle();

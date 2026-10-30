@@ -31,8 +31,10 @@ from the app: only Studio / the service role.
 - **The «يعني» line** (`gist_ar`, `gist_en`): what the drink is, in words
   everyone already knows, shown on its card after «يعني». About 30
   characters (60 at most), and never another menu word: «ميلك شيك
-  بالقهوة», not «إسبريسو متخفوق». Compare it to something familiar when you
-  can («زي اللاتيه بس أقوى»). Empty: the card shows the explanation's first
+  بالقهوة», not «إسبريسو متخفوق». Another menu word never counts as
+  familiar, even «لاتيه»: say «قهوة باللبن تقيلة», not «زي اللاتيه بس
+  أقوى». Compare to what people already drink at home when you can
+  («قهوة الكنكة»، «ميلك شيك»). Empty: the card shows the explanation's first
   sentence. The launch lines are in `supabase/content/drinks.csv`
   (`build_seed.py` writes `0004_item_gist.sql`, which only fills empty
   lines).

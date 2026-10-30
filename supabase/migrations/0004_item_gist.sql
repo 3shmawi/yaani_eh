@@ -19,7 +19,7 @@ from (values
   ($c$americano$c$, $c$قهوة سادة خفيفة$c$, $c$Light black coffee$c$),
   ($c$macchiato$c$, $c$قهوة مركّزة بنقطة لبن$c$, $c$Strong coffee with a dot of milk$c$),
   ($c$cortado$c$, $c$قهوة ولبن نص بنص$c$, $c$Coffee and milk, half and half$c$),
-  ($c$flat_white$c$, $c$زي اللاتيه بس أقوى وأصغر$c$, $c$Like a latte, but stronger and smaller$c$),
+  ($c$flat_white$c$, $c$قهوة باللبن تقيلة في فنجان صغير$c$, $c$Strong milky coffee in a small cup$c$),
   ($c$cappuccino$c$, $c$قهوة باللبن ورغوة كتير$c$, $c$Coffee with milk and lots of foam$c$),
   ($c$latte$c$, $c$قهوة بلبن كتير$c$, $c$Coffee with lots of milk$c$),
   ($c$spanish_latte$c$, $c$قهوة باللبن المكثّف المحلّي$c$, $c$Coffee with sweet condensed milk$c$),

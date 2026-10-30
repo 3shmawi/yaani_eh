@@ -98,18 +98,19 @@ None.
 **Scenario (what the integration test shows, with beat() pauses):**
 1. Home opens: the cards rise in after the drink of the day.
 2. Scroll through the cards: every name with its Arabic spelling.
-3. Flat White: «يعني زي اللاتيه بس أقوى وأصغر». Tap it, the photo flies
+3. Flat White: «يعني قهوة باللبن تقيلة في فنجان صغير». Tap it, the photo flies
    into its page; back.
 4. Tap «قهوة ساقعة»: only iced coffee.
 5. Tap «الكل»: everything again.
 
 **Caption (English):** Every drink on a café menu, explained in words you
-already know: a frappé is a coffee milkshake, a flat white is a stronger,
-smaller latte. The name exactly as the menu prints it, how to say it, and
+already know: a frappé is a coffee milkshake, a flat white is strong milky
+coffee in a small cup. The name exactly as the menu prints it, how to say it, and
 what it is. Flutter, Liquid Glass controls, content in Supabase.
 
 **Caption (Egyptian Arabic):** كل مشروب في منيو الكافيه بكلام إنت عارفه:
-الفرابيه يعني ميلك شيك بالقهوة، والفلات وايت يعني زي اللاتيه بس أقوى.
+الفرابيه يعني ميلك شيك بالقهوة، والفلات وايت يعني قهوة باللبن تقيلة في فنجان
+صغير.
 الاسم زي ما هو مكتوب، بيتقال إزاي، ويعني إيه.
 
 **Hashtags:** #flutter #buildinpublic #liquidglass #supabase #yaanieh
