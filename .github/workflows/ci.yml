@@ -141,7 +141,9 @@ jobs:
         run: |
           [ -f integration.log ] || exit 0
           # Test failures and exceptions, as annotations on the run.
-          { grep -n -B12 -A3 -E 'ADB exited|INSTALL_FAILED|Failure \[' integration.log | head -n 60
+          { first=$(grep -n -m1 -E 'Installing build/app' integration.log | cut -d: -f1)
+            [ -n "$first" ] && sed -n "$((first)),$((first+70))p" integration.log | grep -v -E 'KGP|Kotlin|plugin|^\s*$'
+            grep -n -B12 -A3 -E 'ADB exited|INSTALL_FAILED|Failure \[' integration.log | head -n 30
             grep -n -E 'EXCEPTION CAUGHT|Expected:|Actual:|Which:|Test failed|\[E\]|Error:|was thrown|Timed out|_test\.dart:[0-9]+' integration.log | head -n 80
           } > failures.txt || true
           split -b 3500 -d failures.txt part_ 2>/dev/null || true
