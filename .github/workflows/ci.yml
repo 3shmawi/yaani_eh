@@ -134,7 +134,7 @@ jobs:
           n=0; for part in part_*; do [ -f "$part" ] || continue; n=$((n+1)); [ "$n" -gt 8 ] && break
             echo "::error title=integration failures ($n)::$(sed 's/%/%25/g' "$part" | awk '{printf "%s%%0A", $0}')"
           done
-          tail -n 80 integration.log
+          echo "::error title=integration log (end)::$(grep -v -E 'Kotlin|KGP|plugin|^\s*$' integration.log | tail -n 40 | tail -c 3500 | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')"
 
   # A quick Android smoke test (the first flow). The CI emulator renders in
   # software and doesn't survive several app reinstalls in a row, so the
@@ -193,5 +193,5 @@ jobs:
           n=0; for part in part_*; do [ -f "$part" ] || continue; n=$((n+1)); [ "$n" -gt 8 ] && break
             echo "::error title=integration failures ($n)::$(sed 's/%/%25/g' "$part" | awk '{printf "%s%%0A", $0}')"
           done
-          tail -n 80 integration.log
+          echo "::error title=integration log (end)::$(grep -v -E 'Kotlin|KGP|plugin|^\s*$' integration.log | tail -n 40 | tail -c 3500 | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')"
 
