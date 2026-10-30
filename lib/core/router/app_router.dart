@@ -4,8 +4,8 @@ import 'package:yaani_eh/core/analytics/analytics.dart';
 import 'package:yaani_eh/core/monitoring/monitoring.dart';
 import 'package:yaani_eh/core/router/app_routes.dart';
 import 'package:yaani_eh/core/router/not_found_page.dart';
+import 'package:yaani_eh/features/browse_menu/presentation/menu_page.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_page.dart';
-import 'package:yaani_eh/features/home/presentation/home_page.dart';
 import 'package:yaani_eh/features/settings/presentation/settings_page.dart';
 
 /// Root navigator, used to show app-wide dialogs (e.g. the update dialog).
@@ -24,7 +24,7 @@ final appRouter = GoRouter(
       path: AppRoutes.home,
       // The menu, once the catalog is on the device (first launch downloads
       // it; see docs/features/catalog_sync.md).
-      builder: (context, state) => const CatalogSyncPage(child: HomePage()),
+      builder: (context, state) => const CatalogSyncPage(child: MenuPage()),
     ),
     GoRoute(
       path: AppRoutes.settings,

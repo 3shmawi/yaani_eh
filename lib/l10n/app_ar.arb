@@ -47,5 +47,13 @@
   "menuTitle": "المنيو",
   "menuTagline": "اطلب وإنت فاهم",
   "menuCount": "{count, plural, =0{مفيش مشروبات} =1{مشروب واحد} =2{مشروبين} few{{count} مشروبات} other{{count} مشروب}}",
-  "menuEmpty": "المنيو فاضي دلوقتي. ارجعلنا قريب."
+  "menuEmpty": "المنيو فاضي دلوقتي. ارجعلنا قريب.",
+  "chipAll": "الكل",
+  "drinkOfTheDay": "مشروب النهارده",
+  "seeAll": "شوف الكل",
+  "seeAllIn": "شوف كل {category}",
+  "priceRange": "{range} ج.م",
+  "calories": "{count} سعر حراري",
+  "categoryEmpty": "لسه مفيش حاجة هنا. مشروبات جاية قريب.",
+  "approximateNote": "السعرات والأسعار تقريبية."
 }

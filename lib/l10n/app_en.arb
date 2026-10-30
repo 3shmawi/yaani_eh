@@ -93,5 +93,34 @@
       }
     }
   },
-  "menuEmpty": "The menu is empty for now. Check back soon."
+  "menuEmpty": "The menu is empty for now. Check back soon.",
+  "chipAll": "All",
+  "drinkOfTheDay": "Drink of the day",
+  "seeAll": "See all",
+  "seeAllIn": "See all {category}",
+  "@seeAllIn": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "priceRange": "{range} EGP",
+  "@priceRange": {
+    "placeholders": {
+      "range": {
+        "type": "String"
+      }
+    }
+  },
+  "calories": "{count} kcal",
+  "@calories": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "categoryEmpty": "Nothing here yet. More drinks are coming.",
+  "approximateNote": "Calories and prices are approximate."
 }

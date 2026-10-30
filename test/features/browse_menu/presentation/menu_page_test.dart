@@ -1,0 +1,218 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:yaani_eh/features/browse_menu/domain/usecases/build_menu.dart';
+import 'package:yaani_eh/features/browse_menu/presentation/menu_controller.dart';
+import 'package:yaani_eh/features/browse_menu/presentation/menu_page.dart';
+import 'package:yaani_eh/features/browse_menu/presentation/menu_view.dart';
+import 'package:yaani_eh/features/browse_menu/presentation/widgets/drink_card.dart';
+import 'package:yaani_eh/features/catalog_sync/data/models/catalog_rows.dart';
+import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
+import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
+
+import '../../../helpers/fake_catalog_remote.dart';
+import '../../../helpers/fake_catalog_repository.dart';
+import '../../../helpers/pump_app.dart';
+
+final _day = DateTime(2026, 10, 30);
+final List<CatalogCategory> _categories = [
+  for (final r in sampleCategories()) CatalogRows.category(r)!,
+];
+
+MenuModel _menu({String? selected, List<CatalogItem>? items}) =>
+    const BuildMenu()(
+      items: items ?? sampleCatalogItems(),
+      categories: _categories,
+      today: _day,
+      selectedCategoryId: selected,
+    );
+
+void main() {
+  group(MenuView, () {
+    Future<void> pumpView(
+      WidgetTester tester, {
+      MenuModel? menu,
+      Locale locale = const Locale('en'),
+      ThemeMode mode = ThemeMode.light,
+      void Function(CatalogCategory?)? onSelect,
+      VoidCallback? onSettings,
+    }) => tester.pumpApp(
+      MenuView(
+        menu: menu,
+        onSelectCategory: onSelect ?? (_) {},
+        onOpenSettings: onSettings ?? () {},
+      ),
+      locale: locale,
+      themeMode: mode,
+    );
+
+    testWidgets('header, chips, drink of the day and glass cards', (
+      tester,
+    ) async {
+      await pumpView(tester, menu: _menu());
+      expect(find.text(l10nEn.menuTitle), findsOneWidget);
+      expect(find.text(l10nEn.chipAll), findsOneWidget);
+      expect(find.text('Coffee'), findsWidgets); // chip + section
+      expect(find.byKey(const Key('drink_of_the_day')), findsOneWidget);
+      expect(find.text(l10nEn.drinkOfTheDay), findsOneWidget);
+      expect(find.byType(DrinkCard), findsWidgets);
+      await tester.expectAccessible();
+    });
+
+    testWidgets('chips and "see all" select a category', (tester) async {
+      final picked = <String?>[];
+      await pumpView(
+        tester,
+        menu: _menu(),
+        onSelect: (c) => picked.add(c?.slug),
+      );
+
+      await tester.tap(find.text('Iced coffee').first);
+      await tester.tap(find.text(l10nEn.seeAll).first);
+      await tester.tap(find.text(l10nEn.chipAll));
+      expect(picked, ['iced_coffee', 'coffee', null]);
+    });
+
+    testWidgets('a selected category shows only its drinks', (tester) async {
+      await pumpView(tester, menu: _menu(selected: coldId));
+      expect(find.byKey(const Key('drink_of_the_day')), findsNothing);
+      expect(find.text(l10nEn.seeAll), findsNothing);
+      expect(find.text('Cold Brew'), findsOneWidget);
+      expect(find.text('Espresso'), findsNothing);
+      await tester.expectAccessible();
+    });
+
+    testWidgets('loading and empty states', (tester) async {
+      await pumpView(tester);
+      expect(find.bySemanticsLabel(l10nEn.loading), findsOneWidget);
+
+      await pumpView(tester, menu: _menu(items: const []));
+      expect(find.text(l10nEn.menuEmpty), findsOneWidget);
+      await tester.expectAccessible();
+    });
+
+    testWidgets('settings stays one tap away', (tester) async {
+      var opened = 0;
+      await pumpView(tester, menu: _menu(), onSettings: () => opened++);
+      await tester.tap(find.byKey(const Key('home_settings_button')));
+      expect(opened, 1);
+    });
+
+    for (final (name, locale, mode) in [
+      ('Arabic', const Locale('ar'), ThemeMode.light),
+      ('dark', const Locale('en'), ThemeMode.dark),
+      ('Arabic dark', const Locale('ar'), ThemeMode.dark),
+    ]) {
+      testWidgets('works in $name', (tester) async {
+        await pumpView(tester, menu: _menu(), locale: locale, mode: mode);
+        expect(tester.takeException(), isNull);
+        await tester.expectAccessible();
+      });
+    }
+
+    testWidgets('Arabic: categories and explanations in Arabic, RTL', (
+      tester,
+    ) async {
+      await pumpView(tester, menu: _menu(), locale: const Locale('ar'));
+      expect(find.text('الكل'), findsOneWidget);
+      expect(find.text('قهوة'), findsWidgets);
+      expect(
+        Directionality.of(tester.element(find.text('الكل'))),
+        TextDirection.rtl,
+      );
+    });
+
+    testWidgets('small phone with large text, and a tablet', (tester) async {
+      tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await pumpView(tester, menu: _menu(), locale: const Locale('ar'));
+      tester.view.physicalSize = const Size(960, 1704); // 320×568
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+
+      tester.view.physicalSize = const Size(2048, 2732); // iPad
+      tester.view.devicePixelRatio = 2;
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    });
+  });
+
+  group(DrinkCard, () {
+    testWidgets('price range when known, kept left to right', (tester) async {
+      final item = CatalogRows.item({
+        ...sampleItems().first,
+        'price_min_egp': 70,
+        'price_max_egp': 150,
+      })!;
+      await tester.pumpApp(
+        Center(
+          child: SizedBox(width: 170, child: DrinkCard(item: item)),
+        ),
+        locale: const Locale('ar'),
+      );
+      expect(find.text('\u206670–150\u2069 ج.م'), findsOneWidget);
+    });
+
+    testWidgets('calories while prices are not checked yet', (tester) async {
+      await tester.pumpApp(
+        Center(
+          child: SizedBox(
+            width: 170,
+            child: DrinkCard(item: sampleCatalogItems()[4]),
+          ),
+        ),
+      );
+      expect(find.text(l10nEn.calories(190)), findsOneWidget);
+    });
+
+    testWidgets('one label for screen readers, tappable when wired', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      var opened = 0;
+      await tester.pumpApp(
+        Center(
+          child: SizedBox(
+            width: 170,
+            child: DrinkCard(
+              item: sampleCatalogItems().first,
+              onTap: () => opened++,
+            ),
+          ),
+        ),
+      );
+      expect(
+        find.bySemanticsLabel(RegExp('^Espresso، إسبريسو')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byType(DrinkCard));
+      expect(opened, 1);
+      handle.dispose();
+    });
+  });
+
+  group(MenuPage, () {
+    testWidgets('reads the menu from the device and filters by chip', (
+      tester,
+    ) async {
+      await tester.pumpApp(
+        ProviderScope(
+          overrides: [
+            catalogRepositoryProvider.overrideWithValue(
+              FakeCatalogRepository(has: true),
+            ),
+            todayProvider.overrideWithValue(_day),
+          ],
+          child: const MenuPage(),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Flat White'), findsWidgets);
+
+      await tester.tap(find.text('Iced coffee').first);
+      await tester.pumpAndSettle();
+      expect(find.text('Flat White'), findsNothing);
+      expect(find.text('Cold Brew'), findsWidgets);
+    });
+  });
+}

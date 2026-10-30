@@ -7,8 +7,8 @@ import 'package:yaani_eh/core/router/not_found_page.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_theme.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
+import 'package:yaani_eh/features/browse_menu/presentation/menu_page.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
-import 'package:yaani_eh/features/home/presentation/home_page.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
 import '../helpers/fake_catalog_repository.dart';
@@ -66,6 +66,6 @@ void main() {
     appRouter.go('/?redirect=https://evil.example.com');
     await tester.pumpAndSettle();
 
-    expect(find.byType(HomePage), findsOneWidget);
+    expect(find.byType(MenuPage), findsOneWidget);
   });
 }

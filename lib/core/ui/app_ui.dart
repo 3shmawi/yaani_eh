@@ -83,11 +83,16 @@ class AppGlass extends StatefulWidget {
     this.backdrop,
     this.backdropRegion = const Rect.fromLTWH(0, 0, 1, 1),
     this.blur,
+    this.minimal = false,
     super.key,
   });
 
   final Widget child;
   final GlassKind kind;
+
+  /// Many glass surfaces at once (grid labels): the cheapest shader, so
+  /// scrolling stays smooth on mid-range Android.
+  final bool minimal;
 
   /// Clear glass only. [GlassTone.auto] measures [backdrop] under
   /// [backdropRegion] when given, otherwise follows the theme.
@@ -203,6 +208,7 @@ class _AppGlassState extends State<AppGlass> {
         ? AppColors.glassClearLight
         : AppColors.glassClearDark;
     return GlassContainer(
+      quality: widget.minimal ? GlassQuality.minimal : null,
       shape: LiquidRoundedSuperellipse(borderRadius: radius),
       settings: LiquidGlassSettings(
         glassColor: tint,

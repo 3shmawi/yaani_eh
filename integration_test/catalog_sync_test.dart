@@ -50,6 +50,6 @@ void main() {
     );
     await tester.pumpAndSettle();
     await beat(tester, 1500);
-    expect(find.text('Iced Mocha'), findsOneWidget);
+    expect(find.text('Iced Mocha'), findsWidgets);
   });
 }

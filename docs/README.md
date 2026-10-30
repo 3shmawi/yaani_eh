@@ -12,6 +12,8 @@ Start with [`../CLAUDE.md`](../CLAUDE.md) (rules + stack), then:
 
 ## Features
 - [Catalog sync (offline menu)](features/catalog_sync.md)
+- [Browse menu (Home)](features/browse_menu.md)
 - [App update gate](features/app_update.md)
 - [Settings (language & theme)](features/settings.md)
 - [catalog sync](features/catalog_sync.md)
+- [browse menu](features/browse_menu.md)
