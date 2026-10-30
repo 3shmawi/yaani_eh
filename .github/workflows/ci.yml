@@ -133,4 +133,18 @@ jobs:
           disable-animations: true
           # GLASS_LITE: the emulator has no real GPU and glass shaders stall it
           # (glass apps draw the solid variant; other apps ignore the define).
-          script: flutter test integration_test  --dart-define-from-file=env/example.json --dart-define=GLASS_LITE=true
+          # The log is kept so a failure shows its reason (next step).
+          script: bash -o pipefail -c "flutter test integration_test  --dart-define-from-file=env/example.json --dart-define=GLASS_LITE=true 2>&1 | tee integration.log"
+
+      - name: Why the integration tests failed
+        if: failure()
+        run: |
+          [ -f integration.log ] || exit 0
+          # Test failures and exceptions, as annotations on the run.
+          grep -n -E 'EXCEPTION CAUGHT|Expected:|Actual:|Which:|Test failed|\[E\]|Error:|was thrown|Timed out|_test\.dart:[0-9]+' integration.log \
+            | grep -v -E '^\s*$' | head -n 120 > failures.txt || true
+          split -b 3500 -d failures.txt part_ 2>/dev/null || true
+          n=0; for part in part_*; do [ -f "$part" ] || continue; n=$((n+1)); [ "$n" -gt 8 ] && break
+            echo "::error title=integration failures ($n)::$(sed 's/%/%25/g' "$part" | awk '{printf "%s%%0A", $0}')"
+          done
+          tail -n 80 integration.log
