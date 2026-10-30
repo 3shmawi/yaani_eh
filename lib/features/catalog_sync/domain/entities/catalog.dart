@@ -63,6 +63,8 @@ class CatalogItem {
     required this.menuNameAr,
     required this.explanationAr,
     required this.explanationEn,
+    this.gistAr,
+    this.gistEn,
     this.calories,
     this.sizeMl,
     this.priceMinEgp,
@@ -87,6 +89,10 @@ class CatalogItem {
   final String menuNameAr;
   final String explanationAr;
   final String explanationEn;
+
+  /// The «يعني» line: what it is in everyday words, e.g. `ميلك شيك بالقهوة`.
+  final String? gistAr;
+  final String? gistEn;
   final int? calories;
   final int? sizeMl;
   final int? priceMinEgp;
@@ -100,6 +106,16 @@ class CatalogItem {
   final Map<String, Object?> traits;
   final int sortOrder;
   final List<ItemTerm> terms;
+
+  /// The «يعني» line in one language; without one, the explanation's first
+  /// sentence (cards keep it to two lines).
+  String gist({required bool arabic}) {
+    final gist = arabic ? gistAr : gistEn;
+    if (gist != null) return gist;
+    final explanation = arabic ? explanationAr : explanationEn;
+    final end = explanation.indexOf(RegExp('[.!?؟]'));
+    return end < 0 ? explanation : explanation.substring(0, end);
+  }
 }
 
 /// How far the first download got.

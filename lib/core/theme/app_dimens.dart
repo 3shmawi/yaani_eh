@@ -1,3 +1,4 @@
+import 'package:flutter/animation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -64,4 +65,23 @@ abstract final class AppDimens {
   /// Pronounce pill: the moving bars of a playing name.
   static const soundBarWidth = 3.0;
   static const soundBarGap = 2.0;
+}
+
+/// Motion from the Design System: short and purposeful (150–300 ms).
+/// Widgets that use these turn motion off with Reduce Motion.
+abstract final class AppMotion {
+  /// A card's press feedback.
+  static const press = Duration(milliseconds: 150);
+  static const pressScale = 0.97;
+
+  /// A list's cards rising into place the first time it shows.
+  static const reveal = Duration(milliseconds: 280);
+  static const revealStagger = Duration(milliseconds: 45);
+  static const revealRise = 12.0;
+
+  /// Only the first cards are staggered; later ones show at once, so
+  /// scrolling never waits for them.
+  static const revealStaggered = 8;
+
+  static const Curve enter = Curves.easeOutCubic;
 }

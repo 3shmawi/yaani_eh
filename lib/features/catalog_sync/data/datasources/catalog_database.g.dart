@@ -591,6 +591,24 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _gistArMeta = const VerificationMeta('gistAr');
+  @override
+  late final GeneratedColumn<String> gistAr = GeneratedColumn<String>(
+    'gist_ar',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _gistEnMeta = const VerificationMeta('gistEn');
+  @override
+  late final GeneratedColumn<String> gistEn = GeneratedColumn<String>(
+    'gist_en',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _caloriesMeta = const VerificationMeta(
     'calories',
   );
@@ -710,6 +728,8 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
     menuNameAr,
     explanationAr,
     explanationEn,
+    gistAr,
+    gistEn,
     calories,
     sizeMl,
     priceMinEgp,
@@ -794,6 +814,18 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
       );
     } else if (isInserting) {
       context.missing(_explanationEnMeta);
+    }
+    if (data.containsKey('gist_ar')) {
+      context.handle(
+        _gistArMeta,
+        gistAr.isAcceptableOrUnknown(data['gist_ar']!, _gistArMeta),
+      );
+    }
+    if (data.containsKey('gist_en')) {
+      context.handle(
+        _gistEnMeta,
+        gistEn.isAcceptableOrUnknown(data['gist_en']!, _gistEnMeta),
+      );
     }
     if (data.containsKey('calories')) {
       context.handle(
@@ -907,6 +939,14 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
         DriftSqlType.string,
         data['${effectivePrefix}explanation_en'],
       )!,
+      gistAr: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}gist_ar'],
+      ),
+      gistEn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}gist_en'],
+      ),
       calories: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}calories'],
@@ -964,6 +1004,8 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
   final String menuNameAr;
   final String explanationAr;
   final String explanationEn;
+  final String? gistAr;
+  final String? gistEn;
   final int? calories;
   final int? sizeMl;
   final int? priceMinEgp;
@@ -984,6 +1026,8 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     required this.menuNameAr,
     required this.explanationAr,
     required this.explanationEn,
+    this.gistAr,
+    this.gistEn,
     this.calories,
     this.sizeMl,
     this.priceMinEgp,
@@ -1005,6 +1049,12 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     map['menu_name_ar'] = Variable<String>(menuNameAr);
     map['explanation_ar'] = Variable<String>(explanationAr);
     map['explanation_en'] = Variable<String>(explanationEn);
+    if (!nullToAbsent || gistAr != null) {
+      map['gist_ar'] = Variable<String>(gistAr);
+    }
+    if (!nullToAbsent || gistEn != null) {
+      map['gist_en'] = Variable<String>(gistEn);
+    }
     if (!nullToAbsent || calories != null) {
       map['calories'] = Variable<int>(calories);
     }
@@ -1043,6 +1093,12 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
       menuNameAr: Value(menuNameAr),
       explanationAr: Value(explanationAr),
       explanationEn: Value(explanationEn),
+      gistAr: gistAr == null && nullToAbsent
+          ? const Value.absent()
+          : Value(gistAr),
+      gistEn: gistEn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(gistEn),
       calories: calories == null && nullToAbsent
           ? const Value.absent()
           : Value(calories),
@@ -1085,6 +1141,8 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
       menuNameAr: serializer.fromJson<String>(json['menuNameAr']),
       explanationAr: serializer.fromJson<String>(json['explanationAr']),
       explanationEn: serializer.fromJson<String>(json['explanationEn']),
+      gistAr: serializer.fromJson<String?>(json['gistAr']),
+      gistEn: serializer.fromJson<String?>(json['gistEn']),
       calories: serializer.fromJson<int?>(json['calories']),
       sizeMl: serializer.fromJson<int?>(json['sizeMl']),
       priceMinEgp: serializer.fromJson<int?>(json['priceMinEgp']),
@@ -1110,6 +1168,8 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
       'menuNameAr': serializer.toJson<String>(menuNameAr),
       'explanationAr': serializer.toJson<String>(explanationAr),
       'explanationEn': serializer.toJson<String>(explanationEn),
+      'gistAr': serializer.toJson<String?>(gistAr),
+      'gistEn': serializer.toJson<String?>(gistEn),
       'calories': serializer.toJson<int?>(calories),
       'sizeMl': serializer.toJson<int?>(sizeMl),
       'priceMinEgp': serializer.toJson<int?>(priceMinEgp),
@@ -1131,6 +1191,8 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     String? menuNameAr,
     String? explanationAr,
     String? explanationEn,
+    Value<String?> gistAr = const Value.absent(),
+    Value<String?> gistEn = const Value.absent(),
     Value<int?> calories = const Value.absent(),
     Value<int?> sizeMl = const Value.absent(),
     Value<int?> priceMinEgp = const Value.absent(),
@@ -1149,6 +1211,8 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     menuNameAr: menuNameAr ?? this.menuNameAr,
     explanationAr: explanationAr ?? this.explanationAr,
     explanationEn: explanationEn ?? this.explanationEn,
+    gistAr: gistAr.present ? gistAr.value : this.gistAr,
+    gistEn: gistEn.present ? gistEn.value : this.gistEn,
     calories: calories.present ? calories.value : this.calories,
     sizeMl: sizeMl.present ? sizeMl.value : this.sizeMl,
     priceMinEgp: priceMinEgp.present ? priceMinEgp.value : this.priceMinEgp,
@@ -1183,6 +1247,8 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
       explanationEn: data.explanationEn.present
           ? data.explanationEn.value
           : this.explanationEn,
+      gistAr: data.gistAr.present ? data.gistAr.value : this.gistAr,
+      gistEn: data.gistEn.present ? data.gistEn.value : this.gistEn,
       calories: data.calories.present ? data.calories.value : this.calories,
       sizeMl: data.sizeMl.present ? data.sizeMl.value : this.sizeMl,
       priceMinEgp: data.priceMinEgp.present
@@ -1216,6 +1282,8 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
           ..write('menuNameAr: $menuNameAr, ')
           ..write('explanationAr: $explanationAr, ')
           ..write('explanationEn: $explanationEn, ')
+          ..write('gistAr: $gistAr, ')
+          ..write('gistEn: $gistEn, ')
           ..write('calories: $calories, ')
           ..write('sizeMl: $sizeMl, ')
           ..write('priceMinEgp: $priceMinEgp, ')
@@ -1239,6 +1307,8 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     menuNameAr,
     explanationAr,
     explanationEn,
+    gistAr,
+    gistEn,
     calories,
     sizeMl,
     priceMinEgp,
@@ -1261,6 +1331,8 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
           other.menuNameAr == this.menuNameAr &&
           other.explanationAr == this.explanationAr &&
           other.explanationEn == this.explanationEn &&
+          other.gistAr == this.gistAr &&
+          other.gistEn == this.gistEn &&
           other.calories == this.calories &&
           other.sizeMl == this.sizeMl &&
           other.priceMinEgp == this.priceMinEgp &&
@@ -1281,6 +1353,8 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
   final Value<String> menuNameAr;
   final Value<String> explanationAr;
   final Value<String> explanationEn;
+  final Value<String?> gistAr;
+  final Value<String?> gistEn;
   final Value<int?> calories;
   final Value<int?> sizeMl;
   final Value<int?> priceMinEgp;
@@ -1300,6 +1374,8 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     this.menuNameAr = const Value.absent(),
     this.explanationAr = const Value.absent(),
     this.explanationEn = const Value.absent(),
+    this.gistAr = const Value.absent(),
+    this.gistEn = const Value.absent(),
     this.calories = const Value.absent(),
     this.sizeMl = const Value.absent(),
     this.priceMinEgp = const Value.absent(),
@@ -1320,6 +1396,8 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     required String menuNameAr,
     required String explanationAr,
     required String explanationEn,
+    this.gistAr = const Value.absent(),
+    this.gistEn = const Value.absent(),
     this.calories = const Value.absent(),
     this.sizeMl = const Value.absent(),
     this.priceMinEgp = const Value.absent(),
@@ -1346,6 +1424,8 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     Expression<String>? menuNameAr,
     Expression<String>? explanationAr,
     Expression<String>? explanationEn,
+    Expression<String>? gistAr,
+    Expression<String>? gistEn,
     Expression<int>? calories,
     Expression<int>? sizeMl,
     Expression<int>? priceMinEgp,
@@ -1366,6 +1446,8 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
       if (menuNameAr != null) 'menu_name_ar': menuNameAr,
       if (explanationAr != null) 'explanation_ar': explanationAr,
       if (explanationEn != null) 'explanation_en': explanationEn,
+      if (gistAr != null) 'gist_ar': gistAr,
+      if (gistEn != null) 'gist_en': gistEn,
       if (calories != null) 'calories': calories,
       if (sizeMl != null) 'size_ml': sizeMl,
       if (priceMinEgp != null) 'price_min_egp': priceMinEgp,
@@ -1388,6 +1470,8 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     Value<String>? menuNameAr,
     Value<String>? explanationAr,
     Value<String>? explanationEn,
+    Value<String?>? gistAr,
+    Value<String?>? gistEn,
     Value<int?>? calories,
     Value<int?>? sizeMl,
     Value<int?>? priceMinEgp,
@@ -1408,6 +1492,8 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
       menuNameAr: menuNameAr ?? this.menuNameAr,
       explanationAr: explanationAr ?? this.explanationAr,
       explanationEn: explanationEn ?? this.explanationEn,
+      gistAr: gistAr ?? this.gistAr,
+      gistEn: gistEn ?? this.gistEn,
       calories: calories ?? this.calories,
       sizeMl: sizeMl ?? this.sizeMl,
       priceMinEgp: priceMinEgp ?? this.priceMinEgp,
@@ -1445,6 +1531,12 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     }
     if (explanationEn.present) {
       map['explanation_en'] = Variable<String>(explanationEn.value);
+    }
+    if (gistAr.present) {
+      map['gist_ar'] = Variable<String>(gistAr.value);
+    }
+    if (gistEn.present) {
+      map['gist_en'] = Variable<String>(gistEn.value);
     }
     if (calories.present) {
       map['calories'] = Variable<int>(calories.value);
@@ -1492,6 +1584,8 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
           ..write('menuNameAr: $menuNameAr, ')
           ..write('explanationAr: $explanationAr, ')
           ..write('explanationEn: $explanationEn, ')
+          ..write('gistAr: $gistAr, ')
+          ..write('gistEn: $gistEn, ')
           ..write('calories: $calories, ')
           ..write('sizeMl: $sizeMl, ')
           ..write('priceMinEgp: $priceMinEgp, ')
@@ -2316,6 +2410,8 @@ typedef $$ItemsTableCreateCompanionBuilder = ItemsCompanion Function({
   required String menuNameAr,
   required String explanationAr,
   required String explanationEn,
+  Value<String?> gistAr,
+  Value<String?> gistEn,
   Value<int?> calories,
   Value<int?> sizeMl,
   Value<int?> priceMinEgp,
@@ -2336,6 +2432,8 @@ typedef $$ItemsTableUpdateCompanionBuilder = ItemsCompanion Function({
   Value<String> menuNameAr,
   Value<String> explanationAr,
   Value<String> explanationEn,
+  Value<String?> gistAr,
+  Value<String?> gistEn,
   Value<int?> calories,
   Value<int?> sizeMl,
   Value<int?> priceMinEgp,
@@ -2390,6 +2488,16 @@ class $$ItemsTableFilterComposer
 
   ColumnFilters<String> get explanationEn => $composableBuilder(
     column: $table.explanationEn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get gistAr => $composableBuilder(
+    column: $table.gistAr,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get gistEn => $composableBuilder(
+    column: $table.gistEn,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2488,6 +2596,16 @@ class $$ItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get gistAr => $composableBuilder(
+    column: $table.gistAr,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get gistEn => $composableBuilder(
+    column: $table.gistEn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get calories => $composableBuilder(
     column: $table.calories,
     builder: (column) => ColumnOrderings(column),
@@ -2577,6 +2695,12 @@ class $$ItemsTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get gistAr =>
+      $composableBuilder(column: $table.gistAr, builder: (column) => column);
+
+  GeneratedColumn<String> get gistEn =>
+      $composableBuilder(column: $table.gistEn, builder: (column) => column);
+
   GeneratedColumn<int> get calories =>
       $composableBuilder(column: $table.calories, builder: (column) => column);
 
@@ -2653,6 +2777,8 @@ class $$ItemsTableTableManager
                 Value<String> menuNameAr = const Value.absent(),
                 Value<String> explanationAr = const Value.absent(),
                 Value<String> explanationEn = const Value.absent(),
+                Value<String?> gistAr = const Value.absent(),
+                Value<String?> gistEn = const Value.absent(),
                 Value<int?> calories = const Value.absent(),
                 Value<int?> sizeMl = const Value.absent(),
                 Value<int?> priceMinEgp = const Value.absent(),
@@ -2672,6 +2798,8 @@ class $$ItemsTableTableManager
                 menuNameAr: menuNameAr,
                 explanationAr: explanationAr,
                 explanationEn: explanationEn,
+                gistAr: gistAr,
+                gistEn: gistEn,
                 calories: calories,
                 sizeMl: sizeMl,
                 priceMinEgp: priceMinEgp,
@@ -2693,6 +2821,8 @@ class $$ItemsTableTableManager
                 required String menuNameAr,
                 required String explanationAr,
                 required String explanationEn,
+                Value<String?> gistAr = const Value.absent(),
+                Value<String?> gistEn = const Value.absent(),
                 Value<int?> calories = const Value.absent(),
                 Value<int?> sizeMl = const Value.absent(),
                 Value<int?> priceMinEgp = const Value.absent(),
@@ -2712,6 +2842,8 @@ class $$ItemsTableTableManager
                 menuNameAr: menuNameAr,
                 explanationAr: explanationAr,
                 explanationEn: explanationEn,
+                gistAr: gistAr,
+                gistEn: gistEn,
                 calories: calories,
                 sizeMl: sizeMl,
                 priceMinEgp: priceMinEgp,

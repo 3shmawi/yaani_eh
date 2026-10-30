@@ -257,6 +257,8 @@ List<Map<String, Object?>> sampleItems({bool withAudio = false}) {
         'menu_name_ar': d.$3,
         'explanation_ar': d.$4,
         'explanation_en': d.$5,
+        'gist_ar': _gists[d.$1]?.$1,
+        'gist_en': _gists[d.$1]?.$2,
         'calories': d.$6,
         'size_ml': 350,
         'price_min_egp': null,
@@ -280,6 +282,13 @@ List<Map<String, Object?>> sampleItems({bool withAudio = false}) {
 }
 
 const _noAudio = {'affogato', 'iced_mocha'};
+
+/// The «يعني» line of some drinks; the others fall back to the first
+/// sentence of their explanation.
+const _gists = {
+  'espresso': ('فنجان قهوة صغير ومركّز', 'A tiny, strong cup of coffee'),
+  'flat_white': ('زي اللاتيه بس أقوى وأصغر', 'Like a latte, but stronger'),
+};
 
 /// The Café section's traits, as in supabase/content/build_seed.py.
 const cafeTraitSchema = <Object?>[

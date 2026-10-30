@@ -8,7 +8,7 @@ Start with [`../CLAUDE.md`](../CLAUDE.md) (rules + stack), then:
 - [Content (menu data)](content.md) — tables, editing drinks in Supabase Studio, photos, prices
 - [Deep links](deep_links.md)
 - [Security](security.md) — what is tested and how
-- [Decisions](decisions/) — why the stack looks the way it does; [photo thumbnails](decisions/0002-photo-thumbnails.md)
+- [Decisions](decisions/) — why the stack looks the way it does; [photo thumbnails](decisions/0002-photo-thumbnails.md); [drink cards say what a drink is](decisions/0003-drink-card-meaning.md)
 
 ## Roadmap
 Build in this order, one feature per PR (each with tests, doc and demo):

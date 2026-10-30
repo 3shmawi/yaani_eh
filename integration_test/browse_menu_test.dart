@@ -7,14 +7,16 @@ import 'helpers/demo.dart';
 import 'helpers/demo_app.dart';
 
 /// Demo: "A café menu… that finally makes sense."
-/// Scroll the glass cards (every name with its Arabic spelling), filter by
-/// a category chip, then back to everything.
+/// The cards rise in; each one says what the drink is in everyday words
+/// («فلات وايت يعني زي اللاتيه بس أقوى»). Open one (its photo flies into
+/// the page) and come back, filter by a category chip, then back to
+/// everything.
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   /// A text in either language (the device may be in Arabic or English).
   Finder either(String en, String ar) => find.byWidgetPredicate(
-    (w) => w is Text && (w.data == en || w.data == ar),
+    (w) => w is Text && [en, ar].contains(w.data ?? w.textSpan?.toPlainText()),
   );
 
   testWidgets('browse the menu and filter by category', (tester) async {
@@ -43,7 +45,28 @@ void main() {
     await tester.pumpAndSettle();
     await beat(tester);
 
-    // 3. Only iced coffee.
+    // 3. Every card says what it is: Flat White, «يعني زي اللاتيه بس أقوى».
+    final meaning = either(
+      'Like a latte, but stronger',
+      'يعني زي اللاتيه بس أقوى وأصغر',
+    );
+    await tester.dragUntilVisible(meaning, list, const Offset(0, -150));
+    await tester.pumpAndSettle();
+    await beat(tester, 1500);
+    expect(meaning, findsOneWidget);
+
+    // Open it: the photo flies into the drink page. Then back.
+    await tester.tap(find.widgetWithText(DrinkCard, 'Flat White'));
+    await tester.pumpAndSettle();
+    await beat(tester, 1500);
+    expect(find.byKey(const Key('drink_back')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('drink_back')));
+    await tester.pumpAndSettle();
+    await beat(tester);
+    await tester.drag(list, const Offset(0, 1200));
+    await tester.pumpAndSettle();
+
+    // 4. Only iced coffee.
     await tester.tap(either('Iced coffee', 'قهوة ساقعة').first);
     await tester.pumpAndSettle();
     await beat(tester, 1800);
@@ -57,7 +80,7 @@ void main() {
     await tester.drag(list, const Offset(0, 1200));
     await tester.pumpAndSettle();
 
-    // 4. Back to everything.
+    // 5. Back to everything.
     await tester.tap(either('All', 'الكل'));
     await tester.pumpAndSettle();
     await beat(tester, 1500);

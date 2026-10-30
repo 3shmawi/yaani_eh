@@ -5,9 +5,16 @@
 ## What it does
 Home is the café menu, made readable: the espresso header with category
 chips, a "drink of the day" card with its explanation, then every
-category's drinks as glass cards — photo, the name exactly as menus print
-it, its Arabic spelling and the price range (or calories until prices are
-checked). Tapping a chip shows just that category. Categories come from the
+category's drinks as cards. Each card answers «يعني إيه؟» at a glance:
+
+1. the photo (recognise it),
+2. the name exactly as menus print it (find it),
+3. its Arabic spelling (say it),
+4. the «يعني» line, what it is in everyday words, e.g. «فرابيه يعني ميلك
+   شيك بالقهوة» (understand it).
+
+No price on the card: the drink page has it. Tapping a chip shows just that
+category. Categories come from the
 data, so new ones (and later whole sections like desserts) appear without an
 app update.
 
@@ -26,7 +33,10 @@ app update.
   - `presentation/menu_controller.dart` — `selectedCategoryProvider`,
     `menuProvider` (rebuilds when the catalog syncs), `todayProvider`.
   - `presentation/menu_page.dart` → `menu_view.dart` (Main artboard);
-    widgets `DrinkCard`, `DrinkOfTheDay`.
+    widgets `DrinkCard` (`core/widgets/drink_card.dart`), `DrinkOfTheDay`.
+  - The «يعني» line: `CatalogItem.gist(arabic:)` — `gist_ar` / `gist_en`
+    from `catalog_sync`, or the explanation's first sentence until a drink
+    has one.
   - Shared: `core/widgets/category_chips.dart`, `core/widgets/drink_photo.dart`
     (cached photo or brand gradient + initial), `core/backend/media.dart`
     (public Storage URLs), `AppGlass(minimal: true)` for many cards.
@@ -46,8 +56,10 @@ None.
 - Unit: `test/features/browse_menu/domain/usecases/build_menu_test.dart`.
 - Widget: `test/features/browse_menu/presentation/menu_page_test.dart` —
   states (loading, empty, all, one category), chips and «شوف الكل»,
-  `DrinkCard` price/calories and its single screen-reader label, Arabic /
-  dark / small phone with 1.3× text / tablet, `expectAccessible`.
+  `DrinkCard` (name, spelling, «يعني» line and its fallback, no price,
+  cards in a row line up, press feedback and Reduce Motion, one
+  screen-reader label), the entry stagger, Arabic / dark / small phone
+  with 1.3× text / tablet, `expectAccessible`.
 - Integration (demo): `integration_test/browse_menu_test.dart`.
 
 ## Decisions & edge cases
@@ -58,8 +70,19 @@ None.
   (`memCacheWidth`), cached on the phone after the first view
   (`MediaCache`), so seen photos work offline; none yet → brand gradient +
   first letter.
-- Grid labels use the cheapest glass (`minimal`) so 40+ cards scroll
-  smoothly on mid-range Android; chips are clear glass on the header.
+- Card layout ("caption below", chosen over a frosted label, a photo
+  scrim and list rows): glass only on the controls over the photo (play,
+  later the heart), the text on the solid surface. Text always reads, in
+  light, dark and with large text, and there's no blur per card, so 40+
+  cards scroll smoothly on mid-range Android.
+- Card type: `TextRole.cardTitle` (15) for the name, `TextRole.cardBody`
+  (13) for the spelling and the «يعني» line. The line always takes two
+  lines of space, so the cards in a row line up.
+- Motion (`AppMotion`, all off with Reduce Motion): the first 8 cards rise
+  in one after another (`AppReveal`, 280 ms, 45 ms apart, once); a card
+  shrinks to 0.97 while pressed (`AppPressable`; a scroll cancels it); its
+  photo flies into the drink page (`Hero`, `DrinkCard.heroTag`, Home grid
+  only so a tag is never on screen twice).
 - The search field in the header opens `smart_search`.
 - The speaker button (`pronunciation`, through `MenuView.cardAction`) sits
   in the drink of the day's top-end corner and each card's top-start
@@ -73,18 +96,20 @@ None.
 **Hook (first 2 seconds):** «منيو الكافيه… بس مفهوم» / "A café menu… that finally makes sense."
 
 **Scenario (what the integration test shows, with beat() pauses):**
-1. Home opens: the drink of the day with its plain explanation.
-2. Scroll through the glass cards: every name with its Arabic spelling.
-3. Tap «قهوة ساقعة»: only iced coffee.
-4. Tap «الكل»: everything again.
+1. Home opens: the cards rise in after the drink of the day.
+2. Scroll through the cards: every name with its Arabic spelling.
+3. Flat White: «يعني زي اللاتيه بس أقوى وأصغر». Tap it, the photo flies
+   into its page; back.
+4. Tap «قهوة ساقعة»: only iced coffee.
+5. Tap «الكل»: everything again.
 
-**Caption (English):** Every drink on a café menu, explained in plain
-Egyptian Arabic — the name exactly as the menu prints it, how to read it,
-calories and price. Categories are data in Supabase, so new ones show up
-without an app update. Liquid Glass cards in Flutter.
+**Caption (English):** Every drink on a café menu, explained in words you
+already know: a frappé is a coffee milkshake, a flat white is a stronger,
+smaller latte. The name exactly as the menu prints it, how to say it, and
+what it is. Flutter, Liquid Glass controls, content in Supabase.
 
-**Caption (Egyptian Arabic):** كل مشروب في منيو الكافيه متشرح بالمصري: الاسم
-زي ما هو مكتوب، بيتقري إزاي، سعراته وسعره. والأقسام بتتضاف من غير ما تحدّث
-التطبيق.
+**Caption (Egyptian Arabic):** كل مشروب في منيو الكافيه بكلام إنت عارفه:
+الفرابيه يعني ميلك شيك بالقهوة، والفلات وايت يعني زي اللاتيه بس أقوى.
+الاسم زي ما هو مكتوب، بيتقال إزاي، ويعني إيه.
 
 **Hashtags:** #flutter #buildinpublic #liquidglass #supabase #yaanieh

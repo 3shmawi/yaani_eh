@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:yaani_eh/core/text/bidi.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_text_styles.dart';
-import 'package:yaani_eh/core/widgets/drink_card.dart';
 import 'package:yaani_eh/core/widgets/drink_photo.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/smart_search/domain/entities/search_text.dart';
+import 'package:yaani_eh/l10n/l10n.dart';
 
 /// One search result (Design System → ResultRow): the photo fills the
 /// row's height at the start edge, then the name, Arabic spelling, the
@@ -150,4 +151,16 @@ TextSpan highlighted(BuildContext context, String text, Set<String> highlight) {
   }
   if (at < text.length) spans.add(TextSpan(text: text.substring(at)));
   return TextSpan(children: spans);
+}
+
+/// "70–150 EGP" when prices are known, else "190 kcal", else null.
+String? drinkMeta(BuildContext context, CatalogItem item) {
+  final l10n = context.l10n;
+  final min = item.priceMinEgp;
+  final max = item.priceMaxEgp ?? min;
+  if (min != null && max != null) {
+    return l10n.priceRange(Bidi.range(min, max));
+  }
+  final calories = item.calories;
+  return calories == null ? null : l10n.calories(calories);
 }

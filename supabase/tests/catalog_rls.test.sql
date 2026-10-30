@@ -4,7 +4,7 @@
 -- only; that hostile values are rejected.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(32);
+select plan(37);
 
 -- RLS on every table.
 select ok((select relrowsecurity from pg_class where oid = 'public.categories'::regclass), 'RLS on categories');
@@ -14,6 +14,10 @@ select ok((select relrowsecurity from pg_class where oid = 'public.catalog_tombs
 
 -- Launch content is there.
 select is((select count(*)::int from public.items where is_published), 41, '41 published drinks');
+select is(
+  (select count(*)::int from public.items where is_published and gist_ar is not null and gist_en is not null),
+  41, 'every launch drink has its «يعني» line in both languages'
+);
 select is(
   (select count(*)::int from public.categories where parent_id = (select id from public.categories where slug = 'cafe')),
   6, 'six categories under the Café section'
@@ -105,6 +109,14 @@ select throws_ok(
      select id, 'x', 'klingon' from public.items where slug = 'latte' $$,
   '23514', null, 'unknown term languages are rejected'
 );
+select throws_ok(
+  $$ update public.items set gist_ar = repeat('ق', 61) where slug = 'latte' $$,
+  '23514', null, 'a «يعني» line longer than 60 is rejected'
+);
+select throws_ok(
+  $$ update public.items set gist_en = '' where slug = 'latte' $$,
+  '23514', null, 'an empty «يعني» line is rejected (null means none)'
+);
 
 -- As anon (the app).
 set local role anon;
@@ -114,6 +126,10 @@ select is((select count(*)::int from public.items where slug = 'secret_drink'), 
 select is((select count(*)::int from public.categories where slug = 'draft_section'), 0, 'anon cannot see a hidden category');
 select is((select count(*)::int from public.item_terms where term = 'hidden term'), 0, 'anon cannot see terms of hidden items');
 select ok((select count(*) > 300 from public.item_terms), 'anon can read search terms');
+select is(
+  (select gist_ar from public.items where slug = 'coffee_frappe'), 'ميلك شيك بالقهوة',
+  'anon can read the «يعني» line'
+);
 
 select is(
   (select count(*)::int from public.catalog_removed_since('1970-01-01') where kind = 'item'),
@@ -142,6 +158,12 @@ select results_eq(
      select count(*)::int from changed $$,
   $$ values (0) $$,
   'anon cannot edit items'
+);
+select results_eq(
+  $$ with changed as (update public.items set gist_ar = 'hacked' returning 1)
+     select count(*)::int from changed $$,
+  $$ values (0) $$,
+  'anon cannot change a «يعني» line'
 );
 select results_eq(
   $$ with gone as (delete from public.items returning 1) select count(*)::int from gone $$,

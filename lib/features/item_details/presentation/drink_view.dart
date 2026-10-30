@@ -105,7 +105,8 @@ class DrinkView extends StatelessWidget {
             ),
             SizedBox(height: AppDimens.space3),
             SizedBox(
-              height: 176.r,
+              // A 132-wide photo plus the name and spelling.
+              height: 196.r,
               child: ListView.separated(
                 key: const Key('similar_drinks'),
                 scrollDirection: Axis.horizontal,
@@ -142,10 +143,14 @@ class DrinkView extends StatelessWidget {
             start: 0,
             end: 0,
             height: photoHeight,
-            child: DrinkPhoto(
-              name: item.menuName,
-              imagePath: item.imagePath,
-              size: PhotoSize.full,
+            // The Home card's photo flies into this one.
+            child: Hero(
+              tag: DrinkCard.heroTag(item.id),
+              child: DrinkPhoto(
+                name: item.menuName,
+                imagePath: item.imagePath,
+                size: PhotoSize.full,
+              ),
             ),
           ),
           // Keeps the status bar and the back button readable.

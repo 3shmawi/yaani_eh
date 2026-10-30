@@ -31,6 +31,8 @@ class Items extends Table {
   TextColumn get menuNameAr => text()();
   TextColumn get explanationAr => text()();
   TextColumn get explanationEn => text()();
+  TextColumn get gistAr => text().nullable()();
+  TextColumn get gistEn => text().nullable()();
   IntColumn get calories => integer().nullable()();
   IntColumn get sizeMl => integer().nullable()();
   IntColumn get priceMinEgp => integer().nullable()();
@@ -77,7 +79,7 @@ class CatalogDatabase extends _$CatalogDatabase {
     : super(executor ?? driftDatabase(name: 'catalog'));
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -86,6 +88,15 @@ class CatalogDatabase extends _$CatalogDatabase {
       await customStatement(
         'CREATE INDEX IF NOT EXISTS items_category ON items (category_id)',
       );
+    },
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        // The «يعني» line. Rows already on the phone don't have it, so the
+        // next sync starts over and fetches every drink again.
+        await m.addColumn(items, items.gistAr);
+        await m.addColumn(items, items.gistEn);
+        await (delete(syncMeta)..where((r) => r.key.equals('cursor'))).go();
+      }
     },
   );
 }

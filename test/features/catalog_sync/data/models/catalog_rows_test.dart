@@ -47,6 +47,21 @@ void main() {
       });
     }
 
+    test('the «يعني» line is read; a broken one is dropped, the item kept', () {
+      expect(
+        CatalogRows.item({...item, 'gist_ar': ' قهوة بلبن كتير '})!.gistAr,
+        'قهوة بلبن كتير',
+      );
+      for (final bad in <Object?>['', '   ', 'ق' * 61, 42, <Object?>[]]) {
+        final parsed = CatalogRows.item({...item, 'gist_en': bad});
+        expect(parsed, isNotNull, reason: '$bad');
+        expect(parsed!.gistEn, isNull, reason: '$bad');
+      }
+      // Shown as plain text, never run: an injection-like line stays text.
+      const sneaky = "<script>x</script>'; DROP TABLE items;--";
+      expect(CatalogRows.item({...item, 'gist_en': sneaky})!.gistEn, sneaky);
+    });
+
     test('unsafe media paths are dropped, the item is kept', () {
       for (final path in ['../secret', '/etc/passwd', 'a' * 301]) {
         final parsed = CatalogRows.item({...item, 'image_path': path})!;
