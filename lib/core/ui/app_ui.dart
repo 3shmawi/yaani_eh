@@ -426,6 +426,7 @@ class AppIconButton extends StatelessWidget {
     this.tone = GlassTone.auto,
     this.backdrop,
     this.backdropRegion = const Rect.fromLTWH(0, 0, 1, 1),
+    this.minimal = false,
     super.key,
   });
 
@@ -438,6 +439,11 @@ class AppIconButton extends StatelessWidget {
   final GlassTone tone;
   final ImageProvider? backdrop;
   final Rect backdropRegion;
+
+  /// One per card in a list (the cards' play button): the cheapest glass,
+  /// like the card labels, so a screen of cards stays within the frame
+  /// budget.
+  final bool minimal;
 
   @override
   Widget build(BuildContext context) {
@@ -459,6 +465,7 @@ class AppIconButton extends StatelessWidget {
             radius: size / 2,
             backdrop: backdrop,
             backdropRegion: backdropRegion,
+            minimal: minimal,
             child: Center(child: iconWidget),
           );
     return Tooltip(

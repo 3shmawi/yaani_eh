@@ -107,6 +107,10 @@ None.
 - Upload M4A (AAC) or MP3: the bucket also accepts Ogg, which iPhones
   can't play (it would show «مقدرناش نشغّل الاسم»).
 - Changing speed applies to the next clip, not the one playing.
+- The cards' speaker uses the cheapest glass (`AppIconButton(minimal:)`,
+  like the card labels): one premium glass button per card pushed Home
+  past Liquid Glass's frame budget (19 premium surfaces, ~200 ms raster
+  frames on the iOS simulator), which fails integration tests.
 - The speed label is LTR-isolated (`Bidi.ltr`), so RTL never shows `×0.75`.
 
 ## Demo & post

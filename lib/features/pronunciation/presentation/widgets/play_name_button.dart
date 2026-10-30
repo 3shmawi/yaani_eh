@@ -16,6 +16,7 @@ class PlayNameButton extends StatelessWidget {
     required this.onPressed,
     this.failure,
     this.tone = GlassTone.auto,
+    this.minimal = true,
     super.key,
   });
 
@@ -25,6 +26,9 @@ class PlayNameButton extends StatelessWidget {
   final AppFailure? failure;
   final VoidCallback onPressed;
   final GlassTone tone;
+
+  /// The cheapest glass (default): there's one of these on every card.
+  final bool minimal;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +47,7 @@ class PlayNameButton extends StatelessWidget {
       tooltip: active ? l10n.pronounceStopOf(name) : l10n.pronounceHearOf(name),
       selected: active,
       tone: tone,
+      minimal: minimal,
       onPressed: onPressed,
     );
     if (state != SegmentState.failed || failure == null) return button;

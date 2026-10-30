@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yaani_eh/core/network/app_failure.dart';
 import 'package:yaani_eh/core/theme/app_icons.dart';
+import 'package:yaani_eh/core/ui/app_ui.dart';
 import 'package:yaani_eh/features/pronunciation/domain/entities/pronunciation.dart';
 import 'package:yaani_eh/features/pronunciation/presentation/pronounce.dart';
 import 'package:yaani_eh/features/pronunciation/presentation/pronunciation_controller.dart';
@@ -353,6 +354,18 @@ void main() {
       await tester.pump();
       expect(player.isPlaying, isFalse);
       expect(find.byIcon(AppIcons.speaker), findsOneWidget);
+    });
+
+    testWidgets('card buttons use the cheapest glass (one per card keeps '
+        'a screen of cards in the frame budget)', (tester) async {
+      await pump(tester, ItemPlayButton(item: flatWhite));
+      final glass = tester.widget<AppGlass>(
+        find.descendant(
+          of: find.byType(PlayNameButton),
+          matching: find.byType(AppGlass),
+        ),
+      );
+      expect(glass.minimal, isTrue);
     });
 
     testWidgets('no clips → no card button', (tester) async {
