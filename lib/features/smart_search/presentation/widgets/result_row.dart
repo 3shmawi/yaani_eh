@@ -47,66 +47,78 @@ class ResultRow extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: radius,
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: AppDimens.rowMinHeight),
-                child: IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      SizedBox(
-                        width: AppDimens.rowImage,
-                        child: DrinkPhoto(
-                          name: item.menuName,
-                          imagePath: item.imagePath,
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.all(AppDimens.space3),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                item.menuName,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: AppTextStyles.forText(
-                                  item.menuName,
-                                  TextRole.headline,
-                                ).copyWith(color: p.ink),
-                              ),
-                              Text(
-                                item.menuNameAr,
-                                style: AppTextStyles.forText(
-                                  item.menuNameAr,
-                                  TextRole.caption,
-                                ).copyWith(color: p.inkMuted),
-                              ),
-                              SizedBox(height: AppDimens.space1),
-                              Text.rich(
-                                highlighted(context, explanation, highlight),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: AppTextStyles.forText(
-                                  explanation,
-                                  TextRole.callout,
-                                ).copyWith(color: p.ink),
-                              ),
-                              if (meta != null)
-                                Text(
-                                  meta,
-                                  style: context
-                                      .text(TextRole.caption)
-                                      .copyWith(color: p.inkMuted),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+              // The photo fills the row's height whatever the text needs
+              // (a layer, so the row is laid out once — no IntrinsicHeight).
+              child: Stack(
+                children: [
+                  PositionedDirectional(
+                    start: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: AppDimens.rowImage,
+                    child: DrinkPhoto(
+                      name: item.menuName,
+                      imagePath: item.imagePath,
+                      size: PhotoSize.thumbnail,
+                    ),
                   ),
-                ),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: AppDimens.rowMinHeight,
+                    ),
+                    // Full width; the text centred in the row's height.
+                    child: Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(
+                          AppDimens.rowImage + AppDimens.space3,
+                          AppDimens.space3,
+                          AppDimens.space3,
+                          AppDimens.space3,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              item.menuName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.forText(
+                                item.menuName,
+                                TextRole.headline,
+                              ).copyWith(color: p.ink),
+                            ),
+                            Text(
+                              item.menuNameAr,
+                              style: AppTextStyles.forText(
+                                item.menuNameAr,
+                                TextRole.caption,
+                              ).copyWith(color: p.inkMuted),
+                            ),
+                            SizedBox(height: AppDimens.space1),
+                            Text.rich(
+                              highlighted(context, explanation, highlight),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.forText(
+                                explanation,
+                                TextRole.callout,
+                              ).copyWith(color: p.ink),
+                            ),
+                            if (meta != null)
+                              Text(
+                                meta,
+                                style: context
+                                    .text(TextRole.caption)
+                                    .copyWith(color: p.inkMuted),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

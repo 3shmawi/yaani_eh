@@ -42,6 +42,7 @@ class DrinkOfTheDay extends StatelessWidget {
                     child: DrinkPhoto(
                       name: item.menuName,
                       imagePath: item.imagePath,
+                      size: PhotoSize.thumbnail,
                     ),
                   ),
                   Column(

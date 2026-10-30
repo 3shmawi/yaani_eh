@@ -25,13 +25,48 @@ from the app: only Studio / the service role.
   removes it on the next sync.
 - **Prices:** fill `price_min_egp`, `price_max_egp` and `price_updated_at`.
   The app shows a "price may be old" note after 3 months.
-- **Photos:** upload to the `item-images` bucket (WebP, 1200×1600, < 300 KB —
-  own photos or Pexels/Unsplash-licensed; no café logos, branded cups or
-  faces), then put the path (e.g. `latte.webp`) in `image_path`.
+- **Photos:** every drink has a photo and a thumbnail, side by side in the
+  `item-images` bucket. See [Photos and thumbnails](#photos-and-thumbnails).
 - **Pronunciation:** upload to `item-audio`, then fill `audio_barista_path`
   and/or `audio_original_path`. A missing clip just hides its button.
 - **Names:** the menu name stays exactly as menus print it. Trademarked
   names (Frappuccino, Oreo…) may only be search terms, never item names.
+
+## Photos and thumbnails
+
+| File | Size | Shown on |
+|---|---|---|
+| `latte.webp` (the photo) | WebP, 1200×1600 (3:4), < 300 KB | the drink page |
+| `latte.thumb.webp` (its thumbnail) | WebP, 400 px wide (3:4), ≤ 40 KB (usually 30–40) | cards: Home, search, similar drinks |
+
+**Naming:** the thumbnail sits in the same folder as its photo, with
+`.thumb.webp` in place of the photo's extension: `latte.webp` →
+`latte.thumb.webp`, `cafe/flat_white.jpg` → `cafe/flat_white.thumb.webp`.
+The app works the thumbnail's name out from `image_path`
+(`MediaUrls.thumbnailPath`), so the database only holds the photo's path.
+
+**Adding or changing a photo:**
+1. The photo: WebP, 1200×1600, < 300 KB — own photos or
+   Pexels/Unsplash-licensed; no café logos, branded cups or faces.
+2. Make its thumbnail (needs `cwebp`: `brew install webp` / `apt install webp`):
+   ```bash
+   ./scripts/make_thumbnails.sh path/to/photos      # a folder, or files
+   ```
+   It writes `<name>.thumb.webp` next to each photo (400 px wide, metadata
+   removed, quality lowered until ≤ 40 KB), skips thumbnails that are newer
+   than their photo (`--force` remakes them) and warns about any that stay
+   over 40 KB.
+3. Upload **both** files to `item-images` (same folder), then put the
+   photo's path (e.g. `latte.webp`) in `image_path`. Changing a photo: upload
+   both again under the same names.
+
+**A thumbnail is missing:** cards fall back to the full photo (slower, more
+data) and stop asking for that thumbnail until the app restarts. Nothing
+breaks, but upload the thumbnail. **The photo is missing:** the drink page
+shows the thumbnail; with neither, the brand gradient and first letter.
+
+Both are cached on the phone after the first view (up to 600 files, kept
+180 days after last use), so photos already seen still show offline.
 
 ## Launch content
 
