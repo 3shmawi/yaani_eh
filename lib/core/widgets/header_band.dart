@@ -9,7 +9,7 @@ import 'package:yaani_eh/core/ui/app_ui.dart';
 /// something to sit on; controls inside use the dark tone.
 class HeaderBand extends StatelessWidget {
   const new({
-    required this.title,
+    this.title,
     this.eyebrow,
     this.subtitle,
     this.bottom,
@@ -17,7 +17,8 @@ class HeaderBand extends StatelessWidget {
     super.key,
   });
 
-  final String title;
+  /// Null for bands that only hold controls (search).
+  final String? title;
   final String? eyebrow;
   final String? subtitle;
 
@@ -94,15 +95,16 @@ class HeaderBand extends StatelessWidget {
                                 .text(TextRole.label)
                                 .copyWith(color: AppColors.onHeaderMuted),
                           ),
-                        Semantics(
-                          header: true,
-                          child: Text(
-                            title,
-                            style: context
-                                .text(TextRole.largeTitle)
-                                .copyWith(color: AppColors.onHeader),
+                        if (title != null)
+                          Semantics(
+                            header: true,
+                            child: Text(
+                              title!,
+                              style: context
+                                  .text(TextRole.largeTitle)
+                                  .copyWith(color: AppColors.onHeader),
+                            ),
                           ),
-                        ),
                         if (subtitle != null) Text(subtitle!, style: muted),
                       ],
                     ),

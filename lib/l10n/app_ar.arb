@@ -64,5 +64,20 @@
   "priceStale": "السعر ممكن يكون اتغيّر",
   "similarDrinks": "مشروبات شبهه",
   "kcal": "سعر حراري",
-  "currency": "ج.م"
+  "currency": "ج.م",
+  "searchPlaceholder": "اكتب اسم المشروب… أو وصفه",
+  "searchLabel": "ابحث",
+  "clearSearch": "امسح",
+  "youTyped": "إنت كتبت «{query}»",
+  "seeDetails": "التفاصيل",
+  "searchResults": "{count, plural, =1{مشروب واحد لـ«{query}»} =2{مشروبين لـ«{query}»} few{{count} مشروبات لـ«{query}»} other{{count} مشروب لـ«{query}»}}",
+  "searchMoreWith": "كمان فيها «{query}»",
+  "searchRankHint": "المفضلة والقريب من ذوقك بيطلعوا الأول",
+  "searchNothing": "مالقيناش «{query}»",
+  "searchNothingBody": "جرّب اسم تاني، أو اوصفه بكلامك.",
+  "didYouMean": "يمكن تقصد",
+  "searchIdleTitle": "دوّر بالاسم أو بالوصف",
+  "searchIdleBody": "بيشتغل من غير نت، بالعربي أو الإنجليزي أو الفرانكو.",
+  "searchTry": "جرّب",
+  "searchExamples": "فرابيه|لبن وقهوة|ساقع|2ahwa"
 }

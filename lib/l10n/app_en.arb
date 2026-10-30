@@ -138,5 +138,51 @@
   "priceStale": "Price may have changed",
   "similarDrinks": "Similar drinks",
   "kcal": "kcal",
-  "currency": "EGP"
+  "currency": "EGP",
+  "searchPlaceholder": "Type a drink name… or describe it",
+  "searchLabel": "Search",
+  "clearSearch": "Clear",
+  "youTyped": "You typed “{query}”",
+  "@youTyped": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "seeDetails": "See details",
+  "searchResults": "{count, plural, =1{1 drink for “{query}”} other{{count} drinks for “{query}”}}",
+  "@searchResults": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "searchMoreWith": "More with “{query}”",
+  "@searchMoreWith": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "searchRankHint": "Your favorites and taste come first",
+  "searchNothing": "We didn't find “{query}”",
+  "@searchNothing": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "searchNothingBody": "Try another name, or describe it in your own words.",
+  "didYouMean": "Did you mean",
+  "searchIdleTitle": "Search by name or by description",
+  "searchIdleBody": "Works offline, in Arabic, English or Franco.",
+  "searchTry": "Try",
+  "searchExamples": "Frappé|milk and coffee|iced|Cortado"
 }
