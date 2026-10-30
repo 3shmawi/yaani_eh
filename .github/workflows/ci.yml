@@ -146,7 +146,11 @@ jobs:
           # GLASS_LITE: the emulator has no real GPU and glass shaders stall it
           # (glass apps draw the solid variant; other apps ignore the define).
           # The log is kept so a failure shows its reason (next step).
-          script: bash -o pipefail -c "flutter test integration_test  --dart-define-from-file=env/example.json --dart-define=GLASS_LITE=true 2>&1 | tee integration.log"
+          script: |
+            adb logcat -c || true
+            (adb logcat -v time > logcat.txt 2>&1 &) || true
+            (while true; do date +%T >> host.txt; free -m | sed -n 2p >> host.txt; pgrep -a -f qemu-system | head -c 120 >> host.txt; echo >> host.txt; sleep 5; done &) || true
+            bash -o pipefail -c "flutter test integration_test  --dart-define-from-file=env/example.json --dart-define=GLASS_LITE=true 2>&1 | tee integration.log"
 
       - name: Why the integration tests failed
         if: failure()
@@ -163,3 +167,12 @@ jobs:
             echo "::error title=integration failures ($n)::$(sed 's/%/%25/g' "$part" | awk '{printf "%s%%0A", $0}')"
           done
           tail -n 80 integration.log
+          # What the emulator and the host said around the crash.
+          if [ -f logcat.txt ]; then
+            grep -n -E 'FATAL|AndroidRuntime|ANR in|lowmemorykiller|lmkd|Killing|watchdog|Watchdog|SIGSEGV|crash|died|yaanieh' logcat.txt | tail -n 60 > logcat_key.txt || true
+            echo "::error title=logcat (key)::$(tail -c 3500 logcat_key.txt | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')"
+            echo "::error title=logcat (end)::$(tail -n 40 logcat.txt | tail -c 3500 | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')"
+          fi
+          if [ -f host.txt ]; then
+            echo "::error title=host memory / emulator process::$(tail -c 3500 host.txt | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')"
+          fi
