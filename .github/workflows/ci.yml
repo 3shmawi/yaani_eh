@@ -91,11 +91,57 @@ jobs:
           supabase db start
           supabase test db
 
+  # Every integration test, on an iPhone simulator with full Liquid Glass
+  # (Metal), like a real phone. Same runner as the demo videos.
+  integration-ios:
+    name: Integration tests (iOS simulator)
+    if: github.event_name == 'pull_request'
+    runs-on: macos-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Flutter version from .fvmrc
+        id: fvm
+        run: echo "version=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm.outputs.version }}
+          cache: true
+
+      - name: Install packages
+        run: |
+          flutter pub get
+          flutter gen-l10n
+
+      - name: Run integration tests
+        run: |
+          udid=$(xcrun simctl list devices available -j | jq -r \
+            '[.devices | to_entries[] | select(.key | test("iOS")) | .value[] | select(.name | test("^iPhone [0-9]+( Pro)?$"))] | last | .udid')
+          xcrun simctl boot "$udid" 2>/dev/null || true
+          xcrun simctl bootstatus "$udid" -b > /dev/null
+          set -o pipefail
+          flutter test integration_test -d "$udid" --dart-define-from-file=env/example.json 2>&1 | tee integration.log
+
+      - name: Why the integration tests failed
+        if: failure()
+        run: |
+          [ -f integration.log ] || exit 0
+          grep -n -E 'EXCEPTION CAUGHT|Expected:|Actual:|Which:|Test failed|\[E\]|Error:|was thrown|Timed out|not found|_test\.dart:[0-9]+' integration.log \
+            | head -n 100 > failures.txt || true
+          split -b 3500 -d failures.txt part_ 2>/dev/null || true
+          n=0; for part in part_*; do [ -f "$part" ] || continue; n=$((n+1)); [ "$n" -gt 8 ] && break
+            echo "::error title=integration failures ($n)::$(sed 's/%/%25/g' "$part" | awk '{printf "%s%%0A", $0}')"
+          done
+          tail -n 80 integration.log
+
+  # A quick Android smoke test (the first flow). The CI emulator renders in
+  # software and doesn't survive several app reinstalls in a row, so the
+  # full suite runs on the iOS simulator above.
   integration:
     name: Integration tests (Android emulator)
     if: github.event_name == 'pull_request'
-    # Pinned: the emulator froze after the first test file on the newer
-    # ubuntu-latest image (Ubuntu 26 rollout, Oct 2026).
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
@@ -126,59 +172,26 @@ jobs:
           flutter pub get
           flutter gen-l10n
 
-      # Flutter rebuilds the app for every test file. With the template's
-      # 8 GB Gradle heap (+ Kotlin daemon) next to the emulator, the runner
-      # runs out of memory and the emulator is killed between files. Cap
-      # Gradle here only (later keys win in gradle.properties).
-      - name: Leave memory for the emulator
-        run: |
-          {
-            echo 'org.gradle.jvmargs=-Xmx3g -XX:MaxMetaspaceSize=1g -XX:ReservedCodeCacheSize=256m'
-            echo 'kotlin.daemon.jvmargs=-Xmx1g'
-          } >> android/gradle.properties
-
       - name: Run integration tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
           arch: x86_64
-          # Plain AOSP image: no Google app / Gboard, which kept the
-          # software-rendered emulator busy until it froze after a test.
-          target: default
-          ram-size: 3072M
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          target: google_apis
           disable-animations: true
           # GLASS_LITE: the emulator has no real GPU and glass shaders stall it
           # (glass apps draw the solid variant; other apps ignore the define).
-          # The log is kept so a failure shows its reason (next step).
-          script: |
-            adb logcat -c || true
-            nohup sh -c 'adb logcat -v time > logcat.txt 2>&1' > /dev/null 2>&1 < /dev/null &
-            nohup sh -c 'for i in $(seq 1 400); do echo "$(date +%T) $(free -m | sed -n 2p) qemu=$(pgrep -c -f qemu-system)" >> host.txt; sleep 5; done' > /dev/null 2>&1 < /dev/null &
-            bash -o pipefail -c "flutter test integration_test  --dart-define-from-file=env/example.json --dart-define=GLASS_LITE=true 2>&1 | tee integration.log"
-            pkill -f 'adb logcat' || true
+          script: bash -o pipefail -c "flutter test integration_test/app_test.dart --dart-define-from-file=env/example.json --dart-define=GLASS_LITE=true 2>&1 | tee integration.log"
 
       - name: Why the integration tests failed
-        if: failure() || cancelled()
+        if: failure()
         run: |
           [ -f integration.log ] || exit 0
-          # Test failures and exceptions, as annotations on the run.
-          { first=$(grep -n -m1 -E 'Installing build/app' integration.log | cut -d: -f1)
-            [ -n "$first" ] && sed -n "$((first)),$((first+70))p" integration.log | grep -v -E 'KGP|Kotlin|plugin|^\s*$'
-            grep -n -B12 -A3 -E 'ADB exited|INSTALL_FAILED|Failure \[' integration.log | head -n 30
-            grep -n -E 'EXCEPTION CAUGHT|Expected:|Actual:|Which:|Test failed|\[E\]|Error:|was thrown|Timed out|_test\.dart:[0-9]+' integration.log | head -n 80
-          } > failures.txt || true
+          grep -n -E 'EXCEPTION CAUGHT|Expected:|Actual:|Which:|Test failed|\[E\]|Error:|was thrown|Timed out|not found|_test\.dart:[0-9]+' integration.log \
+            | head -n 100 > failures.txt || true
           split -b 3500 -d failures.txt part_ 2>/dev/null || true
           n=0; for part in part_*; do [ -f "$part" ] || continue; n=$((n+1)); [ "$n" -gt 8 ] && break
             echo "::error title=integration failures ($n)::$(sed 's/%/%25/g' "$part" | awk '{printf "%s%%0A", $0}')"
           done
           tail -n 80 integration.log
-          # What the emulator and the host said around the crash.
-          if [ -f logcat.txt ]; then
-            grep -n -E 'FATAL|AndroidRuntime|ANR in|lowmemorykiller|lmkd|Killing|watchdog|Watchdog|SIGSEGV|crash|died|yaanieh' logcat.txt | tail -n 60 > logcat_key.txt || true
-            echo "::error title=logcat (key)::$(tail -c 3500 logcat_key.txt | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')"
-            echo "::error title=logcat (end)::$(tail -n 40 logcat.txt | tail -c 3500 | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')"
-          fi
-          if [ -f host.txt ]; then
-            echo "::error title=host memory / emulator process::$(tail -c 3500 host.txt | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')"
-          fi
+
