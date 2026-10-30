@@ -58,6 +58,9 @@ abstract final class AppDimens {
   static double get rowImage => 104.w;
   static double get rowMinHeight => 112.h;
 
+  /// One tile of the header band's mashrabiya pattern.
+  static double get patternTile => 28.r;
+
   /// Pronounce pill: the visible height of a segment and the speed toggle
   /// (the tap area stays [touchTarget]).
   static double get pronounceSegment => 36.r;
@@ -70,6 +73,12 @@ abstract final class AppDimens {
 /// Motion from the Design System: short and purposeful (150–300 ms).
 /// Widgets that use these turn motion off with Reduce Motion.
 abstract final class AppMotion {
+  /// A switch or chip moving its selection.
+  static const select = Duration(milliseconds: 200);
+
+  /// A list scrolling to a category after its chip is tapped.
+  static const jump = Duration(milliseconds: 300);
+
   /// A card's press feedback.
   static const press = Duration(milliseconds: 150);
   static const pressScale = 0.97;

@@ -19,18 +19,23 @@ data, so new ones (and later whole sections like desserts) appear without an
 app update.
 
 ## User flows
-1. Open the app → Home with «الكل» selected, the drink of the day and all
-   categories, each with «شوف الكل».
-2. Tap a chip (or «شوف الكل») → only that category; tap «الكل» to go back.
-3. Offline → same screen from the device, with the offline pill.
+1. Open the app → Home on «مشروبات»: the drink of the day, then every
+   category's drinks, one after another.
+2. Tap a chip → the list scrolls to that category. Scrolling on, the
+   highlighted chip follows; once the header has scrolled away, the chips
+   stay pinned at the top.
+3. Tap «حلويات» in the switch → «حلويات جاية قريب» (no desserts yet), with
+   «شوف المتاح دلوقتي» back to the drinks.
+4. Offline → same screen from the device, with the offline pill.
 
 ## Architecture
 - Layers / main files: `lib/features/browse_menu/`
-  - `domain/usecases/build_menu.dart` — `BuildMenu` (pure): chips (only
-    categories with drinks, ordered by section then category), sections,
-    the drink of the day (stable for a day, by date), and a fallback to
-    «الكل» when the selected category disappears in a sync.
-  - `presentation/menu_controller.dart` — `selectedCategoryProvider`,
+  - `domain/usecases/build_menu.dart` — `BuildMenu` (pure): the tabs
+    (every section, in order; one without drinks is coming soon), the open
+    tab (the first with drinks when none is chosen or it vanished in a
+    sync), its chips (only categories with drinks) and sections, and the
+    drink of the day from the open tab (stable for a day, by date).
+  - `presentation/menu_controller.dart` — `selectedTabProvider`,
     `menuProvider` (rebuilds when the catalog syncs), `todayProvider`.
   - `presentation/menu_page.dart` → `menu_view.dart` (Main artboard);
     widgets `DrinkCard` (`core/widgets/drink_card.dart`), `DrinkOfTheDay`.
@@ -47,15 +52,21 @@ app update.
 ## Analytics events
 | Event | When | Properties |
 |---|---|---|
-| `menu_category_selected` | a chip or «شوف الكل» is tapped | `category` (slug, or `all`) |
+| `menu_section_selected` | a section is opened in the switch | `section` (slug), `coming_soon` (bool: it has no items yet; tells us how many people look for desserts) |
+| `menu_category_selected` | a chip is tapped (the list scrolls to it) | `category` (slug) |
 
 ## Feature flags
 None.
 
 ## Tests
-- Unit: `test/features/browse_menu/domain/usecases/build_menu_test.dart`.
+- Unit: `test/features/browse_menu/domain/usecases/build_menu_test.dart` —
+  the first section with drinks opens, a section without drinks is coming
+  soon, a vanished section falls back, desserts go live with their first
+  item, empty categories get no chip.
 - Widget: `test/features/browse_menu/presentation/menu_page_test.dart` —
-  states (loading, empty, all, one category), chips and «شوف الكل»,
+  states (loading, empty, coming soon), the switch, a chip scrolling to its
+  category and lighting up in the pinned row, the pinned row hiding again,
+  one section without a switch,
   `DrinkCard` (name, spelling, «يعني» line and its fallback, no price,
   cards in a row line up, press feedback and Reduce Motion, one
   screen-reader label), the entry stagger, Arabic / dark / small phone
@@ -90,8 +101,23 @@ None.
 - The speaker button (`pronunciation`, through `MenuView.cardAction`) sits
   in the drink of the day's top-end corner and each card's top-start
   corner, for drinks that have a clip; it plays without opening the drink.
-- Not here yet, each comes with its feature: hearts (`favorites`, the
-  cards' top-end corner) and the tab bar (once a second tab exists). Cards
+- Header: the app's own name («يعني إيه؟») instead of «المنيو», so the
+  same band works for any section; behind it the mashrabiya pattern
+  (`HeaderPattern`, drawn, faint `AppColors.headerPattern`, left out in the
+  flat Reduce Transparency / Increase Contrast band). Sections switch:
+  `AppSegmentedControl`, shown when there are two or more sections. No
+  «الكل» chip: the whole section is one list and chips jump within it.
+- The list is built at once (not lazily), so a chip can scroll to any
+  category and the highlight can follow them all; a section is ~40 cards.
+  Positions come from the viewport (`getOffsetToReveal`), so they're right
+  even for off-screen categories.
+- Selected chips and the switch's selected option are warm milk
+  (`AppColors.selected`) in both themes: pure white looked pasted on the
+  espresso band and glared in dark mode; the page colour fails in dark
+  (1.3:1 against the band).
+- Not here yet, each comes with its feature: hearts and the long-press
+  preview (`favorites`, the cards' top-end corner) and the tab bar (once a
+  second tab exists). Cards
   and the drink of the day open the drink (`item_details`).
 - Calories and prices are labelled approximate at the end of the list.
 
@@ -103,8 +129,9 @@ None.
 2. Scroll through the cards: every name with its Arabic spelling.
 3. Flat White: «يعني قهوة باللبن تقيلة في فنجان صغير». Tap it, the photo flies
    into its page; back.
-4. Tap «قهوة ساقعة»: only iced coffee.
-5. Tap «الكل»: everything again.
+4. Tap «قهوة ساقعة»: the list scrolls there; the chips stay pinned on top.
+5. Back up, tap «حلويات»: «جاية قريب»; «شوف المتاح دلوقتي» brings the
+   drinks back.
 
 **Caption (English):** Every drink on a café menu, explained in words you
 already know: a frappé is a coffee milkshake, a flat white is strong milky

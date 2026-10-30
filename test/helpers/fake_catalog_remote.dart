@@ -97,13 +97,16 @@ const cafeId = '00000000-0000-4000-8000-0000000c0000';
 const coffeeId = '00000000-0000-4000-8000-0000000c0001';
 const coldId = '00000000-0000-4000-8000-0000000c0002';
 
+/// A section with no drinks yet: Home shows it as coming soon.
+const dessertsId = '00000000-0000-4000-8000-0000000c0003';
+
 List<Map<String, Object?>> sampleCategories() => [
   {
     'id': cafeId,
     'parent_id': null,
     'slug': 'cafe',
-    'name_ar': 'الكافيه',
-    'name_en': 'Café',
+    'name_ar': 'مشروبات',
+    'name_en': 'Drinks',
     'icon': 'coffee',
     'trait_schema': cafeTraitSchema,
     'sort_order': 0,
@@ -127,6 +130,17 @@ List<Map<String, Object?>> sampleCategories() => [
     'name_ar': 'قهوة ساقعة',
     'name_en': 'Iced coffee',
     'icon': 'ice_cream',
+    'trait_schema': null,
+    'sort_order': 1,
+    'updated_at': '2026-10-01T10:00:00Z',
+  },
+  {
+    'id': dessertsId,
+    'parent_id': null,
+    'slug': 'desserts',
+    'name_ar': 'حلويات',
+    'name_en': 'Desserts',
+    'icon': 'cake',
     'trait_schema': null,
     'sort_order': 1,
     'updated_at': '2026-10-01T10:00:00Z',

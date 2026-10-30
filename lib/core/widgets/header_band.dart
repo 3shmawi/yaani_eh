@@ -3,10 +3,12 @@ import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_text_styles.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
+import 'package:yaani_eh/core/widgets/header_pattern.dart';
 
 /// The espresso gradient that opens list screens (Home, Favorites, first
-/// launch, errors). It reads the same in both themes and gives clear glass
-/// something to sit on; controls inside use the dark tone.
+/// launch, errors), with the faint mashrabiya pattern behind it. It reads
+/// the same in both themes and gives clear glass something to sit on;
+/// controls inside use the dark tone.
 class HeaderBand extends StatelessWidget {
   const new({
     this.title,
@@ -56,69 +58,80 @@ class HeaderBand extends StatelessWidget {
                 stops: [0, 0.55, 1],
               ),
       ),
-      child: DecoratedBox(
-        // The soft crema glow in the top-end corner.
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.vertical(bottom: radius),
-          gradient: flat
-              ? null
-              : RadialGradient(
-                  center: AlignmentDirectional.topEnd.resolve(
-                    Directionality.of(context),
-                  ),
-                  radius: 0.9,
-                  colors: const [Color(0x8CC9874F), Color(0x00C9874F)],
-                ),
-        ),
-        child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(
-            AppDimens.space4,
-            top + AppDimens.space3,
-            AppDimens.space4,
-            AppDimens.space5,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (eyebrow != null)
-                          Text(
-                            eyebrow!,
-                            style: context
-                                .text(TextRole.label)
-                                .copyWith(color: AppColors.onHeaderMuted),
-                          ),
-                        if (title != null)
-                          Semantics(
-                            header: true,
-                            child: Text(
-                              title!,
-                              style: context
-                                  .text(TextRole.largeTitle)
-                                  .copyWith(color: AppColors.onHeader),
-                            ),
-                          ),
-                        if (subtitle != null) Text(subtitle!, style: muted),
-                      ],
+      child: Stack(
+        children: [
+          if (!flat)
+            Positioned.fill(
+              child: ClipRRect(
+                borderRadius: BorderRadius.vertical(bottom: radius),
+                child: const HeaderPattern(),
+              ),
+            ),
+          DecoratedBox(
+            // The soft crema glow in the top-end corner.
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.vertical(bottom: radius),
+              gradient: flat
+                  ? null
+                  : RadialGradient(
+                      center: AlignmentDirectional.topEnd.resolve(
+                        Directionality.of(context),
+                      ),
+                      radius: 0.9,
+                      colors: const [Color(0x8CC9874F), Color(0x00C9874F)],
                     ),
+            ),
+            child: Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(
+                AppDimens.space4,
+                top + AppDimens.space3,
+                AppDimens.space4,
+                AppDimens.space5,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (eyebrow != null)
+                              Text(
+                                eyebrow!,
+                                style: context
+                                    .text(TextRole.label)
+                                    .copyWith(color: AppColors.onHeaderMuted),
+                              ),
+                            if (title != null)
+                              Semantics(
+                                header: true,
+                                child: Text(
+                                  title!,
+                                  style: context
+                                      .text(TextRole.largeTitle)
+                                      .copyWith(color: AppColors.onHeader),
+                                ),
+                              ),
+                            if (subtitle != null) Text(subtitle!, style: muted),
+                          ],
+                        ),
+                      ),
+                      ?trailing,
+                    ],
                   ),
-                  ?trailing,
+                  if (bottom != null) ...[
+                    SizedBox(height: AppDimens.space4),
+                    bottom!,
+                  ],
                 ],
               ),
-              if (bottom != null) ...[
-                SizedBox(height: AppDimens.space4),
-                bottom!,
-              ],
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

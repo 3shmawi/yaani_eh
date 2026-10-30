@@ -15,9 +15,8 @@ class MenuPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) => MenuView(
     menu: ref.watch(menuProvider),
-    onSelectCategory: (c) => ref
-        .read(selectedCategoryProvider.notifier)
-        .select(c?.id, slug: c?.slug),
+    onSelectTab: ref.read(selectedTabProvider.notifier).select,
+    onJumpToCategory: trackCategoryJump,
     onOpenSettings: () => unawaited(context.push<void>(AppRoutes.settings)),
     onOpenSearch: () => unawaited(context.push<void>(AppRoutes.search)),
     onOpenItem: (item) =>

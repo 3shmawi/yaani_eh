@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_icons.dart';
@@ -15,13 +16,18 @@ import 'package:yaani_eh/features/browse_menu/presentation/widgets/drink_of_the_
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
-/// Home (the Main artboard): the header band with category chips, the
-/// drink of the day, then each category's drinks as glass cards.
-class MenuView extends StatelessWidget {
+/// Home (the Main artboard): the header band with the app's name, the
+/// sections switch («مشروبات | حلويات») and the open section's category
+/// chips; then the drink of the day and every category's drinks, one after
+/// another. A chip scrolls to its category, and the highlighted chip
+/// follows the list. Once the band scrolls away, the chips stay pinned at
+/// the top. A section without drinks yet says it's coming soon.
+class MenuView extends StatefulWidget {
   const new({
     required this.menu,
-    required this.onSelectCategory,
+    required this.onSelectTab,
     required this.onOpenSettings,
+    this.onJumpToCategory,
     this.onOpenItem,
     this.onOpenSearch,
     this.cardAction,
@@ -30,10 +36,13 @@ class MenuView extends StatelessWidget {
 
   /// Null while loading from the device.
   final MenuModel? menu;
-  final void Function(CatalogCategory? category) onSelectCategory;
+  final ValueChanged<MenuTab> onSelectTab;
   final VoidCallback onOpenSettings;
 
-  /// Opening a drink (item_details); null until that screen exists.
+  /// A chip was tapped (the list scrolls by itself; this is for analytics).
+  final ValueChanged<CatalogCategory>? onJumpToCategory;
+
+  /// Opening a drink (item_details).
   final ValueChanged<CatalogItem>? onOpenItem;
 
   /// The search field in the header opens the search screen.
@@ -44,42 +53,172 @@ class MenuView extends StatelessWidget {
   final Widget Function(CatalogItem item)? cardAction;
 
   @override
+  State<MenuView> createState() => _MenuViewState();
+}
+
+class _MenuViewState extends State<MenuView> {
+  final _scroll = ScrollController();
+  final GlobalKey _chipsKey = GlobalKey();
+  final _sectionKeys = <String, GlobalKey>{};
+
+  /// The highlighted chip: the category at the top of the list.
+  String? _active;
+
+  /// The band's chips have scrolled away, so the pinned copy shows.
+  bool _pinned = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scroll.addListener(_follow);
+  }
+
+  @override
+  void didUpdateWidget(MenuView old) {
+    super.didUpdateWidget(old);
+    if (old.menu?.selectedTabId != widget.menu?.selectedTabId) {
+      // Another section: start it from the top.
+      _active = null;
+      _pinned = false;
+      if (_scroll.hasClients) _scroll.jumpTo(0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  GlobalKey _keyFor(String categoryId) =>
+      _sectionKeys.putIfAbsent(categoryId, GlobalKey.new);
+
+  /// How far down the screen the pinned chips reach.
+  double get _pinnedBottom =>
+      MediaQuery.paddingOf(context).top +
+      AppDimens.touchTarget +
+      AppDimens.space2 * 2;
+
+  /// The scroll offset at which [key]'s top reaches the top of the list.
+  /// Asked of the viewport, so it's right even when [key] is off screen.
+  double? _offsetOf(GlobalKey key) {
+    final box = key.currentContext?.findRenderObject();
+    if (box == null || !box.attached) return null;
+    return RenderAbstractViewport.maybeOf(box)
+        ?.getOffsetToReveal(box, 0)
+        .offset;
+  }
+
+  void _follow() {
+    final chips = widget.menu?.chips ?? const <CatalogCategory>[];
+    if (chips.isEmpty || !_scroll.hasClients) return;
+    final position = _scroll.position;
+    final chipsAt = _offsetOf(_chipsKey);
+    final pinned =
+        chipsAt != null &&
+        position.pixels >
+            chipsAt + AppDimens.touchTarget - MediaQuery.paddingOf(context).top;
+
+    var active = chips.first.id;
+    if (position.pixels >= position.maxScrollExtent - 1) {
+      // The last categories may never reach the top: at the end, it's
+      // the last one.
+      active = chips.last.id;
+    } else {
+      for (final c in chips) {
+        final at = _offsetOf(_keyFor(c.id));
+        if (at != null &&
+            at - position.pixels <= _pinnedBottom + AppDimens.space3) {
+          active = c.id;
+        }
+      }
+    }
+    if (pinned != _pinned || active != _active) {
+      setState(() {
+        _pinned = pinned;
+        _active = active;
+      });
+    }
+  }
+
+  void _jumpTo(CatalogCategory category) {
+    widget.onJumpToCategory?.call(category);
+    final at = _offsetOf(_keyFor(category.id));
+    if (at == null || !_scroll.hasClients) return;
+    setState(() => _active = category.id);
+    final position = _scroll.position;
+    final target = (at - _pinnedBottom - AppDimens.space2).clamp(
+      position.minScrollExtent,
+      position.maxScrollExtent,
+    );
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _scroll.jumpTo(target);
+    } else {
+      _scroll.animateTo(
+        target,
+        duration: AppMotion.jump,
+        curve: AppMotion.enter,
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final menu = this.menu;
+    final menu = widget.menu;
     final arabic = Localizations.localeOf(context).languageCode == 'ar';
     String name(CatalogCategory c) => arabic ? c.nameAr : c.nameEn;
+    final chips = menu?.chips ?? const <CatalogCategory>[];
+    final tabs = menu?.tabs ?? const <MenuTab>[];
+    final active = _active ?? chips.firstOrNull?.id;
+
+    Widget chipRow({Key? key}) => _EdgeToEdge(
+      child: CategoryChips(
+        key: key,
+        options: [for (final c in chips) (id: c.id, label: name(c))],
+        selectedId: active,
+        onSelected: (id) => _jumpTo(chips.firstWhere((c) => c.id == id)),
+      ),
+    );
 
     final header = HeaderBand(
-      eyebrow: l10n.appEyebrow,
-      title: l10n.menuTitle,
+      title: l10n.appEyebrow,
       subtitle: l10n.menuTagline,
       trailing: AppIconButton(
         key: const Key('home_settings_button'),
         icon: AppIcons.settings,
         tooltip: l10n.settingsTitle,
         tone: GlassTone.dark,
-        onPressed: onOpenSettings,
+        onPressed: widget.onOpenSettings,
       ),
       bottom: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (onOpenSearch != null) SearchField(onTap: onOpenSearch),
-          if (menu != null && menu.chips.isNotEmpty) ...[
-            SizedBox(height: AppDimens.space3),
-            _EdgeToEdge(
-              // The chips scroll edge to edge, past the band's gutter.
-              child: CategoryChips(
-                key: const Key('category_chips'),
-                options: [
-                  (id: null, label: l10n.chipAll),
-                  for (final c in menu.chips) (id: c.id, label: name(c)),
-                ],
-                selectedId: menu.selectedCategoryId,
-                onSelected: (id) => onSelectCategory(
-                  id == null ? null : menu.chips.firstWhere((c) => c.id == id),
-                ),
+          if (tabs.length > 1) ...[
+            AppSegmentedControl(
+              key: const Key('menu_sections'),
+              segments: [
+                for (final t in tabs)
+                  (
+                    id: t.section.id,
+                    label: name(t.section),
+                    badge: t.hasItems ? null : l10n.comingSoonBadge,
+                  ),
+              ],
+              selectedId: menu?.selectedTabId,
+              onSelected: (id) => widget.onSelectTab(
+                tabs.firstWhere((t) => t.section.id == id),
               ),
+            ),
+            SizedBox(height: AppDimens.space3),
+          ],
+          if (widget.onOpenSearch != null)
+            SearchField(onTap: widget.onOpenSearch),
+          if (chips.isNotEmpty) ...[
+            SizedBox(height: AppDimens.space3),
+            KeyedSubtree(
+              key: _chipsKey,
+              child: chipRow(key: const Key('category_chips')),
             ),
           ],
         ],
@@ -92,75 +231,128 @@ class MenuView extends StatelessWidget {
     } else if (menu.isEmpty) {
       body = SliverFillRemaining(
         hasScrollBody: false,
+        child: EmptyView(message: l10n.menuEmpty),
+      );
+    } else if (menu.comingSoon) {
+      final open = tabs.where((t) => t.hasItems).firstOrNull;
+      body = SliverFillRemaining(
+        hasScrollBody: false,
         child: EmptyView(
-          message: menu.selectedCategoryId == null
-              ? l10n.menuEmpty
-              : l10n.categoryEmpty,
+          key: const Key('menu_coming_soon'),
+          icon: AppIcons.cake,
+          title: l10n.comingSoonTitle(name(menu.selectedTab!.section)),
+          message: l10n.comingSoonMessage,
+          actionLabel: open == null ? null : l10n.comingSoonAction,
+          onAction: open == null ? null : () => widget.onSelectTab(open),
         ),
       );
     } else {
-      body = SliverPadding(
-        padding: EdgeInsetsDirectional.fromSTEB(
-          AppDimens.space4,
-          AppDimens.space4,
-          AppDimens.space4,
-          AppDimens.space8,
-        ),
-        sliver: SliverList.list(
-          children: [
-            if (menu.drinkOfTheDay case final today?) ...[
-              DrinkOfTheDay(
-                key: const Key('drink_of_the_day'),
-                item: today,
-                onTap: onOpenItem == null ? null : () => onOpenItem!(today),
-                action: cardAction?.call(today),
+      body = SliverToBoxAdapter(
+        // Built at once (not lazily) so a chip can scroll to any category
+        // and the highlight can follow them all; a section is ~40 cards.
+        child: Padding(
+          padding: EdgeInsetsDirectional.fromSTEB(
+            AppDimens.space4,
+            AppDimens.space4,
+            AppDimens.space4,
+            AppDimens.space8,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (menu.drinkOfTheDay case final today?) ...[
+                DrinkOfTheDay(
+                  key: const Key('drink_of_the_day'),
+                  item: today,
+                  onTap: widget.onOpenItem == null
+                      ? null
+                      : () => widget.onOpenItem!(today),
+                  action: widget.cardAction?.call(today),
+                ),
+                SizedBox(height: AppDimens.space6),
+              ],
+              for (final (i, section) in menu.sections.indexed) ...[
+                KeyedSubtree(
+                  key: _keyFor(section.category.id),
+                  child: _SectionHeader(title: name(section.category)),
+                ),
+                SizedBox(height: AppDimens.space3),
+                _Grid(
+                  items: section.items,
+                  // Card number on the screen, for the entry stagger.
+                  firstIndex: menu.sections
+                      .take(i)
+                      .fold(0, (n, s) => n + s.items.length),
+                  onOpenItem: widget.onOpenItem,
+                  cardAction: widget.cardAction,
+                ),
+                SizedBox(height: AppDimens.space6),
+              ],
+              Text(
+                l10n.approximateNote,
+                textAlign: TextAlign.center,
+                style: context
+                    .text(TextRole.caption)
+                    .copyWith(color: context.palette.inkMuted),
               ),
-              SizedBox(height: AppDimens.space6),
             ],
-            for (final (i, section) in menu.sections.indexed) ...[
-              _SectionHeader(
-                title: name(section.category),
-                // On "All", jump to the category; inside it, no need.
-                seeAll: menu.selectedCategoryId == null
-                    ? () => onSelectCategory(section.category)
-                    : null,
-              ),
-              SizedBox(height: AppDimens.space3),
-              _Grid(
-                items: section.items,
-                // Card number on the screen, for the entry stagger.
-                firstIndex: menu.sections
-                    .take(i)
-                    .fold(0, (n, s) => n + s.items.length),
-                onOpenItem: onOpenItem,
-                cardAction: cardAction,
-              ),
-              SizedBox(height: AppDimens.space6),
-            ],
-            Text(
-              l10n.approximateNote,
-              textAlign: TextAlign.center,
-              style: context
-                  .text(TextRole.caption)
-                  .copyWith(color: context.palette.inkMuted),
-            ),
-          ],
+          ),
         ),
       );
     }
 
     return Material(
       color: context.palette.surface,
-      child: CustomScrollView(
-        key: const Key('menu_list'),
-        slivers: [
-          SliverToBoxAdapter(child: header),
-          const SliverToBoxAdapter(child: OfflineBanner()),
-          body,
+      child: Stack(
+        children: [
+          CustomScrollView(
+            key: const Key('menu_list'),
+            controller: _scroll,
+            slivers: [
+              SliverToBoxAdapter(child: header),
+              const SliverToBoxAdapter(child: OfflineBanner()),
+              body,
+            ],
+          ),
+          if (_pinned && chips.isNotEmpty)
+            PositionedDirectional(
+              top: 0,
+              start: 0,
+              end: 0,
+              child: _PinnedChips(
+                child: chipRow(key: const Key('category_chips_pinned')),
+              ),
+            ),
         ],
       ),
     );
   }
+}
+
+/// The chips at the top of the screen once the band has scrolled away: a
+/// slim espresso strip under the status bar, like the band's own bottom.
+class _PinnedChips extends StatelessWidget {
+  const new({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => DecoratedBox(
+    decoration: BoxDecoration(
+      color: AppColors.espresso,
+      borderRadius: BorderRadius.vertical(
+        bottom: Radius.circular(AppDimens.radiusLg),
+      ),
+      boxShadow: context.palette.glassShadow,
+    ),
+    child: Padding(
+      padding: EdgeInsetsDirectional.only(
+        top: MediaQuery.paddingOf(context).top + AppDimens.space2,
+        bottom: AppDimens.space2,
+      ),
+      child: child,
+    ),
+  );
 }
 
 /// Lets the chips run under the band's side padding.
@@ -183,43 +375,21 @@ class _EdgeToEdge extends StatelessWidget {
 }
 
 class _SectionHeader extends StatelessWidget {
-  const new({required this.title, this.seeAll});
+  const new({required this.title});
 
   final String title;
-  final VoidCallback? seeAll;
 
   @override
-  Widget build(BuildContext context) {
-    final p = context.palette;
-    return Row(
-      children: [
-        Expanded(
-          child: Semantics(
-            header: true,
-            child: Text(
-              title,
-              style: AppTextStyles.forText(
-                title,
-                TextRole.headline,
-              ).copyWith(color: p.ink),
-            ),
-          ),
-        ),
-        if (seeAll != null)
-          Semantics(
-            label: context.l10n.seeAllIn(title),
-            button: true,
-            child: ExcludeSemantics(
-              child: AppButton(
-                label: context.l10n.seeAll,
-                kind: AppButtonKind.text,
-                onPressed: seeAll,
-              ),
-            ),
-          ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Semantics(
+    header: true,
+    child: Text(
+      title,
+      style: AppTextStyles.forText(
+        title,
+        TextRole.headline,
+      ).copyWith(color: context.palette.ink),
+    ),
+  );
 }
 
 class _Grid extends StatelessWidget {

@@ -59,9 +59,15 @@ void main() {
     });
 
     test('selected chips are solid and high contrast', () {
+      // Warm milk, not white: AAA (7:1) text, and clearly brighter than
+      // the espresso band it sits on, in both themes.
       expect(
         _contrast(AppColors.onSelected, AppColors.selected),
-        greaterThanOrEqualTo(17),
+        greaterThanOrEqualTo(7),
+      );
+      expect(
+        _contrast(AppColors.selected, AppColors.espresso),
+        greaterThanOrEqualTo(7),
       );
     });
 

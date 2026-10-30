@@ -4,7 +4,7 @@
 -- only; that hostile values are rejected.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(37);
+select plan(40);
 
 -- RLS on every table.
 select ok((select relrowsecurity from pg_class where oid = 'public.categories'::regclass), 'RLS on categories');
@@ -25,6 +25,19 @@ select is(
 select ok(
   (select jsonb_array_length(trait_schema) = 4 from public.categories where slug = 'cafe'),
   'the Café section has the four taste traits'
+);
+select is(
+  (select name_ar || ' / ' || name_en from public.categories where slug = 'cafe'),
+  'مشروبات / Drinks', 'the drinks section is called «مشروبات»'
+);
+select is(
+  (select count(*)::int from public.categories where parent_id is null and is_published),
+  2, 'two sections: drinks and desserts'
+);
+select is(
+  (select count(*)::int from public.items i join public.categories c on c.id = i.category_id
+   where c.parent_id = (select id from public.categories where slug = 'desserts')),
+  0, 'desserts has no items yet, so the app shows it as coming soon'
 );
 select is(
   (select count(*)::int from public.items where menu_name ilike '%oreo%' or menu_name ilike '%frappuccino%'),

@@ -28,9 +28,15 @@ abstract final class AppColors {
   static const glassRim = Color(0x99FFFFFF);
   static const glassRimSoft = Color(0x1AFFFFFF);
 
-  /// A selected chip or tab over glass (solid, like an iOS toggle).
-  static const selected = Color(0xFFFFFFFF);
+  /// A selected chip, tab or switch option on the header band: warm milk,
+  /// the band's own secondary text colour, in both themes (pure white
+  /// looked pasted on, and glared in dark mode).
+  static const selected = Color(0xFFEBD9C6);
   static const onSelected = Color(0xFF24170F);
+
+  /// The mashrabiya pattern behind the header band: milk, faint, so text
+  /// on the band keeps its contrast.
+  static const headerPattern = Color(0x2EEBD9C6);
 }
 
 /// Theme-dependent Design System colors. Read with `context.palette`.

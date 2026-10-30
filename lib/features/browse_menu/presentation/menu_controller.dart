@@ -3,26 +3,36 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yaani_eh/core/analytics/analytics.dart';
 import 'package:yaani_eh/features/browse_menu/domain/usecases/build_menu.dart';
+import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
 
-/// The selected category chip (null = "All").
-final selectedCategoryProvider = NotifierProvider<SelectedCategory, String?>(
-  SelectedCategory.new,
+/// The open section of Home («مشروبات»، «حلويات»); null = the first one
+/// with drinks.
+final selectedTabProvider = NotifierProvider<SelectedTab, String?>(
+  SelectedTab.new,
 );
 
-class SelectedCategory extends Notifier<String?> {
+class SelectedTab extends Notifier<String?> {
   @override
   String? build() => null;
 
-  /// [slug] is only for analytics (no personal data).
-  void select(String? id, {String? slug}) {
-    if (id == state) return;
-    state = id;
+  void select(MenuTab tab) {
+    if (tab.section.id == state) return;
+    state = tab.section.id;
     unawaited(
-      Analytics.capture('menu_category_selected', {'category': slug ?? 'all'}),
+      Analytics.capture('menu_section_selected', {
+        'section': tab.section.slug,
+        'coming_soon': !tab.hasItems,
+      }),
     );
   }
 }
+
+/// A category chip was tapped (the list scrolls to it). Slug only, no
+/// personal data.
+void trackCategoryJump(CatalogCategory category) => unawaited(
+  Analytics.capture('menu_category_selected', {'category': category.slug}),
+);
 
 /// Overridable clock, so "drink of the day" is testable.
 final todayProvider = Provider<DateTime>((ref) => DateTime.now());
@@ -37,6 +47,6 @@ final menuProvider = Provider<MenuModel?>((ref) {
     items: items,
     categories: categories,
     today: ref.watch(todayProvider),
-    selectedCategoryId: ref.watch(selectedCategoryProvider),
+    selectedTabId: ref.watch(selectedTabProvider),
   );
 });
