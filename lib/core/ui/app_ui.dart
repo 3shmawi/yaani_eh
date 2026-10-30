@@ -186,18 +186,16 @@ class _AppGlassState extends State<AppGlass> {
       final shape = RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(radius),
       );
-      // Shadow outside, Material inside: ListTile and InkWell paint their
-      // ink on the nearest Material, so the fill must be one.
-      return DecoratedBox(
-        decoration: ShapeDecoration(shape: shape, shadows: p.glassShadow),
-        child: Material(
-          color: p.glassFillLite,
-          shape: shape,
-          clipBehavior: Clip.antiAlias,
-          child: CustomPaint(
-            foregroundPainter: _RimPainter(radius),
-            child: content,
-          ),
+      // Lite is for slow devices and Reduce Transparency: a near-solid fill
+      // and the rim, no blurred shadow (cheap to draw, even in software).
+      // Material, so ListTile / InkWell ink stays visible.
+      return Material(
+        color: p.glassFillLite,
+        shape: shape,
+        clipBehavior: Clip.antiAlias,
+        child: CustomPaint(
+          foregroundPainter: _RimPainter(radius),
+          child: content,
         ),
       );
     }
