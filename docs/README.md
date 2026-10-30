@@ -10,6 +10,22 @@ Start with [`../CLAUDE.md`](../CLAUDE.md) (rules + stack), then:
 - [Security](security.md) — what is tested and how
 - [Decisions](decisions/) — why the stack looks the way it does
 
+## Roadmap
+Build in this order, one feature per PR (each with tests, doc and demo):
+
+| # | Feature | Status |
+|---|---|---|
+| 1 | `catalog_sync` — the menu downloads once and works offline | ✅ |
+| 2 | `browse_menu` — Home: category chips and drink cards | ✅ |
+| 3 | `item_details` — drink page: traits, price, similar drinks | ✅ |
+| 4 | `smart_search` — by name or description, offline | ✅ |
+| 5 | `pronunciation` — hear the drink's name (barista + original), the play pill on cards and the drink page | next |
+| 6 | `favorites` — hearts, a Favorites tab (brings the tab bar) | |
+| 7 | `taste_profile` — "My taste": what you like, used to rank search and suggestions | |
+| 8 | `suggest_item` — suggest a drink from your taste | |
+
+Update the status here when a feature merges.
+
 ## Features
 - [Catalog sync (offline menu)](features/catalog_sync.md)
 - [Browse menu (Home)](features/browse_menu.md)
