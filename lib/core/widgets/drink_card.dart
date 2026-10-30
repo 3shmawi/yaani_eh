@@ -7,13 +7,17 @@ import 'package:yaani_eh/core/widgets/drink_photo.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
-/// The browse unit (Design System → DrinkCard, "caption below"): the photo
-/// is a clean 3:4 tile with its controls in clear glass, and the text sits
-/// under it on the solid surface, where it always reads:
+/// The browse unit (Design System → DrinkCard): a 3:4 photo tile with its
+/// controls in clear glass and, at its bottom, over a soft shadow (no box),
 ///
 /// 1. the menu name, exactly as cafe menus print it (to find it),
-/// 2. its Arabic spelling (to say it),
+/// 2. its Arabic spelling (to say it);
+///
+/// then, under the photo on the solid surface,
+///
 /// 3. the «يعني» line, what it is in everyday words (why the app exists).
+///    Never cut: lines are short (≤ 60 characters in the database), so it
+///    shows whole; it always takes at least two lines so a row lines up.
 ///
 /// No price here: the drink page has it.
 class DrinkCard extends StatelessWidget {
@@ -29,8 +33,8 @@ class DrinkCard extends StatelessWidget {
   final CatalogItem item;
   final VoidCallback? onTap;
 
-  /// Small cards in a strip (similar drinks): name and spelling only; the
-  /// photo takes the height that's left.
+  /// Small cards in a strip (similar drinks): the photo with its name and
+  /// spelling only, filling the strip's height.
   final bool compact;
 
   /// A control over the photo's top-start corner (the play button); the
@@ -50,97 +54,118 @@ class DrinkCard extends StatelessWidget {
     final arabic = Localizations.localeOf(context).languageCode == 'ar';
     final gist = compact ? null : item.gist(arabic: arabic);
     final radius = AppDimens.radiusLg;
+    // The shadow gets darker where text must read with Reduce
+    // Transparency / Increase Contrast.
+    final scrim = AppUi.isLite(context)
+        ? AppColors.photoScrimStrong
+        : AppColors.photoScrim;
 
-    Widget photo = DrinkPhoto(
+    Widget picture = DrinkPhoto(
       name: item.menuName,
       imagePath: item.imagePath,
       size: PhotoSize.thumbnail,
     );
-    if (hero) photo = Hero(tag: heroTag(item.id), child: photo);
-    photo = DecoratedBox(
+    if (hero) picture = Hero(tag: heroTag(item.id), child: picture);
+
+    final names = Padding(
+      padding: EdgeInsetsDirectional.fromSTEB(
+        AppDimens.space3,
+        AppDimens.space6,
+        AppDimens.space3,
+        AppDimens.space3,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            item.menuName,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyles.forText(
+              item.menuName,
+              TextRole.cardTitle,
+            ).copyWith(color: AppColors.onHeader, shadows: _textShadow),
+          ),
+          Text(
+            item.menuNameAr,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyles.forText(item.menuNameAr, TextRole.cardBody)
+                .copyWith(
+                  color: AppColors.onHeaderMuted,
+                  fontWeight: FontWeight.w500,
+                  shadows: _textShadow,
+                ),
+          ),
+        ],
+      ),
+    );
+
+    final action = this.action;
+    Widget photo = DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(radius),
         boxShadow: p.cardShadow,
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(radius),
-        child: photo,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            picture,
+            // A soft shadow from the middle down, so the name reads on any
+            // photo without a box around it.
+            DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [scrim.withValues(alpha: 0), scrim],
+                  stops: const [0.45, 1],
+                ),
+              ),
+            ),
+            PositionedDirectional(
+              start: 0,
+              end: 0,
+              bottom: 0,
+              child: ExcludeSemantics(child: names),
+            ),
+            if (!compact && action != null)
+              PositionedDirectional(
+                top: AppDimens.space1,
+                start: AppDimens.space1,
+                child: action,
+              ),
+          ],
+        ),
       ),
     );
-    final action = this.action;
-    if (!compact && action != null) {
-      photo = Stack(
-        fit: StackFit.expand,
-        children: [
-          photo,
-          PositionedDirectional(
-            top: AppDimens.space1,
-            start: AppDimens.space1,
-            child: action,
-          ),
-        ],
-      );
+    if (!compact) {
+      photo = AspectRatio(aspectRatio: DrinkPhoto.aspectRatio, child: photo);
     }
 
-    final caption = Padding(
-      padding: EdgeInsetsDirectional.only(
-        top: AppDimens.space2,
-        start: AppDimens.space1,
-        end: AppDimens.space1,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ExcludeSemantics(
-            child: Text(
-              item.menuName,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTextStyles.forText(
-                item.menuName,
-                TextRole.cardTitle,
-              ).copyWith(color: p.ink),
-            ),
-          ),
-          ExcludeSemantics(
-            child: Text(
-              item.menuNameAr,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTextStyles.forText(
-                item.menuNameAr,
-                TextRole.cardBody,
-              ).copyWith(color: p.inkMuted, fontWeight: FontWeight.w500),
-            ),
-          ),
-          if (gist != null) ...[
-            SizedBox(height: AppDimens.space1),
-            ExcludeSemantics(child: _Meaning(gist: gist)),
-          ],
-        ],
-      ),
-    );
-
-    final body = compact
-        ? Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(child: photo),
-              caption,
-            ],
-          )
+    final body = gist == null
+        ? photo
         : Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
-              AspectRatio(aspectRatio: DrinkPhoto.aspectRatio, child: photo),
-              caption,
+              photo,
+              Padding(
+                padding: EdgeInsetsDirectional.only(
+                  top: AppDimens.space2,
+                  start: AppDimens.space1,
+                  end: AppDimens.space1,
+                ),
+                child: ExcludeSemantics(child: _Meaning(gist: gist)),
+              ),
             ],
           );
 
     // The play button keeps its own semantics; the card reads as one
-    // button with the three lines.
+    // button with its three lines.
     return Semantics(
       button: onTap != null,
       label: [
@@ -152,10 +177,16 @@ class DrinkCard extends StatelessWidget {
       child: AppPressable(onTap: onTap, child: body),
     );
   }
+
+  /// Lifts the name off bright spots of a photo.
+  static const _textShadow = [
+    Shadow(color: Color(0x66000000), blurRadius: 6, offset: Offset(0, 1)),
+  ];
 }
 
 /// «يعني ميلك شيك بالقهوة»: the lead word in `brand`, the meaning in ink.
-/// Always takes two lines of space, so the cards in a row line up.
+/// Takes at least two lines of space, so the cards in a row line up, and
+/// shows whole however long it is.
 class _Meaning extends StatelessWidget {
   const new({required this.gist});
 
@@ -188,8 +219,6 @@ class _Meaning extends StatelessWidget {
             TextSpan(text: full.substring(at < 0 ? 0 : at)),
           ],
         ),
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
         style: style,
       ),
     );

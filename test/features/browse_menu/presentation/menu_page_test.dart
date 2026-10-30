@@ -227,7 +227,7 @@ void main() {
       expect(find.textContaining('سعر حراري'), findsNothing);
     });
 
-    testWidgets('cards in a row line up: the meaning keeps two lines', (
+    testWidgets('cards in a row line up: the meaning takes two lines', (
       tester,
     ) async {
       final items = sampleCatalogItems();
@@ -235,7 +235,8 @@ void main() {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            for (final item in [items[0], items[1]])
+            // Two real «يعني» lines: one line long, two lines long.
+            for (final item in items.where((i) => i.gistEn != null))
               SizedBox(width: 170, child: DrinkCard(item: item)),
           ],
         ),
@@ -245,6 +246,27 @@ void main() {
           tester.getSize(find.byWidget(card.widget)).height,
       ];
       expect(heights.toSet(), hasLength(1));
+    });
+
+    testWidgets('a long «يعني» line shows whole: small phone, large text', (
+      tester,
+    ) async {
+      tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      final long = '${'ق' * 20} ${'ب' * 20} ${'ن' * 18}'; // 60 chars
+      final item = CatalogRows.item({...sampleItems().first, 'gist_ar': long})!;
+      await tester.pumpApp(
+        Center(
+          child: SizedBox(width: 138, child: DrinkCard(item: item)),
+        ),
+        locale: const Locale('ar'),
+      );
+      tester.view.physicalSize = const Size(960, 1704); // 320×568
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      final text = tester.widget<Text>(find.text('يعني $long'));
+      expect(text.maxLines, isNull);
+      expect(text.overflow, isNot(TextOverflow.ellipsis));
     });
 
     testWidgets('pressing shrinks the card, still with Reduce Motion', (

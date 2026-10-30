@@ -23,7 +23,7 @@ component READMEs under `project/components/`, and the screen's
 | Icons (Phosphor, Regular + Fill) | `app_icons.dart` (`AppIcons`, `AppIconsFill`) — fonts bundled in `assets/fonts/Phosphor` |
 | Glass (clear / frosted, tone, lite) | `AppGlass` in `lib/core/ui/app_ui.dart` (+ `glass_tone.dart`) |
 | Button, IconButton, Card | `AppButton`, `AppIconButton`, `AppCard` in `app_ui.dart` |
-| DrinkCard ("caption below": photo tile, glass controls, text on the surface) | `core/widgets/drink_card.dart`; type `TextRole.cardTitle` / `cardBody` |
+| DrinkCard (photo tile with the name on a soft shadow, glass controls, the «يعني» line under it) | `core/widgets/drink_card.dart`; type `TextRole.cardTitle` / `cardBody` |
 | Motion (durations, curves, press scale, list stagger) | `AppMotion` in `app_dimens.dart`; `AppReveal` (list entry) and `AppPressable` (card press) in `app_ui.dart` |
 | HeaderBand, EmptyState, ErrorState, OfflineBanner | `lib/core/widgets/` (`header_band.dart`, `state_views.dart`, `offline_banner.dart`) |
 | Bidi (ranges, `0.75×`, Latin names in Arabic) | `Bidi.range(min, max)`, `Bidi.ltr(text)` in `lib/core/text/bidi.dart` |

@@ -15,9 +15,13 @@ Four layouts were compared with the same content and type scale
 B caption below, C meaning first, D list row.
 
 ## Decision
-- **B, caption below:** the photo is a clean tile, its controls (play,
-  later the heart) are clear glass on it, and the text sits under it on the
-  solid surface. Glass only on controls, as Liquid Glass intends.
+- **B, caption below, with the name on the photo:** the photo is a tile,
+  its controls (play, later the heart) are clear glass on it, and the name
+  and spelling sit at its bottom over a soft shadow, not a box (a review
+  asked for A's look without its frosted block). The «يعني» line sits
+  under the photo on the solid surface, never cut (≤ 60 characters in the
+  database, no line limit). Glass only on controls, as Liquid Glass
+  intends.
 - **The card's third line is the «يعني» line**, not the price:
   `items.gist_ar` / `gist_en` (≤ 60 chars), everyday words only («فرابيه
   يعني ميلك شيك بالقهوة»). Without one, the explanation's first sentence.

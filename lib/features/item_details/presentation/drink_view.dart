@@ -105,8 +105,7 @@ class DrinkView extends StatelessWidget {
             ),
             SizedBox(height: AppDimens.space3),
             SizedBox(
-              // A 132-wide photo plus the name and spelling.
-              height: 196.r,
+              height: 176.r,
               child: ListView.separated(
                 key: const Key('similar_drinks'),
                 scrollDirection: Axis.horizontal,

@@ -18,6 +18,12 @@ abstract final class AppColors {
   static const onGlassLight = Color(0xFF24170F);
   static const onGlassDark = Color(0xFFFFFFFF);
 
+  /// The soft shadow at the bottom of a card photo that carries its name:
+  /// espresso, clear at the top, fading in toward the text. [photoScrimStrong]
+  /// with Reduce Transparency / Increase Contrast.
+  static const photoScrim = Color(0xB3140C08);
+  static const photoScrimStrong = Color(0xE6140C08);
+
   /// Specular rim: bright corners fading to the soft middle.
   static const glassRim = Color(0x99FFFFFF);
   static const glassRimSoft = Color(0x1AFFFFFF);

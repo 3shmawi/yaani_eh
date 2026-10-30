@@ -70,14 +70,17 @@ None.
   (`memCacheWidth`), cached on the phone after the first view
   (`MediaCache`), so seen photos work offline; none yet → brand gradient +
   first letter.
-- Card layout ("caption below", chosen over a frosted label, a photo
-  scrim and list rows): glass only on the controls over the photo (play,
-  later the heart), the text on the solid surface. Text always reads, in
-  light, dark and with large text, and there's no blur per card, so 40+
-  cards scroll smoothly on mid-range Android.
+- Card layout: the name and its spelling sit at the bottom of the photo
+  over a soft espresso shadow (`AppColors.photoScrim`, a gradient, no box;
+  darker with Reduce Transparency / Increase Contrast), and the «يعني» line
+  sits under the photo on the solid surface. Glass only on the controls
+  (play, later the heart), so there's no blur per card and 40+ cards scroll
+  smoothly on mid-range Android.
+- The «يعني» line is never cut: no line limit, because the database caps
+  it at 60 characters and the content guide aims for ~30 (two lines). It
+  always takes at least two lines, so the cards in a row line up.
 - Card type: `TextRole.cardTitle` (15) for the name, `TextRole.cardBody`
-  (13) for the spelling and the «يعني» line. The line always takes two
-  lines of space, so the cards in a row line up.
+  (13) for the spelling and the «يعني» line.
 - Motion (`AppMotion`, all off with Reduce Motion): the first 8 cards rise
   in one after another (`AppReveal`, 280 ms, 45 ms apart, once); a card
   shrinks to 0.97 while pressed (`AppPressable`; a scroll cancels it); its
