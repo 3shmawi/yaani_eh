@@ -122,5 +122,21 @@
     }
   },
   "categoryEmpty": "Nothing here yet. More drinks are coming.",
-  "approximateNote": "Calories and prices are approximate."
+  "approximateNote": "Calories and prices are approximate.",
+  "drinkNotFoundTitle": "We can't find this drink",
+  "drinkNotFoundBody": "It may have been taken off the menu.",
+  "priceAtCafes": "Price at cafés",
+  "priceChecked": "Checked {date}",
+  "@priceChecked": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "priceMissing": "We're still collecting prices for this drink.",
+  "priceStale": "Price may have changed",
+  "similarDrinks": "Similar drinks",
+  "kcal": "kcal",
+  "currency": "EGP"
 }

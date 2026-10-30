@@ -18,5 +18,7 @@ class MenuPage extends ConsumerWidget {
         .read(selectedCategoryProvider.notifier)
         .select(c?.id, slug: c?.slug),
     onOpenSettings: () => unawaited(context.push<void>(AppRoutes.settings)),
+    onOpenItem: (item) =>
+        unawaited(context.push<void>(AppRoutes.drink(item.slug))),
   );
 }
