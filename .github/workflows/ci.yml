@@ -94,7 +94,9 @@ jobs:
   integration:
     name: Integration tests (Android emulator)
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
+    # Pinned: the emulator froze after the first test file on the newer
+    # ubuntu-latest image (Ubuntu 26 rollout, Oct 2026).
+    runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v5
