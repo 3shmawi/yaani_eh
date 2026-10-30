@@ -124,12 +124,24 @@ jobs:
           flutter pub get
           flutter gen-l10n
 
+      # Flutter rebuilds the app for every test file. With the template's
+      # 8 GB Gradle heap (+ Kotlin daemon) next to the emulator, the runner
+      # runs out of memory and the emulator is killed between files. Cap
+      # Gradle here only (later keys win in gradle.properties).
+      - name: Leave memory for the emulator
+        run: |
+          {
+            echo 'org.gradle.jvmargs=-Xmx3g -XX:MaxMetaspaceSize=1g -XX:ReservedCodeCacheSize=256m'
+            echo 'kotlin.daemon.jvmargs=-Xmx1g'
+          } >> android/gradle.properties
+
       - name: Run integration tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
           arch: x86_64
           target: google_apis
+          ram-size: 3072M
           disable-animations: true
           # GLASS_LITE: the emulator has no real GPU and glass shaders stall it
           # (glass apps draw the solid variant; other apps ignore the define).
