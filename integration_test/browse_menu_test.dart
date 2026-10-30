@@ -51,12 +51,15 @@ void main() {
       'يعني قهوة باللبن تقيلة في فنجان صغير',
     );
     await tester.dragUntilVisible(meaning, list, const Offset(0, -150));
+    // The whole card in the middle of the screen, like a thumb would put it.
+    final flatWhite = find.widgetWithText(DrinkCard, 'Flat White');
+    await Scrollable.ensureVisible(tester.element(flatWhite), alignment: 0.5);
     await tester.pumpAndSettle();
     await beat(tester, 1500);
     expect(meaning, findsOneWidget);
 
     // Open it: the photo flies into the drink page. Then back.
-    await tester.tap(find.widgetWithText(DrinkCard, 'Flat White'));
+    await tester.tap(flatWhite);
     await tester.pumpAndSettle();
     await beat(tester, 1500);
     expect(find.byKey(const Key('drink_back')), findsOneWidget);
