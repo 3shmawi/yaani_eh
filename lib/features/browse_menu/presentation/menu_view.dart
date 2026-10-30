@@ -8,6 +8,7 @@ import 'package:yaani_eh/core/widgets/category_chips.dart';
 import 'package:yaani_eh/core/widgets/drink_card.dart';
 import 'package:yaani_eh/core/widgets/header_band.dart';
 import 'package:yaani_eh/core/widgets/offline_banner.dart';
+import 'package:yaani_eh/core/widgets/search_field.dart';
 import 'package:yaani_eh/core/widgets/state_views.dart';
 import 'package:yaani_eh/features/browse_menu/domain/usecases/build_menu.dart';
 import 'package:yaani_eh/features/browse_menu/presentation/widgets/drink_of_the_day.dart';
@@ -22,6 +23,7 @@ class MenuView extends StatelessWidget {
     required this.onSelectCategory,
     required this.onOpenSettings,
     this.onOpenItem,
+    this.onOpenSearch,
     super.key,
   });
 
@@ -32,6 +34,9 @@ class MenuView extends StatelessWidget {
 
   /// Opening a drink (item_details); null until that screen exists.
   final ValueChanged<CatalogItem>? onOpenItem;
+
+  /// The search field in the header opens the search screen.
+  final VoidCallback? onOpenSearch;
 
   @override
   Widget build(BuildContext context) {
@@ -51,9 +56,13 @@ class MenuView extends StatelessWidget {
         tone: GlassTone.dark,
         onPressed: onOpenSettings,
       ),
-      bottom: menu == null || menu.chips.isEmpty
-          ? null
-          : _EdgeToEdge(
+      bottom: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (onOpenSearch != null) SearchField(onTap: onOpenSearch),
+          if (menu != null && menu.chips.isNotEmpty) ...[
+            SizedBox(height: AppDimens.space3),
+            _EdgeToEdge(
               // The chips scroll edge to edge, past the band's gutter.
               child: CategoryChips(
                 key: const Key('category_chips'),
@@ -67,6 +76,9 @@ class MenuView extends StatelessWidget {
                 ),
               ),
             ),
+          ],
+        ],
+      ),
     );
 
     final Widget body;

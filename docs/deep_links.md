@@ -7,6 +7,7 @@ also a deep link.
 |---|---|
 | `/` | Home |
 | `/drink/<slug>` | One drink (e.g. `/drink/flat_white`); unknown or malformed slugs show not-found |
+| `/search?q=<text>` | Search, optionally pre-filled (`q` is cleaned: control/direction characters removed, trimmed, max 60) |
 | `/settings` | Settings |
 
 ## Custom scheme (works now)
