@@ -1,51 +1,18 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:yaani_eh/core/adaptive/adaptive.dart';
-import 'package:yaani_eh/core/config/app_flavor.dart';
 import 'package:yaani_eh/core/router/app_routes.dart';
-import 'package:yaani_eh/core/theme/app_dimens.dart';
-import 'package:yaani_eh/core/theme/app_text_styles.dart';
-import 'package:yaani_eh/core/ui/app_ui.dart';
-import 'package:yaani_eh/l10n/l10n.dart';
+import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
+import 'package:yaani_eh/features/home/presentation/home_view.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends ConsumerWidget {
   const new({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final flavor = AppFlavor.current;
-    return AppScaffold(
-      title: l10n.appTitle,
-      actions: [
-        AppIconButton(
-          key: const Key('home_settings_button'),
-          tooltip: l10n.settingsTitle,
-          icon: AdaptiveIcons.settings(context),
-          onPressed: () => unawaited(context.push<void>(AppRoutes.settings)),
-        ),
-      ],
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(AppDimens.space6),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                l10n.homeWelcome,
-                style: context.text(TextRole.title),
-                textAlign: TextAlign.center,
-              ),
-              if (!flavor.isProd) ...[
-                SizedBox(height: AppDimens.space4),
-                Chip(label: Text(flavor.name.toUpperCase())),
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) => HomeView(
+    items: ref.watch(catalogItemsProvider).value,
+    onOpenSettings: () => unawaited(context.push<void>(AppRoutes.settings)),
+  );
 }

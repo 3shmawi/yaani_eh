@@ -11,5 +11,7 @@ Start with [`../CLAUDE.md`](../CLAUDE.md) (rules + stack), then:
 - [Decisions](decisions/) — why the stack looks the way it does
 
 ## Features
+- [Catalog sync (offline menu)](features/catalog_sync.md)
 - [App update gate](features/app_update.md)
 - [Settings (language & theme)](features/settings.md)
+- [catalog sync](features/catalog_sync.md)

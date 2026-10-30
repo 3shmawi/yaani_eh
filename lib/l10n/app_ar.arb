@@ -1,7 +1,6 @@
 {
   "@@locale": "ar",
   "appTitle": "يعني إيه",
-  "homeWelcome": "أهلًا بيك في يعني إيه",
   "settingsTitle": "الإعدادات",
   "settingsLanguage": "اللغة",
   "settingsLanguageSystem": "زي لغة الموبايل",
@@ -29,5 +28,24 @@
   "errorValidation": "فيه حاجة في البيانات مش مظبوطة. جرّب تاني.",
   "errorUnknown": "حصلت مشكلة. جرّب تاني.",
   "backOnline": "النت رجع",
-  "loading": "بنحمّل"
+  "loading": "بنحمّل",
+  "appEyebrow": "يعني إيه؟",
+  "welcomeTitle": "أهلًا بيك",
+  "welcomeSubtitle": "ثواني ونفهّمك أي منيو",
+  "firstLoadTitle": "بنجهز المنيو لأول مرة",
+  "firstLoadBody": "بنحمّل المشروبات على موبايلك مرة واحدة، وبعد كده يشتغل من غير نت.",
+  "firstLoadProgress": "{saved} من {total} مشروب",
+  "firstLoadProgressLabel": "بنجهز المنيو، {saved} من {total}",
+  "didYouKnow": "تعرف إن…",
+  "tipCortado": "يعني «مقطوع» بالإسباني: إسبريسو مقطوع بشوية لبن سخن.",
+  "tipAffogato": "يعني «غرقان» بالإيطالي: بولة آيس كريم غرقانة في شوت إسبريسو.",
+  "tipMacchiato": "يعني «مبقّع» بالإيطالي: إسبريسو عليه بقعة رغوة لبن.",
+  "firstLoadOfflineTitle": "محتاجين نت أول مرة بس",
+  "firstLoadOfflineBody": "مقدرناش نحمّل المنيو. أول ما النت يرجع هنحمّله مرة واحدة، وبعد كده يشتغل من غير نت.",
+  "firstLoadFailedTitle": "مقدرناش نحمّل المنيو",
+  "autoRetryHint": "بنجرب لوحدنا كل 30 ثانية",
+  "menuTitle": "المنيو",
+  "menuTagline": "اطلب وإنت فاهم",
+  "menuCount": "{count, plural, =0{مفيش مشروبات} =1{مشروب واحد} =2{مشروبين} few{{count} مشروبات} other{{count} مشروب}}",
+  "menuEmpty": "المنيو فاضي دلوقتي. ارجعلنا قريب."
 }

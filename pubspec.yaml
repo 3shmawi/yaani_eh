@@ -8,6 +8,8 @@ environment:
 
 dependencies:
   connectivity_plus: ^7.3.2
+  drift: 2.35.2
+  drift_flutter: 0.3.1
   flutter:
     sdk: flutter
   flutter_localizations:
@@ -17,6 +19,7 @@ dependencies:
   go_router: ^18.1.1
   intl: ^0.20.3
   liquid_glass_widgets: ^1.16.0
+  meta: ^1.19.0
   package_info_plus: ^10.2.2
   posthog_flutter: ^5.58.0
   sentry_flutter: ^10.2.0
@@ -34,6 +37,8 @@ dev_dependencies:
   sentry_dart_plugin: ^3.4.0
   flutter_native_splash: ^2.4.8
   flutter_launcher_icons: ^0.14.4
+  drift_dev: 2.35.1
+  build_runner: 2.16.2
 
 flutter:
   assets:

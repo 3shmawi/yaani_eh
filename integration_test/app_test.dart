@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:yaani_eh/features/home/presentation/home_page.dart';
 import 'package:yaani_eh/features/settings/presentation/settings_view.dart';
-import 'package:yaani_eh/main.dart' as app;
 
 import 'helpers/demo.dart';
+import 'helpers/demo_app.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('starts on home and opens settings', (tester) async {
-    await app.main();
+    await DemoApp.start(pageSize: 100);
+    await pumpUntil(tester, find.byKey(const Key('menu_list')));
     await tester.pumpAndSettle();
     await beat(tester, 1500);
-
-    expect(find.byType(HomePage), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('home_settings_button')));
     await tester.pumpAndSettle();
