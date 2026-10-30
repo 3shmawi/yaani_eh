@@ -22,7 +22,7 @@ void main() {
     await beat(tester, 1500);
 
     // 2. Done: the menu is on the phone.
-    await pumpUntil(tester, find.text('Espresso'));
+    await pumpUntil(tester, find.byKey(const Key('drink_of_the_day')));
     await beat(tester, 1200);
     await tester.drag(
       find.byKey(const Key('menu_list')),

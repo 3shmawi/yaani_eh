@@ -24,10 +24,15 @@ void main() {
     await pumpUntil(tester, find.byKey(const Key('drink_of_the_day')));
     await tester.pumpAndSettle();
     await beat(tester, 1800);
-    expect(find.byType(DrinkCard), findsWidgets);
 
-    // 2. Scroll through the glass cards.
+    // 2. Scroll through the glass cards (any screen size).
     final list = find.byKey(const Key('menu_list'));
+    await tester.dragUntilVisible(
+      find.byType(DrinkCard).first,
+      list,
+      const Offset(0, -200),
+    );
+    expect(find.byType(DrinkCard), findsWidgets);
     await tester.drag(list, const Offset(0, -450));
     await tester.pumpAndSettle();
     await beat(tester, 1200);
@@ -43,8 +48,14 @@ void main() {
     await tester.pumpAndSettle();
     await beat(tester, 1800);
     expect(find.byKey(const Key('drink_of_the_day')), findsNothing);
-    expect(find.text('Cold Brew'), findsOneWidget);
+    await tester.dragUntilVisible(
+      find.text('Cold Brew'),
+      list,
+      const Offset(0, -200),
+    );
     expect(find.text('Espresso'), findsNothing);
+    await tester.drag(list, const Offset(0, 1200));
+    await tester.pumpAndSettle();
 
     // 4. Back to everything.
     await tester.tap(either('All', 'الكل'));
