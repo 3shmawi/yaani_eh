@@ -9,6 +9,7 @@ import 'package:yaani_eh/features/browse_menu/presentation/menu_controller.dart'
 import 'package:yaani_eh/features/item_details/domain/usecases/describe_item.dart';
 import 'package:yaani_eh/features/item_details/presentation/drink_controller.dart';
 import 'package:yaani_eh/features/item_details/presentation/drink_view.dart';
+import 'package:yaani_eh/features/pronunciation/presentation/pronounce.dart';
 
 /// `/drink/:slug`: wires one drink's details to [DrinkView].
 class DrinkPage extends ConsumerStatefulWidget {
@@ -54,6 +55,7 @@ class _DrinkPageState extends ConsumerState<DrinkPage> {
             now: ref.watch(todayProvider),
           ),
           similar: similar,
+          pronounce: ItemPronounce(item: item),
           onBack: _back,
           onOpenDrink: (other) =>
               unawaited(context.push<void>(AppRoutes.drink(other.slug))),

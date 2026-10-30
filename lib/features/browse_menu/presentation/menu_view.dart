@@ -24,6 +24,7 @@ class MenuView extends StatelessWidget {
     required this.onOpenSettings,
     this.onOpenItem,
     this.onOpenSearch,
+    this.cardAction,
     super.key,
   });
 
@@ -37,6 +38,10 @@ class MenuView extends StatelessWidget {
 
   /// The search field in the header opens the search screen.
   final VoidCallback? onOpenSearch;
+
+  /// A control on each card and the drink of the day (the play button,
+  /// feature `pronunciation`).
+  final Widget Function(CatalogItem item)? cardAction;
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +113,7 @@ class MenuView extends StatelessWidget {
                 key: const Key('drink_of_the_day'),
                 item: today,
                 onTap: onOpenItem == null ? null : () => onOpenItem!(today),
+                action: cardAction?.call(today),
               ),
               SizedBox(height: AppDimens.space6),
             ],
@@ -120,7 +126,11 @@ class MenuView extends StatelessWidget {
                     : null,
               ),
               SizedBox(height: AppDimens.space3),
-              _Grid(items: section.items, onOpenItem: onOpenItem),
+              _Grid(
+                items: section.items,
+                onOpenItem: onOpenItem,
+                cardAction: cardAction,
+              ),
               SizedBox(height: AppDimens.space6),
             ],
             Text(
@@ -209,10 +219,15 @@ class _SectionHeader extends StatelessWidget {
 }
 
 class _Grid extends StatelessWidget {
-  const new({required this.items, required this.onOpenItem});
+  const new({
+    required this.items,
+    required this.onOpenItem,
+    required this.cardAction,
+  });
 
   final List<CatalogItem> items;
   final ValueChanged<CatalogItem>? onOpenItem;
+  final Widget Function(CatalogItem item)? cardAction;
 
   @override
   Widget build(BuildContext context) {
@@ -232,6 +247,7 @@ class _Grid extends StatelessWidget {
                 child: DrinkCard(
                   item: item,
                   onTap: onOpenItem == null ? null : () => onOpenItem!(item),
+                  action: cardAction?.call(item),
                 ),
               ),
           ],

@@ -9,6 +9,7 @@ Security is tested, not assumed. Three layers run on every pull request.
 | `platform_config_test.dart` | cleartext HTTP, debuggable releases, extra exported Android activities, disabled iOS App Transport Security |
 | `workflow_secrets_test.dart` | secrets pasted into CI scripts, a key written to a file without `scripts/mask_secrets.sh`, `set -x`, actions not pinned to a commit |
 | `deep_link_test.dart` | crafted/unknown deep links crashing the app or reaching unexpected screens; open redirects via query parameters |
+| `media_paths_test.dart` | photo / thumbnail / pronunciation paths from the database reaching another Storage path (`..`, `/x`, `a//b`), another host, or adding a query or fragment |
 
 ## 2. CI `security` job
 - **gitleaks** — scans the whole git history for committed secrets.

@@ -21,11 +21,14 @@ abstract final class MediaUrls {
   static String? itemImage(String? path, {String baseUrl = Env.supabaseUrl}) =>
       _public('item-images', path, baseUrl);
 
-  /// The thumbnail of a drink photo, or null.
+  /// The thumbnail of a drink photo, or null (also when the photo's own
+  /// path is refused).
   static String? itemThumbnail(
     String? path, {
     String baseUrl = Env.supabaseUrl,
-  }) => _public('item-images', thumbnailPath(path), baseUrl);
+  }) => itemImage(path, baseUrl: baseUrl) == null
+      ? null
+      : _public('item-images', thumbnailPath(path), baseUrl);
 
   /// The URLs to try for a drink photo, best first: the [size] asked for,
   /// then the other copy (a card falls back to the full photo when a
@@ -60,9 +63,13 @@ abstract final class MediaUrls {
   static String? itemAudio(String? path, {String baseUrl = Env.supabaseUrl}) =>
       _public('item-audio', path, baseUrl);
 
+  /// Null for no path, no Supabase, or a path that could leave the bucket
+  /// (`..`, `.` or empty segments: URLs collapse them).
   static String? _public(String bucket, String? path, String baseUrl) {
     if (path == null || path.isEmpty || baseUrl.isEmpty) return null;
-    final segments = path.split('/').map(Uri.encodeComponent).join('/');
+    final parts = path.split('/');
+    if (parts.any((p) => p.isEmpty || p == '.' || p == '..')) return null;
+    final segments = parts.map(Uri.encodeComponent).join('/');
     return '$baseUrl/storage/v1/object/public/$bucket/$segments';
   }
 }

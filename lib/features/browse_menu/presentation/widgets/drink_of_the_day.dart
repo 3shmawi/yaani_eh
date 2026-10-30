@@ -11,10 +11,13 @@ import 'package:yaani_eh/l10n/l10n.dart';
 /// The wide card at the top of Home: one drink a day, with its explanation
 /// right on the card (Home artboard).
 class DrinkOfTheDay extends StatelessWidget {
-  const new({required this.item, this.onTap, super.key});
+  const new({required this.item, this.onTap, this.action, super.key});
 
   final CatalogItem item;
   final VoidCallback? onTap;
+
+  /// A control in the top-end corner (the play button, Home artboard).
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +26,7 @@ class DrinkOfTheDay extends StatelessWidget {
     final arabic = Localizations.localeOf(context).languageCode == 'ar';
     final explanation = arabic ? item.explanationAr : item.explanationEn;
     final radius = AppDimens.radiusLg;
-    return Semantics(
+    final card = Semantics(
       button: onTap != null,
       label:
           '${l10n.drinkOfTheDay}: ${item.menuName}، ${item.menuNameAr}. '
@@ -125,6 +128,18 @@ class DrinkOfTheDay extends StatelessWidget {
           ),
         ),
       ),
+    );
+    final action = this.action;
+    if (action == null) return card;
+    return Stack(
+      children: [
+        card,
+        PositionedDirectional(
+          top: AppDimens.space2,
+          end: AppDimens.space2,
+          child: action,
+        ),
+      ],
     );
   }
 }

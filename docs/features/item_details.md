@@ -62,8 +62,10 @@ None.
   card) shows while it loads, and offline when the full photo was never
   downloaded. Similar-drink cards use thumbnails. See docs/content.md →
   Photos and thumbnails.
-- The heart (`favorites`) and the pronunciation pill (`pronunciation`) join
-  this screen with their features.
+- The pronounce pill (`pronunciation`, through `DrinkView.pronounce`) sits
+  on the photo just above the sheet and scrolls with it; opening the page
+  prefetches the drink's clips for offline use. The heart (`favorites`)
+  joins with its feature.
 - "Average of N cafés" from the design needs a café count in the data; for
   now the card shows the month the price was checked.
 - Month names come from `intl`; the year stays in Western digits, as menus

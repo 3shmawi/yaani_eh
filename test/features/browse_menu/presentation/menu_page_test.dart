@@ -9,9 +9,11 @@ import 'package:yaani_eh/features/browse_menu/presentation/menu_view.dart';
 import 'package:yaani_eh/features/catalog_sync/data/models/catalog_rows.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
+import 'package:yaani_eh/features/pronunciation/presentation/widgets/play_name_button.dart';
 
 import '../../../helpers/fake_catalog_remote.dart';
 import '../../../helpers/fake_catalog_repository.dart';
+import '../../../helpers/fake_pronunciation.dart';
 import '../../../helpers/pump_app.dart';
 
 final _day = DateTime(2026, 10, 30);
@@ -213,6 +215,60 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Flat White'), findsNothing);
       expect(find.text('Cold Brew'), findsWidgets);
+    });
+
+    testWidgets('drinks with clips get a play button on their card and the '
+        'drink of the day; it plays without opening the drink', (tester) async {
+      final repo = FakePronunciationRepository();
+      final player = FakeClipPlayer();
+      await tester.pumpApp(
+        ProviderScope(
+          overrides: [
+            catalogRepositoryProvider.overrideWithValue(
+              FakeCatalogRepository(
+                has: true,
+                items: sampleCatalogItems(withAudio: true),
+              ),
+            ),
+            todayProvider.overrideWithValue(_day),
+            ...pronunciationOverrides(repo, player),
+          ],
+          child: const MenuPage(),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final today = find.byKey(const Key('drink_of_the_day'));
+      expect(
+        find.descendant(of: today, matching: find.byType(PlayNameButton)),
+        findsOneWidget,
+      );
+      // Affogato and Iced Mocha have no clips.
+      expect(find.byKey(const Key('play_affogato')), findsNothing);
+
+      final card = find.widgetWithText(DrinkCard, 'Flat White');
+      await tester.dragUntilVisible(
+        card,
+        find.byType(Scrollable).first,
+        const Offset(0, -200),
+      );
+      await tester.pumpAndSettle();
+      final play = find.descendant(
+        of: card,
+        matching: find.byKey(const Key('play_flat_white')),
+      );
+      // Top-start corner of the card (the heart will take top-end).
+      expect(
+        tester.getTopLeft(play).dx - tester.getTopLeft(card).dx,
+        lessThan(10),
+      );
+      await tester.tap(play);
+      await tester.pump();
+      expect(player.played.single.file, '/clips/flat_white.barista.m4a');
+      // Still on Home.
+      expect(find.byType(MenuView), findsOneWidget);
+      player.finish();
+      await tester.pumpAndSettle();
+      await tester.expectAccessible();
     });
   });
 }

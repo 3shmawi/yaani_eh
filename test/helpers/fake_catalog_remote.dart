@@ -134,7 +134,9 @@ List<Map<String, Object?>> sampleCategories() => [
 ];
 
 /// Twelve real drinks from the launch content.
-List<Map<String, Object?>> sampleItems() {
+/// The sample drinks. [withAudio]: pronunciation clips for most of them
+/// (none for Affogato and Iced Mocha; Cold Brew has only the barista one).
+List<Map<String, Object?>> sampleItems({bool withAudio = false}) {
   const drinks = [
     (
       'espresso',
@@ -261,8 +263,13 @@ List<Map<String, Object?>> sampleItems() {
         'price_max_egp': null,
         'price_updated_at': null,
         'image_path': null,
-        'audio_barista_path': null,
-        'audio_original_path': null,
+        'audio_barista_path': withAudio && !_noAudio.contains(d.$1)
+            ? '${d.$1}.barista.m4a'
+            : null,
+        'audio_original_path':
+            withAudio && !_noAudio.contains(d.$1) && d.$1 != 'cold_brew'
+            ? '${d.$1}.original.m4a'
+            : null,
         'traits': {'temp': d.$7 ? 'cold' : 'hot', 'milk': true},
         'sort_order': i,
         'is_published': true,
@@ -271,6 +278,8 @@ List<Map<String, Object?>> sampleItems() {
       },
   ];
 }
+
+const _noAudio = {'affogato', 'iced_mocha'};
 
 /// The Café section's traits, as in supabase/content/build_seed.py.
 const cafeTraitSchema = <Object?>[

@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter_cache_manager/flutter_cache_manager.dart'
+    show HttpExceptionWithStatus;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:yaani_eh/core/network/app_failure.dart';
@@ -8,6 +10,18 @@ import 'package:yaani_eh/core/network/result.dart';
 
 void main() {
   group('AppFailure.from', () {
+    test('maps answered file downloads by status (photos, clips)', () {
+      AppFailure of(int status) =>
+          AppFailure.from(HttpExceptionWithStatus(status, 'x'));
+      expect(of(404), isA<NotFoundFailure>());
+      expect(of(400), isA<NotFoundFailure>());
+      expect(of(401), isA<UnauthorizedFailure>());
+      expect(of(403), isA<UnauthorizedFailure>());
+      expect(of(503), isA<ServerFailure>());
+      expect(of(404).isRetryable, isFalse);
+      expect(of(503).isRetryable, isTrue);
+    });
+
     test('maps platform and Supabase errors', () {
       expect(
         AppFailure.from(const SocketException('offline')),

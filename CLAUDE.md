@@ -228,6 +228,9 @@ leaks").
   integration test or a feature doc gets its demo automatically: the
   **Demo video** workflow records the test on an iOS Simulator (full glass)
   and comments a 1080×1920 video + caption on the PR. No label, no manual step.
+  It records the feature whose doc **and** `<name>_test.dart` both changed
+  (so a PR that also touches other features' docs keeps its own caption),
+  else the first changed test and doc.
   The build and install before the test is cut out: the video starts a
   second before the test does (`scripts/record_demo_ios.sh` →
   `compose_demo.sh`).

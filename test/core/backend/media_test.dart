@@ -69,6 +69,26 @@ void main() {
       expect(MediaUrls.itemThumbnail('', baseUrl: _base), isNull);
     });
 
+    test('a path that could leave the bucket gives no URL', () {
+      for (final path in [
+        '../secret.webp',
+        'a/../../auth/v1/admin',
+        './latte.webp',
+        '/latte.webp',
+        'a//b.webp',
+        'latte.webp/',
+        '..',
+      ]) {
+        expect(MediaUrls.itemImage(path, baseUrl: _base), isNull, reason: path);
+        expect(MediaUrls.itemAudio(path, baseUrl: _base), isNull, reason: path);
+      }
+      // Dots inside a name are fine.
+      expect(
+        MediaUrls.itemImage('flat..white.webp', baseUrl: _base),
+        '$_bucket/flat..white.webp',
+      );
+    });
+
     test('audio uses its own bucket', () {
       expect(
         MediaUrls.itemAudio('latte.m4a', baseUrl: _base),

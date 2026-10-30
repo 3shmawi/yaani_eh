@@ -13,13 +13,23 @@ import 'package:yaani_eh/l10n/l10n.dart';
 /// a frosted label holds the menu name, its Arabic spelling and the price
 /// range (or calories while prices aren't checked yet).
 class DrinkCard extends StatelessWidget {
-  const new({required this.item, this.onTap, this.compact = false, super.key});
+  const new({
+    required this.item,
+    this.onTap,
+    this.compact = false,
+    this.action,
+    super.key,
+  });
 
   final CatalogItem item;
   final VoidCallback? onTap;
 
   /// Small cards in a strip (similar drinks): name and spelling only.
   final bool compact;
+
+  /// A control over the photo's top-start corner (the play button); the
+  /// top-end corner is the heart's. Not on compact cards.
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +94,7 @@ class DrinkCard extends StatelessWidget {
         ],
       ),
     );
-    return Semantics(
+    final tappable = Semantics(
       button: onTap != null,
       label: [item.menuName, item.menuNameAr, ?meta].join('، '),
       onTap: onTap,
@@ -94,6 +104,18 @@ class DrinkCard extends StatelessWidget {
           child: AspectRatio(aspectRatio: 3 / 4, child: card),
         ),
       ),
+    );
+    final action = this.action;
+    if (compact || action == null) return tappable;
+    return Stack(
+      children: [
+        tappable,
+        PositionedDirectional(
+          top: AppDimens.space1,
+          start: AppDimens.space1,
+          child: action,
+        ),
+      ],
     );
   }
 }

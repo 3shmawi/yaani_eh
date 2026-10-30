@@ -56,4 +56,12 @@ abstract final class AppDimens {
   static double get tabBarHeight => 60.h;
   static double get rowImage => 104.w;
   static double get rowMinHeight => 112.h;
+
+  /// Pronounce pill: the visible height of a segment and the speed toggle
+  /// (the tap area stays [touchTarget]).
+  static double get pronounceSegment => 36.r;
+
+  /// Pronounce pill: the moving bars of a playing name.
+  static const soundBarWidth = 3.0;
+  static const soundBarGap = 2.0;
 }
