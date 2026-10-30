@@ -137,7 +137,11 @@ class DrinkView extends StatelessWidget {
             start: 0,
             end: 0,
             height: photoHeight,
-            child: DrinkPhoto(name: item.menuName, imagePath: item.imagePath),
+            child: DrinkPhoto(
+              name: item.menuName,
+              imagePath: item.imagePath,
+              size: PhotoSize.full,
+            ),
           ),
           // Keeps the status bar and the back button readable.
           PositionedDirectional(

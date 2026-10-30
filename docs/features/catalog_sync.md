@@ -85,7 +85,9 @@ None.
 - drift (SQLite) over key-value storage: delta upserts, deletes and joins
   stay simple as sections and categories grow.
 - Images and audio are cached after first view by the screens that show
-  them (`browse_menu`, `item_details`, `pronunciation`), not here.
+  them (`browse_menu`, `item_details`, `pronunciation`), not here. Photos
+  go through `MediaCache` (`lib/core/backend/media_cache.dart`): 600
+  files, 180 days; cards keep thumbnails, the drink page full photos.
 - Home (`browse_menu`) reads the menu through `catalogItemsProvider` and
   `catalogCategoriesProvider`.
 - Content edits never need a release; schema changes need a migration.

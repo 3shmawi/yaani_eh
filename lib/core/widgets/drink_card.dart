@@ -31,7 +31,11 @@ class DrinkCard extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          DrinkPhoto(name: item.menuName, imagePath: item.imagePath),
+          DrinkPhoto(
+            name: item.menuName,
+            imagePath: item.imagePath,
+            size: PhotoSize.thumbnail,
+          ),
           PositionedDirectional(
             start: AppDimens.space2,
             end: AppDimens.space2,

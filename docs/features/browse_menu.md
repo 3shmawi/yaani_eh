@@ -51,8 +51,13 @@ None.
 - Integration (demo): `integration_test/browse_menu_test.dart`.
 
 ## Decisions & edge cases
-- Photos: `image_path` in the `item-images` bucket, cached after the first
-  view (`cached_network_image`); none yet → brand gradient + first letter.
+- Photos: cards and the drink of the day load the **thumbnail**
+  (`DrinkPhoto(size: PhotoSize.thumbnail)` → `<name>.thumb.webp`, ~35 KB),
+  falling back to the full photo when it's missing (docs/content.md →
+  Photos and thumbnails). Decoded at the card's size on screen
+  (`memCacheWidth`), cached on the phone after the first view
+  (`MediaCache`), so seen photos work offline; none yet → brand gradient +
+  first letter.
 - Grid labels use the cheapest glass (`minimal`) so 40+ cards scroll
   smoothly on mid-range Android; chips are clear glass on the header.
 - The search field in the header opens `smart_search`.

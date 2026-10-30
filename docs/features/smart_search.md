@@ -66,6 +66,9 @@ None.
 - Integration (demo): `integration_test/smart_search_test.dart`.
 
 ## Decisions & edge cases
+- Result rows show the drink's **thumbnail** (`PhotoSize.thumbnail`), decoded
+  at the row's size, full photo as fallback. The photo is a layer that
+  fills the row's height, so rows are laid out once (no `IntrinsicHeight`).
 - No server search: the catalog is small and on the device, so search is
   instant and offline; the index rebuilds when a sync changes the menu.
 - The tab bar (Home / Search / Favorites / My taste) arrives with
