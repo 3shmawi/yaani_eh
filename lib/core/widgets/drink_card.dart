@@ -13,15 +13,18 @@ import 'package:yaani_eh/l10n/l10n.dart';
 /// a frosted label holds the menu name, its Arabic spelling and the price
 /// range (or calories while prices aren't checked yet).
 class DrinkCard extends StatelessWidget {
-  const new({required this.item, this.onTap, super.key});
+  const new({required this.item, this.onTap, this.compact = false, super.key});
 
   final CatalogItem item;
   final VoidCallback? onTap;
 
+  /// Small cards in a strip (similar drinks): name and spelling only.
+  final bool compact;
+
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
-    final meta = drinkMeta(context, item);
+    final meta = compact ? null : drinkMeta(context, item);
     final radius = AppDimens.radiusLg;
     final card = ClipRRect(
       borderRadius: BorderRadius.circular(radius),

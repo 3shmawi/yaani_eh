@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:yaani_eh/core/widgets/drink_card.dart';
 import 'package:yaani_eh/features/browse_menu/domain/usecases/build_menu.dart';
 import 'package:yaani_eh/features/browse_menu/presentation/menu_controller.dart';
 import 'package:yaani_eh/features/browse_menu/presentation/menu_page.dart';
 import 'package:yaani_eh/features/browse_menu/presentation/menu_view.dart';
-import 'package:yaani_eh/features/browse_menu/presentation/widgets/drink_card.dart';
 import 'package:yaani_eh/features/catalog_sync/data/models/catalog_rows.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';

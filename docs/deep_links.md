@@ -6,6 +6,7 @@ also a deep link.
 | Path | Screen |
 |---|---|
 | `/` | Home |
+| `/drink/<slug>` | One drink (e.g. `/drink/flat_white`); unknown or malformed slugs show not-found |
 | `/settings` | Settings |
 
 ## Custom scheme (works now)

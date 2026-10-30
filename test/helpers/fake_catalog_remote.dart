@@ -105,9 +105,7 @@ List<Map<String, Object?>> sampleCategories() => [
     'name_ar': 'الكافيه',
     'name_en': 'Café',
     'icon': 'coffee',
-    'trait_schema': <Object?>[
-      {'key': 'temp', 'type': 'enum'},
-    ],
+    'trait_schema': cafeTraitSchema,
     'sort_order': 0,
     'updated_at': '2026-10-01T10:00:00Z',
   },
@@ -273,3 +271,40 @@ List<Map<String, Object?>> sampleItems() {
       },
   ];
 }
+
+/// The Café section's traits, as in supabase/content/build_seed.py.
+const cafeTraitSchema = <Object?>[
+  {
+    'key': 'temp',
+    'type': 'enum',
+    'options': [
+      {'value': 'hot', 'ar': 'سخن', 'en': 'Hot'},
+      {'value': 'cold', 'ar': 'ساقع', 'en': 'Iced'},
+      {'value': 'both', 'ar': 'سخن أو ساقع', 'en': 'Hot or iced'},
+    ],
+  },
+  {
+    'key': 'sweetness',
+    'type': 'scale',
+    'labels': {
+      'ar': ['سادة', 'مظبوط', 'حلو', 'حلو أوي'],
+      'en': ['Not sweet', 'A little sweet', 'Sweet', 'Very sweet'],
+    },
+  },
+  {
+    'key': 'milk',
+    'type': 'bool',
+    'labels': {
+      'ar': ['من غير لبن', 'بلبن'],
+      'en': ['No milk', 'With milk'],
+    },
+  },
+  {
+    'key': 'caffeine',
+    'type': 'scale',
+    'labels': {
+      'ar': ['من غير كافيين', 'خفيف', 'متوسط', 'قوي'],
+      'en': ['No caffeine', 'Light', 'Medium', 'Strong'],
+    },
+  },
+];
