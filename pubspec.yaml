@@ -80,4 +80,6 @@ flutter:
 sentry:
   upload_debug_symbols: true
   upload_sources: true
+  # Linking commits needs the Sentry GitHub integration and full history.
+  commits: false
   log_level: error
