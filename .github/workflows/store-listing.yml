@@ -19,7 +19,7 @@ jobs:
     name: Check texts (limits + no placeholders)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Flutter version from .fvmrc
         id: fvm
         run: echo "version=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
@@ -37,7 +37,7 @@ jobs:
     if: inputs.platform != 'ios'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.3'
@@ -63,7 +63,7 @@ jobs:
     if: inputs.platform != 'android'
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Upload to App Store Connect
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}

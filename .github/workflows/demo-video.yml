@@ -44,7 +44,7 @@ jobs:
       doc: ${{ steps.what.outputs.doc }}
       title: ${{ steps.what.outputs.title }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -98,7 +98,7 @@ jobs:
 
       - name: Keep the raw recording
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: demo-raw
           path: build/demo/raw.mp4
@@ -110,9 +110,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: demo-raw
           path: build/demo
@@ -129,7 +129,7 @@ jobs:
 
       - name: Upload video
         id: upload
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: demo-video
           path: |

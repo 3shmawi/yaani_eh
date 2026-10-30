@@ -28,7 +28,7 @@ jobs:
       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
       ENV_PROD_JSON: ${{ secrets.ENV_PROD_JSON }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Project ref
         id: ref
@@ -43,7 +43,7 @@ jobs:
             echo "ready=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: supabase/setup-cli@v1
+      - uses: supabase/setup-cli@v3
         if: steps.ref.outputs.ready == 'true'
         with:
           # Pinned: "latest" asks the GitHub API on every run and gets rate-limited.
