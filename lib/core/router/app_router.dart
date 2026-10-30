@@ -8,6 +8,7 @@ import 'package:yaani_eh/features/browse_menu/presentation/menu_page.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_page.dart';
 import 'package:yaani_eh/features/item_details/presentation/drink_page.dart';
 import 'package:yaani_eh/features/settings/presentation/settings_page.dart';
+import 'package:yaani_eh/features/smart_search/presentation/search_page.dart';
 
 /// Root navigator, used to show app-wide dialogs (e.g. the update dialog).
 final rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -36,6 +37,14 @@ final appRouter = GoRouter(
       },
       builder: (context, state) => CatalogSyncPage(
         child: DrinkPage(slug: state.pathParameters['slug']!),
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.search,
+      builder: (context, state) => CatalogSyncPage(
+        child: SearchPage(
+          initialQuery: AppRoutes.cleanQuery(state.uri.queryParameters['q']),
+        ),
       ),
     ),
     GoRoute(

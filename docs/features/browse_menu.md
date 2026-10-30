@@ -55,8 +55,8 @@ None.
   view (`cached_network_image`); none yet → brand gradient + first letter.
 - Grid labels use the cheapest glass (`minimal`) so 40+ cards scroll
   smoothly on mid-range Android; chips are clear glass on the header.
-- Not here yet, each comes with its feature: the search field
-  (`smart_search`), hearts (`favorites`), the play button
+- The search field in the header opens `smart_search`.
+- Not here yet, each comes with its feature: hearts (`favorites`), the play button
   (`pronunciation`) and the tab bar (once a second tab exists). Cards and
   the drink of the day open the drink (`item_details`).
 - Calories and prices are labelled approximate at the end of the list.

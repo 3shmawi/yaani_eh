@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yaani_eh/core/router/app_router.dart';
+import 'package:yaani_eh/core/router/app_routes.dart';
 import 'package:yaani_eh/core/router/not_found_page.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_theme.dart';
@@ -10,6 +11,7 @@ import 'package:yaani_eh/core/ui/app_ui.dart';
 import 'package:yaani_eh/features/browse_menu/presentation/menu_page.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
 import 'package:yaani_eh/features/item_details/presentation/drink_view.dart';
+import 'package:yaani_eh/features/smart_search/presentation/search_page.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
 import '../helpers/fake_catalog_repository.dart';
@@ -89,6 +91,26 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(DrinkMissingView), findsOneWidget);
 
+    appRouter.go('/');
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('search links: any query is shown safely, never executed', (
+    tester,
+  ) async {
+    await pumpRouter(tester);
+    for (final query in [
+      'latte',
+      '<script>alert(1)</script>',
+      "'; DROP TABLE items; --",
+      '%00%0A',
+      'a' * 500,
+    ]) {
+      appRouter.go(AppRoutes.searchFor(query));
+      await tester.pumpAndSettle();
+      expect(find.byType(SearchPage), findsOneWidget, reason: query);
+      expect(tester.takeException(), isNull);
+    }
     appRouter.go('/');
     await tester.pumpAndSettle();
   });
