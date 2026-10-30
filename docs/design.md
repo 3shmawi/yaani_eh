@@ -39,7 +39,7 @@ Screens use `lib/core/ui/app_ui.dart` (`AppScaffold`, `AppGlass`, `AppCard`,
 - Glass needs content behind it: a drink photo, the `HeaderBand`, or the
   brand gradient (`AppBackground`). `AppScaffold` defaults to the flat
   `surface`, where text sits on solid colors.
-- Lite mode (no blur, `glass-fill-lite`) turns on by itself with Reduce
+- Lite mode (no blur, no drop shadow, `glass-fill-lite` + rim) turns on by itself with Reduce
   Transparency / Increase Contrast and on devices too slow for the shader
   (`adaptiveQuality`); the header band turns flat espresso there too.
 - At most two glass layers on top of each other; lists of many cards use

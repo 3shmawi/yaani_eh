@@ -83,11 +83,16 @@ class AppGlass extends StatefulWidget {
     this.backdrop,
     this.backdropRegion = const Rect.fromLTWH(0, 0, 1, 1),
     this.blur,
+    this.minimal = false,
     super.key,
   });
 
   final Widget child;
   final GlassKind kind;
+
+  /// Many glass surfaces at once (grid labels): the cheapest shader, so
+  /// scrolling stays smooth on mid-range Android.
+  final bool minimal;
 
   /// Clear glass only. [GlassTone.auto] measures [backdrop] under
   /// [backdropRegion] when given, otherwise follows the theme.
@@ -181,18 +186,16 @@ class _AppGlassState extends State<AppGlass> {
       final shape = RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(radius),
       );
-      // Shadow outside, Material inside: ListTile and InkWell paint their
-      // ink on the nearest Material, so the fill must be one.
-      return DecoratedBox(
-        decoration: ShapeDecoration(shape: shape, shadows: p.glassShadow),
-        child: Material(
-          color: p.glassFillLite,
-          shape: shape,
-          clipBehavior: Clip.antiAlias,
-          child: CustomPaint(
-            foregroundPainter: _RimPainter(radius),
-            child: content,
-          ),
+      // Lite is for slow devices and Reduce Transparency: a near-solid fill
+      // and the rim, no blurred shadow (cheap to draw, even in software).
+      // Material, so ListTile / InkWell ink stays visible.
+      return Material(
+        color: p.glassFillLite,
+        shape: shape,
+        clipBehavior: Clip.antiAlias,
+        child: CustomPaint(
+          foregroundPainter: _RimPainter(radius),
+          child: content,
         ),
       );
     }
@@ -203,6 +206,7 @@ class _AppGlassState extends State<AppGlass> {
         ? AppColors.glassClearLight
         : AppColors.glassClearDark;
     return GlassContainer(
+      quality: widget.minimal ? GlassQuality.minimal : null,
       shape: LiquidRoundedSuperellipse(borderRadius: radius),
       settings: LiquidGlassSettings(
         glassColor: tint,
@@ -285,6 +289,9 @@ class AppScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     final canPop = Navigator.of(context).canPop();
     final hasBar = title != null || actions.isNotEmpty || canPop;
+    if (AppUi.isLite(context)) {
+      return _lite(context, canPop: canPop, hasBar: hasBar);
+    }
     return GlassScaffold(
       background: background ?? ColoredBox(color: context.palette.surface),
       appBar: hasBar
@@ -323,6 +330,71 @@ class AppScaffold extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Lite mode: no glass shaders and no background capture at all (the
+/// package scaffold re-captures the screen every frame, which slow devices
+/// and software-rendered emulators can't keep up with).
+extension on AppScaffold {
+  Widget _lite(
+    BuildContext context, {
+    required bool canPop,
+    required bool hasBar,
+  }) {
+    final p = context.palette;
+    return Material(
+      color: p.surface,
+      child: Stack(
+        children: [
+          if (background != null) Positioned.fill(child: background!),
+          SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (hasBar)
+                  Padding(
+                    padding: EdgeInsetsDirectional.symmetric(
+                      horizontal: AppDimens.space2,
+                      vertical: AppDimens.space1,
+                    ),
+                    child: Row(
+                      children: [
+                        if (canPop)
+                          AppIconButton(
+                            icon: AdaptiveIcons.back(context),
+                            tooltip: MaterialLocalizations.of(context)
+                                .backButtonTooltip,
+                            onPressed: () => Navigator.of(context).maybePop(),
+                          ),
+                        SizedBox(width: AppDimens.space2),
+                        Expanded(
+                          child: title == null
+                              ? const SizedBox.shrink()
+                              : Semantics(
+                                  header: true,
+                                  child: Text(
+                                    title!,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: context
+                                        .text(TextRole.headline)
+                                        .copyWith(color: p.ink),
+                                  ),
+                                ),
+                        ),
+                        ...actions,
+                      ],
+                    ),
+                  ),
+                const OfflineBanner(),
+                Expanded(child: body),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

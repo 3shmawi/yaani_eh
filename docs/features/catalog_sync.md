@@ -73,7 +73,7 @@ None.
 - Controller: `presentation/catalog_sync_controller_test.dart` — states,
   30 s retry, retry button, shared sync, resume throttle.
 - Widget: `presentation/catalog_sync_view_test.dart` (+ accessibility, RTL,
-  dark, small phone with large text), `test/features/home/`.
+  dark, small phone with large text).
 - Security: hostile rows (SQL-like slugs, wrong types, absurd numbers, path
   traversal in media paths) are rejected; RLS in
   `supabase/tests/catalog_rls.test.sql`.
@@ -86,7 +86,8 @@ None.
   stay simple as sections and categories grow.
 - Images and audio are cached after first view by the screens that show
   them (`browse_menu`, `item_details`, `pronunciation`), not here.
-- Home is a plain list until `browse_menu` builds the Home artboard.
+- Home (`browse_menu`) reads the menu through `catalogItemsProvider` and
+  `catalogCategoriesProvider`.
 - Content edits never need a release; schema changes need a migration.
 
 ## Demo & post
