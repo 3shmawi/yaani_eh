@@ -79,5 +79,15 @@
   "searchIdleTitle": "دوّر بالاسم أو بالوصف",
   "searchIdleBody": "بيشتغل من غير نت، بالعربي أو الإنجليزي أو الفرانكو.",
   "searchTry": "جرّب",
-  "searchExamples": "فرابيه|لبن وقهوة|ساقع|2ahwa"
+  "searchExamples": "فرابيه|لبن وقهوة|ساقع|2ahwa",
+  "pronounceBarista": "زي الباريستا",
+  "pronounceOriginal": "الأصلي",
+  "pronounceSlower": "أبطأ",
+  "pronounceBaristaOf": "اسمع {name} زي الباريستا",
+  "pronounceOriginalOf": "اسمع نطق {name} الأصلي",
+  "pronounceStopOf": "وقّف {name}",
+  "pronounceHearOf": "اسمع اسم {name}",
+  "pronounceOffline": "إنت أوفلاين، والاسم ده متسمعش على الموبايل ده قبل كده.",
+  "pronounceMissing": "التسجيل ده مش متاح دلوقتي.",
+  "pronounceError": "مقدرناش نشغّل الاسم. جرّب تاني."
 }

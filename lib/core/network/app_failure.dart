@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart'
+    show HttpExceptionWithStatus;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Every error the UI can show, independent of where it came from
@@ -20,6 +22,15 @@ sealed class AppFailure {
   /// Maps any thrown error to a failure.
   static AppFailure from(Object error) => switch (error) {
     AppFailure() => error,
+    // A file download (photos, clips) that the server answered.
+    HttpExceptionWithStatus(statusCode: 401 || 403) => UnauthorizedFailure(
+      error,
+    ),
+    HttpExceptionWithStatus(:final statusCode)
+        when statusCode >= 400 && statusCode < 500 =>
+      NotFoundFailure(error),
+    HttpExceptionWithStatus(:final statusCode) when statusCode >= 500 =>
+      ServerFailure(error),
     SocketException() || HttpException() => NetworkFailure(error),
     TimeoutException() => TimeoutFailure(error),
     AuthException() => UnauthorizedFailure(error),

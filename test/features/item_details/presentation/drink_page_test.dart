@@ -10,9 +10,11 @@ import 'package:yaani_eh/features/item_details/domain/usecases/describe_item.dar
 import 'package:yaani_eh/features/item_details/presentation/drink_controller.dart';
 import 'package:yaani_eh/features/item_details/presentation/drink_page.dart';
 import 'package:yaani_eh/features/item_details/presentation/drink_view.dart';
+import 'package:yaani_eh/features/pronunciation/presentation/widgets/pronounce_pill.dart';
 
 import '../../../helpers/fake_catalog_remote.dart';
 import '../../../helpers/fake_catalog_repository.dart';
+import '../../../helpers/fake_pronunciation.dart';
 import '../../../helpers/pump_app.dart';
 
 final _now = DateTime(2026, 10, 30);
@@ -163,6 +165,51 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(DrinkView), findsOneWidget);
       expect(find.text('Cortado'), findsWidgets);
+    });
+
+    testWidgets('a drink with clips: the pronounce pill on the photo, clips '
+        'prefetched, a tap plays', (tester) async {
+      final repo = FakePronunciationRepository();
+      final player = FakeClipPlayer();
+      await tester.pumpApp(
+        ProviderScope(
+          overrides: [
+            catalogRepositoryProvider.overrideWithValue(
+              FakeCatalogRepository(
+                has: true,
+                items: sampleCatalogItems(withAudio: true),
+              ),
+            ),
+            todayProvider.overrideWithValue(_now),
+            ...pronunciationOverrides(repo, player),
+          ],
+          child: const DrinkPage(slug: 'flat_white'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(PronouncePill), findsOneWidget);
+      expect(repo.prefetched, [
+        'flat_white.barista.m4a',
+        'flat_white.original.m4a',
+      ]);
+      // On the photo, above the sheet with the name.
+      expect(
+        tester.getBottomLeft(find.byType(PronouncePill)).dy,
+        lessThan(tester.getTopLeft(find.text('Flat White').last).dy),
+      );
+
+      await tester.tap(find.byKey(const Key('pronounce_barista')));
+      await tester.pump();
+      expect(player.played.single.file, '/clips/flat_white.barista.m4a');
+      player.finish();
+      await tester.pumpAndSettle();
+      await tester.expectAccessible();
+    });
+
+    testWidgets('a drink without clips has no pill', (tester) async {
+      await pumpPage(tester, 'cortado');
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('pronounce_barista')), findsNothing);
     });
 
     testWidgets('an unknown drink shows a friendly message', (tester) async {

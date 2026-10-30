@@ -26,6 +26,7 @@ class DrinkView extends StatelessWidget {
     required this.similar,
     required this.onBack,
     required this.onOpenDrink,
+    this.pronounce,
     super.key,
   });
 
@@ -34,6 +35,10 @@ class DrinkView extends StatelessWidget {
   final List<CatalogItem> similar;
   final VoidCallback onBack;
   final ValueChanged<CatalogItem> onOpenDrink;
+
+  /// The pronounce pill (feature `pronunciation`), on the photo just above
+  /// the sheet; scrolls with it.
+  final Widget? pronounce;
 
   @override
   Widget build(BuildContext context) {
@@ -164,7 +169,23 @@ class DrinkView extends StatelessWidget {
           CustomScrollView(
             key: const Key('drink_scroll'),
             slivers: [
-              SliverToBoxAdapter(child: SizedBox(height: photoHeight - 48.h)),
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: photoHeight - 48.h,
+                  child: Align(
+                    alignment: AlignmentDirectional.bottomStart,
+                    child: Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(
+                        AppDimens.space4,
+                        0,
+                        AppDimens.space4,
+                        AppDimens.space6,
+                      ),
+                      child: pronounce,
+                    ),
+                  ),
+                ),
+              ),
               const SliverToBoxAdapter(child: OfflineBanner()),
               SliverToBoxAdapter(child: sheet),
             ],

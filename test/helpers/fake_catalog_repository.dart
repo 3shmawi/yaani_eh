@@ -63,6 +63,6 @@ class FakeCatalogRepository implements CatalogRepository {
   }
 }
 
-List<CatalogItem> sampleCatalogItems() => [
-  for (final r in sampleItems()) CatalogRows.item(r)!,
+List<CatalogItem> sampleCatalogItems({bool withAudio = false}) => [
+  for (final r in sampleItems(withAudio: withAudio)) CatalogRows.item(r)!,
 ];

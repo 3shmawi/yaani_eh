@@ -27,8 +27,7 @@ from the app: only Studio / the service role.
   The app shows a "price may be old" note after 3 months.
 - **Photos:** every drink has a photo and a thumbnail, side by side in the
   `item-images` bucket. See [Photos and thumbnails](#photos-and-thumbnails).
-- **Pronunciation:** upload to `item-audio`, then fill `audio_barista_path`
-  and/or `audio_original_path`. A missing clip just hides its button.
+- **Pronunciation:** see [Pronunciation clips](#pronunciation-clips).
 - **Names:** the menu name stays exactly as menus print it. Trademarked
   names (Frappuccino, Oreo…) may only be search terms, never item names.
 
@@ -67,6 +66,31 @@ shows the thumbnail; with neither, the brand gradient and first letter.
 
 Both are cached on the phone after the first view (up to 600 files, kept
 180 days after last use), so photos already seen still show offline.
+
+## Pronunciation clips
+
+Each drink can have two short recordings of its name, played by the
+pronounce pill (docs/features/pronunciation.md):
+
+| Column | Voice | Button |
+|---|---|---|
+| `audio_barista_path` | how baristas in Egypt say it | «زي الباريستا» (and the cards' speaker) |
+| `audio_original_path` | the original Italian / English | «الأصلي» |
+
+- **Format:** M4A (AAC) or MP3, mono, about 64 kbps, 1–3 seconds, under
+  50 KB. Not Ogg: the bucket accepts it but iPhones can't play it.
+- **Recording:** the name alone, said once, clearly, no music or "it's
+  pronounced…". Trim silence at both ends. Own recordings only.
+- **Naming:** `<slug>.barista.m4a` and `<slug>.original.m4a`, e.g.
+  `flat_white.barista.m4a`. Upload to the `item-audio` bucket, then put the
+  path in the column. A path with `..`, a leading `/` or `//` is ignored by
+  the app.
+- **Missing clip:** its segment is hidden; no clips at all hides the pill
+  and the cards' speaker. **Replacing a clip:** upload it under a new name
+  (e.g. `flat_white.barista.2.m4a`) and update the path, so phones that
+  already have the old one get the new one on the next sync.
+- Phones keep a clip after the first play (and when its drink page is
+  opened online), so heard names work offline.
 
 ## Launch content
 

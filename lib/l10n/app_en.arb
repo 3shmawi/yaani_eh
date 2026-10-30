@@ -184,5 +184,52 @@
   "searchIdleTitle": "Search by name or by description",
   "searchIdleBody": "Works offline, in Arabic, English or Franco.",
   "searchTry": "Try",
-  "searchExamples": "Frappé|milk and coffee|iced|Cortado"
+  "searchExamples": "Frappé|milk and coffee|iced|Cortado",
+  "pronounceBarista": "Barista",
+  "@pronounceBarista": {
+    "description": "Pronounce pill: how baristas in Egypt say the drink's name."
+  },
+  "pronounceOriginal": "Original",
+  "@pronounceOriginal": {
+    "description": "Pronounce pill: the original Italian/English pronunciation."
+  },
+  "pronounceSlower": "Slower",
+  "@pronounceSlower": {
+    "description": "Screen-reader label of the 0.75× speed toggle."
+  },
+  "pronounceBaristaOf": "Play barista pronunciation of {name}",
+  "@pronounceBaristaOf": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pronounceOriginalOf": "Play original pronunciation of {name}",
+  "@pronounceOriginalOf": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pronounceStopOf": "Stop {name}",
+  "@pronounceStopOf": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pronounceHearOf": "Hear the name: {name}",
+  "@pronounceHearOf": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pronounceOffline": "You're offline, and this name hasn't been played on this phone yet.",
+  "pronounceMissing": "This recording isn't available right now.",
+  "pronounceError": "Couldn't play the name. Try again."
 }

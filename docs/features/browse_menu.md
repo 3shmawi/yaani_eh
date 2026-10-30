@@ -61,9 +61,12 @@ None.
 - Grid labels use the cheapest glass (`minimal`) so 40+ cards scroll
   smoothly on mid-range Android; chips are clear glass on the header.
 - The search field in the header opens `smart_search`.
-- Not here yet, each comes with its feature: hearts (`favorites`), the play button
-  (`pronunciation`) and the tab bar (once a second tab exists). Cards and
-  the drink of the day open the drink (`item_details`).
+- The speaker button (`pronunciation`, through `MenuView.cardAction`) sits
+  in the drink of the day's top-end corner and each card's top-start
+  corner, for drinks that have a clip; it plays without opening the drink.
+- Not here yet, each comes with its feature: hearts (`favorites`, the
+  cards' top-end corner) and the tab bar (once a second tab exists). Cards
+  and the drink of the day open the drink (`item_details`).
 - Calories and prices are labelled approximate at the end of the list.
 
 ## Demo & post
