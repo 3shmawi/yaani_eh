@@ -136,22 +136,16 @@ jobs:
           done
           echo "::error title=integration log (end)::$(grep -v -E 'Kotlin|KGP|plugin|^\s*$' integration.log | tail -n 40 | tail -c 3500 | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')"
 
-  # A quick Android smoke test (the first flow). The CI emulator renders in
-  # software and doesn't survive several app reinstalls in a row, so the
-  # full suite runs on the iOS simulator above.
-  integration:
-    name: Integration tests (Android emulator)
+  # Android: the app must build. Flows are tested on the iOS simulator
+  # above: the CI Android emulator (software rendering) went offline at the
+  # end of every app run, losing the results, in every setup tried.
+  android-build:
+    name: Android build (debug APK)
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
-
-      - name: Enable KVM
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
 
       - uses: actions/setup-java@v5
         with:
@@ -167,31 +161,8 @@ jobs:
           flutter-version: ${{ steps.fvm.outputs.version }}
           cache: true
 
-      - name: Install packages
+      - name: Build
         run: |
           flutter pub get
           flutter gen-l10n
-
-      - name: Run integration tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 34
-          arch: x86_64
-          target: google_apis
-          disable-animations: true
-          # GLASS_LITE: the emulator has no real GPU and glass shaders stall it
-          # (glass apps draw the solid variant; other apps ignore the define).
-          script: bash -o pipefail -c "flutter test integration_test/app_test.dart --dart-define-from-file=env/example.json --dart-define=GLASS_LITE=true 2>&1 | tee integration.log"
-
-      - name: Why the integration tests failed
-        if: failure()
-        run: |
-          [ -f integration.log ] || exit 0
-          grep -n -E 'EXCEPTION CAUGHT|Expected:|Actual:|Which:|Test failed|\[E\]|Error:|was thrown|Timed out|not found|_test\.dart:[0-9]+' integration.log \
-            | head -n 100 > failures.txt || true
-          split -b 3500 -d failures.txt part_ 2>/dev/null || true
-          n=0; for part in part_*; do [ -f "$part" ] || continue; n=$((n+1)); [ "$n" -gt 8 ] && break
-            echo "::error title=integration failures ($n)::$(sed 's/%/%25/g' "$part" | awk '{printf "%s%%0A", $0}')"
-          done
-          echo "::error title=integration log (end)::$(grep -v -E 'Kotlin|KGP|plugin|^\s*$' integration.log | tail -n 40 | tail -c 3500 | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')"
-
+          flutter build apk --debug --dart-define-from-file=env/example.json
