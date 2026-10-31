@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:yaani_eh/core/config/app_content.dart';
 import 'package:yaani_eh/core/widgets/drink_card.dart';
 import 'package:yaani_eh/features/browse_menu/presentation/menu_controller.dart';
 import 'package:yaani_eh/features/catalog_sync/data/models/catalog_rows.dart';
@@ -63,9 +64,7 @@ void main() {
       );
     }
 
-    testWidgets('name, explanation, pills, price and similar drinks', (
-      tester,
-    ) async {
+    testWidgets('name, explanation, pills and similar drinks', (tester) async {
       await pumpView(tester);
       expect(find.text('Flat White'), findsOneWidget);
       expect(find.text('فلات وايت'), findsOneWidget);
@@ -77,9 +76,6 @@ void main() {
       );
       expect(find.text('Hot'), findsOneWidget);
       expect(find.text('With milk'), findsOneWidget);
-      expect(find.text(l10nEn.priceAtCafes), findsOneWidget);
-      expect(find.text(l10nEn.priceChecked('October 2026')), findsOneWidget);
-      expect(find.text(l10nEn.priceStale), findsNothing);
       expect(find.text(l10nEn.similarDrinks), findsOneWidget);
       await tester.expectAccessible();
     });
@@ -99,15 +95,19 @@ void main() {
       await tester.expectAccessible();
     });
 
-    testWidgets('an old price gets a warning in words', (tester) async {
+    testWidgets('no prices: the app says what a drink is, not its cost', (
+      tester,
+    ) async {
+      // A drink with a known, old price still shows none of it.
       await pumpView(tester, item: _flatWhite(checked: '2026-05-01'));
-      expect(find.text(l10nEn.priceStale), findsOneWidget);
-    });
-
-    testWidgets('no price yet says so', (tester) async {
-      await pumpView(tester, item: _flatWhite(min: null, max: null));
-      expect(find.text(l10nEn.priceMissing), findsOneWidget);
+      expect(AppContent.showPrices, isFalse);
       expect(find.text(l10nEn.priceAtCafes), findsNothing);
+      expect(find.text(l10nEn.priceStale), findsNothing);
+      expect(find.textContaining(l10nEn.currency), findsNothing);
+      expect(find.text(l10nEn.approximateCalories), findsOneWidget);
+
+      await pumpView(tester, item: _flatWhite(min: null, max: null));
+      expect(find.text(l10nEn.priceMissing), findsNothing);
     });
 
     testWidgets('back and similar drinks are tappable', (tester) async {
@@ -204,6 +204,26 @@ void main() {
       player.finish();
       await tester.pumpAndSettle();
       await tester.expectAccessible();
+    });
+
+    testWidgets("«how it's made» opens the recipe sheet", (tester) async {
+      await pumpPage(tester, 'flat_white');
+      await tester.pumpAndSettle();
+      final row = find.byKey(const Key('drink_recipe'));
+      await tester.ensureVisible(row);
+      await tester.pumpAndSettle();
+      expect(find.text("How it's made · 180 ml"), findsOneWidget);
+      await tester.expectAccessible();
+
+      await tester.tap(row);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('recipe_view')), findsOneWidget);
+    });
+
+    testWidgets("no recipe yet, no «how it's made»", (tester) async {
+      await pumpPage(tester, 'cortado');
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('drink_recipe')), findsNothing);
     });
 
     testWidgets('a drink without clips has no pill', (tester) async {

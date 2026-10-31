@@ -33,17 +33,42 @@ INSERT INTO sync_meta VALUES ('first_sync_done', 'true');
 PRAGMA user_version = 1;
 ''';
 
+/// Version 2 (the «يعني» line, before «طريقة التحضير»).
+final String _v2 = _v1
+    .replaceFirst(
+      'audio_original_path TEXT,',
+      'audio_original_path TEXT, gist_ar TEXT, gist_en TEXT,',
+    )
+    .replaceFirst('user_version = 1', 'user_version = 2');
+
+CatalogDatabase _open(String schema) => CatalogDatabase(
+  NativeDatabase.memory(
+    setup: (raw) => schema
+        .split(';')
+        .map((sql) => sql.trim())
+        .where((sql) => sql.isNotEmpty)
+        .forEach(raw.execute),
+  ),
+);
+
 void main() {
+  test('upgrading from v2 adds recipes and fetches everything again', () async {
+    final db = _open(_v2);
+    addTearDown(db.close);
+    final local = CatalogLocalDataSource(db);
+
+    final row = await db.select(db.items).getSingle();
+    expect(row.menuName, 'Latte');
+    expect(row.recipe, isNull);
+    expect(await local.firstSyncDone(), isTrue);
+    expect(await local.cursor(), isNull);
+
+    await db.update(db.items).write(const ItemsCompanion(recipe: Value('{}')));
+    expect((await db.select(db.items).getSingle()).recipe, '{}');
+  });
+
   test('upgrading from v1 keeps the menu and fetches it all again', () async {
-    final db = CatalogDatabase(
-      NativeDatabase.memory(
-        setup: (raw) => _v1
-            .split(';')
-            .map((sql) => sql.trim())
-            .where((sql) => sql.isNotEmpty)
-            .forEach(raw.execute),
-      ),
-    );
+    final db = _open(_v1);
     addTearDown(db.close);
     final local = CatalogLocalDataSource(db);
 
@@ -59,5 +84,7 @@ void main() {
         .update(db.items)
         .write(const ItemsCompanion(gistAr: Value('قهوة بلبن كتير')));
     expect((await db.select(db.items).getSingle()).gistAr, 'قهوة بلبن كتير');
+    // Straight to the current version: the recipe column is there too.
+    expect((await db.select(db.items).getSingle()).recipe, isNull);
   });
 }

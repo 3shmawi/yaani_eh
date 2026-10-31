@@ -46,6 +46,9 @@ class Items extends Table {
   TextColumn get traits => text().withDefault(const Constant('{}'))();
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();
 
+  /// «طريقة التحضير», JSON in the server's shape.
+  TextColumn get recipe => text().nullable()();
+
   @override
   Set<Column<Object>> get primaryKey => {id};
 }
@@ -79,7 +82,7 @@ class CatalogDatabase extends _$CatalogDatabase {
     : super(executor ?? driftDatabase(name: 'catalog'));
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -95,6 +98,11 @@ class CatalogDatabase extends _$CatalogDatabase {
         // next sync starts over and fetches every drink again.
         await m.addColumn(items, items.gistAr);
         await m.addColumn(items, items.gistEn);
+        await (delete(syncMeta)..where((r) => r.key.equals('cursor'))).go();
+      }
+      if (from < 3) {
+        // «طريقة التحضير»: the same, so every drink comes back with it.
+        await m.addColumn(items, items.recipe);
         await (delete(syncMeta)..where((r) => r.key.equals('cursor'))).go();
       }
     },

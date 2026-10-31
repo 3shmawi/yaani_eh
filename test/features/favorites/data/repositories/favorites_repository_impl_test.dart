@@ -30,6 +30,14 @@ void main() {
     expect((await repository.watch().first).map((f) => f.itemId), ['b']);
   });
 
+  test('two saved in the same second: the last one comes first', () async {
+    // Dates are stored to the second.
+    await repository.add('a');
+    now = now.add(const Duration(milliseconds: 400));
+    await repository.add('b');
+    expect((await repository.watch().first).map((f) => f.itemId), ['b', 'a']);
+  });
+
   test('saving twice keeps the first date; removing twice is fine', () async {
     await repository.add('a');
     final first = (await repository.watch().first).single.savedAt;

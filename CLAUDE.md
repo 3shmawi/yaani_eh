@@ -1,6 +1,6 @@
 # Yaani Eh
 
-Explains cafe menus in plain Egyptian Arabic: photos, calories, prices and pronunciation.
+Explains cafe menus in plain Egyptian Arabic: photos, calories, recipes and pronunciation.
 
 This file is the source of truth for anyone — human or AI agent — working on
 this project. Read it fully before changing code. Feature details live in

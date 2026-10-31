@@ -6,9 +6,15 @@
 Tapping any drink opens its page: the photo under the status bar, then a
 sheet with the name exactly as menus print it and its Arabic spelling, a
 plain explanation in the reader's language, trait pills (calories, hot or
-iced, sweetness, milk, caffeine), the price range at cafés with the month it
-was checked, and similar drinks to compare. Works offline, from the device
-copy.
+iced, sweetness, milk, caffeine), «طريقة التحضير» (the `recipes` sheet,
+when the drink has a recipe), and similar drinks to compare. Works offline,
+from the device copy.
+
+**No prices.** The app explains what a drink is, not what it costs, so the
+price card and the "price may have changed" pill are hidden
+(`AppContent.showPrices = false` in `lib/core/config/app_content.dart`).
+Prices still sync, so turning them back on is that one line. The note at
+the end says «السعرات تقريبية» only.
 
 ## User flows
 1. Home → tap a card (or the drink of the day) → the drink.
@@ -22,7 +28,8 @@ copy.
 - Layers / main files: `lib/features/item_details/`
   - `domain/usecases/describe_item.dart` — `DescribeItem` (trait pills
     from the section's `trait_schema`: `enum` / `scale` / `bool`, in `ar`
-    or `en`; stale price after 90 days or when undated) and `SimilarItems`
+    or `en`; stale price after 90 days or when undated, used only while
+    prices are shown) and `SimilarItems`
     (same category first, then closest temperature / sweetness / milk /
     caffeine).
   - `presentation/drink_controller.dart` — `drinkDetailsProvider(slug)`:

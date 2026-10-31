@@ -14,11 +14,13 @@ import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/favorites/presentation/favorites_controller.dart';
 import 'package:yaani_eh/features/pronunciation/domain/usecases/clips_for.dart';
 import 'package:yaani_eh/features/pronunciation/presentation/pronunciation_controller.dart';
+import 'package:yaani_eh/features/recipes/presentation/recipe_sheet.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
 /// The long press on a drink card: what it is at a glance (photo, name,
 /// spelling, «يعني» line, the start of the explanation), with «اسمع الاسم»
-/// (when it has a clip), save / remove and «افتح المشروب».
+/// (when it has a clip), «طريقة التحضير» (when it has a recipe), save /
+/// remove and «افتح المشروب».
 Future<void> showDrinkPreview(
   BuildContext context,
   WidgetRef ref,
@@ -40,6 +42,16 @@ Future<void> showDrinkPreview(
           label: l10n.previewHear,
           onSelected: () =>
               ref.read(pronunciationProvider.notifier).toggleFirst(item),
+        ),
+      if (item.recipe != null)
+        AppPreviewAction(
+          key: const Key('preview_recipe'),
+          icon: AppIcons.recipe,
+          label: l10n.previewRecipe,
+          tag: l10n.previewNew,
+          onSelected: () => unawaited(
+            showRecipeSheet(context, item, from: RecipeSource.preview),
+          ),
         ),
       AppPreviewAction(
         key: const Key('preview_save'),

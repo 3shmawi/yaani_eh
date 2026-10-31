@@ -38,7 +38,7 @@ class SupabaseCatalogRemote implements CatalogRemoteDataSource {
       'explanation_en,gist_ar,gist_en,calories,size_ml,price_min_egp,'
       'price_max_egp,'
       'price_updated_at,image_path,audio_barista_path,audio_original_path,'
-      'traits,sort_order,updated_at';
+      'traits,sort_order,recipe,updated_at';
 
   @override
   Future<List<Object?>> categories({required DateTime since}) => _client

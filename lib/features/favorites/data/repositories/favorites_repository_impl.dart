@@ -12,13 +12,19 @@ class FavoritesRepositoryImpl implements FavoritesRepository {
 
   @override
   Stream<List<Favorite>> watch() =>
-      (_db.select(
-        _db.favorites,
-      )..orderBy([(f) => OrderingTerm.desc(f.savedAt)])).watch().map(
-        (rows) => [
-          for (final r in rows) Favorite(itemId: r.itemId, savedAt: r.savedAt),
-        ],
-      );
+      (_db.select(_db.favorites)..orderBy([
+            (f) => OrderingTerm.desc(f.savedAt),
+            // Dates are kept to the second: two drinks saved in the same
+            // second are told apart by which was saved last.
+            (f) => OrderingTerm.desc(f.rowId),
+          ]))
+          .watch()
+          .map(
+            (rows) => [
+              for (final r in rows)
+                Favorite(itemId: r.itemId, savedAt: r.savedAt),
+            ],
+          );
 
   /// Saving twice keeps the first date.
   @override

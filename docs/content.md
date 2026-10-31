@@ -23,8 +23,10 @@ from the app: only Studio / the service role.
   launch or resume.
 - **Hide a drink:** set `is_published` to false (or delete the row). The app
   removes it on the next sync.
-- **Prices:** fill `price_min_egp`, `price_max_egp` and `price_updated_at`.
-  The app shows a "price may be old" note after 3 months.
+- **Prices:** `price_min_egp`, `price_max_egp` and `price_updated_at` still
+  sync, but the app doesn't show them (`AppContent.showPrices`). Leave them
+  empty for new drinks.
+- **«طريقة التحضير»** (`recipe`): see [Recipes](#recipes).
 - **Photos:** every drink has a photo and a thumbnail, side by side in the
   `item-images` bucket. See [Photos and thumbnails](#photos-and-thumbnails).
 - **Pronunciation:** see [Pronunciation clips](#pronunciation-clips).
@@ -106,6 +108,42 @@ pronounce pill (docs/features/pronunciation.md):
 - Phones keep a clip after the first play (and when its drink page is
   opened online), so heard names work offline.
 
+## Recipes
+
+`items.recipe` (JSON, `0007_item_recipes.sql`) is «طريقة التحضير»:
+
+```json
+{"minutes": 2,
+ "layers": [{"tone": "espresso", "ml": 60, "ar": "قهوة مركّزة (شوتين)", "en": "Strong coffee (2 shots)"}],
+ "steps": [{"icon": "grind", "title_ar": "…", "title_en": "…",
+            "note_ar": "…", "note_en": "…", "amount_ar": "18 جرام بن", "amount_en": "18 g coffee"}]}
+```
+
+- **layers**, bottom to top, 1–6. Their ml add up to the drink's `size_ml`
+  (the cup is drawn to scale). `tone` is the colour: `espresso`, `coffee`,
+  `foam`, `water`, `milk`, `condensed`, `chocolate`, `white_chocolate`,
+  `caramel`, `vanilla`, `cream`, `ice_cream`, `ice`, `blended_coffee`,
+  `blended_caramel`, `blended_chocolate`, `blended_vanilla`, `tea`,
+  `green_tea`, `chai`, `matcha`, `hibiscus`, `mint_tea`, `mango`,
+  `strawberry`, `orange`, `lemon`, `fruit`, `berry`, `hot_chocolate`,
+  `sahlab`, `nuts`, `cookies`, `soda`. An unknown tone is drawn as milky
+  coffee.
+- **steps**, in order, 1–8. `icon`: `grind`, `shot`, `boil`, `steep`,
+  `milk`, `steam`, `pour`, `ice`, `blend`, `stir`, `sweeten`, `top`,
+  `squeeze`, `serve`. Title ≤ 60, note ≤ 160, amount ≤ 40 characters; note
+  and amount are optional.
+- **minutes**, 1–1440 (cold brew: a night). From an hour up, the app shows
+  hours.
+- **Words:** like the «يعني» line, everyday Egyptian: no menu words
+  («لاتيه»، «إسبريسو»…), and no number ranges (`25–30` turns around in
+  Arabic): say «حوالي 30».
+- The database checks the shape; the app also checks every field and, if
+  anything is off, hides only «طريقة التحضير», never the drink.
+- Launch recipes are in `supabase/content/recipes.json`, checked by
+  `build_seed.py` (sizes add up, known tones and icons, no menu words, no
+  ranges) and written once into `0007_item_recipes.sql`. After launch, edit
+  them in Studio.
+
 ## Launch content
 
 `supabase/content/drinks.csv` (41 drinks, reviewed) → `python3
@@ -118,4 +156,5 @@ launch, edit in Studio — not in the CSV.
 RLS on every table; anon sees only published rows and can't write; hidden and
 deleted rows reach the app as ids only; editing an item or its search words
 bumps `updated_at`; too-long, empty, negative, upside-down or injection-like
-values are rejected.
+values are rejected; every drink has a recipe, a malformed recipe is
+rejected, and anon can read recipes but not change them.

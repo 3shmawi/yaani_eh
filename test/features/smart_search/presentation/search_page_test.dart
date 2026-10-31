@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:yaani_eh/core/router/app_routes.dart';
 import 'package:yaani_eh/core/widgets/search_field.dart';
 import 'package:yaani_eh/features/browse_menu/presentation/menu_controller.dart';
+import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
 import 'package:yaani_eh/features/smart_search/presentation/search_page.dart';
 import 'package:yaani_eh/features/smart_search/presentation/widgets/answer_card.dart';
@@ -86,6 +87,25 @@ void main() {
     expect(find.text(l10nEn.searchNothing('spanish cortado')), findsOneWidget);
     expect(find.text(l10nEn.didYouMean), findsOneWidget);
     await tester.expectAccessible();
+  });
+
+  testWidgets('a result shows calories, never a price', (tester) async {
+    final base = sampleCatalogItems().first;
+    final priced = CatalogItem(
+      id: base.id,
+      categoryId: base.categoryId,
+      slug: base.slug,
+      menuName: base.menuName,
+      menuNameAr: base.menuNameAr,
+      explanationAr: base.explanationAr,
+      explanationEn: base.explanationEn,
+      calories: 5,
+      priceMinEgp: 40,
+      priceMaxEgp: 70,
+    );
+    await tester.pumpApp(Material(child: ResultRow(item: priced)));
+    expect(find.text(l10nEn.calories(5)), findsOneWidget);
+    expect(find.textContaining('EGP'), findsNothing);
   });
 
   testWidgets('the clear button empties the field', (tester) async {

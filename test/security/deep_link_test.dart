@@ -12,6 +12,7 @@ import 'package:yaani_eh/features/browse_menu/presentation/menu_page.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
 import 'package:yaani_eh/features/favorites/presentation/favorites_view.dart';
 import 'package:yaani_eh/features/item_details/presentation/drink_view.dart';
+import 'package:yaani_eh/features/recipes/presentation/step_by_step_view.dart';
 import 'package:yaani_eh/features/smart_search/presentation/search_page.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
@@ -71,6 +72,12 @@ void main() {
       '/favorites/secret',
       '/favorites/../../etc/passwd',
       '/favorites%2F..%2Fadmin',
+      '/drink/../steps',
+      '/drink/FLAT_WHITE/steps',
+      "/drink/latte');DROP TABLE items;--/steps",
+      '/drink/flat_white/steps/../../etc/passwd',
+      '/drink/flat_white/steps/1',
+      '/drink//steps',
     ]) {
       appRouter.go(path);
       await tester.pumpAndSettle();
@@ -100,6 +107,37 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(DrinkMissingView), findsOneWidget);
 
+    appRouter.go('/');
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('a steps link opens step by step, or says there is none', (
+    tester,
+  ) async {
+    await pumpRouter(tester);
+
+    for (final path in [
+      AppRoutes.drinkSteps('flat_white'),
+      '/drink/flat_white/steps?step=999',
+      '/drink/flat_white/steps?redirect=https://evil.example.com',
+    ]) {
+      appRouter.go(path);
+      await tester.pumpAndSettle();
+      expect(find.byType(StepByStepView), findsOneWidget, reason: path);
+      expect(tester.takeException(), isNull);
+    }
+
+    // Closing goes back to the drink, not out of the app.
+    await tester.tap(find.byKey(const Key('steps_close')));
+    await tester.pumpAndSettle();
+    expect(find.byType(DrinkView), findsOneWidget);
+
+    // A drink without a recipe, and one that doesn't exist.
+    for (final slug in ['latte', 'no_such_drink']) {
+      appRouter.go(AppRoutes.drinkSteps(slug));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('steps_missing')), findsOneWidget);
+    }
     appRouter.go('/');
     await tester.pumpAndSettle();
   });

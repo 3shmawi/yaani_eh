@@ -11,9 +11,9 @@ the phone: no account, they work offline, and deleting the app deletes them.
 
 A **long press** on any card opens a quick preview that answers «يعني إيه؟»
 without leaving the menu: the photo, the name, its spelling, the «يعني» line
-and the start of the explanation, with «اسمع الاسم», «احفظ في المفضلة» /
-«شيل من المفضلة» and «افتح المشروب». («طريقة التحضير» joins it with the
-`recipes` feature.)
+and the start of the explanation, with «اسمع الاسم», «طريقة التحضير» (with
+a «جديد» tag; feature `recipes`), «احفظ في المفضلة» / «شيل من المفضلة» and
+«افتح المشروب».
 
 ## User flows
 1. Tap the heart on a card → it turns warm milk and pops; the Favorites tab
@@ -32,7 +32,8 @@ and the start of the explanation, with «اسمع الاسم», «احفظ في 
   - `data/`: `FavoritesDatabase` (its own drift file `favorites`, apart from
     the menu copy, so a menu resync never touches it) and
     `FavoritesRepositoryImpl` (`guard`, no retries: it's local). Saving
-    twice keeps the first date.
+    twice keeps the first date. Dates are kept to the second, so two drinks
+    saved in the same second come back last-saved first (by row id).
   - `presentation/`: `favorites_controller.dart` (`favoritesProvider`,
     `favoriteIdsProvider`, `favoriteDrinksProvider`,
     `FavoritesController.toggle`), `FavoriteButton`, `FavoritesPage` →

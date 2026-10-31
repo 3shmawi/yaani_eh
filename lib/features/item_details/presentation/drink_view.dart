@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart' show DateFormat;
+import 'package:yaani_eh/core/config/app_content.dart';
 import 'package:yaani_eh/core/text/bidi.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
@@ -18,7 +19,8 @@ import 'package:yaani_eh/l10n/l10n.dart';
 
 /// One drink (Details artboard): the photo under the status bar, a
 /// floating back button, and a sheet with the name, the plain
-/// explanation, trait pills, the price and similar drinks.
+/// explanation, trait pills, «طريقة التحضير», the price (while
+/// [AppContent.showPrices]) and similar drinks.
 class DrinkView extends StatelessWidget {
   const new({
     required this.item,
@@ -28,6 +30,7 @@ class DrinkView extends StatelessWidget {
     required this.onOpenDrink,
     this.pronounce,
     this.saveButton,
+    this.onOpenRecipe,
     super.key,
   });
 
@@ -43,6 +46,9 @@ class DrinkView extends StatelessWidget {
   /// The pronounce pill (feature `pronunciation`), on the photo just above
   /// the sheet; scrolls with it.
   final Widget? pronounce;
+
+  /// «طريقة التحضير» (feature `recipes`); null hides the row (no recipe).
+  final VoidCallback? onOpenRecipe;
 
   @override
   Widget build(BuildContext context) {
@@ -96,8 +102,14 @@ class DrinkView extends StatelessWidget {
           ),
           SizedBox(height: AppDimens.space4),
           TraitPills(facts: facts),
-          SizedBox(height: AppDimens.space4),
-          _PriceCard(facts: facts),
+          if (onOpenRecipe != null && item.recipe != null) ...[
+            SizedBox(height: AppDimens.space4),
+            _RecipeRow(recipe: item.recipe!, onTap: onOpenRecipe!),
+          ],
+          if (AppContent.showPrices) ...[
+            SizedBox(height: AppDimens.space4),
+            _PriceCard(facts: facts),
+          ],
           if (similar.isNotEmpty) ...[
             SizedBox(height: AppDimens.space6),
             Semantics(
@@ -129,7 +141,9 @@ class DrinkView extends StatelessWidget {
           ],
           SizedBox(height: AppDimens.space6),
           Text(
-            l10n.approximateNote,
+            AppContent.showPrices
+                ? l10n.approximateNote
+                : l10n.approximateCalories,
             textAlign: TextAlign.center,
             style: context.text(TextRole.caption).copyWith(color: p.inkMuted),
           ),
@@ -319,4 +333,71 @@ class DrinkLoadingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       Material(color: context.palette.surface, child: const LoadingView());
+}
+
+/// The way into «طريقة التحضير»: what it is and the cup's size, then a
+/// chevron.
+class _RecipeRow extends StatelessWidget {
+  const new({required this.recipe, required this.onTap});
+
+  final Recipe recipe;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    final l10n = context.l10n;
+    return Semantics(
+      button: true,
+      label: l10n.previewRecipe,
+      hint: l10n.recipeSubtitle(recipe.totalMl),
+      excludeSemantics: true,
+      child: AppPressable(
+        key: const Key('drink_recipe'),
+        onTap: onTap,
+        child: Container(
+          constraints: const BoxConstraints(minHeight: AppDimens.touchTarget),
+          padding: EdgeInsetsDirectional.symmetric(
+            horizontal: AppDimens.space4,
+            vertical: AppDimens.space3,
+          ),
+          decoration: BoxDecoration(
+            color: p.surfaceRaised,
+            borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+            border: Border.all(color: p.line),
+          ),
+          child: Row(
+            children: [
+              Icon(AppIcons.recipe, size: AppDimens.icon, color: p.brand),
+              SizedBox(width: AppDimens.space3),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.previewRecipe,
+                      style: context
+                          .text(TextRole.callout)
+                          .copyWith(color: p.ink, fontWeight: FontWeight.w600),
+                    ),
+                    Text(
+                      l10n.recipeSubtitle(recipe.totalMl),
+                      style: context
+                          .text(TextRole.caption)
+                          .copyWith(color: p.inkMuted),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                AppIcons.forward,
+                size: AppDimens.iconChip,
+                color: p.inkMuted,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

@@ -37,6 +37,45 @@ abstract final class AppColors {
   /// The mashrabiya pattern behind the header band: milk, faint, so text
   /// on the band keeps its contrast.
   static const headerPattern = Color(0x2EEBD9C6);
+
+  /// The cup in «طريقة التحضير»: what each layer looks like in real life,
+  /// so the same in both themes. Each sits next to its name in the legend.
+  static const layerEspresso = Color(0xFF4A2414);
+  static const layerCoffee = Color(0xFF6B3A20);
+  static const layerFoam = Color(0xFFF4EBDD);
+  static const layerWater = Color(0xFFB9D3DC);
+  static const layerMilk = Color(0xFFE9DCC8);
+  static const layerMilkCoffee = Color(0xFFC8A27E);
+  static const layerCondensed = Color(0xFFE7C995);
+  static const layerChocolate = Color(0xFF5A3324);
+  static const layerWhiteChocolate = Color(0xFFF1E4CC);
+  static const layerCaramel = Color(0xFFC9803A);
+  static const layerVanilla = Color(0xFFF2E3B8);
+  static const layerCream = Color(0xFFFBF6EE);
+  static const layerIce = Color(0xFFDDEAF0);
+  static const layerTea = Color(0xFFA0522D);
+  static const layerGreenTea = Color(0xFFB5B86A);
+  static const layerMatcha = Color(0xFF8DB255);
+  static const layerHibiscus = Color(0xFF9E1B32);
+  static const layerMint = Color(0xFF9DBF7A);
+  static const layerMango = Color(0xFFF2A93B);
+  static const layerStrawberry = Color(0xFFD9475A);
+  static const layerOrange = Color(0xFFF39C2B);
+  static const layerLemon = Color(0xFFE8E08A);
+  static const layerFruit = Color(0xFFE8C46A);
+  static const layerBerry = Color(0xFF7B2D52);
+  static const layerSahlab = Color(0xFFF3E9D6);
+  static const layerNuts = Color(0xFFA9774A);
+  static const layerCookies = Color(0xFF8B6B58);
+  static const layerSoda = Color(0xFFE4EFE6);
+
+  /// The cup's outline and its saucer shadow, over any surface.
+  static const cupLine = Color(0x8C8C7564);
+  static const cupShadow = Color(0x1F000000);
+
+  /// Progress on the header band (step by step): done in warm milk, to come
+  /// in faint milk.
+  static const onHeaderFaint = Color(0x40FFFFFF);
 }
 
 /// Theme-dependent Design System colors. Read with `context.palette`.

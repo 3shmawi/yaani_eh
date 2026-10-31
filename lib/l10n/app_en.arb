@@ -294,5 +294,127 @@
         "type": "int"
       }
     }
+  },
+  "previewRecipe": "How it's made",
+  "@previewRecipe": {
+    "description": "The long-press row and the drink page's button that open the recipe."
+  },
+  "previewNew": "New",
+  "@previewNew": {
+    "description": "A short tag on a new row of the long-press preview."
+  },
+  "recipeSubtitle": "How it's made · {ml} ml",
+  "@recipeSubtitle": {
+    "description": "Under the drink's name on the recipe sheet: the size of the cup.",
+    "placeholders": {
+      "ml": {
+        "type": "int"
+      }
+    }
+  },
+  "recipeLayerMl": "{ml} ml",
+  "@recipeLayerMl": {
+    "description": "How much of one layer of the cup.",
+    "placeholders": {
+      "ml": {
+        "type": "int"
+      }
+    }
+  },
+  "recipeCupLabel": "The cup, bottom to top: {layers}",
+  "@recipeCupLabel": {
+    "description": "Screen-reader label of the cup drawing.",
+    "placeholders": {
+      "layers": {
+        "type": "String"
+      }
+    }
+  },
+  "recipeHot": "Hot",
+  "@recipeHot": {
+    "description": "Fact chip: the drink is served hot."
+  },
+  "recipeCold": "Iced",
+  "@recipeCold": {
+    "description": "Fact chip: the drink is served cold."
+  },
+  "recipeHotOrCold": "Hot or iced",
+  "@recipeHotOrCold": {
+    "description": "Fact chip: either way."
+  },
+  "recipeMinutes": "{count, plural, =1{1 min} other{{count} min}}",
+  "@recipeMinutes": {
+    "description": "Fact chip: how long it takes.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recipeHours": "{count, plural, =1{1 hour} other{{count} hours}}",
+  "@recipeHours": {
+    "description": "Fact chip: how long it takes, when it's hours (cold brew).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "recipeSteps": "Steps",
+  "@recipeSteps": {
+    "description": "Heading of the steps on the recipe sheet."
+  },
+  "recipeStepNumber": "Step {n}",
+  "@recipeStepNumber": {
+    "description": "Screen-reader prefix of a step.",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "recipeStepByStep": "Step by step",
+  "@recipeStepByStep": {
+    "description": "Opens one step at a time, in big text."
+  },
+  "recipeClose": "Close",
+  "@recipeClose": {
+    "description": "Closes the recipe sheet or step-by-step mode."
+  },
+  "stepOf": "Step {n} of {total}",
+  "@stepOf": {
+    "description": "Step-by-step mode: where you are.",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "stepNext": "Next step",
+  "@stepNext": {
+    "description": "Step-by-step mode: go on."
+  },
+  "stepPrevious": "Previous step",
+  "@stepPrevious": {
+    "description": "Step-by-step mode: go back one step."
+  },
+  "stepDone": "Done, enjoy",
+  "@stepDone": {
+    "description": "Step-by-step mode: the last step's button."
+  },
+  "recipeMissingTitle": "No recipe for this one yet",
+  "@recipeMissingTitle": {
+    "description": "Step-by-step link to a drink without a recipe."
+  },
+  "recipeMissingBody": "We're writing them one by one.",
+  "@recipeMissingBody": {
+    "description": "Under recipeMissingTitle."
+  },
+  "approximateCalories": "Calories are approximate.",
+  "@approximateCalories": {
+    "description": "The note at the end of the menu and a drink page, while prices are hidden."
   }
 }

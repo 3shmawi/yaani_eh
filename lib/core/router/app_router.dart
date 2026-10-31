@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yaani_eh/app/app_tabs_shell.dart';
 import 'package:yaani_eh/core/analytics/analytics.dart';
@@ -9,6 +9,7 @@ import 'package:yaani_eh/features/browse_menu/presentation/menu_page.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_page.dart';
 import 'package:yaani_eh/features/favorites/presentation/favorites_page.dart';
 import 'package:yaani_eh/features/item_details/presentation/drink_page.dart';
+import 'package:yaani_eh/features/recipes/presentation/step_by_step_page.dart';
 import 'package:yaani_eh/features/settings/presentation/settings_page.dart';
 import 'package:yaani_eh/features/smart_search/presentation/search_page.dart';
 
@@ -71,6 +72,16 @@ final appRouter = GoRouter(
       builder: (context, state) => CatalogSyncPage(
         child: DrinkPage(slug: state.pathParameters['slug']!),
       ),
+      routes: [
+        GoRoute(
+          path: AppRoutes.drinkStepsSegment,
+          pageBuilder: (context, state) => MaterialPage(
+            key: state.pageKey,
+            fullscreenDialog: true,
+            child: StepByStepPage(slug: state.pathParameters['slug']!),
+          ),
+        ),
+      ],
     ),
     GoRoute(
       path: AppRoutes.search,

@@ -19,6 +19,18 @@ void main() {
     expect(drinks, [items[2], items[1], items[0]]);
   });
 
+  test('the same date keeps the order they came in', () {
+    final same = DateTime.utc(2026, 10, 4);
+    final drinks = const FavoriteDrinks()(
+      items: items,
+      favorites: [
+        for (final i in [3, 0, 2, 1])
+          Favorite(itemId: items[i].id, savedAt: same),
+      ],
+    );
+    expect(drinks, [items[3], items[0], items[2], items[1]]);
+  });
+
   test('a drink taken off the menu is left out', () {
     final drinks = const FavoriteDrinks()(
       items: items,

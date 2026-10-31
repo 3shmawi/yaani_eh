@@ -9,6 +9,7 @@ also a deep link.
 | `/drink/<slug>` | One drink (e.g. `/drink/flat_white`); unknown or malformed slugs show not-found |
 | `/search?q=<text>` | Search, optionally pre-filled (`q` is cleaned: control/direction characters removed, trimmed, max 60) |
 | `/settings` | Settings |
+| `/drink/<slug>/steps` | A drink's «طريقة التحضير», one step at a time, over the drink page; a drink without a recipe (or unknown) says so with a way back |
 | `/favorites` | The Favorites tab (the drinks saved on the phone) |
 
 ## Custom scheme (works now)

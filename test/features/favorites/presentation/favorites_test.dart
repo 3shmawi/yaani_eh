@@ -216,6 +216,8 @@ void main() {
       expect(find.byKey(const Key('drink_preview')), findsOneWidget);
       expect(find.text('A tiny, strong cup of coffee'), findsWidgets);
       expect(find.byKey(const Key('preview_hear')), findsOneWidget);
+      // Espresso has no recipe yet.
+      expect(find.byKey(const Key('preview_recipe')), findsNothing);
       await tester.expectAccessible();
 
       await tester.tap(find.byKey(const Key('preview_save')));
@@ -230,6 +232,33 @@ void main() {
       await tester.tap(find.byKey(const Key('preview_open')));
       await tester.pumpAndSettle();
       expect(opened, [espresso]);
+    });
+
+    testWidgets("«how it's made» opens the recipe", (tester) async {
+      final flatWhite = items.firstWhere((i) => i.slug == 'flat_white');
+      await pumpScoped(
+        tester,
+        Consumer(
+          builder: (context, ref, _) => Center(
+            child: SizedBox(
+              width: 170,
+              child: DrinkCard(
+                item: flatWhite,
+                onLongPress: () =>
+                    showDrinkPreview(context, ref, flatWhite, onOpen: () {}),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.longPress(find.byType(DrinkCard));
+      await tester.pumpAndSettle();
+      expect(find.text(l10nEn.previewNew), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('preview_recipe')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('drink_preview')), findsNothing);
+      expect(find.byKey(const Key('recipe_view')), findsOneWidget);
     });
 
     testWidgets('a tap outside closes it', (tester) async {

@@ -4,6 +4,7 @@ import 'package:yaani_eh/core/network/app_failure.dart';
 import 'package:yaani_eh/core/network/result.dart';
 import 'package:yaani_eh/features/catalog_sync/data/datasources/catalog_database.dart';
 import 'package:yaani_eh/features/catalog_sync/data/datasources/catalog_local_data_source.dart';
+import 'package:yaani_eh/features/catalog_sync/data/models/catalog_rows.dart';
 import 'package:yaani_eh/features/catalog_sync/data/repositories/catalog_repository_impl.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 
@@ -78,6 +79,14 @@ void main() {
     expect(espresso.gistAr, 'فنجان قهوة صغير ومركّز');
     expect(espresso.gistEn, 'A tiny, strong cup of coffee');
     expect(items.firstWhere((i) => i.slug == 'latte').gistAr, isNull);
+  });
+
+  test('«طريقة التحضير» reaches the device', () async {
+    await syncOk();
+    final items = await repository.watchItems().first;
+    final recipe = items.firstWhere((i) => i.slug == 'flat_white').recipe!;
+    expect(recipe, CatalogRows.recipe(sampleRecipes['flat_white']));
+    expect(items.firstWhere((i) => i.slug == 'latte').recipe, isNull);
   });
 
   test('later syncs only download what changed', () async {

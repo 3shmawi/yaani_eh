@@ -719,6 +719,15 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _recipeMeta = const VerificationMeta('recipe');
+  @override
+  late final GeneratedColumn<String> recipe = GeneratedColumn<String>(
+    'recipe',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -740,6 +749,7 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
     audioOriginalPath,
     traits,
     sortOrder,
+    recipe,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -902,6 +912,12 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
         sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
       );
     }
+    if (data.containsKey('recipe')) {
+      context.handle(
+        _recipeMeta,
+        recipe.isAcceptableOrUnknown(data['recipe']!, _recipeMeta),
+      );
+    }
     return context;
   }
 
@@ -987,6 +1003,10 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
         DriftSqlType.int,
         data['${effectivePrefix}sort_order'],
       )!,
+      recipe: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}recipe'],
+      ),
     );
   }
 
@@ -1018,6 +1038,9 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
   /// JSON object.
   final String traits;
   final int sortOrder;
+
+  /// «طريقة التحضير», JSON in the server's shape.
+  final String? recipe;
   const ItemRow({
     required this.id,
     required this.categoryId,
@@ -1038,6 +1061,7 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     this.audioOriginalPath,
     required this.traits,
     required this.sortOrder,
+    this.recipe,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1081,6 +1105,9 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     }
     map['traits'] = Variable<String>(traits);
     map['sort_order'] = Variable<int>(sortOrder);
+    if (!nullToAbsent || recipe != null) {
+      map['recipe'] = Variable<String>(recipe);
+    }
     return map;
   }
 
@@ -1125,6 +1152,9 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
           : Value(audioOriginalPath),
       traits: Value(traits),
       sortOrder: Value(sortOrder),
+      recipe: recipe == null && nullToAbsent
+          ? const Value.absent()
+          : Value(recipe),
     );
   }
 
@@ -1155,6 +1185,7 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
       ),
       traits: serializer.fromJson<String>(json['traits']),
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
+      recipe: serializer.fromJson<String?>(json['recipe']),
     );
   }
   @override
@@ -1180,6 +1211,7 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
       'audioOriginalPath': serializer.toJson<String?>(audioOriginalPath),
       'traits': serializer.toJson<String>(traits),
       'sortOrder': serializer.toJson<int>(sortOrder),
+      'recipe': serializer.toJson<String?>(recipe),
     };
   }
 
@@ -1203,6 +1235,7 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     Value<String?> audioOriginalPath = const Value.absent(),
     String? traits,
     int? sortOrder,
+    Value<String?> recipe = const Value.absent(),
   }) => ItemRow(
     id: id ?? this.id,
     categoryId: categoryId ?? this.categoryId,
@@ -1229,6 +1262,7 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
         : this.audioOriginalPath,
     traits: traits ?? this.traits,
     sortOrder: sortOrder ?? this.sortOrder,
+    recipe: recipe.present ? recipe.value : this.recipe,
   );
   ItemRow copyWithCompanion(ItemsCompanion data) {
     return ItemRow(
@@ -1269,6 +1303,7 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
           : this.audioOriginalPath,
       traits: data.traits.present ? data.traits.value : this.traits,
       sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+      recipe: data.recipe.present ? data.recipe.value : this.recipe,
     );
   }
 
@@ -1293,7 +1328,8 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
           ..write('audioBaristaPath: $audioBaristaPath, ')
           ..write('audioOriginalPath: $audioOriginalPath, ')
           ..write('traits: $traits, ')
-          ..write('sortOrder: $sortOrder')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('recipe: $recipe')
           ..write(')'))
         .toString();
   }
@@ -1319,6 +1355,7 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     audioOriginalPath,
     traits,
     sortOrder,
+    recipe,
   );
   @override
   bool operator ==(Object other) =>
@@ -1342,7 +1379,8 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
           other.audioBaristaPath == this.audioBaristaPath &&
           other.audioOriginalPath == this.audioOriginalPath &&
           other.traits == this.traits &&
-          other.sortOrder == this.sortOrder);
+          other.sortOrder == this.sortOrder &&
+          other.recipe == this.recipe);
 }
 
 class ItemsCompanion extends UpdateCompanion<ItemRow> {
@@ -1365,6 +1403,7 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
   final Value<String?> audioOriginalPath;
   final Value<String> traits;
   final Value<int> sortOrder;
+  final Value<String?> recipe;
   final Value<int> rowid;
   const ItemsCompanion({
     this.id = const Value.absent(),
@@ -1386,6 +1425,7 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     this.audioOriginalPath = const Value.absent(),
     this.traits = const Value.absent(),
     this.sortOrder = const Value.absent(),
+    this.recipe = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ItemsCompanion.insert({
@@ -1408,6 +1448,7 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     this.audioOriginalPath = const Value.absent(),
     this.traits = const Value.absent(),
     this.sortOrder = const Value.absent(),
+    this.recipe = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        categoryId = Value(categoryId),
@@ -1436,6 +1477,7 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     Expression<String>? audioOriginalPath,
     Expression<String>? traits,
     Expression<int>? sortOrder,
+    Expression<String>? recipe,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1458,6 +1500,7 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
       if (audioOriginalPath != null) 'audio_original_path': audioOriginalPath,
       if (traits != null) 'traits': traits,
       if (sortOrder != null) 'sort_order': sortOrder,
+      if (recipe != null) 'recipe': recipe,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1482,6 +1525,7 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     Value<String?>? audioOriginalPath,
     Value<String>? traits,
     Value<int>? sortOrder,
+    Value<String?>? recipe,
     Value<int>? rowid,
   }) {
     return ItemsCompanion(
@@ -1504,6 +1548,7 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
       audioOriginalPath: audioOriginalPath ?? this.audioOriginalPath,
       traits: traits ?? this.traits,
       sortOrder: sortOrder ?? this.sortOrder,
+      recipe: recipe ?? this.recipe,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1568,6 +1613,9 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     if (sortOrder.present) {
       map['sort_order'] = Variable<int>(sortOrder.value);
     }
+    if (recipe.present) {
+      map['recipe'] = Variable<String>(recipe.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1596,6 +1644,7 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
           ..write('audioOriginalPath: $audioOriginalPath, ')
           ..write('traits: $traits, ')
           ..write('sortOrder: $sortOrder, ')
+          ..write('recipe: $recipe, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2422,6 +2471,7 @@ typedef $$ItemsTableCreateCompanionBuilder = ItemsCompanion Function({
   Value<String?> audioOriginalPath,
   Value<String> traits,
   Value<int> sortOrder,
+  Value<String?> recipe,
   Value<int> rowid,
 });
 typedef $$ItemsTableUpdateCompanionBuilder = ItemsCompanion Function({
@@ -2444,6 +2494,7 @@ typedef $$ItemsTableUpdateCompanionBuilder = ItemsCompanion Function({
   Value<String?> audioOriginalPath,
   Value<String> traits,
   Value<int> sortOrder,
+  Value<String?> recipe,
   Value<int> rowid,
 });
 
@@ -2548,6 +2599,11 @@ class $$ItemsTableFilterComposer
 
   ColumnFilters<int> get sortOrder => $composableBuilder(
     column: $table.sortOrder,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get recipe => $composableBuilder(
+    column: $table.recipe,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -2655,6 +2711,11 @@ class $$ItemsTableOrderingComposer
     column: $table.sortOrder,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get recipe => $composableBuilder(
+    column: $table.recipe,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ItemsTableAnnotationComposer
@@ -2740,6 +2801,9 @@ class $$ItemsTableAnnotationComposer
 
   GeneratedColumn<int> get sortOrder =>
       $composableBuilder(column: $table.sortOrder, builder: (column) => column);
+
+  GeneratedColumn<String> get recipe =>
+      $composableBuilder(column: $table.recipe, builder: (column) => column);
 }
 
 class $$ItemsTableTableManager
@@ -2789,6 +2853,7 @@ class $$ItemsTableTableManager
                 Value<String?> audioOriginalPath = const Value.absent(),
                 Value<String> traits = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
+                Value<String?> recipe = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ItemsCompanion(
                 id: id,
@@ -2810,6 +2875,7 @@ class $$ItemsTableTableManager
                 audioOriginalPath: audioOriginalPath,
                 traits: traits,
                 sortOrder: sortOrder,
+                recipe: recipe,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -2833,6 +2899,7 @@ class $$ItemsTableTableManager
                 Value<String?> audioOriginalPath = const Value.absent(),
                 Value<String> traits = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
+                Value<String?> recipe = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ItemsCompanion.insert(
                 id: id,
@@ -2854,6 +2921,7 @@ class $$ItemsTableTableManager
                 audioOriginalPath: audioOriginalPath,
                 traits: traits,
                 sortOrder: sortOrder,
+                recipe: recipe,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

@@ -13,7 +13,8 @@ category's drinks as cards. Each card answers «يعني إيه؟» at a glance:
 4. the «يعني» line, what it is in everyday words, e.g. «فرابيه يعني ميلك
    شيك بالقهوة» (understand it).
 
-No price on the card: the drink page has it. Tapping a chip shows just that
+No price anywhere: the app explains what a drink is, not its cost
+(`AppContent.showPrices`). Tapping a chip shows just that
 category. Categories come from the
 data, so new ones (and later whole sections like desserts) appear without an
 app update.
@@ -123,7 +124,8 @@ None.
   sits under (its list ends `AppDimens.tabBarHeight` higher). Cards and the
   drink of the day open the drink (`item_details`). The grid is the shared
   `DrinkGrid` (`core/widgets/drink_grid.dart`), the same as Favorites.
-- Calories and prices are labelled approximate at the end of the list.
+- Calories are labelled approximate at the end of the list («السعرات
+  تقريبية»).
 
 ## Demo & post
 **Hook (first 2 seconds):** «منيو الكافيه… بس مفهوم» / "A café menu… that finally makes sense."
