@@ -297,6 +297,9 @@ class AppScaffold extends StatelessWidget {
     }
     return GlassScaffold(
       background: background ?? ColoredBox(color: context.palette.surface),
+      // The body starts under the bar, not behind it: by default its first
+      // row (a section label) hid under the back button.
+      extendBody: false,
       appBar: hasBar
           ? GlassAppBar(
               // Like iOS: back at the start, the title centred, actions at
