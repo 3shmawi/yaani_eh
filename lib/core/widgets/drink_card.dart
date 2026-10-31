@@ -184,7 +184,7 @@ class DrinkCard extends StatelessWidget {
   ];
 }
 
-/// «يعني ميلك شيك بالقهوة»: the lead word in `brand`, the meaning in ink.
+/// «يعني قهوة بلبن كتير»: the lead word in `brand`, the meaning in ink.
 /// Takes at least two lines of space, so the cards in a row line up, and
 /// shows whole however long it is.
 class _Meaning extends StatelessWidget {
