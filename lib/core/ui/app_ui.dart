@@ -299,26 +299,27 @@ class AppScaffold extends StatelessWidget {
       background: background ?? ColoredBox(color: context.palette.surface),
       appBar: hasBar
           ? GlassAppBar(
-              // Back, title and actions share the title slot (no flex: the
-              // slot's width may be unbounded).
-              title: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (canPop)
-                    AppIconButton(
+              // Like iOS: back at the start, the title centred, actions at
+              // the end, each in its own slot. The bar is as tall as a
+              // button (48), or a button would spill over the title.
+              toolbarHeight: AppDimens.touchTarget,
+              leading: canPop
+                  ? AppIconButton(
                       icon: AdaptiveIcons.back(context),
                       tooltip: MaterialLocalizations.of(context)
                           .backButtonTooltip,
                       onPressed: () => Navigator.of(context).maybePop(),
+                    )
+                  : null,
+              title: title == null
+                  ? null
+                  : Text(
+                      title!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.text(TextRole.headline),
                     ),
-                  if (title != null)
-                    Text(title!, maxLines: 1, overflow: TextOverflow.ellipsis),
-                  if (actions.isNotEmpty) ...[
-                    SizedBox(width: AppDimens.space2),
-                    ...actions,
-                  ],
-                ],
-              ),
+              actions: actions.isEmpty ? null : actions,
             )
           : null,
       // Transparent Material: ListTile, InkWell, TextField… need one, and
