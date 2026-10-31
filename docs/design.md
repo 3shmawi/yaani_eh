@@ -19,7 +19,8 @@ component READMEs under `project/components/`, and the screen's
 | Colors that change with the theme | `AppPalette` (light/dark) in `app_colors.dart`, read with `context.palette`; Material roles are overridden from it in `AppTheme` |
 | Colors that never change (header band, clear glass, selected) | `AppColors` in `app_colors.dart` |
 | Type scale (Latin + Arabic) | `app_text_styles.dart`: `context.text(TextRole.x)` for UI copy, `AppTextStyles.forText(string, role)` for content (picks the font by the string's script) |
-| Spacing, radius, blur, sizes | `app_dimens.dart` (`space1…space10`, `radiusSm…Pill`, `touchTarget`, `controlHeight`, `chipHeight`…); blur sigma = CSS value ÷ 2 |
+| Spacing, radius, blur, sizes | `app_dimens.dart` (`space1…space10`, `radiusSm…Pill`, `touchTarget`, `controlHeight`, `chipHeight`…); blur sigma = CSS value ÷ 2. They follow the screen from the 375×812 frame, by at most 1.1× (`AppDimens.maxScale`, `designFor`): a Pro Max or a tablet gets more room, not bigger everything |
+| Text size | Points, never screen-scaled (like iOS): the same on every phone, growing only with the phone's text size setting. Arabic body, callout, headline and card text are 1 pt smaller than Latin (Readex Pro draws bigger), with tighter lines |
 | Icons (SF Symbols look: outline + fill) | `app_icons.dart` (`AppIcons`, `AppIconsFill`), from `CupertinoIcons` (cupertino_icons, MIT) on every platform, so the glass controls read like iOS; coffee and cake (not in that set) from Phosphor Regular, bundled in `assets/fonts/Phosphor`. `AppIcons.back` / `forward` mirror in RTL (back points right in Arabic, like iOS); `CupertinoIcons.chevron_back` itself doesn't |
 | Glass (clear / frosted, tone, lite) | `AppGlass` in `lib/core/ui/app_ui.dart` (+ `glass_tone.dart`) |
 | Button, IconButton, Card | `AppButton`, `AppIconButton`, `AppCard` in `app_ui.dart` |
