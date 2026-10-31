@@ -329,7 +329,10 @@ class AppScaffold extends StatelessWidget {
       // GlassScaffold (unlike Scaffold) doesn't provide it.
       body: Material(
         type: MaterialType.transparency,
+        // With a bar, GlassScaffold already starts the body below the
+        // status bar and the bar; keeping the top inset would add it twice.
         child: SafeArea(
+          top: !hasBar,
           child: Column(
             children: [
               const OfflineBanner(),
