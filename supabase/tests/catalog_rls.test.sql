@@ -4,7 +4,7 @@
 -- only; that hostile values are rejected.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(41);
+select plan(46);
 
 -- RLS on every table.
 select ok((select relrowsecurity from pg_class where oid = 'public.categories'::regclass), 'RLS on categories');
@@ -136,6 +136,19 @@ select throws_ok(
   $$ update public.items set gist_en = '' where slug = 'latte' $$,
   '23514', null, 'an empty «يعني» line is rejected (null means none)'
 );
+select is(
+  (select count(*)::int from public.items
+   where is_published and jsonb_array_length(recipe -> 'steps') > 0),
+  41, 'every drink has «طريقة التحضير»'
+);
+select throws_ok(
+  $$ update public.items set recipe = '"steps"'::jsonb where slug = 'latte' $$,
+  '23514', null, 'a recipe that is not an object is rejected'
+);
+select throws_ok(
+  $$ update public.items set recipe = '{"layers": [], "steps": []}'::jsonb where slug = 'latte' $$,
+  '23514', null, 'a recipe without layers or steps is rejected'
+);
 
 -- As anon (the app).
 set local role anon;
@@ -148,6 +161,10 @@ select ok((select count(*) > 300 from public.item_terms), 'anon can read search 
 select is(
   (select gist_ar from public.items where slug = 'coffee_frappe'), 'قهوة باللبن والتلج في الخلاط',
   'anon can read the «يعني» line'
+);
+select is(
+  (select recipe -> 'layers' -> 0 ->> 'tone' from public.items where slug = 'flat_white'), 'espresso',
+  'anon can read a recipe'
 );
 
 select is(
@@ -183,6 +200,12 @@ select results_eq(
      select count(*)::int from changed $$,
   $$ values (0) $$,
   'anon cannot change a «يعني» line'
+);
+select results_eq(
+  $$ with changed as (update public.items set recipe = '{"layers": [{}], "steps": [{}]}'::jsonb returning 1)
+     select count(*)::int from changed $$,
+  $$ values (0) $$,
+  'anon cannot change a recipe'
 );
 select results_eq(
   $$ with gone as (delete from public.items returning 1) select count(*)::int from gone $$,

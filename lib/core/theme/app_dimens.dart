@@ -71,6 +71,22 @@ abstract final class AppDimens {
   /// One tile of the header band's mashrabiya pattern.
   static double get patternTile => 28.r;
 
+  /// «طريقة التحضير»: the cup, the numbered dots of the steps, the sheet's
+  /// grab handle, and the big picture of a step in step-by-step mode.
+  static double get cupWidth => 112.r;
+  static double get cupHeight => 136.r;
+  static double get stepDot => 34.r;
+  static double get stepLine => 2.r;
+  static double get grabWidth => 38.w;
+  static double get grabHeight => 5.h;
+  static double get stepArt => 120.r;
+  static double get stepArtIcon => 54.r;
+  static double get progressHeight => 4.h;
+  static double get legendSwatch => 12.r;
+
+  /// How tall a sheet may get, as a share of the screen.
+  static const double sheetMaxShare = 0.92;
+
   /// Pronounce pill: the visible height of a segment and the speed toggle
   /// (the tap area stays [touchTarget]).
   static double get pronounceSegment => 36.r;
@@ -103,6 +119,13 @@ abstract final class AppMotion {
 
   /// A list's cards rising into place the first time it shows.
   static const reveal = Duration(milliseconds: 280);
+
+  /// The cup filling in, one layer after another (bottom first).
+  static const pourLayer = Duration(milliseconds: 520);
+  static const pourStagger = Duration(milliseconds: 260);
+
+  /// Step by step: sliding to the next step.
+  static const step = Duration(milliseconds: 360);
   static const revealStagger = Duration(milliseconds: 45);
   static const revealRise = 12.0;
 

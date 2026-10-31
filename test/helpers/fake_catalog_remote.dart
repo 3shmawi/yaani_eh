@@ -288,6 +288,7 @@ List<Map<String, Object?>> sampleItems({bool withAudio = false}) {
             : null,
         'traits': {'temp': d.$7 ? 'cold' : 'hot', 'milk': true},
         'sort_order': i,
+        'recipe': sampleRecipes[d.$1],
         'is_published': true,
         'updated_at':
             '2026-10-01T10:00:${(i + 10).toString().padLeft(2, '0')}Z',
@@ -305,6 +306,109 @@ const _gists = {
     'قهوة باللبن تقيلة في فنجان صغير',
     'Strong milky coffee in a small cup',
   ),
+};
+
+/// «طريقة التحضير» of two drinks, as in supabase/content/recipes.json
+/// (a few minutes, and a night in the fridge); the others have none yet.
+const sampleRecipes = <String, Map<String, Object?>>{
+  'flat_white': {
+    'minutes': 2,
+    'layers': [
+      {
+        'tone': 'espresso',
+        'ml': 60,
+        'ar': 'قهوة مركّزة (شوتين)',
+        'en': 'Strong coffee (2 shots)',
+      },
+      {'tone': 'milk', 'ml': 110, 'ar': 'لبن سخن ناعم', 'en': 'Silky hot milk'},
+      {'tone': 'foam', 'ml': 10, 'ar': 'رغوة رفيعة', 'en': 'Thin foam'},
+    ],
+    'steps': [
+      {
+        'icon': 'grind',
+        'title_ar': 'اطحن البن ناعم',
+        'title_en': 'Grind the coffee fine',
+        'note_ar': 'قريب من نعومة السكر الناعم.',
+        'note_en': 'About as fine as caster sugar.',
+        'amount_ar': '18 جرام بن',
+        'amount_en': '18 g coffee',
+      },
+      {
+        'icon': 'shot',
+        'title_ar': 'اعمل شوتين قهوة مركّزة',
+        'title_en': 'Pull two strong shots',
+        'note_ar': 'لحد ما يطلع سائل تقيل عليه وش بني.',
+        'note_en': 'Until a thick shot with a brown crema comes out.',
+        'amount_ar': '60 مل',
+        'amount_en': '60 ml',
+      },
+      {
+        'icon': 'steam',
+        'title_ar': 'سخّن اللبن لحد ما يبقى ناعم',
+        'title_en': 'Steam the milk until silky',
+        'note_ar': 'بالبخار، من غير ما يغلي. الرغوة تبقى رفيعة جدًا.',
+        'note_en': 'Hot, never boiling. The foam stays very thin.',
+        'amount_ar': '110 مل',
+        'amount_en': '110 ml',
+      },
+      {
+        'icon': 'pour',
+        'title_ar': 'صب اللبن على القهوة من قريب',
+        'title_en': 'Pour the milk in, close to the cup',
+        'note_ar': 'ببطء في النص، وفي الآخر ارسم قلب صغير على الوش.',
+        'note_en': 'Slowly, into the middle; finish with a small heart on top.',
+        'amount_ar': 'في فنجان 180 مل',
+        'amount_en': 'In a 180 ml cup',
+      },
+    ],
+  },
+  'cold_brew': {
+    'minutes': 720,
+    'layers': [
+      {'tone': 'ice', 'ml': 100, 'ar': 'تلج', 'en': 'Ice'},
+      {
+        'tone': 'coffee',
+        'ml': 250,
+        'ar': 'قهوة متنقّعة في مية ساقعة',
+        'en': 'Coffee steeped in cold water',
+      },
+    ],
+    'steps': [
+      {
+        'icon': 'grind',
+        'title_ar': 'اطحن البن خشن',
+        'title_en': 'Grind the coffee coarse',
+        'note_ar': 'خشن زي الملح الخشن.',
+        'note_en': 'Like coarse salt.',
+        'amount_ar': '80 جرام بن',
+        'amount_en': '80 g coffee',
+      },
+      {
+        'icon': 'steep',
+        'title_ar': 'نقّعه في مية ساقعة في التلاجة',
+        'title_en': 'Soak it in cold water in the fridge',
+        'note_ar': 'طول الليل. المية الساقعة بتطلّع الطعم من غير المرارة.',
+        'note_en':
+            'Overnight. Cold water draws out the taste without the bitterness.',
+        'amount_ar': 'لتر مية · 12 ساعة',
+        'amount_en': '1 litre water · 12 hours',
+      },
+      {
+        'icon': 'pour',
+        'title_ar': 'صفّيه من البن',
+        'title_en': 'Strain out the coffee',
+        'note_ar': 'في فلتر قماش أو ورق.',
+        'note_en': 'Through a cloth or paper filter.',
+      },
+      {
+        'icon': 'ice',
+        'title_ar': 'صبه على تلج',
+        'title_en': 'Pour it over ice',
+        'amount_ar': '250 مل',
+        'amount_en': '250 ml',
+      },
+    ],
+  },
 };
 
 /// The Café section's traits, as in supabase/content/build_seed.py.

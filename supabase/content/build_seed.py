@@ -13,6 +13,9 @@ Also writes 0004_item_gist.sql, the short «يعني» line of each drink
 production, and an applied migration is never rewritten. Later changes to
 the lines in drinks.csv go out as a new migration (like 0006).
 
+And 0007_item_recipes.sql, «طريقة التحضير» from recipes.json, the same
+way (written once, then frozen).
+
 Every «يعني» line is checked against MENU_WORDS: it must say what a drink
 is in words everyone knows, so it can't lean on another menu word.
 """
@@ -20,10 +23,12 @@ is in words everyone knows, so it can't lean on another menu word.
 import csv
 import json
 import pathlib
+import re
 
 ROOT = pathlib.Path(__file__).resolve().parent
 OUT = ROOT.parent / "migrations" / "0003_seed_drinks.sql"
 GIST_OUT = ROOT.parent / "migrations" / "0004_item_gist.sql"
+RECIPE_OUT = ROOT.parent / "migrations" / "0007_item_recipes.sql"
 
 # Borrowed menu words a «يعني» line may not use: someone who doesn't know
 # one drink may not know these either. Everyday words (شاي أخضر، كركديه،
@@ -186,6 +191,7 @@ def main():
     OUT.write_text("\n".join(out), encoding="utf-8")
     print(f"wrote {OUT.relative_to(ROOT.parent.parent)}: {len(rows)} items, {len(terms)} terms")
     write_gists(rows)
+    write_recipes(rows)
 
 
 def write_gists(rows):
@@ -226,6 +232,110 @@ def write_gists(rows):
     ]
     GIST_OUT.write_text("\n".join(out), encoding="utf-8")
     print(f"wrote {GIST_OUT.relative_to(ROOT.parent.parent)}: {len(rows)} lines")
+
+
+# The colours a cup layer can have and the pictures a step can have. The app
+# knows the same names (RecipeTone / RecipeIcon); an unknown one falls back.
+RECIPE_TONES = {
+    "espresso", "coffee", "foam", "water", "milk", "condensed", "chocolate",
+    "white_chocolate", "caramel", "vanilla", "cream", "ice_cream", "ice",
+    "blended_coffee", "blended_caramel", "blended_chocolate", "blended_vanilla",
+    "tea", "green_tea", "chai", "matcha", "hibiscus", "mint_tea", "mango",
+    "strawberry", "orange", "lemon", "fruit", "berry", "hot_chocolate",
+    "sahlab", "nuts", "cookies", "soda",
+}
+RECIPE_ICONS = {
+    "grind", "shot", "boil", "steep", "milk", "steam", "pour", "ice", "blend",
+    "stir", "sweeten", "top", "squeeze", "serve",
+}
+# A range like «25–30» turns around in RTL text; content says «حوالي 30».
+RANGE = re.compile(r"\d\s*[-–—]\s*\d")
+
+
+def recipe_json(slug, recipe, size_ml):
+    """One drink's recipe as stored in items.recipe, after checking it."""
+    layers = recipe["layers"]
+    steps = recipe["steps"]
+    assert 1 <= len(layers) <= 6, f"{slug}: 1 to 6 layers"
+    assert 1 <= len(steps) <= 8, f"{slug}: 1 to 8 steps"
+    total = sum(ml for _, ml, _, _ in layers)
+    assert total == size_ml, f"{slug}: layers add up to {total} ml, the drink is {size_ml}"
+    assert 1 <= recipe["minutes"] <= 1440, slug
+    texts = []
+    out_layers = []
+    for tone, ml, ar, en in layers:
+        assert tone in RECIPE_TONES, f"{slug}: unknown tone {tone}"
+        assert ml > 0 and 1 <= len(ar) <= 40 and 1 <= len(en) <= 40, f"{slug}: {ar}"
+        texts += [ar, en]
+        out_layers.append({"tone": tone, "ml": ml, "ar": ar, "en": en})
+    out_steps = []
+    for icon, title_ar, note_ar, amount_ar, title_en, note_en, amount_en in steps:
+        assert icon in RECIPE_ICONS, f"{slug}: unknown icon {icon}"
+        assert 1 <= len(title_ar) <= 60 and 1 <= len(title_en) <= 60, f"{slug}: {title_ar}"
+        assert len(note_ar) <= 160 and len(note_en) <= 160, f"{slug}: {title_ar}"
+        assert len(amount_ar) <= 40 and len(amount_en) <= 40, f"{slug}: {title_ar}"
+        assert bool(note_ar) == bool(note_en) and bool(amount_ar) == bool(amount_en), f"{slug}: {title_ar}"
+        texts += [title_ar, note_ar, amount_ar, title_en, note_en, amount_en]
+        step = {"icon": icon, "title_ar": title_ar, "title_en": title_en}
+        if note_ar:
+            step |= {"note_ar": note_ar, "note_en": note_en}
+        if amount_ar:
+            step |= {"amount_ar": amount_ar, "amount_en": amount_en}
+        out_steps.append(step)
+    for text in texts:
+        used = [w for w in MENU_WORDS if w in text.lower()]
+        assert not used, f"{slug}: «{text}» uses a menu word {used}"
+        assert not RANGE.search(text), f"{slug}: «{text}» has a number range"
+    return {"minutes": recipe["minutes"], "layers": out_layers, "steps": out_steps}
+
+
+def write_recipes(rows):
+    """0007: the recipe column, then each drink's «طريقة التحضير»."""
+    recipes = json.loads((ROOT / "recipes.json").read_text(encoding="utf-8"))
+    recipes.pop("_about", None)
+    slugs = [r["slug"] for r in rows]
+    assert set(recipes) == set(slugs), f"recipes.json vs drinks.csv: {set(recipes) ^ set(slugs)}"
+    built = [
+        (r["slug"], recipe_json(r["slug"], recipes[r["slug"]], int(r["size_ml"])))
+        for r in rows
+    ]
+    if RECIPE_OUT.exists():
+        print(f"kept {RECIPE_OUT.relative_to(ROOT.parent.parent)} (applied; never rewritten)")
+        return
+    out = [
+        "-- «طريقة التحضير»: how each drink is made. The cup's layers to scale",
+        "-- (tone, ml, name; bottom to top, adding up to size_ml) and the steps in",
+        "-- order (icon, title, note, amount), in Arabic and English.",
+        "-- GENERATED by supabase/content/build_seed.py from recipes.json — don't edit.",
+        "-- Updates only fill empty recipes, so edits made in Studio are kept; the",
+        "-- touch trigger bumps updated_at, so phones pick them up on next sync.",
+        "",
+        "alter table public.items",
+        "  add column if not exists recipe jsonb",
+        "    check (",
+        "      recipe is null or (",
+        "        jsonb_typeof(recipe) = 'object'",
+        "        and jsonb_typeof(recipe -> 'layers') = 'array'",
+        "        and jsonb_array_length(recipe -> 'layers') between 1 and 6",
+        "        and jsonb_typeof(recipe -> 'steps') = 'array'",
+        "        and jsonb_array_length(recipe -> 'steps') between 1 and 8",
+        "        and pg_column_size(recipe) <= 16384",
+        "      )",
+        "    );",
+        "",
+        "update public.items i",
+        "set recipe = coalesce(i.recipe, v.recipe::jsonb)",
+        "from (values",
+        ",\n".join(
+            f"  ({lit(slug)}, {lit(json.dumps(recipe, ensure_ascii=False))})"
+            for slug, recipe in built
+        ),
+        ") as v (slug, recipe)",
+        "where i.slug = v.slug and i.recipe is null;",
+        "",
+    ]
+    RECIPE_OUT.write_text("\n".join(out), encoding="utf-8")
+    print(f"wrote {RECIPE_OUT.relative_to(ROOT.parent.parent)}: {len(built)} recipes")
 
 
 if __name__ == "__main__":

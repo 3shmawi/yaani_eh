@@ -206,6 +206,26 @@ void main() {
       await tester.expectAccessible();
     });
 
+    testWidgets("«how it's made» opens the recipe sheet", (tester) async {
+      await pumpPage(tester, 'flat_white');
+      await tester.pumpAndSettle();
+      final row = find.byKey(const Key('drink_recipe'));
+      await tester.ensureVisible(row);
+      await tester.pumpAndSettle();
+      expect(find.text("How it's made · 180 ml"), findsOneWidget);
+      await tester.expectAccessible();
+
+      await tester.tap(row);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('recipe_view')), findsOneWidget);
+    });
+
+    testWidgets("no recipe yet, no «how it's made»", (tester) async {
+      await pumpPage(tester, 'cortado');
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('drink_recipe')), findsNothing);
+    });
+
     testWidgets('a drink without clips has no pill', (tester) async {
       await pumpPage(tester, 'cortado');
       await tester.pumpAndSettle();

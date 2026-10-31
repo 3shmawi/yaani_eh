@@ -13,6 +13,11 @@ abstract final class AppRoutes {
   static const drinkPattern = '/drink/:slug';
   static String drink(String slug) => '/drink/$slug';
 
+  /// A drink's «طريقة التحضير», one step at a time:
+  /// `/drink/flat_white/steps` (over the drink page).
+  static const drinkStepsSegment = 'steps';
+  static String drinkSteps(String slug) => '/drink/$slug/$drinkStepsSegment';
+
   /// Search, optionally with a query: `/search?q=latte`.
   static const search = '/search';
   static String searchFor(String query) =>

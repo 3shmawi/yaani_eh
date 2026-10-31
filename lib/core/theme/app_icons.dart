@@ -9,9 +9,20 @@ import 'package:flutter/cupertino.dart';
 abstract final class AppIcons {
   static const _phosphor = 'PhosphorRegular';
 
-  /// Back chevron: mirrors in RTL (like iOS).
-  static const IconData back = CupertinoIcons.chevron_back;
-  static const IconData forward = CupertinoIcons.chevron_forward;
+  /// Back and forward chevrons: they mirror in RTL, like iOS (in Arabic,
+  /// back points right). `CupertinoIcons.chevron_back` itself doesn't.
+  static const IconData back = IconData(
+    0xf3cf,
+    fontFamily: CupertinoIcons.iconFont,
+    fontPackage: CupertinoIcons.iconFontPackage,
+    matchTextDirection: true,
+  );
+  static const IconData forward = IconData(
+    0xf3d1,
+    fontFamily: CupertinoIcons.iconFont,
+    fontPackage: CupertinoIcons.iconFontPackage,
+    matchTextDirection: true,
+  );
   static const IconData search = CupertinoIcons.search;
   static const IconData heart = CupertinoIcons.heart;
   static const IconData speaker = CupertinoIcons.speaker_2;
@@ -28,6 +39,25 @@ abstract final class AppIcons {
   static const IconData retry = CupertinoIcons.arrow_clockwise;
   static const IconData check = CupertinoIcons.checkmark;
   static const IconData settings = CupertinoIcons.gear_alt;
+  static const IconData time = CupertinoIcons.timer;
+  static const IconData hot = CupertinoIcons.flame;
+  static const IconData cold = CupertinoIcons.snow;
+
+  /// «طريقة التحضير»: the list row, and the picture of each kind of step.
+  static const IconData recipe = CupertinoIcons.list_number;
+  static const IconData stepGrind = CupertinoIcons.circle_grid_hex;
+  static const IconData stepBoil = CupertinoIcons.flame;
+  static const IconData stepSteep = CupertinoIcons.hourglass;
+  static const IconData stepMilk = CupertinoIcons.drop;
+  static const IconData stepSteam = CupertinoIcons.thermometer_sun;
+  static const IconData stepPour = CupertinoIcons.arrow_down_to_line;
+  static const IconData stepIce = CupertinoIcons.snow;
+  static const IconData stepBlend = CupertinoIcons.tornado;
+  static const IconData stepStir = CupertinoIcons.arrow_2_circlepath;
+  static const IconData stepSweeten = CupertinoIcons.cube;
+  static const IconData stepTop = CupertinoIcons.sparkles;
+  static const IconData stepSqueeze = CupertinoIcons.drop_triangle;
+  static const IconData stepServe = CupertinoIcons.checkmark_alt;
   static const coffee = IconData(0xe1c2, fontFamily: _phosphor);
   static const cake = IconData(0xe780, fontFamily: _phosphor);
 }

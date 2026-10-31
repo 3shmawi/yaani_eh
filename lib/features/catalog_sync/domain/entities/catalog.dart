@@ -1,4 +1,7 @@
 import 'package:meta/meta.dart';
+import 'package:yaani_eh/features/catalog_sync/domain/entities/recipe.dart';
+
+export 'package:yaani_eh/features/catalog_sync/domain/entities/recipe.dart';
 
 /// A section (root: Café, later Restaurants…) or a chip inside one
 /// (Coffee, Frappés…). Content, not code: new ones arrive with a sync.
@@ -76,6 +79,7 @@ class CatalogItem {
     this.traits = const {},
     this.sortOrder = 0,
     this.terms = const [],
+    this.recipe,
   });
 
   final String id;
@@ -107,6 +111,9 @@ class CatalogItem {
   final Map<String, Object?> traits;
   final int sortOrder;
   final List<ItemTerm> terms;
+
+  /// «طريقة التحضير»; null when it hasn't been written yet.
+  final Recipe? recipe;
 
   /// The «يعني» line in one language; without one, the explanation's first
   /// sentence (cards keep it to two lines).

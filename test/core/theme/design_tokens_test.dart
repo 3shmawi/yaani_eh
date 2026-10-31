@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:yaani_eh/core/text/bidi.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_fonts.dart';
+import 'package:yaani_eh/core/theme/app_icons.dart';
 import 'package:yaani_eh/core/theme/app_text_styles.dart';
 
 double _contrast(Color a, Color b) {
@@ -136,5 +137,10 @@ void main() {
       expect(Bidi.range(90, 90), '\u206690\u2069');
       expect(Bidi.ltr('0.75×'), '\u20660.75×\u2069');
     });
+  });
+
+  test('back and forward chevrons mirror in Arabic, like iOS', () {
+    expect(AppIcons.back.matchTextDirection, isTrue);
+    expect(AppIcons.forward.matchTextDirection, isTrue);
   });
 }

@@ -517,6 +517,10 @@ enum AppButtonKind {
 
   /// Low emphasis, `brand` label on solid surfaces.
   text,
+
+  /// The main action on the header band: warm milk with an espresso label
+  /// (`AppColors.selected`), like a selected chip.
+  band,
 }
 
 /// The Design System button: 44 tall, 48 hit area, pill, verb label.
@@ -527,6 +531,7 @@ class AppButton extends StatelessWidget {
     this.kind = AppButtonKind.primary,
     this.icon,
     this.tone = GlassTone.auto,
+    this.expand = false,
     super.key,
   });
 
@@ -535,6 +540,9 @@ class AppButton extends StatelessWidget {
   final AppButtonKind kind;
   final IconData? icon;
   final GlassTone tone;
+
+  /// As wide as its parent (the one action of a bar), not its label.
+  final bool expand;
 
   @override
   Widget build(BuildContext context) {
@@ -579,6 +587,19 @@ class AppButton extends StatelessWidget {
         radius: height / 2,
         child: row,
       ),
+      AppButtonKind.band => DecoratedBox(
+        decoration: BoxDecoration(
+          color: AppColors.selected,
+          borderRadius: BorderRadius.circular(height / 2),
+        ),
+        child: IconTheme.merge(
+          data: const IconThemeData(color: AppColors.onSelected),
+          child: DefaultTextStyle.merge(
+            style: const TextStyle(color: AppColors.onSelected),
+            child: row,
+          ),
+        ),
+      ),
       AppButtonKind.text => IconTheme.merge(
         data: IconThemeData(color: p.brand),
         child: DefaultTextStyle.merge(
@@ -603,7 +624,11 @@ class AppButton extends StatelessWidget {
             child: Center(
               widthFactor: 1,
               heightFactor: 1,
-              child: SizedBox(height: height, child: face),
+              child: SizedBox(
+                height: height,
+                width: expand ? double.infinity : null,
+                child: face,
+              ),
             ),
           ),
         ),
@@ -800,6 +825,89 @@ class _AppSegmentedControlState extends State<AppSegmentedControl> {
           for (final s in segments)
             GlassSegment(label: _label(s), semanticLabel: _label(s)),
         ],
+      ),
+    );
+  }
+}
+
+/// Opens a bottom sheet of frosted glass (Design System → Sheet): a grab
+/// handle, then [builder]'s content, which scrolls when it's taller than
+/// the screen allows. Drag it down or tap outside to close. A light tap is
+/// felt as it opens.
+Future<void> showAppSheet(
+  BuildContext context, {
+  required WidgetBuilder builder,
+  required String closeLabel,
+}) {
+  unawaited(HapticFeedback.lightImpact());
+  return showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    useRootNavigator: true,
+    backgroundColor: Colors.transparent,
+    barrierColor: context.palette.scrim,
+    barrierLabel: closeLabel,
+    elevation: 0,
+    constraints: BoxConstraints(
+      maxHeight: MediaQuery.sizeOf(context).height * AppDimens.sheetMaxShare,
+    ),
+    builder: (context) => AppSheet(child: builder(context)),
+  );
+}
+
+/// The glass and grab handle of [showAppSheet].
+class AppSheet extends StatelessWidget {
+  const new({required this.child, super.key});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    final radius = Radius.circular(AppDimens.radiusXl);
+    return ClipRRect(
+      borderRadius: BorderRadius.vertical(top: radius),
+      child: BackdropFilter(
+        filter: AppUi.isLite(context)
+            ? ImageFilter.blur()
+            : ImageFilter.blur(
+                sigmaX: AppDimens.blurGlassStrong,
+                sigmaY: AppDimens.blurGlassStrong,
+              ),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: AppUi.isLite(context) ? p.glassFillLite : p.glassFill,
+            border: Border(top: BorderSide(color: p.glassStroke)),
+          ),
+          child: Material(
+            type: MaterialType.transparency,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: EdgeInsetsDirectional.symmetric(
+                    vertical: AppDimens.space2,
+                  ),
+                  child: Center(
+                    child: Container(
+                      width: AppDimens.grabWidth,
+                      height: AppDimens.grabHeight,
+                      decoration: BoxDecoration(
+                        color: p.lineStrong,
+                        borderRadius: BorderRadius.circular(
+                          AppDimens.radiusPill,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Flexible(child: child),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

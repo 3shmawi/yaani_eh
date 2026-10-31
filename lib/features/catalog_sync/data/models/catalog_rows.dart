@@ -84,8 +84,89 @@ abstract final class CatalogRows {
                 if (e.key is String) e.key as String: e.value,
             },
       sortOrder: _int(row['sort_order']) ?? 0,
+      // A broken recipe hides «طريقة التحضير», never the drink.
+      recipe: recipe(row['recipe']),
     );
   }
+
+  /// «طريقة التحضير» from `items.recipe`, or null when it's missing or
+  /// anything in it is off (the sheet would draw it wrong).
+  static Recipe? recipe(Object? value) {
+    if (value is! Map) return null;
+    final minutes = _int(value['minutes']);
+    final layers = value['layers'];
+    final steps = value['steps'];
+    if (minutes == null || minutes < 1 || minutes > 1440) return null;
+    if (layers is! List || layers.isEmpty || layers.length > 6) return null;
+    if (steps is! List || steps.isEmpty || steps.length > 8) return null;
+    final parsedLayers = <RecipeLayer>[];
+    for (final l in layers) {
+      if (l is! Map) return null;
+      final ml = _int(l['ml']);
+      final ar = _text(l['ar'], 40);
+      final en = _text(l['en'], 40);
+      if (ml == null || ml < 1 || ml > 3000 || ar == null || en == null) {
+        return null;
+      }
+      parsedLayers.add(
+        RecipeLayer(
+          tone: RecipeTone.parse(l['tone']),
+          ml: ml,
+          nameAr: ar,
+          nameEn: en,
+        ),
+      );
+    }
+    final parsedSteps = <RecipeStep>[];
+    for (final s in steps) {
+      if (s is! Map) return null;
+      final titleAr = _text(s['title_ar'], 60);
+      final titleEn = _text(s['title_en'], 60);
+      if (titleAr == null || titleEn == null) return null;
+      parsedSteps.add(
+        RecipeStep(
+          icon: RecipeIcon.parse(s['icon']),
+          titleAr: titleAr,
+          titleEn: titleEn,
+          noteAr: _text(s['note_ar'], 160),
+          noteEn: _text(s['note_en'], 160),
+          amountAr: _text(s['amount_ar'], 40),
+          amountEn: _text(s['amount_en'], 40),
+        ),
+      );
+    }
+    return Recipe(minutes: minutes, layers: parsedLayers, steps: parsedSteps);
+  }
+
+  /// A recipe in the server's shape, for local storage ([recipe] reads it
+  /// back).
+  static Map<String, Object?> recipeJson(Recipe recipe) => {
+    'minutes': recipe.minutes,
+    'layers': [
+      for (final l in recipe.layers)
+        {
+          'tone': _snakeName(l.tone.name),
+          'ml': l.ml,
+          'ar': l.nameAr,
+          'en': l.nameEn,
+        },
+    ],
+    'steps': [
+      for (final s in recipe.steps)
+        {
+          'icon': _snakeName(s.icon.name),
+          'title_ar': s.titleAr,
+          'title_en': s.titleEn,
+          'note_ar': ?s.noteAr,
+          'note_en': ?s.noteEn,
+          'amount_ar': ?s.amountAr,
+          'amount_en': ?s.amountEn,
+        },
+    ],
+  };
+
+  static String _snakeName(String camel) =>
+      camel.replaceAllMapped(RegExp('[A-Z]'), (m) => '_${m[0]!.toLowerCase()}');
 
   /// A search term with the id of its item, or null.
   static (String itemId, ItemTerm term)? term(Object? row) {

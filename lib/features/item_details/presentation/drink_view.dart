@@ -28,6 +28,7 @@ class DrinkView extends StatelessWidget {
     required this.onOpenDrink,
     this.pronounce,
     this.saveButton,
+    this.onOpenRecipe,
     super.key,
   });
 
@@ -43,6 +44,9 @@ class DrinkView extends StatelessWidget {
   /// The pronounce pill (feature `pronunciation`), on the photo just above
   /// the sheet; scrolls with it.
   final Widget? pronounce;
+
+  /// «طريقة التحضير» (feature `recipes`); null hides the row (no recipe).
+  final VoidCallback? onOpenRecipe;
 
   @override
   Widget build(BuildContext context) {
@@ -96,6 +100,10 @@ class DrinkView extends StatelessWidget {
           ),
           SizedBox(height: AppDimens.space4),
           TraitPills(facts: facts),
+          if (onOpenRecipe != null && item.recipe != null) ...[
+            SizedBox(height: AppDimens.space4),
+            _RecipeRow(recipe: item.recipe!, onTap: onOpenRecipe!),
+          ],
           SizedBox(height: AppDimens.space4),
           _PriceCard(facts: facts),
           if (similar.isNotEmpty) ...[
@@ -319,4 +327,71 @@ class DrinkLoadingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       Material(color: context.palette.surface, child: const LoadingView());
+}
+
+/// The way into «طريقة التحضير»: what it is and the cup's size, then a
+/// chevron.
+class _RecipeRow extends StatelessWidget {
+  const new({required this.recipe, required this.onTap});
+
+  final Recipe recipe;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    final l10n = context.l10n;
+    return Semantics(
+      button: true,
+      label: l10n.previewRecipe,
+      hint: l10n.recipeSubtitle(recipe.totalMl),
+      excludeSemantics: true,
+      child: AppPressable(
+        key: const Key('drink_recipe'),
+        onTap: onTap,
+        child: Container(
+          constraints: const BoxConstraints(minHeight: AppDimens.touchTarget),
+          padding: EdgeInsetsDirectional.symmetric(
+            horizontal: AppDimens.space4,
+            vertical: AppDimens.space3,
+          ),
+          decoration: BoxDecoration(
+            color: p.surfaceRaised,
+            borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+            border: Border.all(color: p.line),
+          ),
+          child: Row(
+            children: [
+              Icon(AppIcons.recipe, size: AppDimens.icon, color: p.brand),
+              SizedBox(width: AppDimens.space3),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.previewRecipe,
+                      style: context
+                          .text(TextRole.callout)
+                          .copyWith(color: p.ink, fontWeight: FontWeight.w600),
+                    ),
+                    Text(
+                      l10n.recipeSubtitle(recipe.totalMl),
+                      style: context
+                          .text(TextRole.caption)
+                          .copyWith(color: p.inkMuted),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                AppIcons.forward,
+                size: AppDimens.iconChip,
+                color: p.inkMuted,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

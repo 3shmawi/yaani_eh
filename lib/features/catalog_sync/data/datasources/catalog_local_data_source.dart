@@ -80,6 +80,11 @@ class CatalogLocalDataSource {
               audioOriginalPath: Value(i.audioOriginalPath),
               traits: Value(CatalogRows.encode(i.traits)),
               sortOrder: Value(i.sortOrder),
+              recipe: Value(
+                i.recipe == null
+                    ? null
+                    : CatalogRows.encode(CatalogRows.recipeJson(i.recipe!)),
+              ),
             ),
         ])
         ..insertAll(_db.itemTerms, [
@@ -189,6 +194,7 @@ class CatalogLocalDataSource {
       traits: traits is Map<String, Object?> ? traits : const {},
       sortOrder: r.sortOrder,
       terms: terms,
+      recipe: CatalogRows.recipe(CatalogRows.decode(r.recipe)),
     );
   }
 

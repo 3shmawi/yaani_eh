@@ -13,6 +13,7 @@ import 'package:yaani_eh/features/item_details/domain/usecases/describe_item.dar
 import 'package:yaani_eh/features/item_details/presentation/drink_controller.dart';
 import 'package:yaani_eh/features/item_details/presentation/drink_view.dart';
 import 'package:yaani_eh/features/pronunciation/presentation/pronounce.dart';
+import 'package:yaani_eh/features/recipes/presentation/recipe_sheet.dart';
 
 /// `/drink/:slug`: wires one drink's details to [DrinkView].
 class DrinkPage extends ConsumerStatefulWidget {
@@ -66,6 +67,9 @@ class _DrinkPageState extends ConsumerState<DrinkPage> {
             minimal: false,
           ),
           onBack: _back,
+          onOpenRecipe: () => unawaited(
+            showRecipeSheet(context, item, from: RecipeSource.drinkPage),
+          ),
           onOpenDrink: (other) =>
               unawaited(context.push<void>(AppRoutes.drink(other.slug))),
         );

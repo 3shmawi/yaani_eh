@@ -1,0 +1,387 @@
+{
+  "_about": "«طريقة التحضير» of every drink, for review. layers: [tone, ml, ar, en], bottom to top, adding up to the drink's size_ml. steps: [icon, title_ar, note_ar, amount_ar, title_en, note_en, amount_en] (amounts may be empty). Plain words only: no menu words, no number ranges. build_seed.py checks all of it.",
+  "espresso": {
+    "minutes": 1,
+    "layers": [["espresso", 26, "قهوة مركّزة", "Strong coffee"], ["foam", 4, "وش بني", "Brown crema"]],
+    "steps": [
+      ["grind", "اطحن البن ناعم أوي", "قريب من نعومة السكر البودرة. البن الطازة بيفرق في الطعم.", "9 جرام بن", "Grind the coffee very fine", "Nearly as fine as icing sugar. Fresh beans make the difference.", "9 g coffee"],
+      ["shot", "اعمل شوت واحد في المكنة", "المية السخنة بتعدّي على البن تحت ضغط، في حوالي 25 ثانية.", "30 مل", "Pull one shot", "Hot water is pushed through the coffee, in about 25 seconds.", "30 ml"],
+      ["serve", "اشربه على طول", "في فنجان صغير سخن، قبل ما الوش البني يختفي.", "", "Drink it right away", "In a small warm cup, before the brown crema fades.", ""]
+    ]
+  },
+  "doppio": {
+    "minutes": 1,
+    "layers": [["espresso", 52, "قهوة مركّزة (شوتين)", "Strong coffee (2 shots)"], ["foam", 8, "وش بني", "Brown crema"]],
+    "steps": [
+      ["grind", "اطحن بن ناعم أوي", "ضعف كمية الفنجان الواحد.", "18 جرام بن", "Grind the coffee very fine", "Twice as much as for a single cup.", "18 g coffee"],
+      ["shot", "اعمل شوتين مع بعض", "من نفس البن، في نفس الفنجان.", "60 مل", "Pull two shots together", "From the same coffee, into the same cup.", "60 ml"],
+      ["serve", "قدّمه سخن", "في فنجان صغير، ومعاه كوباية مية.", "", "Serve it hot", "In a small cup, with a glass of water.", ""]
+    ]
+  },
+  "americano": {
+    "minutes": 2,
+    "layers": [["water", 290, "مية سخنة", "Hot water"], ["espresso", 60, "قهوة مركّزة (شوتين)", "Strong coffee (2 shots)"]],
+    "steps": [
+      ["boil", "حط مية سخنة في المج الأول", "سخنة قوي بس مش بتغلي.", "290 مل", "Pour hot water into the mug first", "Very hot, but not boiling.", "290 ml"],
+      ["shot", "اعمل شوتين قهوة مركّزة", "واعملهم على المية على طول، عشان الوش يفضل فوق.", "60 مل", "Pull two strong shots", "Straight onto the water, so the crema stays on top.", "60 ml"],
+      ["serve", "اشربها سادة أو بسكر", "طعمها زي القهوة الفلتر، خفيفة.", "", "Drink it black or with sugar", "It tastes like filter coffee: light.", ""]
+    ]
+  },
+  "macchiato": {
+    "minutes": 2,
+    "layers": [["espresso", 45, "قهوة مركّزة", "Strong coffee"], ["foam", 15, "معلقة رغوة لبن", "A spoon of milk foam"]],
+    "steps": [
+      ["shot", "اعمل شوتين قهوة مركّزة", "في فنجان صغير.", "45 مل", "Pull two strong shots", "Into a small cup.", "45 ml"],
+      ["steam", "اعمل شوية رغوة لبن", "سخّن شوية لبن بالبخار لحد ما يبقى رغوة.", "", "Froth a little milk", "Steam a little milk until it foams.", ""],
+      ["top", "حط معلقة رغوة في النص", "بس معلقة: القهوة تفضل هي الأساس.", "15 مل", "Spoon the foam into the middle", "Just a spoonful: the coffee stays in charge.", "15 ml"]
+    ]
+  },
+  "cortado": {
+    "minutes": 2,
+    "layers": [["espresso", 60, "قهوة مركّزة (شوتين)", "Strong coffee (2 shots)"], ["milk", 55, "لبن سخن", "Warm milk"], ["foam", 5, "رغوة خفيفة", "A little foam"]],
+    "steps": [
+      ["shot", "اعمل شوتين قهوة مركّزة", "في كوباية إزاز صغيرة.", "60 مل", "Pull two strong shots", "Into a small glass.", "60 ml"],
+      ["steam", "سخّن اللبن من غير رغوة كتير", "سخن ودافي، مش منفوخ.", "60 مل", "Warm the milk with little foam", "Hot and smooth, not puffed up.", "60 ml"],
+      ["pour", "صب اللبن على القهوة", "كمية زي القهوة بالظبط: نص بنص.", "", "Pour the milk onto the coffee", "The same amount as the coffee: half and half.", ""]
+    ]
+  },
+  "flat_white": {
+    "minutes": 2,
+    "layers": [["espresso", 60, "قهوة مركّزة (شوتين)", "Strong coffee (2 shots)"], ["milk", 110, "لبن سخن ناعم", "Silky hot milk"], ["foam", 10, "رغوة رفيعة", "Thin foam"]],
+    "steps": [
+      ["grind", "اطحن البن ناعم", "قريب من نعومة السكر الناعم.", "18 جرام بن", "Grind the coffee fine", "About as fine as caster sugar.", "18 g coffee"],
+      ["shot", "اعمل شوتين قهوة مركّزة", "لحد ما يطلع سائل تقيل عليه وش بني.", "60 مل", "Pull two strong shots", "Until a thick shot with a brown crema comes out.", "60 ml"],
+      ["steam", "سخّن اللبن لحد ما يبقى ناعم", "بالبخار، من غير ما يغلي. الرغوة تبقى رفيعة جدًا.", "110 مل", "Steam the milk until silky", "Hot, never boiling. The foam stays very thin.", "110 ml"],
+      ["pour", "صب اللبن على القهوة من قريب", "ببطء في النص، وفي الآخر ارسم قلب صغير على الوش.", "في فنجان 180 مل", "Pour the milk in, close to the cup", "Slowly, into the middle; finish with a small heart on top.", "In a 180 ml cup"]
+    ]
+  },
+  "cappuccino": {
+    "minutes": 3,
+    "layers": [["espresso", 60, "قهوة مركّزة (شوتين)", "Strong coffee (2 shots)"], ["milk", 100, "لبن سخن", "Hot milk"], ["foam", 90, "رغوة لبن تقيلة", "Thick milk foam"]],
+    "steps": [
+      ["shot", "اعمل شوتين قهوة مركّزة", "في فنجان واسع.", "60 مل", "Pull two strong shots", "Into a wide cup.", "60 ml"],
+      ["steam", "انفخ اللبن بالبخار", "خلّي البخار يدخّل هوا في الأول، لحد ما اللبن يكبر للضعف.", "190 مل", "Froth the milk with steam", "Let the steam pull in air at first, until the milk doubles.", "190 ml"],
+      ["pour", "صب اللبن والرغوة على القهوة", "الرغوة تفضل فوق، طبقة تقيلة.", "", "Pour the milk and foam onto the coffee", "The foam stays on top in a thick layer.", ""],
+      ["top", "رش كاكاو أو قرفة لو تحب", "على الوش.", "", "Dust with cocoa or cinnamon if you like", "On top.", ""]
+    ]
+  },
+  "latte": {
+    "minutes": 3,
+    "layers": [["espresso", 60, "قهوة مركّزة (شوتين)", "Strong coffee (2 shots)"], ["milk", 270, "لبن سخن", "Hot milk"], ["foam", 20, "رغوة خفيفة", "Light foam"]],
+    "steps": [
+      ["shot", "اعمل شوتين قهوة مركّزة", "في مج كبير.", "60 مل", "Pull two strong shots", "Into a big mug.", "60 ml"],
+      ["steam", "سخّن لبن كتير بالبخار", "سخن وناعم، برغوة خفيفة.", "290 مل", "Steam plenty of milk", "Hot and smooth, with a light foam.", "290 ml"],
+      ["pour", "صب اللبن على القهوة", "ببطء، وارسم على الوش لو تعرف.", "في مج 350 مل", "Pour the milk onto the coffee", "Slowly; draw on top if you can.", "In a 350 ml mug"]
+    ]
+  },
+  "spanish_latte": {
+    "minutes": 3,
+    "layers": [["condensed", 30, "لبن مكثّف محلّي", "Sweet condensed milk"], ["espresso", 60, "قهوة مركّزة (شوتين)", "Strong coffee (2 shots)"], ["milk", 240, "لبن سخن", "Hot milk"], ["foam", 20, "رغوة خفيفة", "Light foam"]],
+    "steps": [
+      ["sweeten", "حط لبن مكثّف في قاع المج", "هو اللي بيحلّي المشروب كله.", "2 معلقة كبيرة", "Put condensed milk in the bottom", "It sweetens the whole drink.", "2 tablespoons"],
+      ["shot", "اعمل شوتين قهوة مركّزة عليه", "وقلّب لحد ما يدوب.", "60 مل", "Pull two strong shots onto it", "Stir until it melts in.", "60 ml"],
+      ["steam", "سخّن اللبن بالبخار", "سخن برغوة خفيفة.", "260 مل", "Steam the milk", "Hot, with a light foam.", "260 ml"],
+      ["pour", "صب اللبن على القهوة", "", "", "Pour the milk onto the coffee", "", ""]
+    ]
+  },
+  "mocha": {
+    "minutes": 3,
+    "layers": [["chocolate", 30, "صوص شوكولاتة", "Chocolate sauce"], ["espresso", 60, "قهوة مركّزة (شوتين)", "Strong coffee (2 shots)"], ["milk", 220, "لبن سخن", "Hot milk"], ["cream", 40, "كريمة", "Whipped cream"]],
+    "steps": [
+      ["sweeten", "حط صوص شوكولاتة في المج", "", "2 معلقة كبيرة", "Put chocolate sauce in the mug", "", "2 tablespoons"],
+      ["shot", "اعمل شوتين قهوة مركّزة عليه", "وقلّب كويس لحد ما الشوكولاتة تدوب.", "60 مل", "Pull two strong shots onto it", "Stir well until the chocolate melts.", "60 ml"],
+      ["steam", "سخّن اللبن وصبه", "سخن برغوة خفيفة.", "220 مل", "Steam the milk and pour it in", "Hot, with a light foam.", "220 ml"],
+      ["top", "حط كريمة على الوش", "ولو تحب، شوية صوص شوكولاتة فوقها.", "", "Top with whipped cream", "And a little chocolate sauce over it, if you like.", ""]
+    ]
+  },
+  "caramel_macchiato": {
+    "minutes": 3,
+    "layers": [["vanilla", 20, "سيروب فانيليا", "Vanilla syrup"], ["milk", 250, "لبن سخن", "Hot milk"], ["foam", 20, "رغوة", "Foam"], ["espresso", 50, "قهوة مركّزة", "Strong coffee"], ["caramel", 10, "خطوط كراميل", "Caramel drizzle"]],
+    "steps": [
+      ["sweeten", "حط سيروب فانيليا في المج", "", "2 معلقة كبيرة", "Put vanilla syrup in the mug", "", "2 tablespoons"],
+      ["steam", "سخّن اللبن وصبه على السيرب", "برغوة خفيفة.", "270 مل", "Steam the milk and pour it onto the syrup", "With a light foam.", "270 ml"],
+      ["shot", "صب القهوة المركّزة على الوش", "ببطء في النص، فتعمل بقعة بني فوق اللبن.", "50 مل", "Pour the strong coffee on top", "Slowly, into the middle: it makes a brown spot on the milk.", "50 ml"],
+      ["top", "ارسم خطوط كراميل فوق", "شبكة صغيرة على الوش.", "", "Drizzle caramel on top", "A little criss-cross on top.", ""]
+    ]
+  },
+  "white_mocha": {
+    "minutes": 3,
+    "layers": [["white_chocolate", 35, "صوص شوكولاتة بيضا", "White chocolate sauce"], ["espresso", 60, "قهوة مركّزة (شوتين)", "Strong coffee (2 shots)"], ["milk", 215, "لبن سخن", "Hot milk"], ["cream", 40, "كريمة", "Whipped cream"]],
+    "steps": [
+      ["sweeten", "حط صوص شوكولاتة بيضا في المج", "هي اللي بتخليه حلو أوي.", "2 معلقة كبيرة", "Put white chocolate sauce in the mug", "It's what makes it so sweet.", "2 tablespoons"],
+      ["shot", "اعمل شوتين قهوة مركّزة عليه", "وقلّب لحد ما تدوب.", "60 مل", "Pull two strong shots onto it", "Stir until it melts.", "60 ml"],
+      ["steam", "سخّن اللبن وصبه", "", "215 مل", "Steam the milk and pour it in", "", "215 ml"],
+      ["top", "حط كريمة على الوش", "", "", "Top with whipped cream", "", ""]
+    ]
+  },
+  "turkish_coffee": {
+    "minutes": 5,
+    "layers": [["coffee", 52, "قهوة بالتفل", "Coffee with its grounds"], ["foam", 8, "وش", "Foam on top"]],
+    "steps": [
+      ["grind", "حط بن ناعم جدًا في الكنكة", "بن تركي، ناعم زي البودرة. وسكر لو بتحبها مظبوط أو زيادة.", "معلقة كبيرة بن", "Put very fine coffee in the kanaka", "Ground like powder. Add sugar if you like it sweet.", "1 heaped tablespoon"],
+      ["boil", "ضيف مية ساقعة وقلّب", "قلّب مرة واحدة بس قبل النار.", "60 مل", "Add cold water and stir", "Stir once, before it goes on the heat.", "60 ml"],
+      ["steep", "سيبها على نار هادية لحد ما تفور", "أول ما الوش يطلع لفوق، شيلها قبل ما تغلي.", "حوالي 3 دقايق", "Heat it gently until it rises", "As soon as the foam climbs, take it off before it boils.", "About 3 minutes"],
+      ["serve", "صبها في الفنجان بالوش", "وسيبها دقيقة لحد ما التفل ينزل تحت.", "", "Pour it into the cup with its foam", "Wait a minute for the grounds to settle.", ""]
+    ]
+  },
+  "french_coffee": {
+    "minutes": 4,
+    "layers": [["coffee", 90, "قهوة بالبندق", "Hazelnut coffee"], ["milk", 140, "لبن سخن", "Hot milk"], ["foam", 20, "رغوة", "Foam"]],
+    "steps": [
+      ["grind", "حط بن بالبندق في الكنكة", "بن محوّج بنكهة البندق، زي اللي بيتباع جاهز.", "معلقتين كبار", "Put hazelnut coffee in a pot", "Ready-flavoured hazelnut coffee, as sold in shops.", "2 tablespoons"],
+      ["milk", "ضيف لبن ومية وسكر", "وقلّب.", "140 مل لبن · 90 مل مية", "Add milk, water and sugar", "Stir.", "140 ml milk · 90 ml water"],
+      ["steep", "سخّنها على نار هادية", "لحد ما تفور، من غير ما تغلي.", "", "Heat it gently", "Until it rises, without boiling.", ""],
+      ["serve", "صفّيها في الفنجان", "عشان التفل ميوصلش.", "", "Strain it into the cup", "So the grounds stay behind.", ""]
+    ]
+  },
+  "affogato": {
+    "minutes": 1,
+    "layers": [["ice_cream", 70, "بولة آيس كريم فانيليا", "A scoop of vanilla ice cream"], ["espresso", 50, "قهوة مركّزة سخنة", "Hot strong coffee"]],
+    "steps": [
+      ["top", "حط بولة آيس كريم في فنجان", "فانيليا، ساقعة من الفريزر.", "بولة كبيرة", "Put a scoop of ice cream in a cup", "Vanilla, straight from the freezer.", "1 big scoop"],
+      ["shot", "اعمل شوتين قهوة مركّزة", "", "50 مل", "Pull two strong shots", "", "50 ml"],
+      ["pour", "صب القهوة السخنة على الآيس كريم", "قدّام اللي هيشربه، وكُل بالمعلقة على طول.", "", "Pour the hot coffee over the ice cream", "In front of whoever's having it; eat with a spoon right away.", ""]
+    ]
+  },
+  "iced_americano": {
+    "minutes": 2,
+    "layers": [["ice", 120, "تلج", "Ice"], ["water", 220, "مية ساقعة", "Cold water"], ["espresso", 60, "قهوة مركّزة (شوتين)", "Strong coffee (2 shots)"]],
+    "steps": [
+      ["ice", "املا الكوباية تلج", "", "كوباية 400 مل", "Fill the glass with ice", "", "A 400 ml glass"],
+      ["pour", "صب مية ساقعة", "لحد تلت الكوباية تقريبًا.", "220 مل", "Pour in cold water", "Until it's about two-thirds full.", "220 ml"],
+      ["shot", "صب شوتين قهوة مركّزة على الوش", "", "60 مل", "Pour two strong shots on top", "", "60 ml"]
+    ]
+  },
+  "iced_latte": {
+    "minutes": 2,
+    "layers": [["ice", 120, "تلج", "Ice"], ["milk", 220, "لبن ساقع", "Cold milk"], ["espresso", 60, "قهوة مركّزة (شوتين)", "Strong coffee (2 shots)"]],
+    "steps": [
+      ["ice", "املا الكوباية تلج", "", "كوباية 400 مل", "Fill the glass with ice", "", "A 400 ml glass"],
+      ["milk", "صب لبن ساقع", "", "220 مل", "Pour in cold milk", "", "220 ml"],
+      ["shot", "صب شوتين قهوة مركّزة على الوش", "ببطء، فتنزل القهوة في اللبن على مهلها.", "60 مل", "Pour two strong shots on top", "Slowly, so the coffee sinks into the milk.", "60 ml"],
+      ["stir", "قلّب قبل ما تشرب", "", "", "Stir before you drink", "", ""]
+    ]
+  },
+  "iced_spanish_latte": {
+    "minutes": 2,
+    "layers": [["condensed", 30, "لبن مكثّف محلّي", "Sweet condensed milk"], ["ice", 110, "تلج", "Ice"], ["milk", 200, "لبن ساقع", "Cold milk"], ["espresso", 60, "قهوة مركّزة (شوتين)", "Strong coffee (2 shots)"]],
+    "steps": [
+      ["sweeten", "حط لبن مكثّف في قاع الكوباية", "", "2 معلقة كبيرة", "Put condensed milk in the bottom of the glass", "", "2 tablespoons"],
+      ["ice", "ضيف تلج ولبن ساقع", "", "200 مل لبن", "Add ice and cold milk", "", "200 ml milk"],
+      ["shot", "صب شوتين قهوة مركّزة على الوش", "", "60 مل", "Pour two strong shots on top", "", "60 ml"],
+      ["stir", "قلّب كويس", "عشان اللبن المكثّف يطلع من تحت.", "", "Stir well", "So the condensed milk comes up from the bottom.", ""]
+    ]
+  },
+  "iced_mocha": {
+    "minutes": 2,
+    "layers": [["chocolate", 30, "صوص شوكولاتة", "Chocolate sauce"], ["ice", 110, "تلج", "Ice"], ["milk", 170, "لبن ساقع", "Cold milk"], ["espresso", 60, "قهوة مركّزة (شوتين)", "Strong coffee (2 shots)"], ["cream", 30, "كريمة", "Whipped cream"]],
+    "steps": [
+      ["shot", "اعمل شوتين وقلّبهم مع صوص الشوكولاتة", "وهي سخنة، عشان تدوب.", "60 مل · 2 معلقة صوص", "Stir two strong shots with chocolate sauce", "While hot, so it melts.", "60 ml · 2 tbsp sauce"],
+      ["ice", "املا الكوباية تلج ولبن ساقع", "", "170 مل لبن", "Fill the glass with ice and cold milk", "", "170 ml milk"],
+      ["pour", "صب القهوة بالشوكولاتة على الوش", "", "", "Pour the chocolate coffee on top", "", ""],
+      ["top", "حط كريمة لو تحب", "", "", "Top with whipped cream if you like", "", ""]
+    ]
+  },
+  "cold_brew": {
+    "minutes": 720,
+    "layers": [["ice", 100, "تلج", "Ice"], ["coffee", 250, "قهوة متنقّعة في مية ساقعة", "Coffee steeped in cold water"]],
+    "steps": [
+      ["grind", "اطحن البن خشن", "خشن زي الملح الخشن.", "80 جرام بن", "Grind the coffee coarse", "Like coarse salt.", "80 g coffee"],
+      ["steep", "نقّعه في مية ساقعة في التلاجة", "طول الليل. المية الساقعة بتطلّع الطعم من غير المرارة.", "لتر مية · 12 ساعة", "Soak it in cold water in the fridge", "Overnight. Cold water draws out the taste without the bitterness.", "1 litre water · 12 hours"],
+      ["pour", "صفّيه من البن", "في فلتر قماش أو ورق.", "", "Strain out the coffee", "Through a cloth or paper filter.", ""],
+      ["ice", "صبه على تلج", "", "250 مل", "Pour it over ice", "", "250 ml"]
+    ]
+  },
+  "iced_caramel_macchiato": {
+    "minutes": 2,
+    "layers": [["vanilla", 20, "سيروب فانيليا", "Vanilla syrup"], ["ice", 110, "تلج", "Ice"], ["milk", 200, "لبن ساقع", "Cold milk"], ["espresso", 60, "قهوة مركّزة (شوتين)", "Strong coffee (2 shots)"], ["caramel", 10, "خطوط كراميل", "Caramel drizzle"]],
+    "steps": [
+      ["sweeten", "حط سيروب فانيليا في الكوباية", "", "2 معلقة كبيرة", "Put vanilla syrup in the glass", "", "2 tablespoons"],
+      ["ice", "ضيف تلج ولبن ساقع", "", "200 مل لبن", "Add ice and cold milk", "", "200 ml milk"],
+      ["shot", "صب شوتين قهوة مركّزة على الوش", "من غير ما تقلّب: القهوة تفضل طبقة فوق.", "60 مل", "Pour two strong shots on top", "Don't stir: the coffee stays a layer on top.", "60 ml"],
+      ["top", "ارسم خطوط كراميل فوق", "", "", "Drizzle caramel on top", "", ""]
+    ]
+  },
+  "coffee_frappe": {
+    "minutes": 3,
+    "layers": [["blended_coffee", 360, "قهوة ولبن وتلج مضروبين في الخلاط", "Coffee, milk and ice, blended"], ["cream", 40, "كريمة", "Whipped cream"]],
+    "steps": [
+      ["shot", "اعمل شوتين قهوة مركّزة وسيبهم يبردوا", "أو استعمل قهوة سريعة الدوبان في شوية مية.", "60 مل", "Pull two strong shots and let them cool", "Or use instant coffee in a little water.", "60 ml"],
+      ["blend", "حط في الخلاط القهوة واللبن والتلج والسكر", "", "150 مل لبن · كوباية تلج", "Put the coffee, milk, ice and sugar in the blender", "", "150 ml milk · 1 cup ice"],
+      ["blend", "اضرب لحد ما يبقى ناعم وتقيل", "مفيش حتت تلج، وقوامه زي العصير التقيل.", "حوالي 30 ثانية", "Blend until smooth and thick", "No chunks of ice; as thick as a thick juice.", "About 30 seconds"],
+      ["top", "صبه وحط كريمة على الوش", "", "", "Pour it and top with whipped cream", "", ""]
+    ]
+  },
+  "caramel_frappe": {
+    "minutes": 3,
+    "layers": [["blended_caramel", 350, "قهوة ولبن وتلج وكراميل مضروبين", "Coffee, milk, ice and caramel, blended"], ["cream", 40, "كريمة", "Whipped cream"], ["caramel", 10, "خطوط كراميل", "Caramel drizzle"]],
+    "steps": [
+      ["shot", "اعمل شوتين قهوة مركّزة وسيبهم يبردوا", "", "60 مل", "Pull two strong shots and let them cool", "", "60 ml"],
+      ["blend", "اضرب في الخلاط القهوة واللبن والتلج والكراميل", "لحد ما يبقى ناعم وتقيل.", "150 مل لبن · 2 معلقة كراميل", "Blend the coffee, milk, ice and caramel", "Until smooth and thick.", "150 ml milk · 2 tbsp caramel"],
+      ["top", "صبه وحط كريمة وخطوط كراميل", "", "", "Pour it; add whipped cream and a caramel drizzle", "", ""]
+    ]
+  },
+  "mocha_frappe": {
+    "minutes": 3,
+    "layers": [["blended_chocolate", 350, "قهوة ولبن وتلج وشوكولاتة مضروبين", "Coffee, milk, ice and chocolate, blended"], ["cream", 40, "كريمة", "Whipped cream"], ["chocolate", 10, "صوص شوكولاتة", "Chocolate sauce"]],
+    "steps": [
+      ["shot", "اعمل شوتين قهوة مركّزة وسيبهم يبردوا", "", "60 مل", "Pull two strong shots and let them cool", "", "60 ml"],
+      ["blend", "اضرب في الخلاط القهوة واللبن والتلج والشوكولاتة", "لحد ما يبقى ناعم وتقيل.", "150 مل لبن · 2 معلقة صوص", "Blend the coffee, milk, ice and chocolate", "Until smooth and thick.", "150 ml milk · 2 tbsp sauce"],
+      ["top", "صبه وحط كريمة وصوص شوكولاتة", "", "", "Pour it; add whipped cream and chocolate sauce", "", ""]
+    ]
+  },
+  "vanilla_cream_frappe": {
+    "minutes": 3,
+    "layers": [["blended_vanilla", 360, "لبن وفانيليا وتلج مضروبين", "Milk, vanilla and ice, blended"], ["cream", 40, "كريمة", "Whipped cream"]],
+    "steps": [
+      ["blend", "حط في الخلاط لبن وتلج وفانيليا", "من غير قهوة خالص.", "200 مل لبن · كوباية تلج", "Put milk, ice and vanilla in the blender", "No coffee at all.", "200 ml milk · 1 cup ice"],
+      ["sweeten", "ضيف سكر أو بولة آيس كريم فانيليا", "الآيس كريم بيخليه أتقل.", "", "Add sugar or a scoop of vanilla ice cream", "The ice cream makes it thicker.", ""],
+      ["blend", "اضرب لحد ما يبقى ناعم", "", "حوالي 30 ثانية", "Blend until smooth", "", "About 30 seconds"],
+      ["top", "صبه وحط كريمة على الوش", "", "", "Pour it and top with whipped cream", "", ""]
+    ]
+  },
+  "green_tea": {
+    "minutes": 4,
+    "layers": [["green_tea", 300, "شاي أخضر", "Green tea"]],
+    "steps": [
+      ["boil", "سخّن مية ومتسيبهاش تغلي", "المية اللي بتغلي بتخلي الشاي الأخضر مُر.", "300 مل", "Heat water, but don't let it boil", "Boiling water makes green tea bitter.", "300 ml"],
+      ["steep", "حط الشاي وسيبه شوية", "فتلة أو معلقة صغيرة ورق.", "حوالي 3 دقايق", "Add the tea and let it sit", "One bag or a small spoon of leaves.", "About 3 minutes"],
+      ["serve", "طلّع الشاي واشربه", "سادة أو بعسل.", "", "Take the tea out and drink", "Plain or with honey.", ""]
+    ]
+  },
+  "earl_grey": {
+    "minutes": 5,
+    "layers": [["tea", 300, "شاي بريحة البرجموت", "Bergamot-scented tea"]],
+    "steps": [
+      ["boil", "اغلي مية", "", "300 مل", "Boil water", "", "300 ml"],
+      ["steep", "حط الشاي وسيبه", "شاي أسود فيه زيت البرجموت، نوع حمضيات.", "حوالي 4 دقايق", "Add the tea and let it sit", "Black tea with bergamot oil, a kind of citrus.", "About 4 minutes"],
+      ["serve", "اشربه سادة أو بلبن", "ممكن شريحة ليمون كمان.", "", "Drink it plain or with milk", "Or with a slice of lemon.", ""]
+    ]
+  },
+  "chai_latte": {
+    "minutes": 6,
+    "layers": [["chai", 160, "شاي بالتوابل", "Spiced tea"], ["milk", 170, "لبن سخن", "Hot milk"], ["foam", 20, "رغوة", "Foam"]],
+    "steps": [
+      ["boil", "اغلي شاي أسود مع التوابل", "قرفة وحبهان وجنزبيل وقرنفل.", "160 مل مية", "Boil black tea with the spices", "Cinnamon, cardamom, ginger and cloves.", "160 ml water"],
+      ["sweeten", "حلّيه بالسكر أو العسل", "", "", "Sweeten it with sugar or honey", "", ""],
+      ["steam", "سخّن اللبن برغوة", "", "190 مل", "Steam the milk with foam", "", "190 ml"],
+      ["pour", "صفّي الشاي وضيف عليه اللبن", "", "", "Strain the tea and add the milk", "", ""]
+    ]
+  },
+  "matcha_latte": {
+    "minutes": 3,
+    "layers": [["matcha", 60, "بودرة شاي أخضر مدوّبة", "Green tea powder, whisked"], ["milk", 270, "لبن سخن", "Hot milk"], ["foam", 20, "رغوة", "Foam"]],
+    "steps": [
+      ["sweeten", "حط بودرة شاي أخضر في المج", "بودرة ناعمة من ورق الشاي الأخضر نفسه.", "معلقة صغيرة", "Put green tea powder in the mug", "A fine powder made from the green tea leaves themselves.", "1 teaspoon"],
+      ["stir", "ضيف شوية مية سخنة واضرب كويس", "بمضرب صغير، لحد ما تبقى ناعمة من غير حبيبات.", "60 مل", "Add a little hot water and whisk", "With a small whisk, until smooth with no lumps.", "60 ml"],
+      ["steam", "سخّن اللبن وصبه عليها", "", "290 مل", "Steam the milk and pour it in", "", "290 ml"]
+    ]
+  },
+  "hibiscus": {
+    "minutes": 10,
+    "layers": [["ice", 100, "تلج", "Ice"], ["hibiscus", 250, "كركديه", "Hibiscus"]],
+    "steps": [
+      ["boil", "اغلي الكركديه في مية", "أو نقّعه في مية ساقعة طول الليل، بيطلع أحلى.", "معلقتين كبار · 300 مل", "Boil the hibiscus in water", "Or soak it in cold water overnight: it tastes better.", "2 tablespoons · 300 ml"],
+      ["sweeten", "صفّيه وحلّيه بالسكر", "وهو سخن، عشان السكر يدوب.", "", "Strain it and add sugar", "While hot, so the sugar dissolves.", ""],
+      ["ice", "برّده وصبه على تلج", "ويتشرب سخن كمان.", "250 مل", "Chill it and pour it over ice", "It's also drunk hot.", "250 ml"]
+    ]
+  },
+  "mint_tea": {
+    "minutes": 5,
+    "layers": [["mint_tea", 300, "شاي بالنعناع", "Mint tea"]],
+    "steps": [
+      ["boil", "اغلي مية", "", "300 مل", "Boil water", "", "300 ml"],
+      ["steep", "حط الشاي وعيدان نعناع فريش", "", "فتلة شاي · كام عود نعناع", "Add tea and fresh mint sprigs", "", "1 tea bag · a few sprigs"],
+      ["serve", "سيبه دقايق وحلّيه", "", "حوالي 3 دقايق", "Let it sit, then sweeten", "", "About 3 minutes"]
+    ]
+  },
+  "mango_juice": {
+    "minutes": 3,
+    "layers": [["mango", 350, "مانجا مضروبة", "Blended mango"]],
+    "steps": [
+      ["squeeze", "قشّر المانجا وقطّعها", "مانجا مستوية، صفرا وطرية.", "2 مانجا", "Peel and cut the mango", "Ripe mango: yellow and soft.", "2 mangoes"],
+      ["blend", "اضربها في الخلاط مع شوية مية أو لبن وسكر", "", "100 مل", "Blend it with a little water or milk and sugar", "", "100 ml"],
+      ["ice", "صبها على تلج", "", "", "Pour it over ice", "", ""]
+    ]
+  },
+  "strawberry_juice": {
+    "minutes": 3,
+    "layers": [["strawberry", 350, "فراولة مضروبة", "Blended strawberries"]],
+    "steps": [
+      ["squeeze", "اغسل الفراولة وشيل الورق الأخضر", "", "250 جرام", "Wash the strawberries and remove the green tops", "", "250 g"],
+      ["blend", "اضربها في الخلاط مع مية وسكر", "ولو تحب، شوية لبن.", "100 مل", "Blend with water and sugar", "Or a little milk, if you like.", "100 ml"],
+      ["ice", "صبها على تلج", "", "", "Pour over ice", "", ""]
+    ]
+  },
+  "orange_juice": {
+    "minutes": 3,
+    "layers": [["orange", 350, "برتقان معصور", "Squeezed orange"]],
+    "steps": [
+      ["squeeze", "اعصر البرتقان", "بالعصّارة، من غير مية.", "4 برتقانات", "Squeeze the oranges", "With a juicer, no water added.", "4 oranges"],
+      ["serve", "اشربه على طول", "طعمه بيتغيّر لو استنى.", "", "Drink it right away", "The taste changes if it sits.", ""]
+    ]
+  },
+  "lemon_mint": {
+    "minutes": 3,
+    "layers": [["ice", 100, "تلج", "Ice"], ["lemon", 250, "ليمون ونعناع مضروبين", "Lemon and mint, blended"]],
+    "steps": [
+      ["squeeze", "اعصر ليمون", "", "3 ليمونات", "Squeeze some lemons", "", "3 lemons"],
+      ["blend", "اضرب الليمون مع نعناع ومية وسكر", "لحد ما النعناع يبقى حتت صغيرة.", "كام عود نعناع · 200 مل مية", "Blend the lemon with mint, water and sugar", "Until the mint is in tiny pieces.", "A few sprigs · 200 ml water"],
+      ["ice", "صبه على تلج", "", "", "Pour over ice", "", ""]
+    ]
+  },
+  "fruit_cocktail": {
+    "minutes": 5,
+    "layers": [["strawberry", 120, "فراولة", "Strawberry"], ["mango", 120, "مانجا", "Mango"], ["fruit", 120, "موز وجوافة", "Banana and guava"], ["cream", 40, "قشطة وفواكه", "Cream and fruit"]],
+    "steps": [
+      ["blend", "اضرب كل فاكهة لوحدها", "فراولة، مانجا، وموز مع جوافة. كل واحدة مع شوية لبن وسكر.", "", "Blend each fruit on its own", "Strawberry, mango, and banana with guava, each with a little milk and sugar.", ""],
+      ["pour", "صبهم طبقات في كوباية طويلة", "ببطء على ضهر المعلقة، عشان كل طبقة تفضل لوحدها.", "حوالي 120 مل كل طبقة", "Pour them in layers in a tall glass", "Slowly, over the back of a spoon, so each layer stays apart.", "About 120 ml each"],
+      ["top", "حط قشطة وحتت فاكهة على الوش", "", "", "Top with cream and fruit pieces", "", ""]
+    ]
+  },
+  "hot_chocolate": {
+    "minutes": 4,
+    "layers": [["hot_chocolate", 310, "لبن بالشوكولاتة", "Chocolate milk"], ["cream", 40, "كريمة", "Whipped cream"]],
+    "steps": [
+      ["milk", "سخّن لبن على النار", "من غير ما يغلي.", "300 مل", "Heat the milk", "Without boiling.", "300 ml"],
+      ["stir", "ضيف كاكاو أو شوكولاتة مبشورة وقلّب", "وسكر لو الشوكولاتة مش حلوة.", "2 معلقة كبيرة", "Stir in cocoa or grated chocolate", "And sugar, if the chocolate isn't sweet.", "2 tablespoons"],
+      ["top", "صبه وحط كريمة على الوش", "أو مارشملو.", "", "Pour it and top with whipped cream", "Or marshmallows.", ""]
+    ]
+  },
+  "sahlab": {
+    "minutes": 6,
+    "layers": [["sahlab", 280, "لبن بالسحلب", "Milk thickened with sahlab"], ["nuts", 20, "مكسرات وقرفة", "Nuts and cinnamon"]],
+    "steps": [
+      ["stir", "دوّب بودرة السحلب في لبن ساقع", "عشان ميعملش كتل.", "2 معلقة كبيرة · 300 مل لبن", "Mix sahlab powder into cold milk", "So it doesn't go lumpy.", "2 tablespoons · 300 ml milk"],
+      ["boil", "حطه على النار وقلّب على طول", "لحد ما يتقل.", "حوالي 5 دقايق", "Heat it, stirring the whole time", "Until it thickens.", "About 5 minutes"],
+      ["top", "صبه ورش عليه مكسرات وقرفة وجوز هند", "", "", "Pour it; scatter nuts, cinnamon and coconut on top", "", ""]
+    ]
+  },
+  "cookies_milkshake": {
+    "minutes": 3,
+    "layers": [["cookies", 360, "لبن وآيس كريم وبسكوت مضروبين", "Milk, ice cream and biscuits, blended"], ["cream", 40, "كريمة وبسكوت", "Cream and biscuit"]],
+    "steps": [
+      ["blend", "حط في الخلاط لبن وآيس كريم فانيليا", "", "200 مل لبن · 2 بولة", "Put milk and vanilla ice cream in the blender", "", "200 ml milk · 2 scoops"],
+      ["blend", "ضيف بسكوت بالشوكولاتة واضرب", "خلّي فيه حتت صغيرة.", "4 بسكوتات", "Add chocolate biscuits and blend", "Leave some small pieces.", "4 biscuits"],
+      ["top", "صبه وحط كريمة وبسكوت مكسّر", "", "", "Pour it; add whipped cream and crushed biscuit", "", ""]
+    ]
+  },
+  "berry_smoothie": {
+    "minutes": 3,
+    "layers": [["berry", 400, "توت وموز وزبادي مضروبين", "Berries, banana and yoghurt, blended"]],
+    "steps": [
+      ["blend", "حط في الخلاط توت فريزر وموزة", "التوت المتلّج بيخليه ساقع وتقيل من غير تلج.", "كوباية توت · موزة", "Put frozen berries and a banana in the blender", "Frozen berries make it cold and thick without ice.", "1 cup berries · 1 banana"],
+      ["milk", "ضيف زبادي أو لبن وعسل", "", "150 مل", "Add yoghurt or milk and honey", "", "150 ml"],
+      ["blend", "اضرب لحد ما يبقى ناعم", "", "", "Blend until smooth", "", ""]
+    ]
+  },
+  "virgin_mojito": {
+    "minutes": 3,
+    "layers": [["lemon", 60, "ليمون ونعناع مهروسين", "Crushed lime and mint"], ["ice", 120, "تلج", "Ice"], ["soda", 220, "صودا", "Soda"]],
+    "steps": [
+      ["squeeze", "اهرس ليمون ونعناع وسكر في الكوباية", "بمدقة أو بضهر معلقة، لحد ما ريحة النعناع تطلع.", "نص ليمونة · 8 ورقات نعناع", "Crush lime, mint and sugar in the glass", "With a muddler or the back of a spoon, until the mint smells.", "Half a lime · 8 mint leaves"],
+      ["ice", "املا الكوباية تلج", "", "", "Fill the glass with ice", "", ""],
+      ["pour", "كمّل بالصودا وقلّب", "صودا سادة أو سفن.", "220 مل", "Top up with soda and stir", "Plain soda or lemon-lime soda.", "220 ml"]
+    ]
+  }
+}
