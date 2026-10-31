@@ -6,6 +6,9 @@ abstract final class AppRoutes {
   static const home = '/';
   static const settings = '/settings';
 
+  /// The Favorites tab.
+  static const favorites = '/favorites';
+
   /// One drink: `/drink/flat_white`.
   static const drinkPattern = '/drink/:slug';
   static String drink(String slug) => '/drink/$slug';

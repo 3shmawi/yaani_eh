@@ -5,7 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yaani_eh/core/analytics/analytics.dart';
 import 'package:yaani_eh/core/router/app_routes.dart';
+import 'package:yaani_eh/core/ui/app_ui.dart';
 import 'package:yaani_eh/features/browse_menu/presentation/menu_controller.dart';
+import 'package:yaani_eh/features/favorites/presentation/favorites_controller.dart';
+import 'package:yaani_eh/features/favorites/presentation/widgets/favorite_button.dart';
 import 'package:yaani_eh/features/item_details/domain/usecases/describe_item.dart';
 import 'package:yaani_eh/features/item_details/presentation/drink_controller.dart';
 import 'package:yaani_eh/features/item_details/presentation/drink_view.dart';
@@ -56,6 +59,12 @@ class _DrinkPageState extends ConsumerState<DrinkPage> {
           ),
           similar: similar,
           pronounce: ItemPronounce(item: item),
+          saveButton: FavoriteButton(
+            item: item,
+            from: FavoriteSource.drinkPage,
+            tone: GlassTone.dark,
+            minimal: false,
+          ),
           onBack: _back,
           onOpenDrink: (other) =>
               unawaited(context.push<void>(AppRoutes.drink(other.slug))),

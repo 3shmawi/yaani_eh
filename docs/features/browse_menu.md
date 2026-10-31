@@ -115,10 +115,11 @@ None.
   (`AppColors.selected`) in both themes: pure white looked pasted on the
   espresso band and glared in dark mode; the page colour fails in dark
   (1.3:1 against the band).
-- Not here yet, each comes with its feature: hearts and the long-press
-  preview (`favorites`, the cards' top-end corner) and the tab bar (once a
-  second tab exists). Cards
-  and the drink of the day open the drink (`item_details`).
+- From `favorites`: the heart in each card's top-end corner, the long-press
+  preview (`MenuView.onPreviewItem`) and the floating tab bar, which Home
+  sits under (its list ends `AppDimens.tabBarHeight` higher). Cards and the
+  drink of the day open the drink (`item_details`). The grid is the shared
+  `DrinkGrid` (`core/widgets/drink_grid.dart`), the same as Favorites.
 - Calories and prices are labelled approximate at the end of the list.
 
 ## Demo & post

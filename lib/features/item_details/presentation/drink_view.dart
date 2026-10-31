@@ -27,6 +27,7 @@ class DrinkView extends StatelessWidget {
     required this.onBack,
     required this.onOpenDrink,
     this.pronounce,
+    this.saveButton,
     super.key,
   });
 
@@ -35,6 +36,9 @@ class DrinkView extends StatelessWidget {
   final List<CatalogItem> similar;
   final VoidCallback onBack;
   final ValueChanged<CatalogItem> onOpenDrink;
+
+  /// The heart at the top-end corner (feature `favorites`).
+  final Widget? saveButton;
 
   /// The pronounce pill (feature `pronunciation`), on the photo just above
   /// the sheet; scrolls with it.
@@ -205,6 +209,12 @@ class DrinkView extends StatelessWidget {
               onPressed: onBack,
             ),
           ),
+          if (saveButton case final save?)
+            PositionedDirectional(
+              top: top + AppDimens.space2,
+              end: AppDimens.space4,
+              child: save,
+            ),
         ],
       ),
     );

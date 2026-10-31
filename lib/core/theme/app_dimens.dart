@@ -55,8 +55,18 @@ abstract final class AppDimens {
   static double get icon => 24.r;
   static double get iconChip => 20.r;
   static double get tabBarHeight => 60.h;
+
+  /// The count on a tab's icon (saved drinks).
+  static double get badgeSize => 16.r;
   static double get rowImage => 104.w;
   static double get rowMinHeight => 112.h;
+
+  /// The long-press preview's width (it stays a card, not a sheet, on a
+  /// tablet).
+  static double get previewWidth => 380.w;
+
+  /// The long-press preview's photo: wider than a card's, so the text fits.
+  static const double previewPhotoRatio = 4 / 3;
 
   /// One tile of the header band's mashrabiya pattern.
   static double get patternTile => 28.r;
@@ -78,6 +88,13 @@ abstract final class AppMotion {
 
   /// A list scrolling to a category after its chip is tapped.
   static const jump = Duration(milliseconds: 300);
+
+  /// The long-press preview growing into place.
+  static const previewFrom = 0.94;
+
+  /// A heart popping when a drink is saved.
+  static const pop = Duration(milliseconds: 450);
+  static const popFrom = 0.7;
 
   /// A card's press feedback.
   static const press = Duration(milliseconds: 150);

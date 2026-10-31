@@ -57,6 +57,8 @@ None.
 - Integration (demo): `integration_test/item_details_test.dart`.
 
 ## Decisions & edge cases
+- The heart (`favorites`) sits at the photo's top-end corner, across from
+  the back button (`DrinkView.saveButton`). The page covers the tab bar.
 - The photo at the top is the **full** photo (`PhotoSize.full`, 1200×1600),
   decoded at the screen's width; its thumbnail (usually cached from the
   card) shows while it loads, and offline when the full photo was never

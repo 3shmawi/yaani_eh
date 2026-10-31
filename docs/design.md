@@ -25,6 +25,9 @@ component READMEs under `project/components/`, and the screen's
 | Button, IconButton, Card | `AppButton`, `AppIconButton`, `AppCard` in `app_ui.dart` |
 | DrinkCard (photo tile with the name on a soft shadow, glass controls, the «يعني» line under it) | `core/widgets/drink_card.dart`; type `TextRole.cardTitle` / `cardBody` |
 | Segmented control (the Home sections switch), selected = warm milk | `AppSegmentedControl` in `app_ui.dart`; `AppColors.selected` (same in both themes) |
+| TabBar (floating glass pill, count badge) | `AppTabScaffold` + `AppTab` in `app_ui.dart` (`GlassTabBar.bottom`); screens under it keep their last items clear with `AppDimens.tabBarHeight` |
+| Context menu (long-press preview) | `showAppPreviewMenu` + `AppPreviewAction` in `app_ui.dart`: blur + scrim, the preview, frosted rows; same on iOS and Android |
+| Saved / chosen state of an icon button (the heart) | `AppIconButton(selectedLook: AppSelectedLook.chosen)`: warm milk, espresso icon |
 | Header pattern (mashrabiya) | `core/widgets/header_pattern.dart`, `AppColors.headerPattern`, `AppDimens.patternTile` |
 | Motion (durations, curves, press scale, list stagger) | `AppMotion` in `app_dimens.dart`; `AppReveal` (list entry) and `AppPressable` (card press) in `app_ui.dart` |
 | HeaderBand, EmptyState, ErrorState, OfflineBanner | `lib/core/widgets/` (`header_band.dart`, `state_views.dart`, `offline_banner.dart`) |

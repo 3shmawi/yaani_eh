@@ -6,7 +6,7 @@ import 'package:yaani_eh/core/theme/app_icons.dart';
 import 'package:yaani_eh/core/theme/app_text_styles.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
 import 'package:yaani_eh/core/widgets/category_chips.dart';
-import 'package:yaani_eh/core/widgets/drink_card.dart';
+import 'package:yaani_eh/core/widgets/drink_grid.dart';
 import 'package:yaani_eh/core/widgets/header_band.dart';
 import 'package:yaani_eh/core/widgets/offline_banner.dart';
 import 'package:yaani_eh/core/widgets/search_field.dart';
@@ -31,6 +31,8 @@ class MenuView extends StatefulWidget {
     this.onOpenItem,
     this.onOpenSearch,
     this.cardAction,
+    this.cardTrailingAction,
+    this.onPreviewItem,
     super.key,
   });
 
@@ -51,6 +53,12 @@ class MenuView extends StatefulWidget {
   /// A control on each card and the drink of the day (the play button,
   /// feature `pronunciation`).
   final Widget Function(CatalogItem item)? cardAction;
+
+  /// The heart on each card's top-end corner (feature `favorites`).
+  final Widget Function(CatalogItem item)? cardTrailingAction;
+
+  /// A long press on a card: the quick preview (feature `favorites`).
+  final ValueChanged<CatalogItem>? onPreviewItem;
 
   @override
   State<MenuView> createState() => _MenuViewState();
@@ -255,7 +263,8 @@ class _MenuViewState extends State<MenuView> {
             AppDimens.space4,
             AppDimens.space4,
             AppDimens.space4,
-            AppDimens.space8,
+            // Clear of the floating tab bar.
+            AppDimens.tabBarHeight + AppDimens.space8,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -277,14 +286,16 @@ class _MenuViewState extends State<MenuView> {
                   child: _SectionHeader(title: name(section.category)),
                 ),
                 SizedBox(height: AppDimens.space3),
-                _Grid(
+                DrinkGrid(
                   items: section.items,
                   // Card number on the screen, for the entry stagger.
                   firstIndex: menu.sections
                       .take(i)
                       .fold(0, (n, s) => n + s.items.length),
                   onOpenItem: widget.onOpenItem,
+                  onPreviewItem: widget.onPreviewItem,
                   cardAction: widget.cardAction,
+                  cardTrailingAction: widget.cardTrailingAction,
                 ),
                 SizedBox(height: AppDimens.space6),
               ],
@@ -390,49 +401,4 @@ class _SectionHeader extends StatelessWidget {
       ).copyWith(color: context.palette.ink),
     ),
   );
-}
-
-class _Grid extends StatelessWidget {
-  const new({
-    required this.items,
-    required this.firstIndex,
-    required this.onOpenItem,
-    required this.cardAction,
-  });
-
-  final List<CatalogItem> items;
-  final int firstIndex;
-  final ValueChanged<CatalogItem>? onOpenItem;
-  final Widget Function(CatalogItem item)? cardAction;
-
-  @override
-  Widget build(BuildContext context) {
-    final gap = AppDimens.space3;
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        // Two columns on phones, more on tablets (cards stay ~170 wide).
-        final columns = (constraints.maxWidth / 200).floor().clamp(2, 5);
-        final width = (constraints.maxWidth - gap * (columns - 1)) / columns;
-        return Wrap(
-          spacing: gap,
-          runSpacing: gap,
-          children: [
-            for (final (i, item) in items.indexed)
-              SizedBox(
-                width: width,
-                child: AppReveal(
-                  index: firstIndex + i,
-                  child: DrinkCard(
-                    item: item,
-                    hero: true,
-                    onTap: onOpenItem == null ? null : () => onOpenItem!(item),
-                    action: cardAction?.call(item),
-                  ),
-                ),
-              ),
-          ],
-        );
-      },
-    );
-  }
 }
