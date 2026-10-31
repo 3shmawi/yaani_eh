@@ -15,18 +15,23 @@ import 'package:yaani_eh/features/item_details/presentation/drink_view.dart';
 import 'package:yaani_eh/features/recipes/presentation/step_by_step_view.dart';
 import 'package:yaani_eh/features/smart_search/presentation/search_page.dart';
 import 'package:yaani_eh/features/taste_profile/presentation/taste_quiz_view.dart';
+import 'package:yaani_eh/features/welcome/presentation/welcome_view.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
 import '../helpers/fake_catalog_repository.dart';
 import '../helpers/fake_favorites.dart';
 import '../helpers/fake_taste.dart';
+import '../helpers/fake_welcome.dart';
 
 /// Deep links are untrusted input: unknown or crafted paths must land on a
 /// safe screen, never crash or open something unexpected.
 void main() {
   late FakeFavoritesRepository favorites;
 
-  Future<void> pumpRouter(WidgetTester tester) async {
+  Future<void> pumpRouter(
+    WidgetTester tester, {
+    FakeWelcomeRepository? welcome,
+  }) async {
     favorites = FakeFavoritesRepository();
     tester.view
       ..physicalSize = const Size(1125, 2436)
@@ -39,6 +44,7 @@ void main() {
             FakeCatalogRepository(has: true),
           ),
           ...favoritesOverrides(favorites),
+          ...welcomeOverrides(welcome),
           ...tasteOverrides(),
         ],
         child: AppUi.testWrap(
@@ -83,6 +89,8 @@ void main() {
       '/drink//steps',
       '/taste/../admin',
       '/taste/cafe',
+      '/welcome/../admin',
+      '/welcome/1',
     ]) {
       appRouter.go(path);
       await tester.pumpAndSettle();
@@ -96,6 +104,40 @@ void main() {
     appRouter.go('/?redirect=https://evil.example.com');
     await tester.pumpAndSettle();
 
+    expect(find.byType(MenuPage), findsOneWidget);
+  });
+
+  testWidgets('a fresh install opens on the welcome; links still work', (
+    tester,
+  ) async {
+    final welcome = FakeWelcomeRepository(seen: false);
+    await pumpRouter(tester, welcome: welcome);
+
+    appRouter.go('/');
+    await tester.pumpAndSettle();
+    expect(find.byType(WelcomeView), findsOneWidget);
+
+    // A link opens what it links to, not the welcome.
+    appRouter.go('/drink/cortado');
+    await tester.pumpAndSettle();
+    expect(find.byType(DrinkView), findsOneWidget);
+
+    // A crafted query on Home is ignored: still the welcome.
+    appRouter.go('/?redirect=https://evil.example.com');
+    await tester.pumpAndSettle();
+    expect(find.byType(WelcomeView), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('welcome_skip')));
+    await tester.pumpAndSettle();
+    expect(find.byType(MenuPage), findsOneWidget);
+    expect(welcome.seen, isTrue);
+
+    // Seen: Home opens directly; /welcome still opens the welcome itself.
+    appRouter.go('/welcome?next=https://evil.example.com');
+    await tester.pumpAndSettle();
+    expect(find.byType(WelcomeView), findsOneWidget);
+    appRouter.go('/');
+    await tester.pumpAndSettle();
     expect(find.byType(MenuPage), findsOneWidget);
   });
 

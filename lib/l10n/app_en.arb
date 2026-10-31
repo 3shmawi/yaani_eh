@@ -489,5 +489,46 @@
         "type": "String"
       }
     }
-  }
+  },
+  "welcomeSkip": "Skip",
+  "welcomeNext": "Next",
+  "welcomePageOf": "Page {n} of {total}",
+  "@welcomePageOf": {
+    "description": "The welcome's page dots, for screen readers.",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "welcomeMenuTitle": "Café menus that make sense",
+  "welcomeMenuBody": "Every drink on the menu, by the name it's printed with, and what it is in words you know.",
+  "welcomeHearTitle": "Hear it, make it",
+  "welcomeHearBody": "Hear the name the way the barista says it, so you order it right, and see how it's made, even offline.",
+  "welcomeTasteTitle": "Made for your taste",
+  "welcomeTasteBody": "Tell us what you like in 4 questions and we'll sort the menu for you. Save the ones you like. It all stays on your phone, no account.",
+  "welcomeStartTaste": "Tell us your taste",
+  "welcomeOpenMenu": "Go straight to the menu",
+  "welcomeArtMenu": "MENU",
+  "welcomeArtSaid": "flat white",
+  "welcomeArtMeans": "It's",
+  "welcomeArtMeaning": "a strong milky coffee in a small cup",
+  "welcomeArtAffogato": "ah-foh-GAH-toh",
+  "welcomeArtRecipe": "The cup's layers to scale, then the steps one at a time",
+  "welcomeArtSteps": "{count, plural, =1{1 step} other{{count} steps}}",
+  "@welcomeArtSteps": {
+    "description": "How many steps a recipe has, in the welcome's picture.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "welcomeArtSweet": "Sweet",
+  "welcomeArtMilk": "With milk",
+  "welcomeArtStrong": "Strong coffee",
+  "welcomeArtMatch": "Iced coffee with condensed milk"
 }

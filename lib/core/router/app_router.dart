@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yaani_eh/app/app_tabs_shell.dart';
 import 'package:yaani_eh/core/analytics/analytics.dart';
@@ -13,6 +14,8 @@ import 'package:yaani_eh/features/recipes/presentation/step_by_step_page.dart';
 import 'package:yaani_eh/features/settings/presentation/settings_page.dart';
 import 'package:yaani_eh/features/smart_search/presentation/search_page.dart';
 import 'package:yaani_eh/features/taste_profile/presentation/taste_page.dart';
+import 'package:yaani_eh/features/welcome/presentation/welcome_controller.dart';
+import 'package:yaani_eh/features/welcome/presentation/welcome_page.dart';
 
 /// Root navigator, used to show app-wide dialogs (e.g. the update dialog).
 final rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -47,6 +50,15 @@ final appRouter = GoRouter(
               path: AppRoutes.home,
               // The menu, once the catalog is on the device (first launch
               // downloads it; see docs/features/catalog_sync.md).
+              // The welcome comes first, once (docs/features/welcome.md).
+              // Only Home waits for it: a deep link opens what it links to.
+              redirect: (context, state) =>
+                  ProviderScope.containerOf(
+                    context,
+                    listen: false,
+                  ).read(welcomeSeenProvider)
+                  ? null
+                  : AppRoutes.welcome,
               builder: (context, state) =>
                   const CatalogSyncPage(child: MenuPage()),
             ),
@@ -111,6 +123,10 @@ final appRouter = GoRouter(
           ),
         );
       },
+    ),
+    GoRoute(
+      path: AppRoutes.welcome,
+      builder: (context, state) => const WelcomePage(),
     ),
     GoRoute(
       path: AppRoutes.settings,

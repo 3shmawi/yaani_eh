@@ -137,6 +137,45 @@ class HeaderBand extends StatelessWidget {
   }
 }
 
+/// A whole screen on the header band's gradient and pattern (the taste
+/// quiz, the welcome): flat espresso when glass is lite. Text and controls
+/// on it use the `onHeader` colours and the dark glass tone.
+class BandBackground extends StatelessWidget {
+  const new({required this.child, super.key});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final flat = AppUi.isLite(context);
+    return Material(
+      color: AppColors.espresso,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: flat
+              ? null
+              : const LinearGradient(
+                  begin: Alignment(-0.26, -1),
+                  end: Alignment(0.26, 1),
+                  colors: [
+                    AppColors.headerTop,
+                    AppColors.espresso,
+                    AppColors.headerBottom,
+                  ],
+                  stops: [0, 0.55, 1],
+                ),
+        ),
+        child: Stack(
+          children: [
+            if (!flat) const Positioned.fill(child: HeaderPattern()),
+            child,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 /// Wraps a scroll view that opens with a [HeaderBand]: when the list is
 /// pulled down past its top (iOS's bounce), the gap above the band is
 /// filled with the band's own colour, so the band seems to stretch instead

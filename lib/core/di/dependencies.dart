@@ -17,6 +17,8 @@ import 'package:yaani_eh/features/settings/data/repositories/shared_prefs_settin
 import 'package:yaani_eh/features/settings/domain/repositories/settings_repository.dart';
 import 'package:yaani_eh/features/taste_profile/data/repositories/shared_prefs_taste_repository.dart';
 import 'package:yaani_eh/features/taste_profile/domain/repositories/taste_repository.dart';
+import 'package:yaani_eh/features/welcome/data/repositories/shared_prefs_welcome_repository.dart';
+import 'package:yaani_eh/features/welcome/domain/repositories/welcome_repository.dart';
 
 /// Composition root: the only place that knows which implementation backs
 /// each domain interface. Add new repositories / services here.
@@ -27,12 +29,15 @@ abstract final class Dependencies {
   static late ClipPlayer clipPlayer;
   static late FavoritesRepository favoritesRepository;
   static late TasteRepository tasteRepository;
+  static late WelcomeRepository welcomeRepository;
 
   static Future<void> init([DependencyOverrides? overrides]) async {
     final prefs = await SharedPreferences.getInstance();
     settingsRepository = SharedPrefsSettingsRepository(prefs);
     tasteRepository =
         overrides?.tasteRepository ?? SharedPrefsTasteRepository(prefs);
+    welcomeRepository =
+        overrides?.welcomeRepository ?? SharedPrefsWelcomeRepository(prefs);
     catalogRepository = CatalogRepositoryImpl(
       overrides?.catalogRemote ??
           (Backend.isConfigured
@@ -62,6 +67,7 @@ class DependencyOverrides {
     this.clipPlayer,
     this.favoritesDatabase,
     this.tasteRepository,
+    this.welcomeRepository,
   });
 
   final CatalogRemoteDataSource? catalogRemote;
@@ -81,4 +87,8 @@ class DependencyOverrides {
 
   /// «ذوقي» kept in memory: no taste yet, and nothing left behind.
   final TasteRepository? tasteRepository;
+
+  /// Whether the first-open welcome was seen: demos skip it, except the
+  /// welcome's own.
+  final WelcomeRepository? welcomeRepository;
 }

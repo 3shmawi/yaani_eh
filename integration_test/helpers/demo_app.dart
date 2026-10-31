@@ -14,6 +14,7 @@ import 'package:yaani_eh/features/favorites/data/datasources/favorites_database.
 import '../../test/helpers/fake_catalog_remote.dart';
 import '../../test/helpers/fake_pronunciation.dart';
 import '../../test/helpers/fake_taste.dart';
+import '../../test/helpers/fake_welcome.dart';
 import 'demo.dart';
 
 /// Starts the real app as a fresh install, with the menu served by
@@ -30,7 +31,9 @@ class DemoApp {
   final FakePronunciationRepository clips;
   final FakeClipPlayer player;
 
-  static Future<DemoApp> start({int pageSize = 4}) async {
+  /// [welcomed]: false opens on the first-open welcome, as a real fresh
+  /// install does; the other demos start past it, on Home.
+  static Future<DemoApp> start({int pageSize = 4, bool welcomed = true}) async {
     final remote = FakeCatalogRemote(items: sampleItems(withAudio: true))
       // Slow enough for the download to be seen in a recorded demo.
       ..pageDelay = const Duration(milliseconds: isDemo ? 700 : 30);
@@ -51,6 +54,7 @@ class DemoApp {
         clipPlayer: player,
         favoritesDatabase: FavoritesDatabase(NativeDatabase.memory()),
         tasteRepository: FakeTasteRepository(),
+        welcomeRepository: FakeWelcomeRepository(seen: welcomed),
       ),
     );
     return DemoApp._(remote, online, clips, player);

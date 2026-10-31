@@ -20,6 +20,7 @@ import '../helpers/fake_catalog_repository.dart';
 import '../helpers/fake_favorites.dart';
 import '../helpers/fake_pronunciation.dart';
 import '../helpers/fake_taste.dart';
+import '../helpers/fake_welcome.dart';
 import '../helpers/screens.dart';
 
 /// The app's main screens as PNGs in build/screens/, for reviewing a change
@@ -48,6 +49,7 @@ void main() {
           catalogRepositoryProvider.overrideWithValue(
             FakeCatalogRepository(has: true),
           ),
+          ...welcomeOverrides(),
           ...tasteOverrides(FakeTasteRepository(taste)),
           ...favoritesOverrides(FakeFavoritesRepository()),
           ...pronunciationOverrides(
@@ -156,6 +158,17 @@ void main() {
         );
         await tester.drag(find.byType(Scrollable).first, const Offset(0, -260));
         await shoot(tester, '${lang}_12_home_taste');
+      });
+
+      testWidgets('welcome', (tester) async {
+        await open(tester, lang, AppRoutes.welcome);
+        await shoot(tester, '${lang}_13_welcome_menu');
+        await tester.tap(find.byKey(const Key('welcome_next')));
+        await tester.pumpAndSettle();
+        await shoot(tester, '${lang}_14_welcome_hear');
+        await tester.tap(find.byKey(const Key('welcome_next')));
+        await tester.pumpAndSettle();
+        await shoot(tester, '${lang}_15_welcome_taste');
       });
 
       testWidgets('settings', (tester) async {
