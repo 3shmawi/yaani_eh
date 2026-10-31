@@ -18,7 +18,10 @@ class AppShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: AppDimens.designSize,
+      // Capped at AppDimens.maxScale on big screens.
+      designSize: AppDimens.designFor(
+        MediaQueryData.fromView(View.of(context)).size,
+      ),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, _) => MaterialApp.router(

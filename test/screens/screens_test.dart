@@ -52,7 +52,7 @@ void main() {
         ],
         child: AppUi.testWrap(
           ScreenUtilInit(
-            designSize: AppDimens.designSize,
+            designSize: AppDimens.designFor(Size(points[0], points[1])),
             minTextAdapt: true,
             splitScreenMode: true,
             builder: (context, _) => MaterialApp.router(

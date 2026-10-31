@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yaani_eh/core/text/bidi.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
+import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_fonts.dart';
 import 'package:yaani_eh/core/theme/app_icons.dart';
 import 'package:yaani_eh/core/theme/app_text_styles.dart';
@@ -82,7 +83,7 @@ void main() {
   });
 
   group(AppTextStyles, () {
-    // Sizes are screen-scaled, so ScreenUtil must be ready.
+    // Spacing is screen-scaled (text isn't), so ScreenUtil must be ready.
     setUp(
       () => ScreenUtil.configure(
         data: const MediaQueryData(size: Size(375, 812)),
@@ -91,6 +92,26 @@ void main() {
         splitScreenMode: false,
       ),
     );
+    test('text is the same size on every phone, like iOS', () {
+      final small = AppTextStyles.latin(TextRole.body).fontSize;
+      ScreenUtil.configure(
+        data: const MediaQueryData(size: Size(430, 932)),
+        designSize: const Size(375, 812),
+      );
+      expect(AppTextStyles.latin(TextRole.body).fontSize, small);
+      expect(small, 15);
+    });
+
+    test('Arabic reading text is a point smaller than Latin', () {
+      for (final role in [TextRole.body, TextRole.callout, TextRole.cardBody]) {
+        expect(
+          AppTextStyles.arabic(role).fontSize,
+          AppTextStyles.latin(role).fontSize! - 1,
+          reason: '$role',
+        );
+      }
+    });
+
     test('picks the font by the string, not the app language', () {
       final latin = AppTextStyles.forText('Flat White', TextRole.headline);
       final arabic = AppTextStyles.forText('فلات وايت', TextRole.headline);
@@ -102,7 +123,8 @@ void main() {
       final latin = AppTextStyles.latin(TextRole.body);
       final arabic = AppTextStyles.arabic(TextRole.body);
       expect(latin.height, closeTo(22 / 15, 0.001));
-      expect(arabic.height, closeTo(26 / 15, 0.001));
+      expect(arabic.height, closeTo(23 / 14, 0.001));
+      expect(arabic.height, greaterThan(latin.height!));
     });
 
     test('UI copy follows the locale', () {
@@ -136,6 +158,33 @@ void main() {
       expect(Bidi.range(70, 150), '\u206670–150\u2069');
       expect(Bidi.range(90, 90), '\u206690\u2069');
       expect(Bidi.ltr('0.75×'), '\u20660.75×\u2069');
+    });
+  });
+
+  group('screen scaling', () {
+    test('the design frame on a design-sized phone', () {
+      expect(AppDimens.designFor(const Size(375, 812)), AppDimens.designSize);
+    });
+
+    test('a big phone or a tablet grows by at most maxScale', () {
+      for (final screen in const [Size(430, 932), Size(1024, 1366)]) {
+        final frame = AppDimens.designFor(screen);
+        expect(
+          screen.width / frame.width,
+          lessThanOrEqualTo(AppDimens.maxScale),
+        );
+        expect(
+          screen.height / frame.height,
+          lessThanOrEqualTo(AppDimens.maxScale),
+        );
+      }
+      // An iPhone 15 grows less than the cap: by its own width.
+      final iphone = AppDimens.designFor(const Size(393, 852));
+      expect(393 / iphone.width, closeTo(393 / 375, 0.001));
+    });
+
+    test('a small phone still scales down to fit', () {
+      expect(AppDimens.designFor(const Size(320, 568)), AppDimens.designSize);
     });
   });
 
