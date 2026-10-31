@@ -144,6 +144,16 @@ pronounce pill (docs/features/pronunciation.md):
   ranges) and written once into `0007_item_recipes.sql`. After launch, edit
   them in Studio.
 
+## Explanations
+
+The drink page's explanation (`explanation_ar`, `explanation_en`, ≤ 300
+characters) follows the same rule as the «يعني» line: words everyone
+knows, never another menu word («قهوة مركّزة», not «إسبريسو»; «في الخلاط»,
+not «متخفوق»). The launch texts were rewritten that way in
+`supabase/content/explanations.json` → `0008_item_explanations_everyday_words.sql`
+(checked by `build_seed.py`; it only replaces a text that's still the launch
+one). pgTAP checks no explanation uses a menu word.
+
 ## Launch content
 
 `supabase/content/drinks.csv` (41 drinks, reviewed) → `python3
