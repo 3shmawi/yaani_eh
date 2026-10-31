@@ -416,5 +416,78 @@
   "approximateCalories": "Calories are approximate.",
   "@approximateCalories": {
     "description": "The note at the end of the menu and a drink page, while prices are hidden."
+  },
+  "tasteTitle": "My taste",
+  "@tasteTitle": {
+    "description": "The taste quiz's name."
+  },
+  "tasteQuestionOf": "Question {n} of {total}",
+  "@tasteQuestionOf": {
+    "description": "Quiz: where you are.",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "tasteHint": "We'll put the drinks you'll like first. You can change it any time from Home.",
+  "@tasteHint": {
+    "description": "Under each quiz question."
+  },
+  "tasteNoPreference": "Doesn't matter to me",
+  "@tasteNoPreference": {
+    "description": "Quiz: skip a question (no preference)."
+  },
+  "tastePrevious": "Previous question",
+  "@tastePrevious": {
+    "description": "Quiz: back one question."
+  },
+  "tasteClose": "Close",
+  "@tasteClose": {
+    "description": "Closes the quiz without saving."
+  },
+  "tasteNoQuestions": "No questions for this section yet",
+  "@tasteNoQuestions": {
+    "description": "Quiz opened for a section without taste questions."
+  },
+  "tasteSaveFailed": "Couldn't save your taste. Try again.",
+  "@tasteSaveFailed": {
+    "description": "The phone couldn't store the answers."
+  },
+  "tasteForYou": "On your taste",
+  "@tasteForYou": {
+    "description": "Home: the row of drinks that fit your taste."
+  },
+  "tasteChange": "Change your taste",
+  "@tasteChange": {
+    "description": "Home: reopen the quiz."
+  },
+  "tastePromptTitle": "Tell us your taste",
+  "@tastePromptTitle": {
+    "description": "Home: invite to take the quiz."
+  },
+  "tastePromptBody": "Four quick questions, and we'll put the drinks you'll like first.",
+  "@tastePromptBody": {
+    "description": "Home: under tastePromptTitle."
+  },
+  "tastePromptAction": "Start",
+  "@tastePromptAction": {
+    "description": "Home: opens the quiz."
+  },
+  "tasteNoMatches": "Nothing here fits your taste yet",
+  "@tasteNoMatches": {
+    "description": "Home: the quiz was taken but nothing fits in this section."
+  },
+  "tasteWhyLabel": "On your taste: {why}",
+  "@tasteWhyLabel": {
+    "description": "Screen-reader label of why a drink fits.",
+    "placeholders": {
+      "why": {
+        "type": "String"
+      }
+    }
   }
 }

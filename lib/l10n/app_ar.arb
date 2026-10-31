@@ -125,5 +125,20 @@
   "stepDone": "خلصت، بالهنا",
   "recipeMissingTitle": "لسه مكتبناش طريقة تحضيره",
   "recipeMissingBody": "بنكتبهم واحد واحد.",
-  "approximateCalories": "السعرات تقريبية."
+  "approximateCalories": "السعرات تقريبية.",
+  "tasteTitle": "ذوقي",
+  "tasteQuestionOf": "سؤال {n} من {total}",
+  "tasteHint": "هنرتّب لك المنيو على ذوقك. تقدر تغيّره في أي وقت من الصفحة الرئيسية.",
+  "tasteNoPreference": "مش فارقة معايا",
+  "tastePrevious": "السؤال اللي فات",
+  "tasteClose": "اقفل",
+  "tasteNoQuestions": "لسه مفيش أسئلة للقسم ده",
+  "tasteSaveFailed": "مقدرناش نحفظ ذوقك. جرّب تاني.",
+  "tasteForYou": "على ذوقك",
+  "tasteChange": "غيّر ذوقك",
+  "tastePromptTitle": "قولنا ذوقك",
+  "tastePromptBody": "4 أسئلة سريعة، ونرتّب لك المنيو على ذوقك.",
+  "tastePromptAction": "يلا بينا",
+  "tasteNoMatches": "مفيش حاجة هنا على ذوقك لسه",
+  "tasteWhyLabel": "على ذوقك: {why}"
 }

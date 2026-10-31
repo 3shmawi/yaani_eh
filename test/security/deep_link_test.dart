@@ -14,10 +14,12 @@ import 'package:yaani_eh/features/favorites/presentation/favorites_view.dart';
 import 'package:yaani_eh/features/item_details/presentation/drink_view.dart';
 import 'package:yaani_eh/features/recipes/presentation/step_by_step_view.dart';
 import 'package:yaani_eh/features/smart_search/presentation/search_page.dart';
+import 'package:yaani_eh/features/taste_profile/presentation/taste_quiz_view.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
 import '../helpers/fake_catalog_repository.dart';
 import '../helpers/fake_favorites.dart';
+import '../helpers/fake_taste.dart';
 
 /// Deep links are untrusted input: unknown or crafted paths must land on a
 /// safe screen, never crash or open something unexpected.
@@ -37,6 +39,7 @@ void main() {
             FakeCatalogRepository(has: true),
           ),
           ...favoritesOverrides(favorites),
+          ...tasteOverrides(),
         ],
         child: AppUi.testWrap(
           ScreenUtilInit(
@@ -78,6 +81,8 @@ void main() {
       '/drink/flat_white/steps/../../etc/passwd',
       '/drink/flat_white/steps/1',
       '/drink//steps',
+      '/taste/../admin',
+      '/taste/cafe',
     ]) {
       appRouter.go(path);
       await tester.pumpAndSettle();
@@ -142,6 +147,30 @@ void main() {
     await tester.pumpAndSettle();
   });
 
+  testWidgets('a taste link opens the quiz; a crafted section is ignored', (
+    tester,
+  ) async {
+    await pumpRouter(tester);
+    for (final path in [
+      AppRoutes.taste,
+      AppRoutes.tasteFor('cafe'),
+      '/taste?section=desserts',
+      "/taste?section=cafe');DROP TABLE items;--",
+      '/taste?section=../../etc/passwd',
+      '/taste?section=${'a' * 200}',
+      '/taste?redirect=https://evil.example.com',
+    ]) {
+      appRouter.go(path);
+      await tester.pumpAndSettle();
+      expect(find.byType(TasteQuizView), findsOneWidget, reason: path);
+      expect(tester.takeException(), isNull);
+    }
+    // ✕ goes back into the app, never out of it.
+    await tester.tap(find.byKey(const Key('taste_close')));
+    await tester.pumpAndSettle();
+    expect(find.byType(MenuPage), findsOneWidget);
+  });
+
   testWidgets('the favorites link opens the Favorites tab, nothing else', (
     tester,
   ) async {
@@ -169,7 +198,11 @@ void main() {
     expect(find.byKey(const Key('app_tab_bar')), findsOneWidget);
     expect(find.byType(MenuPage), findsOneWidget);
 
-    await tester.tap(find.byKey(const Key('favorite_espresso')));
+    // Clear of the pinned chips and of «على ذوقك».
+    final heart = find.byKey(const Key('favorite_espresso'));
+    await Scrollable.ensureVisible(tester.element(heart), alignment: 0.5);
+    await tester.pumpAndSettle();
+    await tester.tap(heart);
     await tester.pumpAndSettle();
     expect(favorites.saved, hasLength(1));
     expect(

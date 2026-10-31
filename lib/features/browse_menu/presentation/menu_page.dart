@@ -11,6 +11,7 @@ import 'package:yaani_eh/features/favorites/presentation/drink_preview.dart';
 import 'package:yaani_eh/features/favorites/presentation/favorites_controller.dart';
 import 'package:yaani_eh/features/favorites/presentation/widgets/favorite_button.dart';
 import 'package:yaani_eh/features/pronunciation/presentation/pronounce.dart';
+import 'package:yaani_eh/features/taste_profile/presentation/taste_row.dart';
 
 /// Home: wires the menu state to [MenuView].
 class MenuPage extends ConsumerWidget {
@@ -33,6 +34,7 @@ class MenuPage extends ConsumerWidget {
       onPreviewItem: (item) => unawaited(
         showDrinkPreview(context, ref, item, onOpen: () => open(item)),
       ),
+      forYou: (section) => TasteRow(section: section.slug, onOpenItem: open),
     );
   }
 }

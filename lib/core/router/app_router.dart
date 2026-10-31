@@ -12,6 +12,7 @@ import 'package:yaani_eh/features/item_details/presentation/drink_page.dart';
 import 'package:yaani_eh/features/recipes/presentation/step_by_step_page.dart';
 import 'package:yaani_eh/features/settings/presentation/settings_page.dart';
 import 'package:yaani_eh/features/smart_search/presentation/search_page.dart';
+import 'package:yaani_eh/features/taste_profile/presentation/taste_page.dart';
 
 /// Root navigator, used to show app-wide dialogs (e.g. the update dialog).
 final rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -90,6 +91,26 @@ final appRouter = GoRouter(
           initialQuery: AppRoutes.cleanQuery(state.uri.queryParameters['q']),
         ),
       ),
+    ),
+    GoRoute(
+      path: AppRoutes.taste,
+      pageBuilder: (context, state) {
+        // Untrusted input (deep links): only a slug is used; anything else
+        // means the default section.
+        final section = state.uri.queryParameters['section'];
+        return MaterialPage(
+          key: state.pageKey,
+          fullscreenDialog: true,
+          child: CatalogSyncPage(
+            child: TastePage(
+              section:
+                  section != null && AppRoutes.slugPattern.hasMatch(section)
+                  ? section
+                  : null,
+            ),
+          ),
+        );
+      },
     ),
     GoRoute(
       path: AppRoutes.settings,

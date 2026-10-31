@@ -11,6 +11,7 @@ import 'package:yaani_eh/features/smart_search/presentation/widgets/answer_card.
 import 'package:yaani_eh/features/smart_search/presentation/widgets/result_row.dart';
 
 import '../../../helpers/fake_catalog_repository.dart';
+import '../../../helpers/fake_taste.dart';
 import '../../../helpers/pump_app.dart';
 
 void main() {
@@ -27,6 +28,7 @@ void main() {
             FakeCatalogRepository(has: true),
           ),
           todayProvider.overrideWithValue(DateTime(2026, 10, 30)),
+          ...tasteOverrides(),
         ],
         child: SearchPage(initialQuery: query),
       ),

@@ -43,6 +43,10 @@ abstract final class AppIcons {
   static const IconData hot = CupertinoIcons.flame;
   static const IconData cold = CupertinoIcons.snow;
 
+  /// «ذوقي»: the prompt on Home, and «الاتنين» (hot or iced).
+  static const IconData taste = CupertinoIcons.sparkles;
+  static const IconData hotOrCold = CupertinoIcons.thermometer;
+
   /// «طريقة التحضير»: the list row, and the picture of each kind of step.
   static const IconData recipe = CupertinoIcons.list_number;
   static const IconData stepGrind = CupertinoIcons.circle_grid_hex;

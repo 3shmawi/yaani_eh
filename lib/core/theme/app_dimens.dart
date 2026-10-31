@@ -102,6 +102,12 @@ abstract final class AppDimens {
   static double get progressHeight => 4.h;
   static double get legendSwatch => 12.r;
 
+  /// «ذوقي»: an answer card in the quiz.
+  static double get choiceHeight => 64.r;
+
+  /// A card in the «على ذوقك» row on Home.
+  static double get tasteCardWidth => 150.r;
+
   /// How tall a sheet may get, as a share of the screen.
   static const double sheetMaxShare = 0.92;
 

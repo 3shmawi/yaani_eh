@@ -20,6 +20,7 @@ import 'package:yaani_eh/features/pronunciation/presentation/widgets/play_name_b
 import '../../../helpers/fake_catalog_remote.dart';
 import '../../../helpers/fake_catalog_repository.dart';
 import '../../../helpers/fake_pronunciation.dart';
+import '../../../helpers/fake_taste.dart';
 import '../../../helpers/pump_app.dart';
 
 final _day = DateTime(2026, 10, 30);
@@ -480,6 +481,7 @@ void main() {
               FakeCatalogRepository(has: true),
             ),
             todayProvider.overrideWithValue(_day),
+            ...tasteOverrides(),
           ],
           child: const MenuPage(),
         ),
@@ -512,6 +514,7 @@ void main() {
             ),
             todayProvider.overrideWithValue(_day),
             ...pronunciationOverrides(repo, player),
+            ...tasteOverrides(),
           ],
           child: const MenuPage(),
         ),

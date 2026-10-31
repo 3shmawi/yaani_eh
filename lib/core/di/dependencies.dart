@@ -15,6 +15,8 @@ import 'package:yaani_eh/features/pronunciation/data/repositories/pronunciation_
 import 'package:yaani_eh/features/pronunciation/domain/repositories/pronunciation_repository.dart';
 import 'package:yaani_eh/features/settings/data/repositories/shared_prefs_settings_repository.dart';
 import 'package:yaani_eh/features/settings/domain/repositories/settings_repository.dart';
+import 'package:yaani_eh/features/taste_profile/data/repositories/shared_prefs_taste_repository.dart';
+import 'package:yaani_eh/features/taste_profile/domain/repositories/taste_repository.dart';
 
 /// Composition root: the only place that knows which implementation backs
 /// each domain interface. Add new repositories / services here.
@@ -24,10 +26,13 @@ abstract final class Dependencies {
   static late PronunciationRepository pronunciationRepository;
   static late ClipPlayer clipPlayer;
   static late FavoritesRepository favoritesRepository;
+  static late TasteRepository tasteRepository;
 
   static Future<void> init([DependencyOverrides? overrides]) async {
     final prefs = await SharedPreferences.getInstance();
     settingsRepository = SharedPrefsSettingsRepository(prefs);
+    tasteRepository =
+        overrides?.tasteRepository ?? SharedPrefsTasteRepository(prefs);
     catalogRepository = CatalogRepositoryImpl(
       overrides?.catalogRemote ??
           (Backend.isConfigured
@@ -56,6 +61,7 @@ class DependencyOverrides {
     this.pronunciationRepository,
     this.clipPlayer,
     this.favoritesDatabase,
+    this.tasteRepository,
   });
 
   final CatalogRemoteDataSource? catalogRemote;
@@ -72,4 +78,7 @@ class DependencyOverrides {
 
   /// e.g. `FavoritesDatabase(NativeDatabase.memory())`: nothing saved yet.
   final FavoritesDatabase? favoritesDatabase;
+
+  /// «ذوقي» kept in memory: no taste yet, and nothing left behind.
+  final TasteRepository? tasteRepository;
 }
