@@ -76,8 +76,9 @@ None.
   on the photo just above the sheet and scrolls with it; opening the page
   prefetches the drink's clips for offline use. The heart (`favorites`)
   joins with its feature.
-- "Average of N cafés" from the design needs a café count in the data; for
-  now the card shows the month the price was checked.
+- Prices are hidden (`AppContent.showPrices`). If they come back: "Average
+  of N cafés" from the design needs a café count in the data; the card
+  showed the month the price was checked.
 - Month names come from `intl`; the year stays in Western digits, as menus
   print it.
 
@@ -90,12 +91,11 @@ None.
 3. Scroll to similar drinks → tap one.
 4. Back, back → the menu.
 
-**Caption (English):** Tap any drink and get it in one breath: what it is,
-how it differs from its neighbour, calories, hot or iced, milk or not, and
-what cafés charge. Traits come from data, so desserts will bring their own.
+**Caption (English):** Tap any drink and get it in one breath: what it is
+in plain words, calories, hot or iced, milk or not, and how it's made.
+Traits come from data, so desserts will bring their own.
 
-**Caption (Egyptian Arabic):** دوس على أي مشروب وافهمه في نفَس واحد: هو إيه،
-فرقه إيه عن اللي جنبه، سعراته، سخن ولا ساقع، بلبن ولا لأ، وسعره في
-الكافيهات.
+**Caption (Egyptian Arabic):** دوس على أي مشروب وافهمه في نفَس واحد: هو إيه
+بكلام بسيط، سعراته، سخن ولا ساقع، بلبن ولا لأ، وبيتعمل إزاي.
 
 **Hashtags:** #flutter #buildinpublic #arabic #yaanieh

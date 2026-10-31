@@ -1,7 +1,26 @@
-Yaani Eh — Explains cafe menus in plain Egyptian Arabic: photos, calories, recipes and pronunciation.
+Ever stared at a café menu and had no idea what half of it means? Flat White, Cortado, Affogato, Cold Brew… Yaani Eh explains every drink in plain words, so you can order like you know it.
 
-• Feature one: what it does for you
-• Feature two: what it does for you
-• Works in Arabic and English, light and dark mode
+WHAT IT IS, IN WORDS YOU KNOW
+Every drink with its name exactly as the menu prints it, its Arabic spelling, and one short line that says what it really is: "strong milky coffee in a small cup", "coffee, milk and ice in a blender". No jargon, and never another menu word to explain it.
 
-Privacy first: we only collect what the app needs. Privacy policy: https://3shmawi.github.io/yaani_eh/privacy.html
+SEE WHAT'S IN THE CUP
+"How it's made" draws the cup to scale, layer by layer, so you can see that a flat white is mostly milk with a thin foam, and an americano is mostly water. Then the steps a good café follows, each with its amount.
+
+MAKE IT AT HOME
+Step by step shows one step at a time in big text, so you can follow it in your kitchen.
+
+HEAR THE NAME
+Not sure how to say "Affogato"? Hear it the way a barista says it, and the original pronunciation.
+
+SEARCH BY TASTE
+Type what you feel like: "something cold with chocolate", "strong but not bitter". Search understands descriptions in Arabic and English, even with Franco spelling.
+
+KEEP THE ONES YOU LIKE
+Tap the heart to save a drink. Long-press any card for a quick look without leaving the menu.
+
+WORKS OFFLINE
+The whole menu downloads once and works without internet. Favorites stay on your phone. No account needed.
+
+Arabic and English, made for Egypt. Calories are approximate.
+
+Privacy policy: https://3shmawi.github.io/yaani_eh/privacy.html

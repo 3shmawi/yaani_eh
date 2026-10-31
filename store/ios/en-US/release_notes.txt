@@ -1,0 +1,3 @@
+New: “How it’s made” for every drink: the cup drawn to scale, the steps with their amounts, and step-by-step mode for making it at home.
+Every explanation rewritten in plain words.
+Text now stays the same size on every phone, and the Settings header is fixed.
