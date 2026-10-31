@@ -32,6 +32,8 @@ MENU_WORDS = [
     "لاتيه", "إسبريسو", "اسبريسو", "موكا", "فرابيه", "ميلك شيك", "ماكياتو",
     "كابتشينو", "ماتشا", "سموذي", "كولد برو", "أفوجاتو", "دوبيو", "كورتادو",
     "أمريكانو", "تشاي", "موهيتو",
+    # Not a menu word, but not everyday Egyptian either: say «في الخلاط».
+    "متخفوق",
     "latte", "espresso", "mocha", "frapp", "milkshake", "macchiato",
     "cappuccino", "matcha", "smoothie", "cold brew", "affogato", "doppio",
     "cortado", "americano", "chai", "mojito",

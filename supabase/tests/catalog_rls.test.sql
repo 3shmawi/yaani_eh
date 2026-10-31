@@ -20,7 +20,7 @@ select is(
 );
 select is(
   (select count(*)::int from public.items
-   where gist_ar ~ '(لاتيه|إسبريسو|موكا|فرابيه|ميلك شيك|ماكياتو|كابتشينو|ماتشا|سموذي)'
+   where gist_ar ~ '(لاتيه|إسبريسو|موكا|فرابيه|ميلك شيك|ماكياتو|كابتشينو|ماتشا|سموذي|متخفوق)'
       or gist_en ~* '(latte|espresso|mocha|frapp|milkshake|macchiato|cappuccino|matcha|smoothie)'),
   0, 'no «يعني» line leans on another menu word'
 );
@@ -146,7 +146,7 @@ select is((select count(*)::int from public.categories where slug = 'draft_secti
 select is((select count(*)::int from public.item_terms where term = 'hidden term'), 0, 'anon cannot see terms of hidden items');
 select ok((select count(*) > 300 from public.item_terms), 'anon can read search terms');
 select is(
-  (select gist_ar from public.items where slug = 'coffee_frappe'), 'قهوة باللبن متخفوقة بالتلج',
+  (select gist_ar from public.items where slug = 'coffee_frappe'), 'قهوة باللبن والتلج في الخلاط',
   'anon can read the «يعني» line'
 );
 

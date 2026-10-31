@@ -17,10 +17,10 @@ void main() {
   group('gist', () {
     test('the «يعني» line in the asked language', () {
       final item = _item(
-        gistAr: 'قهوة باللبن متخفوقة بالتلج',
+        gistAr: 'قهوة باللبن والتلج في الخلاط',
         gistEn: 'A coffee shake',
       );
-      expect(item.gist(arabic: true), 'قهوة باللبن متخفوقة بالتلج');
+      expect(item.gist(arabic: true), 'قهوة باللبن والتلج في الخلاط');
       expect(item.gist(arabic: false), 'A coffee shake');
     });
 
@@ -34,7 +34,7 @@ void main() {
     });
 
     test('one language missing falls back on its own', () {
-      final item = _item(gistAr: 'قهوة باللبن متخفوقة بالتلج');
+      final item = _item(gistAr: 'قهوة باللبن والتلج في الخلاط');
       expect(item.gist(arabic: false), 'Coffee blended with ice');
     });
   });

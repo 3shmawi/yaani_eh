@@ -30,8 +30,9 @@ from the app: only Studio / the service role.
 - **Pronunciation:** see [Pronunciation clips](#pronunciation-clips).
 - **The «يعني» line** (`gist_ar`, `gist_en`): what the drink is, in words
   everyone already knows, shown on its card after «يعني». About 30
-  characters (60 at most). Say what it's made of: «قهوة باللبن متخفوقة
-  بالتلج», not «إسبريسو متخفوق». Another menu word never counts as
+  characters (60 at most). Say what it's made of: «قهوة باللبن والتلج
+  في الخلاط», not «إسبريسو متخفوق». Words people don't say every day
+  («متخفوق») count as menu words too. Another menu word never counts as
   familiar, even «لاتيه» or «ميلك شيك»: say «قهوة باللبن تقيلة», not «زي
   اللاتيه بس أقوى». Compare to what people already drink at home when you
   can («قهوة الكنكة»). Everyday words like «شاي أخضر», «آيس كريم» or

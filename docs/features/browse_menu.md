@@ -139,7 +139,7 @@ coffee in a small cup. The name exactly as the menu prints it, how to say it, an
 what it is. Flutter, Liquid Glass controls, content in Supabase.
 
 **Caption (Egyptian Arabic):** كل مشروب في منيو الكافيه بكلام إنت عارفه:
-الفرابيه يعني قهوة باللبن متخفوقة بالتلج، والفلات وايت يعني قهوة باللبن تقيلة في فنجان
+الفرابيه يعني قهوة باللبن والتلج في الخلاط، والفلات وايت يعني قهوة باللبن تقيلة في فنجان
 صغير.
 الاسم زي ما هو مكتوب، بيتقال إزاي، ويعني إيه.
 
