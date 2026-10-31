@@ -41,10 +41,6 @@ void main() {
   const ar = lang == 'ar';
 
   late _Catalog catalog;
-  setUpAll(() async {
-    await loadAppFonts();
-    catalog = _Catalog.load('build/store/catalog.json');
-  });
 
   Future<void> open(
     WidgetTester tester,
@@ -109,6 +105,13 @@ void main() {
   String id(String slug) => catalog.items.firstWhere((i) => i.slug == slug).id;
 
   group('store', () {
+    // Inside the group, so a normal run (everything skipped) never reads
+    // the fixture, which only scripts/store_shots.sh makes.
+    setUpAll(() async {
+      await loadAppFonts();
+      catalog = _Catalog.load('build/store/catalog.json');
+    });
+
     testWidgets('1 home', (tester) async {
       await open(tester, AppRoutes.home);
       await shoot(tester, '$out/1_home');
