@@ -4,7 +4,7 @@
 # size (test/screens/store_shots_test.dart), then framed with a caption
 # (tool/store/frame.js). Writes them where the Store listing workflow
 # uploads them from:
-#   store/ios/screenshots/<ar-SA|en-US>/<n>_iphone69.jpg, <n>_ipad13.jpg
+#   store/ios/screenshots/<ar-SA|en-US>/<n>_iphone69.jpg
 #   store/android/<ar|en-US>/images/{phone,sevenInch,tenInch}Screenshots/<n>.jpg
 # (JPEG at quality 90: a quarter of the PNG size, accepted by both stores)
 # plus the Play feature graphic and icon, and the App Store icon.
@@ -18,7 +18,8 @@ python3 tool/store/catalog_fixture.py build/store/catalog.json
 # device id | points@scale to render | final store size | where it goes
 devices=(
   "iphone69|440x956@3|1320x2868|ios"
-  "ipad13|1032x1376@2|2064x2752|ios"
+  # iPad (2064×2752) when the app supports it again:
+  # "ipad13|1032x1376@2|2064x2752|ios"
   "phone|360x640@3|1080x1920|phoneScreenshots"
   "seven|600x960@2|1200x1920|sevenInchScreenshots"
   "ten|800x1280@2|1600x2560|tenInchScreenshots"

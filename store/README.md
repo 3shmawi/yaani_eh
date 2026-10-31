@@ -28,7 +28,7 @@ Made from the app itself, not drawn by hand:
 It renders the main screens from the real launch content at every store
 size, in Arabic and English, adds a caption to each, and writes them where
 the workflow uploads from:
-- `store/ios/screenshots/<ar-SA|en-US>/<n>_iphone69.jpg` (1320×2868), `<n>_ipad13.jpg` (2064×2752)
+- `store/ios/screenshots/<ar-SA|en-US>/<n>_iphone69.jpg` (1320×2868). The app is iPhone-only for now, so there are no iPad screenshots.
 - `store/android/<ar|en-US>/images/phoneScreenshots/<n>.jpg` (1080×1920),
   `sevenInchScreenshots/` (1200×1920), `tenInchScreenshots/` (1600×2560)
 - `store/android/<ar|en-US>/images/featureGraphic.png` (1024×500), `icon.png` (512)

@@ -38,9 +38,12 @@ is used for advertising.
 
 ## App Store Connect
 
-- **Screenshots:** `store/ios/screenshots/<ar-SA|en-US>/`. There are 7 for iPhone
-  6.9" (1320×2868) and 7 for iPad 13" (2064×2752). The app supports
-  iPad (`TARGETED_DEVICE_FAMILY = 1,2`), so iPad screenshots are required.
+- **Screenshots:** `store/ios/screenshots/<ar-SA|en-US>/`, JPEG. There are 7 for
+  iPhone 6.9" (1320×2868).
+- **iPhone only for now** (`TARGETED_DEVICE_FAMILY = 1`). The app has no
+  tablet layout yet, so it isn't offered on iPad and needs no iPad
+  screenshots. To support iPad again: set it back to `1,2`, build a tablet
+  layout, and turn the iPad line on in `scripts/store_shots.sh`.
 - **App Privacy:** Data Used to Track You: none. Data Not Linked to You:
   - Usage Data → Product Interaction (Analytics, App Functionality)
   - Diagnostics → Crash Data, Performance Data, Other Diagnostic Data (App Functionality)
