@@ -15,16 +15,18 @@ void main() {
       );
     }
 
-    test('returns defaults when nothing is stored', () async {
+    test('a first launch is Arabic and dark', () async {
       final repository = await create();
       expect(repository.load(), const AppSettings());
+      expect(repository.load().locale, const Locale('ar'));
+      expect(repository.load().themeMode, ThemeMode.dark);
     });
 
     test('saves and loads locale and theme mode', () async {
       final repository = await create();
       const settings = AppSettings(
-        locale: Locale('ar'),
-        themeMode: ThemeMode.dark,
+        locale: Locale('en'),
+        themeMode: ThemeMode.light,
       );
 
       await repository.save(settings);
@@ -32,12 +34,20 @@ void main() {
       expect(repository.load(), settings);
     });
 
-    test('clears the locale when following the device language', () async {
-      final repository = await create({'settings.locale': 'ar'});
+    test(
+      "«the phone's language» is kept, not mistaken for a first launch",
+      () async {
+        final repository = await create({'settings.locale': 'ar'});
 
-      await repository.save(const AppSettings());
+        await repository.save(const AppSettings(locale: null));
 
-      expect(repository.load().locale, isNull);
+        expect(repository.load().locale, isNull);
+      },
+    );
+
+    test('an unknown stored theme falls back to dark', () async {
+      final repository = await create({'settings.theme_mode': 'neon'});
+      expect(repository.load().themeMode, ThemeMode.dark);
     });
   });
 }

@@ -10,6 +10,14 @@ import 'package:yaani_eh/core/theme/app_text_styles.dart';
 /// [AppPalette] for tokens Material has no role for.
 /// Must be read inside `ScreenUtilInit` (sizes are screen-scaled).
 abstract final class AppTheme {
+  /// The light palette isn't finished, so the app runs dark and Settings
+  /// doesn't offer a theme. Flip to true to bring the choice back.
+  static const lightModeReady = false;
+
+  /// The theme to run: the user's choice once light mode is ready.
+  static ThemeMode modeFor(ThemeMode chosen) =>
+      lightModeReady ? chosen : ThemeMode.dark;
+
   static ThemeData get light => _build(Brightness.light, AppPalette.light);
   static ThemeData get dark => _build(Brightness.dark, AppPalette.dark);
 

@@ -12,25 +12,32 @@ class SharedPrefsSettingsRepository implements SettingsRepository {
   static const _localeKey = 'settings.locale';
   static const _themeModeKey = 'settings.theme_mode';
 
+  /// Stored for «زي لغة الموبايل», so it differs from "never chosen"
+  /// (which is Arabic).
+  static const _followDevice = 'system';
+
   @override
   AppSettings load() {
     final languageCode = _prefs.getString(_localeKey);
     final themeModeName = _prefs.getString(_themeModeKey);
     return AppSettings(
-      locale: languageCode == null ? null : Locale(languageCode),
+      locale: switch (languageCode) {
+        null => AppSettings.defaultLocale,
+        _followDevice => null,
+        final code => Locale(code),
+      },
       themeMode:
-          ThemeMode.values.asNameMap()[themeModeName] ?? ThemeMode.system,
+          ThemeMode.values.asNameMap()[themeModeName] ??
+          AppSettings.defaultThemeMode,
     );
   }
 
   @override
   Future<void> save(AppSettings settings) async {
-    final locale = settings.locale;
-    if (locale == null) {
-      await _prefs.remove(_localeKey);
-    } else {
-      await _prefs.setString(_localeKey, locale.languageCode);
-    }
+    await _prefs.setString(
+      _localeKey,
+      settings.locale?.languageCode ?? _followDevice,
+    );
     await _prefs.setString(_themeModeKey, settings.themeMode.name);
   }
 }

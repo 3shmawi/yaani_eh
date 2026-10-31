@@ -94,7 +94,12 @@ void main() {
     await tester.drag(list, const Offset(0, 3000));
     await tester.pumpAndSettle();
     await beat(tester);
-    await tester.tap(either('Desserts', 'حلويات'));
+    // The switch reads «حلويات · قريبًا».
+    await tester.tap(
+      find.byWidgetPredicate(
+        (w) => w is Text && (w.data ?? '').contains(RegExp('Desserts|حلويات')),
+      ),
+    );
     await tester.pumpAndSettle();
     await beat(tester, 1800);
     expect(find.byKey(const Key('menu_coming_soon')), findsOneWidget);

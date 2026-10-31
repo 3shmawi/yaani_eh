@@ -32,32 +32,32 @@ void main() {
     test('setThemeMode updates state and persists it', () {
       container
           .read(settingsControllerProvider.notifier)
-          .setThemeMode(ThemeMode.dark);
+          .setThemeMode(ThemeMode.light);
 
       expect(
         container.read(settingsControllerProvider).themeMode,
-        ThemeMode.dark,
+        ThemeMode.light,
       );
       verify(
-        () => repository.save(const AppSettings(themeMode: ThemeMode.dark)),
+        () => repository.save(const AppSettings(themeMode: ThemeMode.light)),
       ).called(1);
     });
 
     test('setLocale updates state', () {
       container
           .read(settingsControllerProvider.notifier)
-          .setLocale(const Locale('ar'));
+          .setLocale(const Locale('en'));
 
       expect(
         container.read(settingsControllerProvider).locale,
-        const Locale('ar'),
+        const Locale('en'),
       );
     });
 
     test('does nothing when the value did not change', () {
       container
           .read(settingsControllerProvider.notifier)
-          .setThemeMode(ThemeMode.system);
+          .setThemeMode(ThemeMode.dark);
 
       verifyNever(() => repository.save(any()));
     });

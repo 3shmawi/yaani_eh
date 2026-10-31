@@ -169,14 +169,16 @@ class SearchView extends StatelessWidget {
 
     return Material(
       color: p.surface,
-      child: CustomScrollView(
-        key: const Key('search_scroll'),
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        slivers: [
-          SliverToBoxAdapter(child: header),
-          const SliverToBoxAdapter(child: OfflineBanner()),
-          ...body,
-        ],
+      child: HeaderOverscroll(
+        child: CustomScrollView(
+          key: const Key('search_scroll'),
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          slivers: [
+            SliverToBoxAdapter(child: header),
+            const SliverToBoxAdapter(child: OfflineBanner()),
+            ...body,
+          ],
+        ),
       ),
     );
   }

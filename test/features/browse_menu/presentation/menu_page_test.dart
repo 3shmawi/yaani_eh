@@ -1,10 +1,13 @@
 import 'dart:ui' show Tristate;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
 import 'package:yaani_eh/core/widgets/drink_card.dart';
+import 'package:yaani_eh/core/widgets/header_band.dart';
 import 'package:yaani_eh/features/browse_menu/domain/usecases/build_menu.dart';
 import 'package:yaani_eh/features/browse_menu/presentation/menu_controller.dart';
 import 'package:yaani_eh/features/browse_menu/presentation/menu_page.dart';
@@ -59,8 +62,8 @@ void main() {
       expect(find.text(l10nEn.appEyebrow), findsOneWidget);
       expect(find.byKey(const Key('menu_sections')), findsOneWidget);
       expect(find.text('Drinks'), findsOneWidget);
-      expect(find.text('Desserts'), findsOneWidget);
-      expect(find.text(l10nEn.comingSoonBadge), findsOneWidget);
+      expect(find.textContaining('Desserts'), findsOneWidget);
+      expect(find.textContaining(l10nEn.comingSoonBadge), findsOneWidget);
       expect(find.text('All'), findsNothing);
       expect(find.text('Coffee'), findsWidgets); // chip + section
       expect(find.byKey(const Key('drink_of_the_day')), findsOneWidget);
@@ -129,7 +132,7 @@ void main() {
         menu: _menu(),
         onTab: (t) => picked.add(t.section.slug),
       );
-      await tester.tap(find.text('Desserts'));
+      await tester.tap(find.textContaining('Desserts'));
       expect(picked, ['desserts']);
 
       await pumpView(
@@ -197,7 +200,7 @@ void main() {
     ) async {
       await pumpView(tester, menu: _menu(), locale: const Locale('ar'));
       expect(find.text('مشروبات'), findsOneWidget);
-      expect(find.text('قريبًا'), findsOneWidget);
+      expect(find.textContaining('قريبًا'), findsOneWidget);
       expect(find.text('قهوة'), findsWidgets);
       expect(
         Directionality.of(tester.element(find.text('مشروبات'))),
@@ -239,6 +242,56 @@ void main() {
         ),
         findsNothing,
       );
+    });
+
+    testWidgets('pulled down past the top, the band stretches, no gap', (
+      tester,
+    ) async {
+      await pumpView(tester, menu: _menu());
+      await tester.pumpAndSettle();
+      final gesture = await tester.startGesture(const Offset(200, 300));
+      await gesture.moveBy(const Offset(0, 200));
+      await tester.pump();
+      final fill = tester.widget<ColoredBox>(
+        find.descendant(
+          of: find.byType(HeaderOverscroll),
+          matching: find.byWidgetPredicate(
+            (w) => w is ColoredBox && w.color == AppColors.headerTop,
+          ),
+        ),
+      );
+      expect(tester.getSize(find.byWidget(fill)).height, greaterThan(0));
+      await gesture.up();
+      await tester.pumpAndSettle();
+    }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+
+    testWidgets('a chip ticks like an iOS picker, once', (tester) async {
+      final haptics = <String>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (call) async {
+          if (call.method == 'HapticFeedback.vibrate') {
+            haptics.add('${call.arguments}');
+          }
+          return null;
+        },
+      );
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        ),
+      );
+      await pumpView(tester, menu: _menu());
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.descendant(
+          of: find.byKey(const Key('category_chips')),
+          matching: find.text('Iced coffee'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(haptics, ['HapticFeedbackType.selectionClick']);
     });
 
     testWidgets('small phone with large text, and a tablet', (tester) async {
@@ -434,7 +487,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Flat White'), findsWidgets);
 
-      await tester.tap(find.text('Desserts'));
+      await tester.tap(find.textContaining('Desserts'));
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('menu_coming_soon')), findsOneWidget);
       expect(find.text('Flat White'), findsNothing);

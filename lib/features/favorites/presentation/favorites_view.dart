@@ -73,20 +73,22 @@ class FavoritesView extends StatelessWidget {
     }
     return Material(
       color: context.palette.surface,
-      child: CustomScrollView(
-        key: const Key('favorites_list'),
-        slivers: [
-          SliverToBoxAdapter(
-            child: HeaderBand(
-              title: l10n.favoritesTitle,
-              subtitle: drinks == null
-                  ? null
-                  : l10n.favoritesCount(drinks.length),
+      child: HeaderOverscroll(
+        child: CustomScrollView(
+          key: const Key('favorites_list'),
+          slivers: [
+            SliverToBoxAdapter(
+              child: HeaderBand(
+                title: l10n.favoritesTitle,
+                subtitle: drinks == null
+                    ? null
+                    : l10n.favoritesCount(drinks.length),
+              ),
             ),
-          ),
-          const SliverToBoxAdapter(child: OfflineBanner()),
-          body,
-        ],
+            const SliverToBoxAdapter(child: OfflineBanner()),
+            body,
+          ],
+        ),
       ),
     );
   }

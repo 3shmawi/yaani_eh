@@ -722,10 +722,11 @@ class _AppPressableState extends State<AppPressable> {
       onTapDown: still ? null : (_) => _set(true),
       onTapUp: still ? null : (_) => _set(false),
       onTapCancel: still ? null : () => _set(false),
+      // Down quickly, back up with a small spring, like iOS.
       child: AnimatedScale(
         scale: _down ? AppMotion.pressScale : 1,
-        duration: AppMotion.press,
-        curve: Curves.easeOut,
+        duration: _down ? AppMotion.press : AppMotion.release,
+        curve: _down ? Curves.easeOut : Curves.easeOutBack,
         child: widget.child,
       ),
     );
@@ -737,144 +738,68 @@ class _AppPressableState extends State<AppPressable> {
 typedef AppSegment = ({String id, String label, String? badge});
 
 /// A single-choice switch on the header band (Design System → Segmented
-/// control): clear glass, the selected option a solid `AppColors.selected`
-/// pill. Every option is at least [AppDimens.touchTarget] tall.
-class AppSegmentedControl extends StatelessWidget {
+/// control), with iOS 26's liquid glass indicator: it slides with a little
+/// squash and stretch, and can be dragged from one option to the next
+/// (liquid_glass_widgets' `GlassSegmentedControl`). The selected option
+/// reads in warm milk; every change ticks like an iOS picker. A `badge`
+/// («قريبًا») follows the label.
+class AppSegmentedControl extends StatefulWidget {
   const new({
     required this.segments,
     required this.selectedId,
     required this.onSelected,
-    this.tone = GlassTone.dark,
     super.key,
   });
 
   final List<AppSegment> segments;
   final String? selectedId;
   final ValueChanged<String> onSelected;
-  final GlassTone tone;
 
   @override
-  Widget build(BuildContext context) {
-    // The whole height is the tap area; the selected pill sits inside it.
-    const height = AppDimens.touchTarget;
-    final inset = AppDimens.space1;
-    return AppGlass(
-      kind: GlassKind.clear,
-      tone: tone,
-      radius: height / 2,
-      padding: EdgeInsetsDirectional.symmetric(horizontal: inset),
-      child: Row(
-        children: [
-          for (final s in segments)
-            Expanded(
-              child: _Segment(
-                segment: s,
-                selected: s.id == selectedId,
-                height: height,
-                pill: height - inset * 2,
-                onTap: () => onSelected(s.id),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
+  State<AppSegmentedControl> createState() => _AppSegmentedControlState();
 }
 
-class _Segment extends StatelessWidget {
-  const new({
-    required this.segment,
-    required this.selected,
-    required this.height,
-    required this.pill,
-    required this.onTap,
-  });
+class _AppSegmentedControlState extends State<AppSegmentedControl> {
+  /// The last option reported, so one gesture is reported once (the glass
+  /// control can report a tap on press and again when it settles).
+  String? _reported;
 
-  final AppSegment segment;
-  final bool selected;
+  @override
+  void didUpdateWidget(AppSegmentedControl old) {
+    super.didUpdateWidget(old);
+    _reported = null;
+  }
 
-  /// The tap area's height, and the drawn pill's inside it.
-  final double height;
-  final double pill;
-  final VoidCallback onTap;
+  static String _label(AppSegment s) =>
+      s.badge == null ? s.label : '${s.label} · ${s.badge}';
 
   @override
   Widget build(BuildContext context) {
-    final p = context.palette;
-    final badge = segment.badge;
-    // Unselected: the glass's own text colour (it follows the glass tone
-    // and the lite / high-contrast variant).
-    final fg = selected ? AppColors.onSelected : null;
-    final label = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Flexible(
-          child: Text(
-            segment.label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: AppTextStyles.forText(
-              segment.label,
-              TextRole.label,
-            ).copyWith(color: fg),
-          ),
-        ),
-        if (badge != null) ...[
-          SizedBox(width: AppDimens.space1),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: selected ? p.brand : AppColors.glassClearDark,
-              borderRadius: BorderRadius.circular(AppDimens.radiusPill),
-            ),
-            child: Padding(
-              padding: EdgeInsetsDirectional.symmetric(
-                horizontal: AppDimens.space2,
-              ),
-              child: Text(
-                badge,
-                maxLines: 1,
-                style: AppTextStyles.forText(
-                  badge,
-                  TextRole.caption,
-                ).copyWith(color: selected ? p.onBrand : null),
-              ),
-            ),
-          ),
-        ],
-      ],
-    );
+    final segments = widget.segments;
+    final index = segments.indexWhere((s) => s.id == widget.selectedId);
+    final text = context.text(TextRole.label);
     return Semantics(
-      button: true,
-      selected: selected,
-      label: [segment.label, ?badge].join('، '),
-      onTap: onTap,
-      child: ExcludeSemantics(
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: onTap,
-          child: SizedBox(
-            height: height,
-            child: Center(
-              child: AnimatedContainer(
-                duration: MediaQuery.disableAnimationsOf(context)
-                    ? Duration.zero
-                    : AppMotion.select,
-                constraints: BoxConstraints(minHeight: pill),
-                alignment: Alignment.center,
-                padding: EdgeInsetsDirectional.symmetric(
-                  horizontal: AppDimens.space3,
-                ),
-                decoration: BoxDecoration(
-                  color: selected
-                      ? AppColors.selected
-                      : AppColors.selected.withValues(alpha: 0),
-                  borderRadius: BorderRadius.circular(AppDimens.radiusPill),
-                ),
-                child: label,
-              ),
-            ),
-          ),
-        ),
+      container: true,
+      child: GlassSegmentedControl(
+        // Every option gets the full 48pt tap area inside the 2pt track
+        // padding.
+        height: AppDimens.touchTarget + 4,
+        selectedIndex: index < 0 ? 0 : index,
+        onSegmentSelected: (i) {
+          final id = segments[i].id;
+          if (id == widget.selectedId || id == _reported) return;
+          _reported = id;
+          unawaited(HapticFeedback.selectionClick());
+          widget.onSelected(id);
+        },
+        indicatorColor: AppColors.selected,
+        backgroundColor: AppColors.glassClearDark,
+        selectedTextStyle: text.copyWith(color: AppColors.onSelected),
+        unselectedTextStyle: text.copyWith(color: AppColors.onHeader),
+        segments: [
+          for (final s in segments)
+            GlassSegment(label: _label(s), semanticLabel: _label(s)),
+        ],
       ),
     );
   }
@@ -1105,7 +1030,12 @@ class AppTabScaffold extends StatelessWidget {
                 child: GlassTabBar.bottom(
                   key: const Key('app_tab_bar'),
                   selectedIndex: selectedIndex,
-                  onTabSelected: onSelected,
+                  onTabSelected: (i) {
+                    if (i != selectedIndex) {
+                      unawaited(HapticFeedback.selectionClick());
+                    }
+                    onSelected(i);
+                  },
                   barHeight: AppDimens.tabBarHeight,
                   selectedIconColor: p.brand,
                   unselectedIconColor: p.inkMuted,

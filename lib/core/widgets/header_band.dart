@@ -136,3 +136,57 @@ class HeaderBand extends StatelessWidget {
     );
   }
 }
+
+/// Wraps a scroll view that opens with a [HeaderBand]: when the list is
+/// pulled down past its top (iOS's bounce), the gap above the band is
+/// filled with the band's own colour, so the band seems to stretch instead
+/// of showing the page behind it.
+class HeaderOverscroll extends StatefulWidget {
+  const new({required this.child, super.key});
+
+  final Widget child;
+
+  @override
+  State<HeaderOverscroll> createState() => _HeaderOverscrollState();
+}
+
+class _HeaderOverscrollState extends State<HeaderOverscroll> {
+  final _stretch = ValueNotifier<double>(0);
+
+  @override
+  void dispose() {
+    _stretch.dispose();
+    super.dispose();
+  }
+
+  bool _onScroll(ScrollNotification n) {
+    if (n.depth == 0 && n.metrics.axis == Axis.vertical) {
+      _stretch.value = (n.metrics.minScrollExtent - n.metrics.pixels).clamp(
+        0,
+        double.infinity,
+      );
+    }
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) => Stack(
+    children: [
+      ValueListenableBuilder<double>(
+        valueListenable: _stretch,
+        builder: (context, stretch, _) => PositionedDirectional(
+          top: 0,
+          start: 0,
+          end: 0,
+          // A little more than the gap, so no hairline shows at the seam.
+          height: stretch > 0 ? stretch + AppDimens.radiusXl : 0,
+          child: const ColoredBox(color: AppColors.headerTop),
+        ),
+      ),
+      NotificationListener<ScrollNotification>(
+        onNotification: _onScroll,
+        child: widget.child,
+      ),
+    ],
+  );
+}

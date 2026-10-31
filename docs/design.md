@@ -20,16 +20,18 @@ component READMEs under `project/components/`, and the screen's
 | Colors that never change (header band, clear glass, selected) | `AppColors` in `app_colors.dart` |
 | Type scale (Latin + Arabic) | `app_text_styles.dart`: `context.text(TextRole.x)` for UI copy, `AppTextStyles.forText(string, role)` for content (picks the font by the string's script) |
 | Spacing, radius, blur, sizes | `app_dimens.dart` (`space1…space10`, `radiusSm…Pill`, `touchTarget`, `controlHeight`, `chipHeight`…); blur sigma = CSS value ÷ 2 |
-| Icons (Phosphor, Regular + Fill) | `app_icons.dart` (`AppIcons`, `AppIconsFill`) — fonts bundled in `assets/fonts/Phosphor` |
+| Icons (SF Symbols look: outline + fill) | `app_icons.dart` (`AppIcons`, `AppIconsFill`), from `CupertinoIcons` (cupertino_icons, MIT) on every platform, so the glass controls read like iOS; coffee and cake (not in that set) from Phosphor Regular, bundled in `assets/fonts/Phosphor` |
 | Glass (clear / frosted, tone, lite) | `AppGlass` in `lib/core/ui/app_ui.dart` (+ `glass_tone.dart`) |
 | Button, IconButton, Card | `AppButton`, `AppIconButton`, `AppCard` in `app_ui.dart` |
 | DrinkCard (photo tile with the name on a soft shadow, glass controls, the «يعني» line under it) | `core/widgets/drink_card.dart`; type `TextRole.cardTitle` / `cardBody` |
-| Segmented control (the Home sections switch), selected = warm milk | `AppSegmentedControl` in `app_ui.dart`; `AppColors.selected` (same in both themes) |
+| Segmented control (the Home sections switch), selected = warm milk | `AppSegmentedControl` in `app_ui.dart`, drawn by liquid_glass_widgets' `GlassSegmentedControl`: iOS 26's liquid indicator that squashes, stretches and can be dragged; `AppColors.selected` (same in both themes); a `badge` follows the label («حلويات · قريبًا») |
 | TabBar (floating glass pill, count badge) | `AppTabScaffold` + `AppTab` in `app_ui.dart` (`GlassTabBar.bottom`); screens under it keep their last items clear with `AppDimens.tabBarHeight` |
 | Context menu (long-press preview) | `showAppPreviewMenu` + `AppPreviewAction` in `app_ui.dart`: blur + scrim, the preview, frosted rows; same on iOS and Android |
 | Saved / chosen state of an icon button (the heart) | `AppIconButton(selectedLook: AppSelectedLook.chosen)`: warm milk, espresso icon |
 | Header pattern (mashrabiya) | `core/widgets/header_pattern.dart`, `AppColors.headerPattern`, `AppDimens.patternTile` |
-| Motion (durations, curves, press scale, list stagger) | `AppMotion` in `app_dimens.dart`; `AppReveal` (list entry) and `AppPressable` (card press) in `app_ui.dart` |
+| Motion (durations, curves, press scale, list stagger) | `AppMotion` in `app_dimens.dart`; `AppReveal` (list entry) and `AppPressable` (card press: down in 120 ms, back with a small spring) in `app_ui.dart` |
+| Haptics (like iOS) | a selection tick when a tab, the sections switch or a chip changes; a light tap when a drink is saved; a medium one when the long-press preview opens. Nothing on plain buttons, as on iOS |
+| Pull-down past the top (iOS bounce) | `HeaderOverscroll` (`header_band.dart`) fills the gap above a `HeaderBand` with its own colour, so the band stretches instead of showing the page |
 | HeaderBand, EmptyState, ErrorState, OfflineBanner | `lib/core/widgets/` (`header_band.dart`, `state_views.dart`, `offline_banner.dart`) |
 | Bidi (ranges, `0.75×`, Latin names in Arabic) | `Bidi.range(min, max)`, `Bidi.ltr(text)` in `lib/core/text/bidi.dart` |
 
@@ -85,7 +87,8 @@ dart run flutter_flavorizr -p android:icons,ios:icons   # projects with flavors
   a large phone and a tablet.
 - Has all states: loading (skeleton/adaptive spinner), empty, error with
   retry, success, offline.
-- Arabic RTL and dark mode checked.
+- Arabic RTL and dark mode checked (the app runs dark only for now; see
+  `AppTheme.lightModeReady`).
 - Touch targets ≥ 48×48, text contrast ≥ 4.5:1, works with large text
   (system font scale 1.3+), every icon button has a semantics label/tooltip.
 - Motion: short (150–300 ms), purposeful; respects "reduce motion".

@@ -1,50 +1,42 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/cupertino.dart';
 
-/// The app's icons: Phosphor (MIT), bundled in `assets/fonts/Phosphor`.
-/// Regular weight by default; [AppIconsFill] for the active tab and a
-/// saved heart. Add an icon by copying its code point from
-/// https://phosphoricons.com (the same code point works in both weights).
+/// The app's icons: SF Symbols' look on every platform, from
+/// `CupertinoIcons` (cupertino_icons, MIT): the same outline weight and
+/// rounded ends as iOS, so the glass controls read like the system's. A few
+/// food glyphs SF doesn't have (coffee, cake) come from Phosphor (MIT),
+/// bundled in `assets/fonts/Phosphor`. [AppIconsFill] is the filled weight
+/// for the active tab, a saved heart and a playing name.
 abstract final class AppIcons {
-  static const _family = 'PhosphorRegular';
+  static const _phosphor = 'PhosphorRegular';
 
-  /// Back chevron: mirrors in RTL.
-  static const back = IconData(
-    0xe138,
-    fontFamily: _family,
-    matchTextDirection: true,
-  );
-  static const forward = IconData(
-    0xe13a,
-    fontFamily: _family,
-    matchTextDirection: true,
-  );
-  static const search = IconData(0xe30c, fontFamily: _family);
-  static const heart = IconData(0xe2a8, fontFamily: _family);
-  static const speaker = IconData(0xe44a, fontFamily: _family);
-  static const play = IconData(0xe3d0, fontFamily: _family);
-  static const pause = IconData(0xe39e, fontFamily: _family);
-  static const home = IconData(0xe2c2, fontFamily: _family);
-  static const sliders = IconData(0xe432, fontFamily: _family);
-  static const wifiSlash = IconData(0xe4f2, fontFamily: _family);
-  static const plus = IconData(0xe3d4, fontFamily: _family);
-  static const close = IconData(0xe4f6, fontFamily: _family);
-  static const checkCircle = IconData(0xe184, fontFamily: _family);
-  static const warningCircle = IconData(0xe4e2, fontFamily: _family);
-  static const coffee = IconData(0xe1c2, fontFamily: _family);
-  static const cake = IconData(0xe780, fontFamily: _family);
-  static const send = IconData(0xe398, fontFamily: _family);
-  static const retry = IconData(0xe036, fontFamily: _family);
-  static const check = IconData(0xe182, fontFamily: _family);
-  static const settings = IconData(0xe270, fontFamily: _family);
+  /// Back chevron: mirrors in RTL (like iOS).
+  static const IconData back = CupertinoIcons.chevron_back;
+  static const IconData forward = CupertinoIcons.chevron_forward;
+  static const IconData search = CupertinoIcons.search;
+  static const IconData heart = CupertinoIcons.heart;
+  static const IconData speaker = CupertinoIcons.speaker_2;
+  static const IconData play = CupertinoIcons.play;
+  static const IconData pause = CupertinoIcons.pause;
+  static const IconData home = CupertinoIcons.house;
+  static const IconData sliders = CupertinoIcons.slider_horizontal_3;
+  static const IconData wifiSlash = CupertinoIcons.wifi_slash;
+  static const IconData plus = CupertinoIcons.plus;
+  static const IconData close = CupertinoIcons.xmark;
+  static const IconData checkCircle = CupertinoIcons.checkmark_circle;
+  static const IconData warningCircle = CupertinoIcons.exclamationmark_circle;
+  static const IconData send = CupertinoIcons.paperplane;
+  static const IconData retry = CupertinoIcons.arrow_clockwise;
+  static const IconData check = CupertinoIcons.checkmark;
+  static const IconData settings = CupertinoIcons.gear_alt;
+  static const coffee = IconData(0xe1c2, fontFamily: _phosphor);
+  static const cake = IconData(0xe780, fontFamily: _phosphor);
 }
 
-/// Fill weight: active tab, saved heart, playing audio.
+/// Filled weight: active tab, saved heart, playing name.
 abstract final class AppIconsFill {
-  static const _family = 'PhosphorFill';
-
-  static const heart = IconData(0xe2a8, fontFamily: _family);
-  static const home = IconData(0xe2c2, fontFamily: _family);
-  static const search = IconData(0xe30c, fontFamily: _family);
-  static const sliders = IconData(0xe432, fontFamily: _family);
-  static const speaker = IconData(0xe44a, fontFamily: _family);
+  static const IconData heart = CupertinoIcons.heart_fill;
+  static const IconData home = CupertinoIcons.house_fill;
+  static const IconData search = CupertinoIcons.search;
+  static const IconData sliders = CupertinoIcons.slider_horizontal_3;
+  static const IconData speaker = CupertinoIcons.speaker_2_fill;
 }
