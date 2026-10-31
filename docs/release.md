@@ -60,8 +60,10 @@ Changes under `supabase/` merged to `main` → `supabase.yml` runs
 from `SUPABASE_URL`). PRs touching `supabase/` run the RLS tests first.
 
 ## Store listing
-Texts in `store/`, uploaded by Actions → **Store listing** (fastlane
-supply/deliver) — see `store/README.md`.
+Texts, screenshots and graphics in `store/`, uploaded by Actions → **Store
+listing** (fastlane supply/deliver) — see `store/README.md`. Screenshots are
+made from the app with `./scripts/store_shots.sh`; the privacy, rating and
+review answers are in `store/submission.md`.
 
 ## Store requirements (check each year)
 | Store | Requirement | Where it's handled |
