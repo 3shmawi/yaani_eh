@@ -22,7 +22,7 @@ Build in this order, one feature per PR (each with tests, doc and demo):
 | 5 | `pronunciation` — hear the drink's name (barista + original), the play pill on cards and the drink page | ✅ |
 | 6 | `favorites` — hearts, a Favorites tab (brings the tab bar), the long-press preview | ✅ |
 | 7 | `recipes` — «طريقة التحضير»: the cup's layers to scale and the steps, from the long-press preview | ✅ |
-| 8 | `taste_profile` — "My taste": what you like, used to rank search and suggestions | |
+| 8 | `taste_profile` — «ذوقي»: four questions, «على ذوقك» on Home, ranks search | ✅ |
 | 9 | `suggest_item` — suggest a drink from your taste | |
 
 Update the status here when a feature merges.
@@ -34,6 +34,7 @@ Update the status here when a feature merges.
 - [Smart search](features/smart_search.md)
 - [Favorites (hearts, tab, long-press preview)](features/favorites.md)
 - [Recipes («طريقة التحضير»: the cup to scale, step by step)](features/recipes.md)
+- [Taste profile («ذوقي» and «على ذوقك»)](features/taste_profile.md)
 - [Pronunciation](features/pronunciation.md)
 - [App update gate](features/app_update.md)
 - [Settings (language & theme)](features/settings.md)
