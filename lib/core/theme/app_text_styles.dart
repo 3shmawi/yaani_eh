@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:yaani_eh/core/text/bidi.dart';
 import 'package:yaani_eh/core/theme/app_fonts.dart';
 
@@ -40,15 +39,17 @@ abstract final class AppTextStyles {
   };
 
   static TextStyle arabic(TextRole role) => switch (role) {
+    // Readex Pro draws bigger than Plus Jakarta Sans at the same size, so
+    // the reading roles are a point smaller to look the same.
     TextRole.largeTitle => _arabic(32, 44, FontWeight.w700),
     TextRole.title => _arabic(22, 32, FontWeight.w700),
-    TextRole.headline => _arabic(17, 26, FontWeight.w600),
-    TextRole.body => _arabic(15, 26, FontWeight.w400),
-    TextRole.callout => _arabic(14, 22, FontWeight.w500),
-    TextRole.label => _arabic(13, 20, FontWeight.w600),
-    TextRole.caption => _arabic(12, 18, FontWeight.w500),
-    TextRole.cardTitle => _arabic(15, 22, FontWeight.w600),
-    TextRole.cardBody => _arabic(13, 20, FontWeight.w400),
+    TextRole.headline => _arabic(16, 24, FontWeight.w600),
+    TextRole.body => _arabic(14, 23, FontWeight.w400),
+    TextRole.callout => _arabic(13, 20, FontWeight.w500),
+    TextRole.label => _arabic(13, 19, FontWeight.w600),
+    TextRole.caption => _arabic(12, 17, FontWeight.w500),
+    TextRole.cardTitle => _arabic(15, 21, FontWeight.w600),
+    TextRole.cardBody => _arabic(12, 19, FontWeight.w400),
   };
 
   /// The style for [text] by its script, whatever the app language.
@@ -85,7 +86,9 @@ abstract final class AppTextStyles {
   ]) => TextStyle(
     fontFamily: AppFonts.latin,
     fontFamilyFallback: const [AppFonts.arabic],
-    fontSize: size.sp,
+    // Points, not screen-scaled: like iOS, text is the same size on every
+    // phone and grows only with the phone's own text size setting.
+    fontSize: size,
     height: lineHeight / size,
     fontWeight: weight,
     letterSpacing: tracking,
@@ -95,7 +98,7 @@ abstract final class AppTextStyles {
       TextStyle(
         fontFamily: AppFonts.arabic,
         fontFamilyFallback: const [AppFonts.latin],
-        fontSize: size.sp,
+        fontSize: size,
         height: lineHeight / size,
         fontWeight: weight,
       );

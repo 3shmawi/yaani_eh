@@ -120,8 +120,11 @@ leaks").
   `AppTextStyles.forText(string, role)` (content: font by the string's
   script), `AppDimens`, and `AppIcons` / `AppIconsFill` (Phosphor). New
   tokens go in those files.
-- Sizes scale with flutter_screenutil (`.w`, `.h`, `.sp`, `.r`) — design frame
-  375×812.
+- Sizes scale with flutter_screenutil (`.w`, `.h`, `.r`) — design frame
+  375×812 — but by at most `AppDimens.maxScale` (1.1×) on big phones and
+  tablets (`AppDimens.designFor`). Text is never screen-scaled (no `.sp`):
+  like iOS it's the same on every phone and follows only the phone's own
+  text size.
 - RTL-safe layout: `EdgeInsetsDirectional`, `AlignmentDirectional`,
   `start`/`end` — never `left`/`right`. Number ranges and `0.75×` go through
   `Bidi.range` / `Bidi.ltr` (otherwise RTL shows `150–70`).

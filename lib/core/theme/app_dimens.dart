@@ -1,12 +1,30 @@
+import 'dart:math' as math;
+
 import 'package:flutter/animation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Spacing, radii, blur and sizes from the Design System, scaled to the
 /// screen with flutter_screenutil. Never hard-code sizes in widgets.
+///
+/// Sizes follow the screen, but only so far: up to [maxScale] on a big
+/// phone or a tablet, which gets more room instead of bigger everything
+/// (like iOS). Text doesn't scale with the screen at all; it follows the
+/// phone's own text size (`AppTextStyles`).
 abstract final class AppDimens {
   /// The size of the design frame the UI was drawn on.
   static const designSize = Size(375, 812);
+
+  /// The most a size grows on a screen bigger than [designSize].
+  static const maxScale = 1.1;
+
+  /// The frame to give flutter_screenutil on a [screen] (in points): the
+  /// design frame, widened on big screens so nothing grows past
+  /// [maxScale]. Smaller phones still scale down to fit.
+  static Size designFor(Size screen) => Size(
+    math.max(designSize.width, screen.width / maxScale),
+    math.max(designSize.height, screen.height / maxScale),
+  );
 
   /// Icon-to-label gap.
   static double get space1 => 4.w;
