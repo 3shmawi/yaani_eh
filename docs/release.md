@@ -27,6 +27,21 @@ A manual run (Actions → Release → Run workflow) can force patch/minor/major.
    IPA → App Store Connect / TestFlight.
 4. **GitHub release** — tag `vX.Y.Z` with generated notes.
 
+## Demo video and screenshots (not a merge check)
+The **Demo video** workflow (`.github/workflows/demo-video.yml`) records the
+PR's feature on an iOS Simulator and comments the video, the caption and a
+screenshot of every `beat()` on the PR. It is **not** a required check:
+keep only the CI jobs (format · analyze · test, Android build, integration
+tests, security) and the PR title in `main`'s required checks (Settings →
+Rules), so a merge never waits for the video.
+
+The screenshots go to the `demo-media` branch (`pr-<number>/<commit>/`,
+created empty the first time; nothing runs on pushes to it) through the
+GitHub API, with the job's own `contents: write` token, so the comment can
+show them as pictures. Fork PRs can't write there: their comment has the
+video link only. The branch is safe to prune (delete old `pr-*` folders,
+or the branch itself; it comes back on the next demo).
+
 ## After the stores approve
 Actions → **Announce update** → type `optional` or `force`. It writes the
 version + changelog (from the release's commits, or your text in English and

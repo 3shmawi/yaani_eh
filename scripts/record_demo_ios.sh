@@ -5,6 +5,8 @@
 #   scripts/record_demo_ios.sh <integration_test/file.dart> <out.mp4> [simulator-udid]
 # Without a udid it boots the newest available iPhone simulator.
 # Uses --dart-define=DEMO=true so `beat()` pauses make the video readable.
+# Every `beat()` also prints DEMO_SHOT; each one becomes a simulator
+# screenshot in "<out>.shots/NN.png" (full glass, the real app), for the PR.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 . ./.project-kit.env
@@ -37,7 +39,10 @@ flutter build ios --simulator --debug ${flavor[@]+"${flavor[@]}"} \
 now() { perl -MTime::HiRes=time -e 'printf "%.2f\n", time'; }
 start_file="${out%.*}.start"
 log="${out%.*}.log"
+shots="${out%.*}.shots"
 rm -f "$start_file"
+rm -rf "$shots"
+mkdir -p "$shots"
 : > "$log"
 
 recording_since=$(now)
@@ -68,10 +73,24 @@ watchdog=$!
   done
 ) &
 marker=$!
+# A screenshot for every DEMO_SHOT the test prints (one per beat()).
+(
+  taken=0
+  while kill -0 "$test_pid" 2>/dev/null; do
+    seen=$(grep -c 'DEMO_SHOT' "$log" || true)
+    while [ "$taken" -lt "$seen" ]; do
+      taken=$((taken + 1))
+      xcrun simctl io "$udid" screenshot --type=png \
+        "$shots/$(printf '%02d' "$taken").png" >/dev/null 2>&1 || true
+    done
+    sleep 0.2
+  done
+) &
+shooter=$!
 wait "$test_pid" || status=$?
-kill "$watchdog" "$marker" "$tailer" 2>/dev/null || true
+kill "$watchdog" "$marker" "$tailer" "$shooter" 2>/dev/null || true
 sleep 2
 kill -INT "$recorder" 2>/dev/null || true
 wait "$recorder" 2>/dev/null || true
-echo "Recorded $out (test exit $status)"
+echo "Recorded $out and $(find "$shots" -name '*.png' | wc -l | tr -d ' ') screenshots (test exit $status)"
 exit "$status"

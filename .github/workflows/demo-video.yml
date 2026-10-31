@@ -3,7 +3,11 @@
 #   1. record: the feature's integration test on an iOS Simulator (macOS
 #      runner, full Liquid Glass via Metal; the CI Android emulator has no GPU),
 #   2. compose: a 1080×1920 video (brand background, title, handle) + the post
-#      caption from the feature doc, linked in a comment on the PR.
+#      caption from the feature doc, linked in a comment on the PR, with a
+#      screenshot of every beat() shown right in the comment (published to
+#      the `demo-media` branch, so they open without downloading anything).
+# It's never a required check: a PR merges on CI alone, and the video
+# arrives when it's ready.
 # Can also be run by hand (Actions → Demo video → Run workflow).
 name: Demo video
 
@@ -16,6 +20,7 @@ on:
       # A change to how demos are made gets a demo too, to prove it.
       - 'scripts/record_demo_ios.sh'
       - 'scripts/compose_demo.sh'
+      - 'scripts/publish_demo_shots.sh'
       - '.github/workflows/demo-video.yml'
   workflow_dispatch:
     inputs:
@@ -119,12 +124,13 @@ jobs:
           path: |
             build/demo/raw.mp4
             build/demo/raw.start
+            build/demo/raw.shots/
           if-no-files-found: ignore
           retention-days: 7
 
   compose:
     permissions:
-      contents: read
+      contents: write        # publishes the screenshots to the demo-media branch
       pull-requests: write   # comments the video on the PR
     needs: record
     runs-on: ubuntu-latest
@@ -160,6 +166,31 @@ jobs:
             build/demo/caption.md
           retention-days: 30
 
+      - name: Shrink the screenshots
+        run: |
+          mkdir -p build/demo/shots
+          for f in build/demo/raw.shots/*.png; do
+            [ -e "$f" ] || continue
+            ffmpeg -y -loglevel error -i "$f" -vf scale=390:-2 -q:v 4 \
+              "build/demo/shots/$(basename "$f" .png).jpg"
+          done
+          ls build/demo/shots
+
+      # One commit on the demo-media branch (created empty the first time),
+      # through the API: no git credentials on disk. Same-repo PRs only; a
+      # fork's token can't write, and its comment just has no pictures.
+      - name: Publish the screenshots
+        id: shots
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        # Pictures are a bonus: the video comment goes out without them.
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: ./scripts/publish_demo_shots.sh build/demo/shots "pr-$PR/${SHA:0:7}" > build/demo/shots.md
+
       - name: Link on the PR
         if: github.event_name == 'pull_request'
         env:
@@ -178,6 +209,10 @@ jobs:
             echo
             echo "_${length}s · ${cut}_"
             echo
+            if [ -s build/demo/shots.md ]; then
+              cat build/demo/shots.md
+              echo
+            fi
             sed -n '3,40p' build/demo/caption.md
           } > comment.md
           gh pr comment "$PR" --body-file comment.md

@@ -234,6 +234,22 @@ leaks").
   The build and install before the test is cut out: the video starts a
   second before the test does (`scripts/record_demo_ios.sh` →
   `compose_demo.sh`).
+- Every `beat()` is also a simulator screenshot: the comment shows them
+  as pictures (published to the `demo-media` branch by
+  `scripts/publish_demo_shots.sh`), so the UI can be checked without
+  downloading the video.
+- The Demo video is **never a required check**: a PR merges on CI alone
+  and doesn't wait for the video.
+
+**Review by screenshot (before every UI PR)**
+- Run `./scripts/screens.sh` (add `430x932` for a Pro Max, `--sheet` for
+  one contact sheet per language): the main screens in Arabic and English,
+  dark, as PNGs in `build/screens/`, from the real router and fonts, no
+  simulator needed. Look at every screen the change touches (RTL,
+  overflow, sizes, contrast) and fix what's off before opening the PR.
+- After the Demo video comment lands, look at its iPhone screenshots (full
+  glass), and fix anything there too. New screens get a case in
+  `test/screens/screens_test.dart`.
 
 **Git & releases**
 - Conventional Commits (enforced by `.githooks/commit-msg`):
@@ -256,6 +272,7 @@ Store texts: `store/` → Actions → **Store listing**.
 - [ ] Security tests added for new routes, tables and user input
 - [ ] Strings in both ARB files; works in Arabic (RTL) and dark mode
 - [ ] Matches the design (docs/design.md); looks right on a small phone, a large phone and a tablet
+- [ ] Screens reviewed by screenshot (`./scripts/screens.sh`, then the Demo video's iPhone screenshots)
 - [ ] Loading / empty / error / offline states; accessible (contrast, large text, labels)
 - [ ] Feature doc written/updated; analytics events listed
 - [ ] Setup, CI or secrets changed → `docs/release.md` / `docs/security.md` updated; zizmor and `test/security/` green

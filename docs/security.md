@@ -44,7 +44,9 @@ would be printed in full by any tool that echoes it in an error.
 - Pass passwords through environment variables the tool reads, not as
   command-line arguments.
 - Workflows start with `permissions: contents: read`; a job that must write
-  asks for exactly that. `actions/checkout` uses
+  asks for exactly that. (The Demo video's `compose` job has
+  `contents: write` only to publish screenshots to the `demo-media` branch,
+  through the API, for same-repo PRs; it never pushes code branches.) `actions/checkout` uses
   `persist-credentials: false`.
 - Third-party actions are pinned to a full commit SHA with a `# vX.Y.Z`
   comment (Dependabot updates both). Tools installed in CI are pinned to a
