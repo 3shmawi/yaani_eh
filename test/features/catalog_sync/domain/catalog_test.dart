@@ -16,8 +16,11 @@ CatalogItem _item({String? gistAr, String? gistEn}) => CatalogItem(
 void main() {
   group('gist', () {
     test('the «يعني» line in the asked language', () {
-      final item = _item(gistAr: 'ميلك شيك بالقهوة', gistEn: 'A coffee shake');
-      expect(item.gist(arabic: true), 'ميلك شيك بالقهوة');
+      final item = _item(
+        gistAr: 'قهوة باللبن متخفوقة بالتلج',
+        gistEn: 'A coffee shake',
+      );
+      expect(item.gist(arabic: true), 'قهوة باللبن متخفوقة بالتلج');
       expect(item.gist(arabic: false), 'A coffee shake');
     });
 
@@ -31,7 +34,7 @@ void main() {
     });
 
     test('one language missing falls back on its own', () {
-      final item = _item(gistAr: 'ميلك شيك بالقهوة');
+      final item = _item(gistAr: 'قهوة باللبن متخفوقة بالتلج');
       expect(item.gist(arabic: false), 'Coffee blended with ice');
     });
   });

@@ -134,12 +134,12 @@ None.
    drinks back.
 
 **Caption (English):** Every drink on a café menu, explained in words you
-already know: a frappé is a coffee milkshake, a flat white is strong milky
+already know: a frappé is coffee and milk blended with ice, a flat white is strong milky
 coffee in a small cup. The name exactly as the menu prints it, how to say it, and
 what it is. Flutter, Liquid Glass controls, content in Supabase.
 
 **Caption (Egyptian Arabic):** كل مشروب في منيو الكافيه بكلام إنت عارفه:
-الفرابيه يعني ميلك شيك بالقهوة، والفلات وايت يعني قهوة باللبن تقيلة في فنجان
+الفرابيه يعني قهوة باللبن متخفوقة بالتلج، والفلات وايت يعني قهوة باللبن تقيلة في فنجان
 صغير.
 الاسم زي ما هو مكتوب، بيتقال إزاي، ويعني إيه.
 

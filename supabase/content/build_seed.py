@@ -8,8 +8,13 @@ categories and the drinks in drinks.csv, with their search terms. Every
 insert is `on conflict do nothing`, so it never overwrites edits made later
 in Supabase Studio. After launch, content is edited in Studio, not here.
 
-Also writes 0004_item_gist.sql: the short «يعني» line of each drink
-(gist_ar / gist_en), filled only where it is still empty.
+Also writes 0004_item_gist.sql, the short «يعني» line of each drink
+(gist_ar / gist_en), but only when it doesn't exist yet: it is applied in
+production, and an applied migration is never rewritten. Later changes to
+the lines in drinks.csv go out as a new migration (like 0006).
+
+Every «يعني» line is checked against MENU_WORDS: it must say what a drink
+is in words everyone knows, so it can't lean on another menu word.
 """
 
 import csv
@@ -19,6 +24,18 @@ import pathlib
 ROOT = pathlib.Path(__file__).resolve().parent
 OUT = ROOT.parent / "migrations" / "0003_seed_drinks.sql"
 GIST_OUT = ROOT.parent / "migrations" / "0004_item_gist.sql"
+
+# Borrowed menu words a «يعني» line may not use: someone who doesn't know
+# one drink may not know these either. Everyday words (شاي أخضر، كركديه،
+# آيس كريم، كراميل) are fine.
+MENU_WORDS = [
+    "لاتيه", "إسبريسو", "اسبريسو", "موكا", "فرابيه", "ميلك شيك", "ماكياتو",
+    "كابتشينو", "ماتشا", "سموذي", "كولد برو", "أفوجاتو", "دوبيو", "كورتادو",
+    "أمريكانو", "تشاي", "موهيتو",
+    "latte", "espresso", "mocha", "frapp", "milkshake", "macchiato",
+    "cappuccino", "matcha", "smoothie", "cold brew", "affogato", "doppio",
+    "cortado", "americano", "chai", "mojito",
+]
 
 # The Café section's traits: the taste quiz and the trait pills read these.
 TRAIT_SCHEMA = [
@@ -191,6 +208,12 @@ def write_gists(rows):
     ]
     for r in rows:
         assert 1 <= len(r["gist_ar"]) <= 60 and 1 <= len(r["gist_en"]) <= 60, r["slug"]
+        for line in (r["gist_ar"], r["gist_en"]):
+            used = [w for w in MENU_WORDS if w in line.lower()]
+            assert not used, f"{r['slug']}: «{line}» uses a menu word {used}"
+    if GIST_OUT.exists():
+        print(f"kept {GIST_OUT.relative_to(ROOT.parent.parent)} (applied; never rewritten)")
+        return
     out.append(",\n".join(
         f"  ({lit(r['slug'])}, {lit(r['gist_ar'])}, {lit(r['gist_en'])})" for r in rows
     ))

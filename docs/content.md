@@ -30,14 +30,17 @@ from the app: only Studio / the service role.
 - **Pronunciation:** see [Pronunciation clips](#pronunciation-clips).
 - **The «يعني» line** (`gist_ar`, `gist_en`): what the drink is, in words
   everyone already knows, shown on its card after «يعني». About 30
-  characters (60 at most), and never another menu word: «ميلك شيك
-  بالقهوة», not «إسبريسو متخفوق». Another menu word never counts as
-  familiar, even «لاتيه»: say «قهوة باللبن تقيلة», not «زي اللاتيه بس
-  أقوى». Compare to what people already drink at home when you can
-  («قهوة الكنكة»، «ميلك شيك»). Empty: the card shows the explanation's first
-  sentence. The launch lines are in `supabase/content/drinks.csv`
-  (`build_seed.py` writes `0004_item_gist.sql`, which only fills empty
-  lines).
+  characters (60 at most). Say what it's made of: «قهوة باللبن متخفوقة
+  بالتلج», not «إسبريسو متخفوق». Another menu word never counts as
+  familiar, even «لاتيه» or «ميلك شيك»: say «قهوة باللبن تقيلة», not «زي
+  اللاتيه بس أقوى». Compare to what people already drink at home when you
+  can («قهوة الكنكة»). Everyday words like «شاي أخضر», «آيس كريم» or
+  «كراميل» are fine. Empty: the card shows the explanation's first
+  sentence. The lines live in `supabase/content/drinks.csv`;
+  `build_seed.py` refuses a line with a menu word (`MENU_WORDS`), and the
+  pgTAP tests check the database too. `0004_item_gist.sql` filled the
+  launch lines and is never rewritten: a change to a line in the CSV also
+  needs a new migration, like `0006_item_gist_everyday_words.sql`.
 - **Names:** the menu name stays exactly as menus print it. Trademarked
   names (Frappuccino, Oreo…) may only be search terms, never item names.
 
