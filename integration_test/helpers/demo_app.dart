@@ -13,6 +13,7 @@ import 'package:yaani_eh/features/favorites/data/datasources/favorites_database.
 
 import '../../test/helpers/fake_catalog_remote.dart';
 import '../../test/helpers/fake_pronunciation.dart';
+import '../../test/helpers/fake_taste.dart';
 import 'demo.dart';
 
 /// Starts the real app as a fresh install, with the menu served by
@@ -49,6 +50,7 @@ class DemoApp {
         pronunciationRepository: clips,
         clipPlayer: player,
         favoritesDatabase: FavoritesDatabase(NativeDatabase.memory()),
+        tasteRepository: FakeTasteRepository(),
       ),
     );
     return DemoApp._(remote, online, clips, player);

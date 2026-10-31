@@ -31,6 +31,8 @@ component READMEs under `project/components/`, and the screen's
 | Sheet (frosted glass from the bottom, grab handle, drag down to close) | `showAppSheet` + `AppSheet` in `app_ui.dart`; a light tap as it opens. Used by «طريقة التحضير» |
 | Recipe cup (layers to scale, filling in) | `features/recipes/presentation/widgets/recipe_cup.dart`; colours `AppColors.layer*` (what each layer looks like, same in both themes), shape from the size (small cup ≤ 90 ml, cup ≤ 250 ml, tall glass above); `AppMotion.pourLayer` / `pourStagger`, still with Reduce Motion |
 | Main action on the header band («الخطوة الجاية») | `AppButton(kind: AppButtonKind.band, expand: true)`: warm milk with an espresso label |
+| Quiz answer card («ذوقي») | `_Choice` in `taste_quiz_view.dart`: `AppDimens.choiceHeight`, warm milk when chosen (like a chip), `onHeaderFaint` otherwise; on the header band |
+| «على ذوقك» row | `TasteRowView`: `DrinkCard`s `AppDimens.tasteCardWidth` wide in a horizontal scroll, with why under each (`TextRole.caption`) |
 | Saved / chosen state of an icon button (the heart) | `AppIconButton(selectedLook: AppSelectedLook.chosen)`: warm milk, espresso icon |
 | Header pattern (mashrabiya) | `core/widgets/header_pattern.dart`, `AppColors.headerPattern`, `AppDimens.patternTile` |
 | Motion (durations, curves, press scale, list stagger) | `AppMotion` in `app_dimens.dart`; `AppReveal` (list entry) and `AppPressable` (card press: down in 120 ms, back with a small spring) in `app_ui.dart` |

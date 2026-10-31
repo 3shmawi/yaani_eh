@@ -416,6 +416,7 @@ const cafeTraitSchema = <Object?>[
   {
     'key': 'temp',
     'type': 'enum',
+    'question': {'ar': 'بتحب مشروبك سخن ولا ساقع؟', 'en': 'Hot or iced?'},
     'options': [
       {'value': 'hot', 'ar': 'سخن', 'en': 'Hot'},
       {'value': 'cold', 'ar': 'ساقع', 'en': 'Iced'},
@@ -425,6 +426,9 @@ const cafeTraitSchema = <Object?>[
   {
     'key': 'sweetness',
     'type': 'scale',
+    'min': 0,
+    'max': 3,
+    'question': {'ar': 'بتحبه حلو قد إيه؟', 'en': 'How sweet do you like it?'},
     'labels': {
       'ar': ['سادة', 'مظبوط', 'حلو', 'حلو أوي'],
       'en': ['Not sweet', 'A little sweet', 'Sweet', 'Very sweet'],
@@ -433,6 +437,7 @@ const cafeTraitSchema = <Object?>[
   {
     'key': 'milk',
     'type': 'bool',
+    'question': {'ar': 'بلبن ولا من غير؟', 'en': 'With milk or without?'},
     'labels': {
       'ar': ['من غير لبن', 'بلبن'],
       'en': ['No milk', 'With milk'],
@@ -441,6 +446,9 @@ const cafeTraitSchema = <Object?>[
   {
     'key': 'caffeine',
     'type': 'scale',
+    'min': 0,
+    'max': 3,
+    'question': {'ar': 'عايز قهوة قد إيه؟', 'en': 'How much of a kick?'},
     'labels': {
       'ar': ['من غير كافيين', 'خفيف', 'متوسط', 'قوي'],
       'en': ['No caffeine', 'Light', 'Medium', 'Strong'],

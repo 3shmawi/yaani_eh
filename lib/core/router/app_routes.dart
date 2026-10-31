@@ -6,6 +6,12 @@ abstract final class AppRoutes {
   static const home = '/';
   static const settings = '/settings';
 
+  /// «ذوقي», the taste quiz: `/taste`, or for one section
+  /// `/taste?section=cafe`.
+  static const taste = '/taste';
+  static String tasteFor(String section) =>
+      Uri(path: taste, queryParameters: {'section': section}).toString();
+
   /// The Favorites tab.
   static const favorites = '/favorites';
 

@@ -32,7 +32,7 @@ Re-check both pages before the first upload.
 | An anonymous install ID | PostHog | Analytics (counting installs, not people) | No | No |
 
 Not collected: name, email, phone, location, contacts, photos, payment,
-health, browsing history, search text. Favorites stay on the phone and are
+health, browsing history, search text. Favorites and «ذوقي» answers stay on the phone and are
 never sent. Data is encrypted in transit (HTTPS). No data is sold, and none
 is used for advertising.
 

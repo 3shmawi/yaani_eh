@@ -34,6 +34,7 @@ class MenuView extends StatefulWidget {
     this.cardAction,
     this.cardTrailingAction,
     this.onPreviewItem,
+    this.forYou,
     super.key,
   });
 
@@ -57,6 +58,10 @@ class MenuView extends StatefulWidget {
 
   /// The heart on each card's top-end corner (feature `favorites`).
   final Widget Function(CatalogItem item)? cardTrailingAction;
+
+  /// «على ذوقك» for the open section (feature `taste_profile`), under the
+  /// drink of the day.
+  final Widget Function(CatalogCategory section)? forYou;
 
   /// A long press on a card: the quick preview (feature `favorites`).
   final ValueChanged<CatalogItem>? onPreviewItem;
@@ -284,6 +289,11 @@ class _MenuViewState extends State<MenuView> {
                 ),
                 SizedBox(height: AppDimens.space6),
               ],
+              if (widget.forYou case final forYou?)
+                if (menu.selectedTab?.section case final section?) ...[
+                  forYou(section),
+                  SizedBox(height: AppDimens.space6),
+                ],
               for (final (i, section) in menu.sections.indexed) ...[
                 KeyedSubtree(
                   key: _keyFor(section.category.id),

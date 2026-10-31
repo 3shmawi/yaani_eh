@@ -10,6 +10,7 @@ also a deep link.
 | `/search?q=<text>` | Search, optionally pre-filled (`q` is cleaned: control/direction characters removed, trimmed, max 60) |
 | `/settings` | Settings |
 | `/drink/<slug>/steps` | A drink's «طريقة التحضير», one step at a time, over the drink page; a drink without a recipe (or unknown) says so with a way back |
+| `/taste` | «ذوقي», the taste quiz; `?section=<slug>` picks the section (anything that isn't a slug, or a section without questions, means the drinks) |
 | `/favorites` | The Favorites tab (the drinks saved on the phone) |
 
 ## Custom scheme (works now)
