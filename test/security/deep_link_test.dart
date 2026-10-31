@@ -10,16 +10,21 @@ import 'package:yaani_eh/core/theme/app_theme.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
 import 'package:yaani_eh/features/browse_menu/presentation/menu_page.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
+import 'package:yaani_eh/features/favorites/presentation/favorites_view.dart';
 import 'package:yaani_eh/features/item_details/presentation/drink_view.dart';
 import 'package:yaani_eh/features/smart_search/presentation/search_page.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
 import '../helpers/fake_catalog_repository.dart';
+import '../helpers/fake_favorites.dart';
 
 /// Deep links are untrusted input: unknown or crafted paths must land on a
 /// safe screen, never crash or open something unexpected.
 void main() {
+  late FakeFavoritesRepository favorites;
+
   Future<void> pumpRouter(WidgetTester tester) async {
+    favorites = FakeFavoritesRepository();
     tester.view
       ..physicalSize = const Size(1125, 2436)
       ..devicePixelRatio = 3;
@@ -30,6 +35,7 @@ void main() {
           catalogRepositoryProvider.overrideWithValue(
             FakeCatalogRepository(has: true),
           ),
+          ...favoritesOverrides(favorites),
         ],
         child: AppUi.testWrap(
           ScreenUtilInit(
@@ -62,6 +68,9 @@ void main() {
       '/drink/FLAT_WHITE',
       '/drink/${'a' * 200}',
       '/drink/',
+      '/favorites/secret',
+      '/favorites/../../etc/passwd',
+      '/favorites%2F..%2Fadmin',
     ]) {
       appRouter.go(path);
       await tester.pumpAndSettle();
@@ -93,6 +102,78 @@ void main() {
 
     appRouter.go('/');
     await tester.pumpAndSettle();
+  });
+
+  testWidgets('the favorites link opens the Favorites tab, nothing else', (
+    tester,
+  ) async {
+    await pumpRouter(tester);
+    for (final path in [
+      AppRoutes.favorites,
+      '/favorites?redirect=https://evil.example.com',
+      '/favorites#<script>',
+    ]) {
+      appRouter.go(path);
+      await tester.pumpAndSettle();
+      expect(find.byType(FavoritesView), findsOneWidget, reason: path);
+      expect(tester.takeException(), isNull);
+    }
+    appRouter.go('/');
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('the tab bar switches tabs and counts saved drinks', (
+    tester,
+  ) async {
+    await pumpRouter(tester);
+    appRouter.go('/');
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('app_tab_bar')), findsOneWidget);
+    expect(find.byType(MenuPage), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('favorite_espresso')));
+    await tester.pumpAndSettle();
+    expect(favorites.saved, hasLength(1));
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('app_tab_bar')),
+        matching: find.text('1'),
+      ),
+      // The tab draws its icon twice to cross-fade into the active one.
+      findsWidgets,
+    );
+
+    await tester.tap(
+      find
+          .descendant(
+            of: find.byKey(const Key('app_tab_bar')),
+            matching: find.text('Favorites'),
+          )
+          .first,
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(FavoritesView), findsOneWidget);
+    expect(find.text('Espresso'), findsWidgets);
+
+    // A drink opened from Favorites covers the tab bar; back returns.
+    await tester.tap(find.text('Espresso').first);
+    await tester.pumpAndSettle();
+    expect(find.byType(DrinkView), findsOneWidget);
+    expect(find.byKey(const Key('app_tab_bar')), findsNothing);
+    await tester.tap(find.byKey(const Key('drink_back')));
+    await tester.pumpAndSettle();
+    expect(find.byType(FavoritesView), findsOneWidget);
+
+    await tester.tap(
+      find
+          .descendant(
+            of: find.byKey(const Key('app_tab_bar')),
+            matching: find.text('Menu'),
+          )
+          .first,
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(MenuPage), findsOneWidget);
   });
 
   testWidgets('search links: any query is shown safely, never executed', (

@@ -245,5 +245,54 @@
         "example": "Desserts"
       }
     }
+  },
+  "tabMenu": "Menu",
+  "tabFavorites": "Favorites",
+  "favoritesTitle": "Favorites",
+  "favoritesCount": "{count, plural, =0{None yet} =1{1 drink} other{{count} drinks}}",
+  "favoritesEmptyTitle": "Nothing saved yet",
+  "favoritesEmptyMessage": "Tap the heart on any drink to keep it here, even offline.",
+  "favoritesEmptyAction": "See the menu",
+  "favoriteAddOf": "Save {name} to favorites",
+  "favoriteRemoveOf": "Remove {name} from favorites",
+  "previewHear": "Hear the name",
+  "previewSave": "Save to favorites",
+  "previewUnsave": "Remove from favorites",
+  "previewOpen": "Open the drink",
+  "previewClose": "Close",
+  "@favoritesCount": {
+    "description": "How many drinks are saved, under the Favorites title.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@favoriteAddOf": {
+    "description": "Screen-reader label of the heart.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Flat White"
+      }
+    }
+  },
+  "@favoriteRemoveOf": {
+    "description": "Screen-reader label of a filled heart.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Flat White"
+      }
+    }
+  },
+  "tabFavoritesSaved": "Favorites, {count, plural, =1{1 drink} other{{count} drinks}}",
+  "@tabFavoritesSaved": {
+    "description": "Screen-reader label of the Favorites tab when drinks are saved.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

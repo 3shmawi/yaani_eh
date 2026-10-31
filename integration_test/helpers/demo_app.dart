@@ -9,13 +9,15 @@ import 'package:yaani_eh/core/di/dependencies.dart';
 import 'package:yaani_eh/core/network/connectivity.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
 import 'package:yaani_eh/features/catalog_sync/data/datasources/catalog_database.dart';
+import 'package:yaani_eh/features/favorites/data/datasources/favorites_database.dart';
 
 import '../../test/helpers/fake_catalog_remote.dart';
 import '../../test/helpers/fake_pronunciation.dart';
 import 'demo.dart';
 
 /// Starts the real app as a fresh install, with the menu served by
-/// [FakeCatalogRemote] (CI has no Supabase), pronunciation clips by
+/// [FakeCatalogRemote] (CI has no Supabase), nothing saved in favorites,
+/// pronunciation clips by
 /// [FakePronunciationRepository] + [FakeClipPlayer] (no speakers needed),
 /// and connectivity under the test's control, so flows like "go offline"
 /// are scripted.
@@ -46,6 +48,7 @@ class DemoApp {
         catalogPageSize: pageSize,
         pronunciationRepository: clips,
         clipPlayer: player,
+        favoritesDatabase: FavoritesDatabase(NativeDatabase.memory()),
       ),
     );
     return DemoApp._(remote, online, clips, player);

@@ -9,6 +9,7 @@ also a deep link.
 | `/drink/<slug>` | One drink (e.g. `/drink/flat_white`); unknown or malformed slugs show not-found |
 | `/search?q=<text>` | Search, optionally pre-filled (`q` is cleaned: control/direction characters removed, trimmed, max 60) |
 | `/settings` | Settings |
+| `/favorites` | The Favorites tab (the drinks saved on the phone) |
 
 ## Custom scheme (works now)
 `yaanieh://settings` — test with:

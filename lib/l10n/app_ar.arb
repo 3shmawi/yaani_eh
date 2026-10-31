@@ -89,5 +89,20 @@
   "comingSoonBadge": "قريبًا",
   "comingSoonTitle": "{section} جاية قريب",
   "comingSoonMessage": "هنشرحها بنفس الطريقة: الاسم زي ما هو مكتوب، بيتقال إزاي، ويعني إيه.",
-  "comingSoonAction": "شوف المتاح دلوقتي"
+  "comingSoonAction": "شوف المتاح دلوقتي",
+  "tabMenu": "المنيو",
+  "tabFavorites": "المفضلة",
+  "favoritesTitle": "المفضلة",
+  "favoritesCount": "{count, plural, =0{لسه مفيش} =1{مشروب واحد} =2{مشروبين} few{{count} مشروبات} many{{count} مشروب} other{{count} مشروب}}",
+  "favoritesEmptyTitle": "لسه محفظتش حاجة",
+  "favoritesEmptyMessage": "دوس على القلب في أي مشروب عشان يتحفظ هنا، ويفضل معاك حتى من غير نت.",
+  "favoritesEmptyAction": "شوف المنيو",
+  "favoriteAddOf": "احفظ {name} في المفضلة",
+  "favoriteRemoveOf": "شيل {name} من المفضلة",
+  "previewHear": "اسمع الاسم",
+  "previewSave": "احفظ في المفضلة",
+  "previewUnsave": "شيل من المفضلة",
+  "previewOpen": "افتح المشروب",
+  "previewClose": "اقفل",
+  "tabFavoritesSaved": "المفضلة، {count, plural, =1{مشروب واحد} =2{مشروبين} few{{count} مشروبات} many{{count} مشروب} other{{count} مشروب}}"
 }

@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'dart:ui' show ImageFilter;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:liquid_glass_widgets/liquid_glass_widgets.dart';
 import 'package:yaani_eh/core/adaptive/adaptive.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
@@ -414,15 +417,26 @@ class AppCard extends StatelessWidget {
   );
 }
 
+/// How a selected [AppIconButton] looks.
+enum AppSelectedLook {
+  /// Something happening now (a name playing): `brand` fill.
+  active,
+
+  /// Something chosen and kept (a saved drink): warm milk with an espresso
+  /// icon, like a selected chip.
+  chosen,
+}
+
 /// A round clear-glass button for controls over a photo: back, save, play.
 /// The [tooltip] is also its accessibility label; the hit area is 48×48.
-/// [selected] (a saved heart) draws a `brand` fill with `on-brand` content.
+/// [selected] draws the [selectedLook] fill instead of glass.
 class AppIconButton extends StatelessWidget {
   const new({
     required this.icon,
     required this.tooltip,
     required this.onPressed,
     this.selected,
+    this.selectedLook = AppSelectedLook.active,
     this.tone = GlassTone.auto,
     this.backdrop,
     this.backdropRegion = const Rect.fromLTWH(0, 0, 1, 1),
@@ -436,6 +450,7 @@ class AppIconButton extends StatelessWidget {
 
   /// For toggles; null for plain buttons.
   final bool? selected;
+  final AppSelectedLook selectedLook;
   final GlassTone tone;
   final ImageProvider? backdrop;
   final Rect backdropRegion;
@@ -451,11 +466,17 @@ class AppIconButton extends StatelessWidget {
     final p = context.palette;
     final on = selected ?? false;
     final iconWidget = Icon(icon, size: AppDimens.icon);
+    final chosen = selectedLook == AppSelectedLook.chosen;
     final face = on
         ? DecoratedBox(
-            decoration: BoxDecoration(color: p.brand, shape: BoxShape.circle),
+            decoration: BoxDecoration(
+              color: chosen ? AppColors.selected : p.brand,
+              shape: BoxShape.circle,
+            ),
             child: IconTheme.merge(
-              data: IconThemeData(color: p.onBrand),
+              data: IconThemeData(
+                color: chosen ? AppColors.onSelected : p.onBrand,
+              ),
               child: Center(child: iconWidget),
             ),
           )
@@ -667,10 +688,11 @@ class _AppRevealState extends State<AppReveal>
 /// Screen readers don't see the tap here: wrap it in a labelled
 /// `Semantics(onTap:)`.
 class AppPressable extends StatefulWidget {
-  const new({required this.child, this.onTap, super.key});
+  const new({required this.child, this.onTap, this.onLongPress, super.key});
 
   final Widget child;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
 
   @override
   State<AppPressable> createState() => _AppPressableState();
@@ -691,6 +713,12 @@ class _AppPressableState extends State<AppPressable> {
       // The card's own Semantics carries the tap and its label.
       excludeFromSemantics: true,
       onTap: onTap,
+      onLongPress: widget.onLongPress == null
+          ? null
+          : () {
+              _set(false);
+              widget.onLongPress!();
+            },
       onTapDown: still ? null : (_) => _set(true),
       onTapUp: still ? null : (_) => _set(false),
       onTapCancel: still ? null : () => _set(false),
@@ -848,6 +876,311 @@ class _Segment extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// One row of an [AppPreviewMenu].
+class AppPreviewAction {
+  const new({
+    required this.icon,
+    required this.label,
+    required this.onSelected,
+    this.tag,
+    this.key,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onSelected;
+
+  /// A short tag at the row's end («جديد»), in `brand`.
+  final String? tag;
+  final Key? key;
+}
+
+/// Opens a long-press preview (Design System → Context menu): the page
+/// blurs behind a scrim, [preview] sits on top and the [actions] under it
+/// in frosted glass. A tap outside closes it; choosing a row closes it and
+/// runs the row. One look on every platform, so it can carry the app's own
+/// content (the iOS system menu can't hold a Hero-tagged card).
+Future<void> showAppPreviewMenu(
+  BuildContext context, {
+  required Widget preview,
+  required List<AppPreviewAction> actions,
+  required String closeLabel,
+}) async {
+  // Felt as the preview opens; nothing waits on it.
+  unawaited(HapticFeedback.mediumImpact());
+  final still = MediaQuery.disableAnimationsOf(context);
+  await showGeneralDialog<void>(
+    context: context,
+    barrierDismissible: true,
+    barrierLabel: closeLabel,
+    barrierColor: context.palette.scrim,
+    transitionDuration: still ? Duration.zero : AppMotion.reveal,
+    pageBuilder: (context, _, _) =>
+        AppPreviewMenu(preview: preview, actions: actions),
+    transitionBuilder: (context, animation, _, child) {
+      final t = CurvedAnimation(parent: animation, curve: AppMotion.enter);
+      final blur = AppUi.isLite(context) ? 0.0 : AppDimens.blurGlass * t.value;
+      return BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+        child: FadeTransition(
+          opacity: t,
+          child: ScaleTransition(
+            scale: Tween<double>(
+              begin: AppMotion.previewFrom,
+              end: 1,
+            ).animate(t),
+            child: child,
+          ),
+        ),
+      );
+    },
+  );
+}
+
+/// The preview and its rows; see [showAppPreviewMenu].
+class AppPreviewMenu extends StatelessWidget {
+  const new({required this.preview, required this.actions, super.key});
+
+  final Widget preview;
+  final List<AppPreviewAction> actions;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    return SafeArea(
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: AppDimens.previewWidth),
+          child: SingleChildScrollView(
+            padding: EdgeInsetsDirectional.all(AppDimens.space5),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Material(
+                  color: p.surfaceRaised,
+                  borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+                  clipBehavior: Clip.antiAlias,
+                  child: preview,
+                ),
+                SizedBox(height: AppDimens.space3),
+                AppGlass(
+                  radius: AppDimens.radiusLg,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (final (i, a) in actions.indexed) ...[
+                        if (i > 0) Divider(height: 1, color: p.line),
+                        _PreviewRow(action: a),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PreviewRow extends StatelessWidget {
+  const new({required this.action});
+
+  final AppPreviewAction action;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    final tag = action.tag;
+    final style = context.text(TextRole.callout);
+    return Semantics(
+      button: true,
+      label: action.label,
+      child: InkWell(
+        key: action.key,
+        excludeFromSemantics: true,
+        onTap: () {
+          Navigator.of(context).pop();
+          action.onSelected();
+        },
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: AppDimens.touchTarget),
+          child: Padding(
+            padding: EdgeInsetsDirectional.symmetric(
+              horizontal: AppDimens.space4,
+            ),
+            child: Row(
+              children: [
+                Icon(action.icon, size: AppDimens.icon),
+                SizedBox(width: AppDimens.space3),
+                Expanded(
+                  child: ExcludeSemantics(
+                    child: Text(action.label, style: style),
+                  ),
+                ),
+                if (tag != null)
+                  ExcludeSemantics(
+                    child: Text(
+                      tag,
+                      style: context
+                          .text(TextRole.caption)
+                          .copyWith(color: p.brand),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// One tab of an [AppTabScaffold]. [badge] is a small count on the icon
+/// (saved drinks); null or 0 hides it.
+class AppTab {
+  const new({
+    required this.icon,
+    required this.activeIcon,
+    required this.label,
+    this.badge,
+    this.semanticLabel,
+  });
+
+  final IconData icon;
+  final IconData activeIcon;
+  final String label;
+  final int? badge;
+
+  /// Read instead of [label] (e.g. with the count).
+  final String? semanticLabel;
+}
+
+/// The app's tabs (Design System → TabBar): [body] fills the screen and a
+/// floating glass pill sits over it at the bottom, like iOS 26. On iOS the
+/// pill floats over the home indicator; on Android it stays above the
+/// system navigation bar. Screens under it keep their last items clear of
+/// it with `AppDimens.tabBarHeight`.
+class AppTabScaffold extends StatelessWidget {
+  const new({
+    required this.body,
+    required this.tabs,
+    required this.selectedIndex,
+    required this.onSelected,
+    super.key,
+  });
+
+  final Widget body;
+  final List<AppTab> tabs;
+  final int selectedIndex;
+  final ValueChanged<int> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    return Stack(
+      children: [
+        Positioned.fill(child: body),
+        PositionedDirectional(
+          start: 0,
+          end: 0,
+          bottom: 0,
+          child: SafeArea(
+            top: false,
+            left: false,
+            right: false,
+            bottom: defaultTargetPlatform == TargetPlatform.android,
+            // Text needs a Material ancestor (liquid_glass_widgets has
+            // none of its own); transparent, so the glass shows.
+            child: Material(
+              type: MaterialType.transparency,
+              child: GlassIsolationScope(
+                defaultQuality: GlassQuality.premium,
+                child: GlassTabBar.bottom(
+                  key: const Key('app_tab_bar'),
+                  selectedIndex: selectedIndex,
+                  onTabSelected: onSelected,
+                  barHeight: AppDimens.tabBarHeight,
+                  selectedIconColor: p.brand,
+                  unselectedIconColor: p.inkMuted,
+                  selectedLabelColor: p.brand,
+                  unselectedLabelColor: p.inkMuted,
+                  // The app's fonts (Readex Pro for Arabic), not the
+                  // package's default.
+                  selectedLabelStyle: context
+                      .text(TextRole.caption)
+                      .copyWith(color: p.brand, fontWeight: FontWeight.w600),
+                  unselectedLabelStyle: context
+                      .text(TextRole.caption)
+                      .copyWith(color: p.inkMuted),
+                  tabs: [
+                    for (final t in tabs)
+                      GlassTab(
+                        icon: _TabIcon(icon: t.icon, badge: t.badge),
+                        activeIcon: _TabIcon(
+                          icon: t.activeIcon,
+                          badge: t.badge,
+                        ),
+                        label: t.label,
+                        semanticLabel: t.semanticLabel ?? t.label,
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _TabIcon extends StatelessWidget {
+  const new({required this.icon, this.badge});
+
+  final IconData icon;
+  final int? badge;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    final badge = this.badge;
+    final glyph = Icon(icon, size: AppDimens.icon);
+    if (badge == null || badge <= 0) return glyph;
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        glyph,
+        PositionedDirectional(
+          top: -AppDimens.space1,
+          end: -AppDimens.space2,
+          child: ExcludeSemantics(
+            child: Container(
+              constraints: BoxConstraints(minWidth: AppDimens.badgeSize),
+              height: AppDimens.badgeSize,
+              padding: EdgeInsetsDirectional.symmetric(
+                horizontal: AppDimens.space1,
+              ),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: p.brand,
+                borderRadius: BorderRadius.circular(AppDimens.radiusPill),
+              ),
+              child: Text(
+                badge > 99 ? '99+' : '$badge',
+                style: AppTextStyles.latin(TextRole.caption)
+                    .copyWith(color: p.onBrand, height: 1),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

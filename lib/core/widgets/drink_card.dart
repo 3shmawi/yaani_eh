@@ -24,8 +24,10 @@ class DrinkCard extends StatelessWidget {
   const new({
     required this.item,
     this.onTap,
+    this.onLongPress,
     this.compact = false,
     this.action,
+    this.trailingAction,
     this.hero = false,
     super.key,
   });
@@ -33,13 +35,20 @@ class DrinkCard extends StatelessWidget {
   final CatalogItem item;
   final VoidCallback? onTap;
 
+  /// The quick preview with its actions (hear, save, open).
+  final VoidCallback? onLongPress;
+
   /// Small cards in a strip (similar drinks): the photo with its name and
   /// spelling only, filling the strip's height.
   final bool compact;
 
-  /// A control over the photo's top-start corner (the play button); the
-  /// top-end corner is the heart's. Not on compact cards.
+  /// A control over the photo's top-start corner (the play button). Not on
+  /// compact cards.
   final Widget? action;
+
+  /// A control over the photo's top-end corner (the heart). Not on compact
+  /// cards.
+  final Widget? trailingAction;
 
   /// The photo flies into the drink page ([heroTag]). Only one card per
   /// screen may do it for a drink, so only the Home grid turns it on.
@@ -138,6 +147,12 @@ class DrinkCard extends StatelessWidget {
                 start: AppDimens.space1,
                 child: action,
               ),
+            if (!compact && trailingAction != null)
+              PositionedDirectional(
+                top: AppDimens.space1,
+                end: AppDimens.space1,
+                child: trailingAction!,
+              ),
           ],
         ),
       ),
@@ -159,7 +174,7 @@ class DrinkCard extends StatelessWidget {
                   start: AppDimens.space1,
                   end: AppDimens.space1,
                 ),
-                child: ExcludeSemantics(child: _Meaning(gist: gist)),
+                child: ExcludeSemantics(child: DrinkMeaning(gist: gist)),
               ),
             ],
           );
@@ -174,7 +189,8 @@ class DrinkCard extends StatelessWidget {
         if (gist != null) context.l10n.cardMeaning(gist),
       ].join('، '),
       onTap: onTap,
-      child: AppPressable(onTap: onTap, child: body),
+      onLongPress: onLongPress,
+      child: AppPressable(onTap: onTap, onLongPress: onLongPress, child: body),
     );
   }
 
@@ -185,12 +201,13 @@ class DrinkCard extends StatelessWidget {
 }
 
 /// «يعني ميلك شيك بالقهوة»: the lead word in `brand`, the meaning in ink.
-/// Takes at least two lines of space, so the cards in a row line up, and
+/// Takes at least [minLines] of space, so the cards in a row line up, and
 /// shows whole however long it is.
-class _Meaning extends StatelessWidget {
-  const new({required this.gist});
+class DrinkMeaning extends StatelessWidget {
+  const new({required this.gist, this.minLines = 2, super.key});
 
   final String gist;
+  final int minLines;
 
   @override
   Widget build(BuildContext context) {
@@ -205,7 +222,7 @@ class _Meaning extends StatelessWidget {
     final lines =
         MediaQuery.textScalerOf(context).scale(style.fontSize!) *
         style.height! *
-        2;
+        minLines;
     return ConstrainedBox(
       constraints: BoxConstraints(minHeight: lines),
       child: Text.rich(
