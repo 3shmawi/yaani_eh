@@ -4,7 +4,7 @@
 -- only; that hostile values are rejected.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(40);
+select plan(41);
 
 -- RLS on every table.
 select ok((select relrowsecurity from pg_class where oid = 'public.categories'::regclass), 'RLS on categories');
@@ -17,6 +17,12 @@ select is((select count(*)::int from public.items where is_published), 41, '41 p
 select is(
   (select count(*)::int from public.items where is_published and gist_ar is not null and gist_en is not null),
   41, 'every launch drink has its «يعني» line in both languages'
+);
+select is(
+  (select count(*)::int from public.items
+   where gist_ar ~ '(لاتيه|إسبريسو|موكا|فرابيه|ميلك شيك|ماكياتو|كابتشينو|ماتشا|سموذي|متخفوق)'
+      or gist_en ~* '(latte|espresso|mocha|frapp|milkshake|macchiato|cappuccino|matcha|smoothie)'),
+  0, 'no «يعني» line leans on another menu word'
 );
 select is(
   (select count(*)::int from public.categories where parent_id = (select id from public.categories where slug = 'cafe')),
@@ -140,7 +146,7 @@ select is((select count(*)::int from public.categories where slug = 'draft_secti
 select is((select count(*)::int from public.item_terms where term = 'hidden term'), 0, 'anon cannot see terms of hidden items');
 select ok((select count(*) > 300 from public.item_terms), 'anon can read search terms');
 select is(
-  (select gist_ar from public.items where slug = 'coffee_frappe'), 'ميلك شيك بالقهوة',
+  (select gist_ar from public.items where slug = 'coffee_frappe'), 'قهوة باللبن والتلج في الخلاط',
   'anon can read the «يعني» line'
 );
 

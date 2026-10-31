@@ -24,7 +24,7 @@ B caption below, C meaning first, D list row.
   intends.
 - **The card's third line is the «يعني» line**, not the price:
   `items.gist_ar` / `gist_en` (≤ 60 chars), everyday words only («فرابيه
-  يعني ميلك شيك بالقهوة»). Without one, the explanation's first sentence.
+  يعني قهوة باللبن والتلج في الخلاط»). Without one, the explanation's first sentence.
   The price and calories stay on the drink page.
 - The name stays first (it's how you find the drink you just read on the
   menu); C (meaning as the headline) was weaker for that.

@@ -90,7 +90,8 @@ class CatalogItem {
   final String explanationAr;
   final String explanationEn;
 
-  /// The «يعني» line: what it is in everyday words, e.g. `ميلك شيك بالقهوة`.
+  /// The «يعني» line: what it is in everyday words, e.g.
+  /// `قهوة باللبن والتلج في الخلاط`.
   final String? gistAr;
   final String? gistEn;
   final int? calories;
