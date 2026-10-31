@@ -180,13 +180,11 @@ class _MenuViewState extends State<MenuView> {
     final tabs = menu?.tabs ?? const <MenuTab>[];
     final active = _active ?? chips.firstOrNull?.id;
 
-    Widget chipRow({Key? key}) => _EdgeToEdge(
-      child: CategoryChips(
-        key: key,
-        options: [for (final c in chips) (id: c.id, label: name(c))],
-        selectedId: active,
-        onSelected: (id) => _jumpTo(chips.firstWhere((c) => c.id == id)),
-      ),
+    Widget chipRow({Key? key}) => CategoryChips(
+      key: key,
+      options: [for (final c in chips) (id: c.id, label: name(c))],
+      selectedId: active,
+      onSelected: (id) => _jumpTo(chips.firstWhere((c) => c.id == id)),
     );
 
     final header = HeaderBand(
@@ -202,6 +200,12 @@ class _MenuViewState extends State<MenuView> {
       bottom: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Search first (what most people came for), then the section,
+          // then its categories.
+          if (widget.onOpenSearch != null) ...[
+            SearchField(onTap: widget.onOpenSearch),
+            SizedBox(height: AppDimens.space3),
+          ],
           if (tabs.length > 1) ...[
             AppSegmentedControl(
               key: const Key('menu_sections'),
@@ -220,15 +224,14 @@ class _MenuViewState extends State<MenuView> {
             ),
             SizedBox(height: AppDimens.space3),
           ],
-          if (widget.onOpenSearch != null)
-            SearchField(onTap: widget.onOpenSearch),
-          if (chips.isNotEmpty) ...[
-            SizedBox(height: AppDimens.space3),
+          if (chips.isNotEmpty)
             KeyedSubtree(
               key: _chipsKey,
-              child: chipRow(key: const Key('category_chips')),
+              // Runs under the band's side padding, edge to edge.
+              child: _EdgeToEdge(
+                child: chipRow(key: const Key('category_chips')),
+              ),
             ),
-          ],
         ],
       ),
     );
@@ -316,14 +319,16 @@ class _MenuViewState extends State<MenuView> {
       color: context.palette.surface,
       child: Stack(
         children: [
-          CustomScrollView(
-            key: const Key('menu_list'),
-            controller: _scroll,
-            slivers: [
-              SliverToBoxAdapter(child: header),
-              const SliverToBoxAdapter(child: OfflineBanner()),
-              body,
-            ],
+          HeaderOverscroll(
+            child: CustomScrollView(
+              key: const Key('menu_list'),
+              controller: _scroll,
+              slivers: [
+                SliverToBoxAdapter(child: header),
+                const SliverToBoxAdapter(child: OfflineBanner()),
+                body,
+              ],
+            ),
           ),
           if (_pinned && chips.isNotEmpty)
             PositionedDirectional(
@@ -331,7 +336,11 @@ class _MenuViewState extends State<MenuView> {
               start: 0,
               end: 0,
               child: _PinnedChips(
-                child: chipRow(key: const Key('category_chips_pinned')),
+                // Already full width: the chips keep their own side padding.
+                child: SizedBox(
+                  height: AppDimens.touchTarget,
+                  child: chipRow(key: const Key('category_chips_pinned')),
+                ),
               ),
             ),
         ],

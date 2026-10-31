@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
+import 'package:yaani_eh/core/theme/app_theme.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
 import 'package:yaani_eh/features/settings/domain/entities/app_settings.dart';
 import 'package:yaani_eh/features/settings/presentation/widgets/settings_tiles.dart';
@@ -52,23 +53,25 @@ class SettingsView extends StatelessWidget {
               ],
             ),
           ),
-          SettingsSectionHeader(l10n.settingsTheme),
-          AppCard(
-            child: Column(
-              children: [
-                for (final mode in ThemeMode.values)
-                  SettingsChoiceTile(
-                    label: switch (mode) {
-                      ThemeMode.system => l10n.settingsThemeSystem,
-                      ThemeMode.light => l10n.settingsThemeLight,
-                      ThemeMode.dark => l10n.settingsThemeDark,
-                    },
-                    selected: settings.themeMode == mode,
-                    onTap: () => onThemeModeChanged(mode),
-                  ),
-              ],
+          if (AppTheme.lightModeReady) ...[
+            SettingsSectionHeader(l10n.settingsTheme),
+            AppCard(
+              child: Column(
+                children: [
+                  for (final mode in ThemeMode.values)
+                    SettingsChoiceTile(
+                      label: switch (mode) {
+                        ThemeMode.system => l10n.settingsThemeSystem,
+                        ThemeMode.light => l10n.settingsThemeLight,
+                        ThemeMode.dark => l10n.settingsThemeDark,
+                      },
+                      selected: settings.themeMode == mode,
+                      onTap: () => onThemeModeChanged(mode),
+                    ),
+                ],
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );

@@ -97,8 +97,9 @@ abstract final class AppMotion {
   static const popFrom = 0.7;
 
   /// A card's press feedback.
-  static const press = Duration(milliseconds: 150);
-  static const pressScale = 0.97;
+  static const press = Duration(milliseconds: 120);
+  static const release = Duration(milliseconds: 320);
+  static const pressScale = 0.96;
 
   /// A list's cards rising into place the first time it shows.
   static const reveal = Duration(milliseconds: 280);

@@ -27,7 +27,7 @@ class AppShell extends StatelessWidget {
         routerConfig: appRouter,
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
-        themeMode: settings.themeMode,
+        themeMode: AppTheme.modeFor(settings.themeMode),
         locale: settings.locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,

@@ -101,6 +101,9 @@ None.
 - The speaker button (`pronunciation`, through `MenuView.cardAction`) sits
   in the drink of the day's top-end corner and each card's top-start
   corner, for drinks that have a clip; it plays without opening the drink.
+- Header order: search first (what most people came for), then the
+  sections switch, then the open section's chips. Pulled down past the top,
+  the band stretches (`HeaderOverscroll`) instead of showing the page.
 - Header: the app's own name («يعني إيه؟») instead of «المنيو», so the
   same band works for any section; behind it the mashrabiya pattern
   (`HeaderPattern`, drawn, faint `AppColors.headerPattern`, left out in the
