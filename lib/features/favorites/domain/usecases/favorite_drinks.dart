@@ -12,8 +12,13 @@ class FavoriteDrinks {
     required List<CatalogItem> items,
   }) {
     final byId = {for (final i in items) i.id: i};
-    final sorted = [...favorites]
-      ..sort((a, b) => b.savedAt.compareTo(a.savedAt));
-    return [for (final f in sorted) ?byId[f.itemId]];
+    // Newest first; on a tie, the order they came in (the repository's,
+    // which knows which was saved last).
+    final sorted = [...favorites.indexed]
+      ..sort((a, b) {
+        final byDate = b.$2.savedAt.compareTo(a.$2.savedAt);
+        return byDate != 0 ? byDate : a.$1.compareTo(b.$1);
+      });
+    return [for (final (_, f) in sorted) ?byId[f.itemId]];
   }
 }
