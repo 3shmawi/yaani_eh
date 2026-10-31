@@ -89,5 +89,6 @@
   "pronounceHearOf": "اسمع اسم {name}",
   "pronounceOffline": "إنت أوفلاين، والاسم ده متسمعش على الموبايل ده قبل كده.",
   "pronounceMissing": "التسجيل ده مش متاح دلوقتي.",
-  "pronounceError": "مقدرناش نشغّل الاسم. جرّب تاني."
+  "pronounceError": "مقدرناش نشغّل الاسم. جرّب تاني.",
+  "cardMeaning": "يعني {gist}"
 }

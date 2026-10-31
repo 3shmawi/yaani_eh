@@ -71,6 +71,15 @@ void main() {
     );
   });
 
+  test('the «يعني» line reaches the device', () async {
+    await syncOk();
+    final items = await repository.watchItems().first;
+    final espresso = items.firstWhere((i) => i.slug == 'espresso');
+    expect(espresso.gistAr, 'فنجان قهوة صغير ومركّز');
+    expect(espresso.gistEn, 'A tiny, strong cup of coffee');
+    expect(items.firstWhere((i) => i.slug == 'latte').gistAr, isNull);
+  });
+
   test('later syncs only download what changed', () async {
     await syncOk();
     remote.itemPageCalls = 0;

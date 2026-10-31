@@ -231,5 +231,15 @@
   },
   "pronounceOffline": "You're offline, and this name hasn't been played on this phone yet.",
   "pronounceMissing": "This recording isn't available right now.",
-  "pronounceError": "Couldn't play the name. Try again."
+  "pronounceError": "Couldn't play the name. Try again.",
+  "cardMeaning": "{gist}",
+  "@cardMeaning": {
+    "description": "The drink card's «يعني» line: what the drink is in everyday words. Arabic leads with «يعني»; English shows the words alone.",
+    "placeholders": {
+      "gist": {
+        "type": "String",
+        "example": "A coffee milkshake"
+      }
+    }
+  }
 }

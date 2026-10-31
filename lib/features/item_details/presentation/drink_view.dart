@@ -142,10 +142,14 @@ class DrinkView extends StatelessWidget {
             start: 0,
             end: 0,
             height: photoHeight,
-            child: DrinkPhoto(
-              name: item.menuName,
-              imagePath: item.imagePath,
-              size: PhotoSize.full,
+            // The Home card's photo flies into this one.
+            child: Hero(
+              tag: DrinkCard.heroTag(item.id),
+              child: DrinkPhoto(
+                name: item.menuName,
+                imagePath: item.imagePath,
+                size: PhotoSize.full,
+              ),
             ),
           ),
           // Keeps the status bar and the back button readable.

@@ -590,3 +590,116 @@ class AppButton extends StatelessWidget {
     );
   }
 }
+
+/// Rises and fades [child] into place once, when it first shows
+/// (`AppMotion.reveal`). [index] staggers a list's first cards; from
+/// `AppMotion.revealStaggered` on, they show at once. Nothing moves with
+/// Reduce Motion.
+class AppReveal extends StatefulWidget {
+  const new({required this.index, required this.child, super.key});
+
+  final int index;
+  final Widget child;
+
+  @override
+  State<AppReveal> createState() => _AppRevealState();
+}
+
+class _AppRevealState extends State<AppReveal>
+    with SingleTickerProviderStateMixin {
+  AnimationController? _controller;
+  Animation<double>? _progress;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_controller != null) return;
+    if (MediaQuery.disableAnimationsOf(context) ||
+        widget.index >= AppMotion.revealStaggered) {
+      return;
+    }
+    // The delay is the start of one animation (no timers), so it settles
+    // in tests and stops when the card is disposed.
+    final delay = AppMotion.revealStagger * widget.index;
+    final total = delay + AppMotion.reveal;
+    final controller = _controller = AnimationController(
+      vsync: this,
+      duration: total,
+    );
+    _progress = CurvedAnimation(
+      parent: controller,
+      curve: Interval(
+        delay.inMicroseconds / total.inMicroseconds,
+        1,
+        curve: AppMotion.enter,
+      ),
+    );
+    controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = _progress;
+    if (progress == null) return widget.child;
+    return AnimatedBuilder(
+      animation: progress,
+      child: widget.child,
+      builder: (context, child) => Opacity(
+        opacity: progress.value,
+        child: Transform.translate(
+          offset: Offset(0, AppMotion.revealRise * (1 - progress.value)),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
+/// A whole card as one tap target that shrinks a little while it's
+/// pressed (`AppMotion.pressScale`). A scroll that starts on it cancels
+/// the press. Still with Reduce Motion; no feedback when [onTap] is null.
+/// Screen readers don't see the tap here: wrap it in a labelled
+/// `Semantics(onTap:)`.
+class AppPressable extends StatefulWidget {
+  const new({required this.child, this.onTap, super.key});
+
+  final Widget child;
+  final VoidCallback? onTap;
+
+  @override
+  State<AppPressable> createState() => _AppPressableState();
+}
+
+class _AppPressableState extends State<AppPressable> {
+  bool _down = false;
+
+  void _set(bool down) {
+    if (_down != down) setState(() => _down = down);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final onTap = widget.onTap;
+    final still = onTap == null || MediaQuery.disableAnimationsOf(context);
+    return GestureDetector(
+      // The card's own Semantics carries the tap and its label.
+      excludeFromSemantics: true,
+      onTap: onTap,
+      onTapDown: still ? null : (_) => _set(true),
+      onTapUp: still ? null : (_) => _set(false),
+      onTapCancel: still ? null : () => _set(false),
+      child: AnimatedScale(
+        scale: _down ? AppMotion.pressScale : 1,
+        duration: AppMotion.press,
+        curve: Curves.easeOut,
+        child: widget.child,
+      ),
+    );
+  }
+}

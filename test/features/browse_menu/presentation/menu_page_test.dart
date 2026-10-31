@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:yaani_eh/core/ui/app_ui.dart';
 import 'package:yaani_eh/core/widgets/drink_card.dart';
 import 'package:yaani_eh/features/browse_menu/domain/usecases/build_menu.dart';
 import 'package:yaani_eh/features/browse_menu/presentation/menu_controller.dart';
@@ -124,6 +125,42 @@ void main() {
       );
     });
 
+    testWidgets('the first cards rise in one after another, then rest', (
+      tester,
+    ) async {
+      await pumpView(tester, menu: _menu());
+      final reveals = find.byType(AppReveal);
+      double opacity(int i) => tester
+          .widget<Opacity>(
+            find.descendant(of: reveals.at(i), matching: find.byType(Opacity)),
+          )
+          .opacity;
+      // The first card leads, the second follows…
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(opacity(0), greaterThan(opacity(1)));
+      // …then every card rests fully shown, and nothing keeps animating.
+      await tester.pumpAndSettle();
+      expect(opacity(0), 1);
+      expect(tester.binding.hasScheduledFrame, isFalse);
+      expect(opacity(1), 1);
+    });
+
+    testWidgets('Reduce Motion: cards show at once', (tester) async {
+      tester.platformDispatcher.accessibilityFeaturesTestValue =
+          const FakeAccessibilityFeatures(disableAnimations: true);
+      addTearDown(
+        tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
+      );
+      await pumpView(tester, menu: _menu());
+      expect(
+        find.descendant(
+          of: find.byType(AppReveal),
+          matching: find.byType(Opacity),
+        ),
+        findsNothing,
+      );
+    });
+
     testWidgets('small phone with large text, and a tablet', (tester) async {
       tester.platformDispatcher.textScaleFactorTestValue = 1.3;
       addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
@@ -140,31 +177,137 @@ void main() {
   });
 
   group(DrinkCard, () {
-    testWidgets('price range when known, kept left to right', (tester) async {
+    Future<void> pumpCard(
+      WidgetTester tester,
+      CatalogItem item, {
+      Locale locale = const Locale('en'),
+    }) => tester.pumpApp(
+      Center(
+        child: SizedBox(width: 170, child: DrinkCard(item: item)),
+      ),
+      locale: locale,
+    );
+
+    testWidgets('name, spelling and the «يعني» line, in Arabic', (
+      tester,
+    ) async {
+      await pumpCard(
+        tester,
+        sampleCatalogItems().first,
+        locale: const Locale('ar'),
+      );
+      expect(find.text('Espresso'), findsOneWidget);
+      expect(find.text('إسبريسو'), findsOneWidget);
+      expect(find.text('يعني فنجان قهوة صغير ومركّز'), findsOneWidget);
+      await tester.expectAccessible();
+    });
+
+    testWidgets('English shows the meaning alone', (tester) async {
+      await pumpCard(tester, sampleCatalogItems().first);
+      expect(find.text('A tiny, strong cup of coffee'), findsOneWidget);
+    });
+
+    testWidgets('no «يعني» line yet: the first sentence of the explanation', (
+      tester,
+    ) async {
+      final latte = sampleCatalogItems().firstWhere((i) => i.gistAr == null);
+      await pumpCard(tester, latte, locale: const Locale('ar'));
+      final sentence = latte.explanationAr.split('.').first;
+      expect(find.text('يعني $sentence'), findsOneWidget);
+    });
+
+    testWidgets('no price or calories on the card', (tester) async {
       final item = CatalogRows.item({
         ...sampleItems().first,
         'price_min_egp': 70,
         'price_max_egp': 150,
       })!;
+      await pumpCard(tester, item, locale: const Locale('ar'));
+      expect(find.textContaining('ج.م'), findsNothing);
+      expect(find.textContaining('سعر حراري'), findsNothing);
+    });
+
+    testWidgets('cards in a row line up: the meaning takes two lines', (
+      tester,
+    ) async {
+      final items = sampleCatalogItems();
+      await tester.pumpApp(
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Two real «يعني» lines: one line long, two lines long.
+            for (final item in items.where((i) => i.gistEn != null))
+              SizedBox(width: 170, child: DrinkCard(item: item)),
+          ],
+        ),
+      );
+      final heights = [
+        for (final card in find.byType(DrinkCard).evaluate())
+          tester.getSize(find.byWidget(card.widget)).height,
+      ];
+      expect(heights.toSet(), hasLength(1));
+    });
+
+    testWidgets('a long «يعني» line shows whole: small phone, large text', (
+      tester,
+    ) async {
+      tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      final long = '${'ق' * 20} ${'ب' * 20} ${'ن' * 18}'; // 60 chars
+      final item = CatalogRows.item({...sampleItems().first, 'gist_ar': long})!;
       await tester.pumpApp(
         Center(
-          child: SizedBox(width: 170, child: DrinkCard(item: item)),
+          child: SizedBox(width: 138, child: DrinkCard(item: item)),
         ),
         locale: const Locale('ar'),
       );
-      expect(find.text('\u206670–150\u2069 ج.م'), findsOneWidget);
+      tester.view.physicalSize = const Size(960, 1704); // 320×568
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      final text = tester.widget<Text>(find.text('يعني $long'));
+      expect(text.maxLines, isNull);
+      expect(text.overflow, isNot(TextOverflow.ellipsis));
     });
 
-    testWidgets('calories while prices are not checked yet', (tester) async {
+    testWidgets('pressing shrinks the card, still with Reduce Motion', (
+      tester,
+    ) async {
+      Future<double> pressedScale() async {
+        final gesture = await tester.startGesture(
+          tester.getCenter(find.byType(DrinkCard)),
+        );
+        await tester.pumpAndSettle();
+        final scale = tester
+            .widget<AnimatedScale>(
+              find.descendant(
+                of: find.byType(DrinkCard),
+                matching: find.byType(AnimatedScale),
+              ),
+            )
+            .scale;
+        await gesture.up();
+        await tester.pumpAndSettle();
+        return scale;
+      }
+
+      final item = sampleCatalogItems().first;
       await tester.pumpApp(
         Center(
           child: SizedBox(
             width: 170,
-            child: DrinkCard(item: sampleCatalogItems()[4]),
+            child: DrinkCard(item: item, onTap: () {}),
           ),
         ),
       );
-      expect(find.text(l10nEn.calories(190)), findsOneWidget);
+      expect(await pressedScale(), lessThan(1));
+
+      tester.platformDispatcher.accessibilityFeaturesTestValue =
+          const FakeAccessibilityFeatures(disableAnimations: true);
+      addTearDown(
+        tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
+      );
+      await tester.pumpAndSettle();
+      expect(await pressedScale(), 1);
     });
 
     testWidgets('one label for screen readers, tappable when wired', (

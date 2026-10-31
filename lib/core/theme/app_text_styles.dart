@@ -5,7 +5,20 @@ import 'package:yaani_eh/core/theme/app_fonts.dart';
 
 /// The Design System type scale. Each role exists twice: Latin
 /// (Plus Jakarta Sans) and Arabic (Readex Pro, taller line height).
-enum TextRole { largeTitle, title, headline, body, callout, label, caption }
+///
+/// [cardTitle] and [cardBody] are the drink card's two sizes: the name,
+/// then its spelling and «يعني» line.
+enum TextRole {
+  largeTitle,
+  title,
+  headline,
+  body,
+  callout,
+  label,
+  caption,
+  cardTitle,
+  cardBody,
+}
 
 /// Every text style in the app. Colors come from the theme, so these only
 /// define family, size, weight, line height and tracking.
@@ -22,6 +35,8 @@ abstract final class AppTextStyles {
     TextRole.callout => _latin(14, 20, FontWeight.w500),
     TextRole.label => _latin(13, 16, FontWeight.w600),
     TextRole.caption => _latin(12, 16, FontWeight.w500),
+    TextRole.cardTitle => _latin(15, 20, FontWeight.w600, -0.1),
+    TextRole.cardBody => _latin(13, 18, FontWeight.w400),
   };
 
   static TextStyle arabic(TextRole role) => switch (role) {
@@ -32,6 +47,8 @@ abstract final class AppTextStyles {
     TextRole.callout => _arabic(14, 22, FontWeight.w500),
     TextRole.label => _arabic(13, 20, FontWeight.w600),
     TextRole.caption => _arabic(12, 18, FontWeight.w500),
+    TextRole.cardTitle => _arabic(15, 22, FontWeight.w600),
+    TextRole.cardBody => _arabic(13, 20, FontWeight.w400),
   };
 
   /// The style for [text] by its script, whatever the app language.

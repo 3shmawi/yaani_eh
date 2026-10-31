@@ -67,6 +67,8 @@ abstract final class CatalogRows {
       menuNameAr: menuNameAr,
       explanationAr: explanationAr,
       explanationEn: explanationEn,
+      gistAr: _text(row['gist_ar'], 60),
+      gistEn: _text(row['gist_en'], 60),
       calories: calories,
       sizeMl: sizeMl,
       priceMinEgp: priceMin,

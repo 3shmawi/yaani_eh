@@ -117,7 +117,7 @@ class MenuView extends StatelessWidget {
               ),
               SizedBox(height: AppDimens.space6),
             ],
-            for (final section in menu.sections) ...[
+            for (final (i, section) in menu.sections.indexed) ...[
               _SectionHeader(
                 title: name(section.category),
                 // On "All", jump to the category; inside it, no need.
@@ -128,6 +128,10 @@ class MenuView extends StatelessWidget {
               SizedBox(height: AppDimens.space3),
               _Grid(
                 items: section.items,
+                // Card number on the screen, for the entry stagger.
+                firstIndex: menu.sections
+                    .take(i)
+                    .fold(0, (n, s) => n + s.items.length),
                 onOpenItem: onOpenItem,
                 cardAction: cardAction,
               ),
@@ -221,11 +225,13 @@ class _SectionHeader extends StatelessWidget {
 class _Grid extends StatelessWidget {
   const new({
     required this.items,
+    required this.firstIndex,
     required this.onOpenItem,
     required this.cardAction,
   });
 
   final List<CatalogItem> items;
+  final int firstIndex;
   final ValueChanged<CatalogItem>? onOpenItem;
   final Widget Function(CatalogItem item)? cardAction;
 
@@ -241,13 +247,17 @@ class _Grid extends StatelessWidget {
           spacing: gap,
           runSpacing: gap,
           children: [
-            for (final item in items)
+            for (final (i, item) in items.indexed)
               SizedBox(
                 width: width,
-                child: DrinkCard(
-                  item: item,
-                  onTap: onOpenItem == null ? null : () => onOpenItem!(item),
-                  action: cardAction?.call(item),
+                child: AppReveal(
+                  index: firstIndex + i,
+                  child: DrinkCard(
+                    item: item,
+                    hero: true,
+                    onTap: onOpenItem == null ? null : () => onOpenItem!(item),
+                    action: cardAction?.call(item),
+                  ),
                 ),
               ),
           ],

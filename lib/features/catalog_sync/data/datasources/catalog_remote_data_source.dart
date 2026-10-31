@@ -35,7 +35,8 @@ class SupabaseCatalogRemote implements CatalogRemoteDataSource {
       'updated_at';
   static const _itemColumns =
       'id,category_id,slug,menu_name,menu_name_ar,explanation_ar,'
-      'explanation_en,calories,size_ml,price_min_egp,price_max_egp,'
+      'explanation_en,gist_ar,gist_en,calories,size_ml,price_min_egp,'
+      'price_max_egp,'
       'price_updated_at,image_path,audio_barista_path,audio_original_path,'
       'traits,sort_order,updated_at';
 
