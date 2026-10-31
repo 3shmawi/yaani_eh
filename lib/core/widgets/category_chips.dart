@@ -4,12 +4,13 @@ import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_text_styles.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
 
-/// One chip: an id (null = "All") and its label.
+/// One chip: a category id and its label.
 typedef ChipOption = ({String? id, String label});
 
 /// A horizontal, single-select row of categories (Design System →
 /// CategoryChips). Over the header band: clear glass, selected = solid
-/// white. Scrolls edge to edge; RTL starts from the right.
+/// warm milk (`AppColors.selected`). Scrolls edge to edge; RTL starts from
+/// the right.
 class CategoryChips extends StatelessWidget {
   const new({
     required this.options,
@@ -19,7 +20,6 @@ class CategoryChips extends StatelessWidget {
     super.key,
   });
 
-  /// "All" first (id null), then categories.
   final List<ChipOption> options;
   final String? selectedId;
   final ValueChanged<String?> onSelected;

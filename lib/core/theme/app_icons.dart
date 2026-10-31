@@ -31,6 +31,7 @@ abstract final class AppIcons {
   static const checkCircle = IconData(0xe184, fontFamily: _family);
   static const warningCircle = IconData(0xe4e2, fontFamily: _family);
   static const coffee = IconData(0xe1c2, fontFamily: _family);
+  static const cake = IconData(0xe780, fontFamily: _family);
   static const send = IconData(0xe398, fontFamily: _family);
   static const retry = IconData(0xe036, fontFamily: _family);
   static const check = IconData(0xe182, fontFamily: _family);

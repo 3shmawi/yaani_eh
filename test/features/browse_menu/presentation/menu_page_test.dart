@@ -1,3 +1,5 @@
+import 'dart:ui' show Tristate;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -22,13 +24,12 @@ final List<CatalogCategory> _categories = [
   for (final r in sampleCategories()) CatalogRows.category(r)!,
 ];
 
-MenuModel _menu({String? selected, List<CatalogItem>? items}) =>
-    const BuildMenu()(
-      items: items ?? sampleCatalogItems(),
-      categories: _categories,
-      today: _day,
-      selectedCategoryId: selected,
-    );
+MenuModel _menu({String? tab, List<CatalogItem>? items}) => const BuildMenu()(
+  items: items ?? sampleCatalogItems(),
+  categories: _categories,
+  today: _day,
+  selectedTabId: tab,
+);
 
 void main() {
   group(MenuView, () {
@@ -37,52 +38,130 @@ void main() {
       MenuModel? menu,
       Locale locale = const Locale('en'),
       ThemeMode mode = ThemeMode.light,
-      void Function(CatalogCategory?)? onSelect,
+      ValueChanged<MenuTab>? onTab,
+      ValueChanged<CatalogCategory>? onJump,
       VoidCallback? onSettings,
     }) => tester.pumpApp(
       MenuView(
         menu: menu,
-        onSelectCategory: onSelect ?? (_) {},
+        onSelectTab: onTab ?? (_) {},
+        onJumpToCategory: onJump,
         onOpenSettings: onSettings ?? () {},
       ),
       locale: locale,
       themeMode: mode,
     );
 
-    testWidgets('header, chips, drink of the day and glass cards', (
+    testWidgets('header, sections, chips, drink of the day and cards', (
       tester,
     ) async {
       await pumpView(tester, menu: _menu());
-      expect(find.text(l10nEn.menuTitle), findsOneWidget);
-      expect(find.text(l10nEn.chipAll), findsOneWidget);
+      expect(find.text(l10nEn.appEyebrow), findsOneWidget);
+      expect(find.byKey(const Key('menu_sections')), findsOneWidget);
+      expect(find.text('Drinks'), findsOneWidget);
+      expect(find.text('Desserts'), findsOneWidget);
+      expect(find.text(l10nEn.comingSoonBadge), findsOneWidget);
+      expect(find.text('All'), findsNothing);
       expect(find.text('Coffee'), findsWidgets); // chip + section
       expect(find.byKey(const Key('drink_of_the_day')), findsOneWidget);
-      expect(find.text(l10nEn.drinkOfTheDay), findsOneWidget);
       expect(find.byType(DrinkCard), findsWidgets);
       await tester.expectAccessible();
     });
 
-    testWidgets('chips and "see all" select a category', (tester) async {
-      final picked = <String?>[];
+    testWidgets('every category of the section is on the list', (tester) async {
+      await pumpView(tester, menu: _menu());
+      final list = find.byKey(const Key('menu_list'));
+      await tester.dragUntilVisible(
+        find.text('Cold Brew'),
+        list,
+        const Offset(0, -300),
+      );
+      expect(find.text('Cold Brew'), findsOneWidget);
+    });
+
+    testWidgets('a chip scrolls to its category and lights up', (tester) async {
+      final jumped = <String>[];
+      await pumpView(tester, menu: _menu(), onJump: (c) => jumped.add(c.slug));
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.descendant(
+          of: find.byKey(const Key('category_chips')),
+          matching: find.text('Iced coffee'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(jumped, ['iced_coffee']);
+      // The band scrolled away: the chips are pinned at the top, with
+      // «Iced coffee» selected, and its heading sits just under them.
+      final pinned = find.byKey(const Key('category_chips_pinned'));
+      expect(pinned, findsOneWidget);
+      final selected = tester.getSemantics(
+        find.descendant(of: pinned, matching: find.text('Iced coffee')),
+      );
+      expect(selected.flagsCollection.isSelected, Tristate.isTrue);
+      final heading = find.descendant(
+        of: find.byKey(const Key('menu_list')),
+        matching: find.text('Iced coffee'),
+      );
+      expect(
+        tester.getTopLeft(heading.last).dy,
+        greaterThan(tester.getBottomLeft(pinned).dy - 1),
+      );
+    });
+
+    testWidgets('scrolling back up hides the pinned chips', (tester) async {
+      await pumpView(tester, menu: _menu());
+      final list = find.byKey(const Key('menu_list'));
+      await tester.drag(list, const Offset(0, -600));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('category_chips_pinned')), findsOneWidget);
+      await tester.drag(list, const Offset(0, 2000));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('category_chips_pinned')), findsNothing);
+    });
+
+    testWidgets('the switch opens a section; desserts is coming soon', (
+      tester,
+    ) async {
+      final picked = <String>[];
       await pumpView(
         tester,
         menu: _menu(),
-        onSelect: (c) => picked.add(c?.slug),
+        onTab: (t) => picked.add(t.section.slug),
       );
+      await tester.tap(find.text('Desserts'));
+      expect(picked, ['desserts']);
 
-      await tester.tap(find.text('Iced coffee').first);
-      await tester.tap(find.text(l10nEn.seeAll).first);
-      await tester.tap(find.text(l10nEn.chipAll));
-      expect(picked, ['iced_coffee', 'coffee', null]);
+      await pumpView(
+        tester,
+        menu: _menu(tab: dessertsId),
+        onTab: (t) => picked.add(t.section.slug),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('menu_coming_soon')), findsOneWidget);
+      expect(find.text(l10nEn.comingSoonTitle('Desserts')), findsOneWidget);
+      expect(find.byType(DrinkCard), findsNothing);
+      expect(find.byKey(const Key('category_chips')), findsNothing);
+      await tester.expectAccessible();
+
+      await tester.tap(find.text(l10nEn.comingSoonAction));
+      expect(picked.last, 'cafe');
     });
 
-    testWidgets('a selected category shows only its drinks', (tester) async {
-      await pumpView(tester, menu: _menu(selected: coldId));
-      expect(find.byKey(const Key('drink_of_the_day')), findsNothing);
-      expect(find.text(l10nEn.seeAll), findsNothing);
-      expect(find.text('Cold Brew'), findsOneWidget);
-      expect(find.text('Espresso'), findsNothing);
-      await tester.expectAccessible();
+    testWidgets('one section only: no switch', (tester) async {
+      final categories = [
+        for (final c in _categories)
+          if (c.slug != 'desserts') c,
+      ];
+      await pumpView(
+        tester,
+        menu: const BuildMenu()(
+          items: sampleCatalogItems(),
+          categories: categories,
+          today: _day,
+        ),
+      );
+      expect(find.byKey(const Key('menu_sections')), findsNothing);
     });
 
     testWidgets('loading and empty states', (tester) async {
@@ -117,10 +196,11 @@ void main() {
       tester,
     ) async {
       await pumpView(tester, menu: _menu(), locale: const Locale('ar'));
-      expect(find.text('الكل'), findsOneWidget);
+      expect(find.text('مشروبات'), findsOneWidget);
+      expect(find.text('قريبًا'), findsOneWidget);
       expect(find.text('قهوة'), findsWidgets);
       expect(
-        Directionality.of(tester.element(find.text('الكل'))),
+        Directionality.of(tester.element(find.text('مشروبات'))),
         TextDirection.rtl,
       );
     });
@@ -337,7 +417,7 @@ void main() {
   });
 
   group(MenuPage, () {
-    testWidgets('reads the menu from the device and filters by chip', (
+    testWidgets('reads the menu from the device; the switch opens desserts', (
       tester,
     ) async {
       await tester.pumpApp(
@@ -354,10 +434,14 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Flat White'), findsWidgets);
 
-      await tester.tap(find.text('Iced coffee').first);
+      await tester.tap(find.text('Desserts'));
       await tester.pumpAndSettle();
+      expect(find.byKey(const Key('menu_coming_soon')), findsOneWidget);
       expect(find.text('Flat White'), findsNothing);
-      expect(find.text('Cold Brew'), findsWidgets);
+
+      await tester.tap(find.text(l10nEn.comingSoonAction));
+      await tester.pumpAndSettle();
+      expect(find.text('Flat White'), findsWidgets);
     });
 
     testWidgets('drinks with clips get a play button on their card and the '
@@ -393,6 +477,11 @@ void main() {
         card,
         find.byType(Scrollable).first,
         const Offset(0, -200),
+      );
+      // Clear of the chips pinned at the top.
+      await tester.drag(
+        find.byKey(const Key('menu_list')),
+        const Offset(0, 250),
       );
       await tester.pumpAndSettle();
       final play = find.descendant(

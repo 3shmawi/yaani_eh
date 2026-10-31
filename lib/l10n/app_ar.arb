@@ -44,17 +44,12 @@
   "firstLoadOfflineBody": "مقدرناش نحمّل المنيو. أول ما النت يرجع هنحمّله مرة واحدة، وبعد كده يشتغل من غير نت.",
   "firstLoadFailedTitle": "مقدرناش نحمّل المنيو",
   "autoRetryHint": "بنجرب لوحدنا كل 30 ثانية",
-  "menuTitle": "المنيو",
   "menuTagline": "اطلب وإنت فاهم",
   "menuCount": "{count, plural, =0{مفيش مشروبات} =1{مشروب واحد} =2{مشروبين} few{{count} مشروبات} other{{count} مشروب}}",
   "menuEmpty": "المنيو فاضي دلوقتي. ارجعلنا قريب.",
-  "chipAll": "الكل",
   "drinkOfTheDay": "مشروب النهارده",
-  "seeAll": "شوف الكل",
-  "seeAllIn": "شوف كل {category}",
   "priceRange": "{range} ج.م",
   "calories": "{count} سعر حراري",
-  "categoryEmpty": "لسه مفيش حاجة هنا. مشروبات جاية قريب.",
   "approximateNote": "السعرات والأسعار تقريبية.",
   "drinkNotFoundTitle": "مش لاقيين المشروب ده",
   "drinkNotFoundBody": "يمكن اتشال من المنيو.",
@@ -90,5 +85,9 @@
   "pronounceOffline": "إنت أوفلاين، والاسم ده متسمعش على الموبايل ده قبل كده.",
   "pronounceMissing": "التسجيل ده مش متاح دلوقتي.",
   "pronounceError": "مقدرناش نشغّل الاسم. جرّب تاني.",
-  "cardMeaning": "يعني {gist}"
+  "cardMeaning": "يعني {gist}",
+  "comingSoonBadge": "قريبًا",
+  "comingSoonTitle": "{section} جاية قريب",
+  "comingSoonMessage": "هنشرحها بنفس الطريقة: الاسم زي ما هو مكتوب، بيتقال إزاي، ويعني إيه.",
+  "comingSoonAction": "شوف المتاح دلوقتي"
 }

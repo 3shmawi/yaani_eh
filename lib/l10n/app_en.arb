@@ -83,7 +83,6 @@
   "firstLoadOfflineBody": "We couldn't load the menu. Once you're back online we load it once, then it works offline.",
   "firstLoadFailedTitle": "We couldn't load the menu",
   "autoRetryHint": "We retry by ourselves every 30 seconds",
-  "menuTitle": "Menu",
   "menuTagline": "Order like you know it",
   "menuCount": "{count, plural, =1{1 drink} other{{count} drinks}}",
   "@menuCount": {
@@ -94,17 +93,7 @@
     }
   },
   "menuEmpty": "The menu is empty for now. Check back soon.",
-  "chipAll": "All",
   "drinkOfTheDay": "Drink of the day",
-  "seeAll": "See all",
-  "seeAllIn": "See all {category}",
-  "@seeAllIn": {
-    "placeholders": {
-      "category": {
-        "type": "String"
-      }
-    }
-  },
   "priceRange": "{range} EGP",
   "@priceRange": {
     "placeholders": {
@@ -121,7 +110,6 @@
       }
     }
   },
-  "categoryEmpty": "Nothing here yet. More drinks are coming.",
   "approximateNote": "Calories and prices are approximate.",
   "drinkNotFoundTitle": "We can't find this drink",
   "drinkNotFoundBody": "It may have been taken off the menu.",
@@ -239,6 +227,22 @@
       "gist": {
         "type": "String",
         "example": "A coffee milkshake"
+      }
+    }
+  },
+  "comingSoonBadge": "Soon",
+  "comingSoonTitle": "{section} are on the way",
+  "comingSoonMessage": "Explained the same way: the name as menus print it, how to say it, and what it is.",
+  "comingSoonAction": "See what’s here now",
+  "@comingSoonBadge": {
+    "description": "Tag on a Home section that has no items yet."
+  },
+  "@comingSoonTitle": {
+    "description": "Title of a Home section that has no items yet.",
+    "placeholders": {
+      "section": {
+        "type": "String",
+        "example": "Desserts"
       }
     }
   }

@@ -9,8 +9,8 @@ import 'helpers/demo_app.dart';
 /// Demo: "A café menu… that finally makes sense."
 /// The cards rise in; each one says what the drink is in everyday words
 /// («فلات وايت يعني قهوة باللبن تقيلة في فنجان صغير»). Open one (its
-/// photo flies into the page) and come back, filter by a category chip,
-/// then back to everything.
+/// photo flies into the page) and come back; a chip scrolls to its
+/// category; desserts say they're coming soon.
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -19,7 +19,9 @@ void main() {
     (w) => w is Text && [en, ar].contains(w.data ?? w.textSpan?.toPlainText()),
   );
 
-  testWidgets('browse the menu and filter by category', (tester) async {
+  testWidgets('browse the menu, jump to a category, peek at desserts', (
+    tester,
+  ) async {
     await DemoApp.start(pageSize: 100);
 
     // 1. Home: drink of the day, then the coffee cards.
@@ -69,22 +71,38 @@ void main() {
     await tester.drag(list, const Offset(0, 1200));
     await tester.pumpAndSettle();
 
-    // 4. Only iced coffee.
-    await tester.tap(either('Iced coffee', 'قهوة ساقعة').first);
+    // 4. A chip scrolls the list to its category; the chips stay pinned
+    // at the top and follow.
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const Key('category_chips')),
+        matching: either('Iced coffee', 'قهوة ساقعة'),
+      ),
+    );
     await tester.pumpAndSettle();
     await beat(tester, 1800);
-    expect(find.byKey(const Key('drink_of_the_day')), findsNothing);
+    expect(find.byKey(const Key('category_chips_pinned')), findsOneWidget);
     await tester.dragUntilVisible(
       find.text('Cold Brew'),
       list,
       const Offset(0, -200),
     );
-    expect(find.text('Espresso'), findsNothing);
-    await tester.drag(list, const Offset(0, 1200));
     await tester.pumpAndSettle();
+    await beat(tester);
 
-    // 5. Back to everything.
-    await tester.tap(either('All', 'الكل'));
+    // 5. Back up to the switch: desserts are coming soon. Then back.
+    await tester.drag(list, const Offset(0, 3000));
+    await tester.pumpAndSettle();
+    await beat(tester);
+    await tester.tap(either('Desserts', 'حلويات'));
+    await tester.pumpAndSettle();
+    await beat(tester, 1800);
+    expect(find.byKey(const Key('menu_coming_soon')), findsOneWidget);
+    expect(find.byType(DrinkCard), findsNothing);
+    final back = either('See what’s here now', 'شوف المتاح دلوقتي');
+    await tester.ensureVisible(back); // below the fold on small phones
+    await tester.pumpAndSettle();
+    await tester.tap(back);
     await tester.pumpAndSettle();
     await beat(tester, 1500);
     expect(find.byKey(const Key('drink_of_the_day')), findsOneWidget);

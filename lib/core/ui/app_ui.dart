@@ -703,3 +703,151 @@ class _AppPressableState extends State<AppPressable> {
     );
   }
 }
+
+/// One option of an [AppSegmentedControl]; `badge` is a short tag after
+/// the label («قريبًا»).
+typedef AppSegment = ({String id, String label, String? badge});
+
+/// A single-choice switch on the header band (Design System → Segmented
+/// control): clear glass, the selected option a solid `AppColors.selected`
+/// pill. Every option is at least [AppDimens.touchTarget] tall.
+class AppSegmentedControl extends StatelessWidget {
+  const new({
+    required this.segments,
+    required this.selectedId,
+    required this.onSelected,
+    this.tone = GlassTone.dark,
+    super.key,
+  });
+
+  final List<AppSegment> segments;
+  final String? selectedId;
+  final ValueChanged<String> onSelected;
+  final GlassTone tone;
+
+  @override
+  Widget build(BuildContext context) {
+    // The whole height is the tap area; the selected pill sits inside it.
+    const height = AppDimens.touchTarget;
+    final inset = AppDimens.space1;
+    return AppGlass(
+      kind: GlassKind.clear,
+      tone: tone,
+      radius: height / 2,
+      padding: EdgeInsetsDirectional.symmetric(horizontal: inset),
+      child: Row(
+        children: [
+          for (final s in segments)
+            Expanded(
+              child: _Segment(
+                segment: s,
+                selected: s.id == selectedId,
+                height: height,
+                pill: height - inset * 2,
+                onTap: () => onSelected(s.id),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Segment extends StatelessWidget {
+  const new({
+    required this.segment,
+    required this.selected,
+    required this.height,
+    required this.pill,
+    required this.onTap,
+  });
+
+  final AppSegment segment;
+  final bool selected;
+
+  /// The tap area's height, and the drawn pill's inside it.
+  final double height;
+  final double pill;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    final badge = segment.badge;
+    // Unselected: the glass's own text colour (it follows the glass tone
+    // and the lite / high-contrast variant).
+    final fg = selected ? AppColors.onSelected : null;
+    final label = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Flexible(
+          child: Text(
+            segment.label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyles.forText(
+              segment.label,
+              TextRole.label,
+            ).copyWith(color: fg),
+          ),
+        ),
+        if (badge != null) ...[
+          SizedBox(width: AppDimens.space1),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: selected ? p.brand : AppColors.glassClearDark,
+              borderRadius: BorderRadius.circular(AppDimens.radiusPill),
+            ),
+            child: Padding(
+              padding: EdgeInsetsDirectional.symmetric(
+                horizontal: AppDimens.space2,
+              ),
+              child: Text(
+                badge,
+                maxLines: 1,
+                style: AppTextStyles.forText(
+                  badge,
+                  TextRole.caption,
+                ).copyWith(color: selected ? p.onBrand : null),
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: [segment.label, ?badge].join('، '),
+      onTap: onTap,
+      child: ExcludeSemantics(
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: onTap,
+          child: SizedBox(
+            height: height,
+            child: Center(
+              child: AnimatedContainer(
+                duration: MediaQuery.disableAnimationsOf(context)
+                    ? Duration.zero
+                    : AppMotion.select,
+                constraints: BoxConstraints(minHeight: pill),
+                alignment: Alignment.center,
+                padding: EdgeInsetsDirectional.symmetric(
+                  horizontal: AppDimens.space3,
+                ),
+                decoration: BoxDecoration(
+                  color: selected
+                      ? AppColors.selected
+                      : AppColors.selected.withValues(alpha: 0),
+                  borderRadius: BorderRadius.circular(AppDimens.radiusPill),
+                ),
+                child: label,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

@@ -8,7 +8,7 @@ syncs only what changed, so content changes never need an app release.
 
 | Table | What it holds |
 |---|---|
-| `categories` | Roots are **sections** (`cafe` now; restaurants later). Children are the chips (Coffee, Frappés…). The section's `trait_schema` drives the taste quiz and the trait pills. |
+| `categories` | Roots are **sections**, the Home switch: `cafe` («مشروبات / Drinks») and `desserts` («حلويات», no items yet; `0005_menu_sections.sql`). Children are the chips (Coffee, Frappés…). A section with no published items shows as «قريبًا» and goes live with its first item, no app update. The section's `trait_schema` drives the taste quiz and the trait pills. |
 | `items` | One drink (later: dish, dessert). Menu name as written on menus + Arabic spelling, short explanations (≤ 300 chars), the «يعني» line (`gist_ar` / `gist_en`, ≤ 60 chars, `0004_item_gist.sql`), calories, size, price range in EGP, photo and audio paths, `traits`. |
 | `item_terms` | Extra search words per item: `ar`, `en` or `franco` (e.g. `2ahwa`). |
 | `catalog_tombstones` | Filled automatically when you delete a row; the app reads it through `catalog_removed_since`. |
