@@ -4,7 +4,7 @@
 -- only; that hostile values are rejected.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(46);
+select plan(47);
 
 -- RLS on every table.
 select ok((select relrowsecurity from pg_class where oid = 'public.categories'::regclass), 'RLS on categories');
@@ -135,6 +135,12 @@ select throws_ok(
 select throws_ok(
   $$ update public.items set gist_en = '' where slug = 'latte' $$,
   '23514', null, 'an empty «يعني» line is rejected (null means none)'
+);
+select is(
+  (select count(*)::int from public.items
+   where explanation_ar ~ '(لاتيه|إسبريسو|اسبريسو|موكا|فرابيه|ميلك شيك|ماكياتو|كابتشينو|ماتشا|سموذي|متخفوق)'
+      or explanation_en ~* '(latte|espresso|mocha|frapp|milkshake|macchiato|cappuccino|matcha|smoothie)'),
+  0, 'no explanation leans on another menu word'
 );
 select is(
   (select count(*)::int from public.items

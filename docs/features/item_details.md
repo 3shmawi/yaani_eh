@@ -5,7 +5,8 @@
 ## What it does
 Tapping any drink opens its page: the photo under the status bar, then a
 sheet with the name exactly as menus print it and its Arabic spelling, a
-plain explanation in the reader's language, trait pills (calories, hot or
+plain explanation in the reader's language (everyday words, never another
+menu word: docs/content.md → Explanations), trait pills (calories, hot or
 iced, sweetness, milk, caffeine), «طريقة التحضير» (the `recipes` sheet,
 when the drink has a recipe), and similar drinks to compare. Works offline,
 from the device copy.
