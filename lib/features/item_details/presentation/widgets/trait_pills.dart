@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yaani_eh/core/config/app_content.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_icons.dart';
@@ -41,7 +42,7 @@ class TraitPills extends StatelessWidget {
           ),
         for (final trait in facts.traits)
           _Pill(child: Text(trait, style: style)),
-        if (facts.priceIsStale)
+        if (AppContent.showPrices && facts.priceIsStale)
           _Pill(
             outlined: true,
             child: Row(

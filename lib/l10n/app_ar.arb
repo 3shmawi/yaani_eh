@@ -124,5 +124,6 @@
   "stepPrevious": "الخطوة اللي فاتت",
   "stepDone": "خلصت، بالهنا",
   "recipeMissingTitle": "لسه مكتبناش طريقة تحضيره",
-  "recipeMissingBody": "بنكتبهم واحد واحد."
+  "recipeMissingBody": "بنكتبهم واحد واحد.",
+  "approximateCalories": "السعرات تقريبية."
 }

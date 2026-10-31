@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:yaani_eh/core/config/app_content.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_icons.dart';
@@ -303,7 +304,9 @@ class _MenuViewState extends State<MenuView> {
                 SizedBox(height: AppDimens.space6),
               ],
               Text(
-                l10n.approximateNote,
+                AppContent.showPrices
+                    ? l10n.approximateNote
+                    : l10n.approximateCalories,
                 textAlign: TextAlign.center,
                 style: context
                     .text(TextRole.caption)

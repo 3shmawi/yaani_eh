@@ -16,7 +16,7 @@ Franco, offline, on the device copy of the menu. Nothing found → «مالقي�
 3. A name → AnswerCard («إنت كتبت "…"», name = explanation, pills,
    «التفاصيل») + related drinks below.
 4. A description → «N مشروب لـ"…"» + ranked rows (photo, name, spelling,
-   explanation with highlights, calories/price).
+   explanation with highlights, calories; prices are hidden).
 5. Tap anything → the drink (`/drink/:slug`); back returns to the results.
 6. Links: `yaanieh://search?q=latte` opens search pre-filled.
 

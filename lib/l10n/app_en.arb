@@ -412,5 +412,9 @@
   "recipeMissingBody": "We're writing them one by one.",
   "@recipeMissingBody": {
     "description": "Under recipeMissingTitle."
+  },
+  "approximateCalories": "Calories are approximate.",
+  "@approximateCalories": {
+    "description": "The note at the end of the menu and a drink page, while prices are hidden."
   }
 }

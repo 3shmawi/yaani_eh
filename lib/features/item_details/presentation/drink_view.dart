@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart' show DateFormat;
+import 'package:yaani_eh/core/config/app_content.dart';
 import 'package:yaani_eh/core/text/bidi.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
@@ -18,7 +19,8 @@ import 'package:yaani_eh/l10n/l10n.dart';
 
 /// One drink (Details artboard): the photo under the status bar, a
 /// floating back button, and a sheet with the name, the plain
-/// explanation, trait pills, the price and similar drinks.
+/// explanation, trait pills, «طريقة التحضير», the price (while
+/// [AppContent.showPrices]) and similar drinks.
 class DrinkView extends StatelessWidget {
   const new({
     required this.item,
@@ -104,8 +106,10 @@ class DrinkView extends StatelessWidget {
             SizedBox(height: AppDimens.space4),
             _RecipeRow(recipe: item.recipe!, onTap: onOpenRecipe!),
           ],
-          SizedBox(height: AppDimens.space4),
-          _PriceCard(facts: facts),
+          if (AppContent.showPrices) ...[
+            SizedBox(height: AppDimens.space4),
+            _PriceCard(facts: facts),
+          ],
           if (similar.isNotEmpty) ...[
             SizedBox(height: AppDimens.space6),
             Semantics(
@@ -137,7 +141,9 @@ class DrinkView extends StatelessWidget {
           ],
           SizedBox(height: AppDimens.space6),
           Text(
-            l10n.approximateNote,
+            AppContent.showPrices
+                ? l10n.approximateNote
+                : l10n.approximateCalories,
             textAlign: TextAlign.center,
             style: context.text(TextRole.caption).copyWith(color: p.inkMuted),
           ),

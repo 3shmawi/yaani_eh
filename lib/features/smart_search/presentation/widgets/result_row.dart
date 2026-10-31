@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yaani_eh/core/config/app_content.dart';
 import 'package:yaani_eh/core/text/bidi.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
@@ -153,12 +154,13 @@ TextSpan highlighted(BuildContext context, String text, Set<String> highlight) {
   return TextSpan(children: spans);
 }
 
-/// "70–150 EGP" when prices are known, else "190 kcal", else null.
+/// "70–150 EGP" when prices are shown and known, else "190 kcal", else
+/// null.
 String? drinkMeta(BuildContext context, CatalogItem item) {
   final l10n = context.l10n;
   final min = item.priceMinEgp;
   final max = item.priceMaxEgp ?? min;
-  if (min != null && max != null) {
+  if (AppContent.showPrices && min != null && max != null) {
     return l10n.priceRange(Bidi.range(min, max));
   }
   final calories = item.calories;
