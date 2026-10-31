@@ -53,14 +53,17 @@ jobs:
           printf '%s' "$PLAY_JSON" > "$RUNNER_TEMP/play.json"
           ./scripts/mask_secrets.sh "$RUNNER_TEMP/play.json"
           shots=true
-          ls store/android/*/images/phoneScreenshots/*.png >/dev/null 2>&1 && shots=false
+          ls store/android/*/images/phoneScreenshots/*.{png,jpg} >/dev/null 2>&1 && shots=false
+          # Icon and feature graphic, once they're in store/android/<locale>/images/.
+          images=true
+          ls store/android/*/images/featureGraphic.png >/dev/null 2>&1 && images=false
           fastlane supply \
             --package_name "com.mohager.yaanieh" \
             --json_key "$RUNNER_TEMP/play.json" \
             --metadata_path store/android \
             --skip_upload_apk true --skip_upload_aab true \
             --skip_upload_changelogs true \
-            --skip_upload_images true \
+            --skip_upload_images "$images" \
             --skip_upload_screenshots "$shots"
 
   ios:
@@ -82,7 +85,7 @@ jobs:
           jq -n --arg id "$ASC_KEY_ID" --arg issuer "$ASC_ISSUER_ID" --rawfile key "$RUNNER_TEMP/asc.p8" \
             '{key_id: $id, issuer_id: $issuer, key: $key, in_house: false}' > "$RUNNER_TEMP/asc.json"
           shots=true
-          ls store/ios/screenshots/*/*.png >/dev/null 2>&1 && shots=false
+          ls store/ios/screenshots/*/*.{png,jpg} >/dev/null 2>&1 && shots=false
           fastlane deliver \
             --api_key_path "$RUNNER_TEMP/asc.json" \
             --app_identifier "com.mohager.yaanieh" \
