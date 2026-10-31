@@ -528,6 +528,9 @@ enum AppButtonKind {
   /// The main action on the header band: warm milk with an espresso label
   /// (`AppColors.selected`), like a selected chip.
   band,
+
+  /// Low emphasis on the header band: a warm-milk label, no fill.
+  bandText,
 }
 
 /// The Design System button: 44 tall, 48 hit area, pill, verb label.
@@ -605,6 +608,13 @@ class AppButton extends StatelessWidget {
             style: const TextStyle(color: AppColors.onSelected),
             child: row,
           ),
+        ),
+      ),
+      AppButtonKind.bandText => IconTheme.merge(
+        data: const IconThemeData(color: AppColors.onHeaderMuted),
+        child: DefaultTextStyle.merge(
+          style: const TextStyle(color: AppColors.onHeaderMuted),
+          child: row,
         ),
       ),
       AppButtonKind.text => IconTheme.merge(

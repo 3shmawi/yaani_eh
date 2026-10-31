@@ -76,6 +76,16 @@ abstract final class AppColors {
   /// Progress on the header band (step by step): done in warm milk, to come
   /// in faint milk.
   static const onHeaderFaint = Color(0x40FFFFFF);
+
+  /// Cards and chips drawn on the header band (the welcome's pictures). The
+  /// band is dark in both themes, so these don't change with it.
+  static const bandCard = Color(0xF01C1511);
+  static const bandCardLine = Color(0x24FFFFFF);
+  static const bandCardInk = Color(0xFFF6EDE5);
+  static const bandCardMuted = Color(0xFFBCA898);
+  static const bandAccent = Color(0xFFE5A178);
+  static const bandAccentFill = Color(0xFF3B2418);
+  static const bandChip = Color(0x1FFFFFFF);
 }
 
 /// Theme-dependent Design System colors. Read with `context.palette`.

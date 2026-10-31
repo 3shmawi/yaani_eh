@@ -23,6 +23,7 @@ import 'package:yaani_eh/l10n/l10n.dart';
 import '../helpers/fake_favorites.dart';
 import '../helpers/fake_pronunciation.dart';
 import '../helpers/fake_taste.dart';
+import '../helpers/fake_welcome.dart';
 import '../helpers/screens.dart';
 
 /// The raw screens for the store listings (`scripts/store_shots.sh` frames
@@ -56,6 +57,7 @@ void main() {
       ProviderScope(
         overrides: [
           catalogRepositoryProvider.overrideWithValue(catalog),
+          ...welcomeOverrides(),
           ...tasteOverrides(),
           ...favoritesOverrides(FakeFavoritesRepository(saved: saved)),
           ...pronunciationOverrides(

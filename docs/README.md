@@ -23,6 +23,7 @@ Build in this order, one feature per PR (each with tests, doc and demo):
 | 6 | `favorites` — hearts, a Favorites tab (brings the tab bar), the long-press preview | ✅ |
 | 7 | `recipes` — «طريقة التحضير»: the cup's layers to scale and the steps, from the long-press preview | ✅ |
 | 8 | `taste_profile` — «ذوقي»: four questions, «على ذوقك» on Home, ranks search | ✅ |
+| 8b | `welcome` — the first-open welcome: three pages, then «قولنا ذوقك» or the menu | ✅ |
 | 9 | `suggest_item` — suggest a drink from your taste | |
 
 Update the status here when a feature merges.
@@ -35,6 +36,7 @@ Update the status here when a feature merges.
 - [Favorites (hearts, tab, long-press preview)](features/favorites.md)
 - [Recipes («طريقة التحضير»: the cup to scale, step by step)](features/recipes.md)
 - [Taste profile («ذوقي» and «على ذوقك»)](features/taste_profile.md)
+- [Welcome (first open)](features/welcome.md)
 - [Pronunciation](features/pronunciation.md)
 - [App update gate](features/app_update.md)
 - [Settings (language & theme)](features/settings.md)

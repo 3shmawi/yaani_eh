@@ -108,6 +108,18 @@ abstract final class AppDimens {
   /// A card in the «على ذوقك» row on Home.
   static double get tasteCardWidth => 150.r;
 
+  /// The welcome: the picture above each page's title (it shrinks to fit
+  /// a small phone or large text), the cards in it, and the page dots.
+  static double get welcomeArtWidth => 340.r;
+  static double get welcomeArtHeight => 300.r;
+  static double get welcomeMenuCard => 200.r;
+  static double get welcomeExplainCard => 240.r;
+  static double get welcomePhoto => 104.r;
+  static double get welcomeMatchPhotoWidth => 72.r;
+  static double get welcomeMatchPhotoHeight => 88.r;
+  static double get welcomeDot => 6.r;
+  static double get welcomeDotActive => 22.r;
+
   /// How tall a sheet may get, as a share of the screen.
   static const double sheetMaxShare = 0.92;
 

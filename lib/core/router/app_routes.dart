@@ -6,6 +6,9 @@ abstract final class AppRoutes {
   static const home = '/';
   static const settings = '/settings';
 
+  /// The first-open welcome. Home redirects here until it's been seen.
+  static const welcome = '/welcome';
+
   /// «ذوقي», the taste quiz: `/taste`, or for one section
   /// `/taste?section=cafe`.
   static const taste = '/taste';

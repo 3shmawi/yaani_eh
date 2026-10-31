@@ -62,8 +62,9 @@ is used for advertising.
 - **Sign-in required:** No.
 - **Review notes:**
 
-  > No account needed. On first launch the app downloads the drink menu once
-  > (internet needed for that), then works offline. Try: long-press a drink
+  > No account needed. On first launch a three-page welcome explains the
+  > app (Skip / «تخطّي» leaves it) while the drink menu downloads once
+  > (internet needed for that); then it works offline. Try: long-press a drink
   > card for a quick look; open Flat White → «طريقة التحضير» / "How it's
   > made" → «خطوة بخطوة» / "Step by step"; search "something cold with
   > chocolate". The app's language defaults to Arabic; switch it in
