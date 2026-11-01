@@ -1,0 +1,251 @@
+<!doctype html>
+<!--
+  Mockups for docs/decisions/0004-home-header.md. Not app code: a quick,
+  throwaway picture of each option with the app's fonts and colour tokens
+  (dark theme, glass in its solid look), rendered by render_mocks.js.
+  Query: ?opt=a|b|c&state=top|scrolled|section|sheet&lang=ar|en&w=393&h=852&ts=1
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: Readex; src: url(../../../assets/fonts/ReadexPro/ReadexPro-400.ttf); font-weight: 400; }
+@font-face { font-family: Readex; src: url(../../../assets/fonts/ReadexPro/ReadexPro-500.ttf); font-weight: 500; }
+@font-face { font-family: Readex; src: url(../../../assets/fonts/ReadexPro/ReadexPro-600.ttf); font-weight: 600; }
+@font-face { font-family: Readex; src: url(../../../assets/fonts/ReadexPro/ReadexPro-700.ttf); font-weight: 700; }
+@font-face { font-family: Jakarta; src: url(../../../assets/fonts/PlusJakartaSans/PlusJakartaSans-400.ttf); font-weight: 400; }
+@font-face { font-family: Jakarta; src: url(../../../assets/fonts/PlusJakartaSans/PlusJakartaSans-500.ttf); font-weight: 500; }
+@font-face { font-family: Jakarta; src: url(../../../assets/fonts/PlusJakartaSans/PlusJakartaSans-600.ttf); font-weight: 600; }
+@font-face { font-family: Jakarta; src: url(../../../assets/fonts/PlusJakartaSans/PlusJakartaSans-700.ttf); font-weight: 700; }
+:root {
+  /* AppColors / AppPalette.dark */
+  --espresso: #3B1F12; --header-top: #5A2C17; --header-bottom: #24120A;
+  --on-header: #FFFFFF; --on-header-muted: #EBD9C6;
+  --selected: #EBD9C6; --on-selected: #24170F;
+  --glass-dark: rgba(24,16,12,.55); --rim: rgba(255,255,255,.16);
+  --surface: #14100D; --raised: #1F1814; --ink: #F6EDE5; --muted: #BCA898;
+  --line: #3A2D25; --brand: #E5A178; --brand-soft: #3B2418; --crema: #A8683A;
+  --ts: 1; --s: 1;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--surface); color: var(--ink); overflow: hidden; }
+body { font-family: Readex, Jakarta, sans-serif; }
+body.en { font-family: Jakarta, Readex, sans-serif; }
+.screen { position: relative; overflow: hidden; background: var(--surface); }
+.t-large { font-size: calc(32px * var(--ts)); line-height: 1.3; font-weight: 700; }
+.t-title { font-size: calc(22px * var(--ts)); line-height: 1.3; font-weight: 700; }
+.t-head { font-size: calc(16px * var(--ts)); line-height: 1.45; font-weight: 600; }
+.t-body { font-size: calc(15px * var(--ts)); line-height: 1.5; }
+.t-call { font-size: calc(13px * var(--ts)); line-height: 1.5; font-weight: 500; }
+.t-label { font-size: calc(13px * var(--ts)); line-height: 1.4; font-weight: 600; }
+.t-cap { font-size: calc(12px * var(--ts)); line-height: 1.4; }
+.muted { color: var(--muted); }
+.band {
+  position: relative; border-end-start-radius: calc(32px * var(--s)); border-end-end-radius: calc(32px * var(--s));
+  background: radial-gradient(circle at var(--glow), rgba(201,135,79,.55) 0, rgba(201,135,79,0) 60%),
+    linear-gradient(165deg, var(--header-top) 0%, var(--espresso) 55%, var(--header-bottom) 100%);
+  color: var(--on-header); padding: calc(var(--top) + 12px * var(--s)) calc(16px * var(--s)) calc(20px * var(--s));
+}
+.band.slim { padding-top: calc(var(--top) + 6px * var(--s)); padding-bottom: calc(8px * var(--s)); border-end-start-radius: calc(24px * var(--s)); border-end-end-radius: calc(24px * var(--s)); box-shadow: 0 10px 30px rgba(0,0,0,.45); }
+.inner { max-width: var(--readable); margin-inline: auto; }
+.row { display: flex; align-items: center; gap: calc(8px * var(--s)); }
+.col { display: flex; flex-direction: column; }
+.grow { flex: 1; min-width: 0; }
+.iconbtn { width: 48px; height: 48px; border-radius: 999px; display: grid; place-items: center; background: var(--glass-dark); border: 1px solid var(--rim); flex: none; }
+.iconbtn svg { width: calc(22px * var(--s)); height: calc(22px * var(--s)); }
+.search { height: max(48px, calc(48px * var(--s))); min-height: calc(48px * var(--ts)); border-radius: 999px; background: var(--glass-dark); border: 1px solid var(--rim); display: flex; align-items: center; gap: 10px; padding-inline: 16px; color: var(--muted); white-space: nowrap; overflow: hidden; }
+.search svg { width: 22px; height: 22px; flex: none; color: var(--on-header); }
+.chips { display: flex; gap: calc(8px * var(--s)); overflow: hidden; margin-inline: calc(-16px * var(--s)); padding-inline: calc(16px * var(--s)); }
+.chip { flex: none; min-height: 48px; display: flex; align-items: center; }
+.chip span { display: inline-block; padding: calc(6px * var(--s)) calc(16px * var(--s)); border-radius: 999px; background: var(--glass-dark); border: 1px solid var(--rim); white-space: nowrap; }
+.chip.on span { background: var(--selected); color: var(--on-selected); border-color: transparent; }
+svg { stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+/* Section pills (option a) */
+.secs { display: flex; gap: calc(10px * var(--s)); overflow: hidden; margin-inline: calc(-16px * var(--s)); padding-inline: calc(16px * var(--s)); }
+.sec { flex: none; min-width: calc(112px * var(--s)); border-radius: calc(20px * var(--s)); padding: calc(10px * var(--s)) calc(14px * var(--s)); background: var(--glass-dark); border: 1px solid var(--rim); }
+.sec svg { width: calc(26px * var(--s)); height: calc(26px * var(--s)); }
+.sec.on { background: var(--selected); color: var(--on-selected); border-color: transparent; }
+.sec.on .muted { color: #5b4636; }
+.sec.soon { opacity: .9; }
+.badge { display: inline-block; border-radius: 999px; padding: 1px 8px; background: var(--brand-soft); color: var(--brand); font-weight: 600; font-size: calc(11px * var(--ts)); white-space: nowrap; }
+.sec.on .badge { background: rgba(59,31,18,.15); color: var(--espresso); }
+/* Content */
+.content { padding: calc(16px * var(--s)); }
+.content.inner { max-width: none; }
+.hero { position: relative; border-radius: calc(24px * var(--s)); overflow: hidden; background: linear-gradient(120deg, #4a2817 0%, #a86a3d 45%, #5a3a24 100%); padding: calc(14px * var(--s)); }
+.hero .tag { display: inline-block; border-radius: 999px; padding: 3px 12px; background: var(--glass-dark); border: 1px solid var(--rim); }
+.hero .label { margin-top: calc(14px * var(--s)); border-radius: calc(16px * var(--s)); background: rgba(28,21,17,.85); border: 1px solid var(--rim); padding: calc(10px * var(--s)) calc(14px * var(--s)); }
+.yaani { color: var(--brand); font-weight: 600; }
+.grid { display: grid; gap: calc(12px * var(--s)); grid-template-columns: repeat(var(--cols), 1fr); }
+.card .ph { aspect-ratio: 1 / 1; border-radius: calc(24px * var(--s)); background: linear-gradient(160deg, #4a2817 0%, #a86a3d 40%, #2c170d 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: calc(12px * var(--s)); position: relative; }
+.card .ph .ini { position: absolute; inset: 0; display: grid; place-items: center; font-family: Jakarta; font-size: calc(64px * var(--s)); font-weight: 600; color: rgba(255,240,230,.92); }
+.card .ph .nm { position: relative; font-family: Jakarta; font-weight: 600; font-size: calc(15px * var(--ts)); color: #fff; }
+.card .ph .sp { position: relative; color: var(--on-header-muted); }
+.card p { padding: calc(8px * var(--s)) calc(4px * var(--s)) 0; }
+.h2 { margin: calc(24px * var(--s)) 0 calc(12px * var(--s)); }
+/* Section cards (option b) */
+.hub { display: grid; gap: calc(12px * var(--s)); grid-template-columns: repeat(var(--hubcols), 1fr); }
+.scard { border-radius: calc(24px * var(--s)); background: var(--raised); border: 1px solid var(--line); padding: calc(14px * var(--s)); display: flex; gap: calc(14px * var(--s)); align-items: center; min-height: calc(96px * var(--s)); }
+.scard .art { flex: none; width: calc(64px * var(--s)); height: calc(64px * var(--s)); border-radius: calc(18px * var(--s)); display: grid; place-items: center; background: linear-gradient(150deg, var(--header-top), var(--header-bottom)); color: var(--selected); }
+.scard .art svg { width: calc(32px * var(--s)); height: calc(32px * var(--s)); }
+.scard.soon { background: transparent; border-style: dashed; }
+.scard.soon .art { background: var(--brand-soft); color: var(--muted); }
+.chev { flex: none; width: 20px; height: 20px; color: var(--muted); }
+/* Tab bar */
+.tabbar { position: absolute; inset-inline: calc(24px * var(--s)); bottom: calc(18px + var(--bottom)); max-width: 560px; margin-inline: auto; height: calc(62px * var(--s)); min-height: calc(40px + 22px * var(--ts)); border-radius: 999px; background: rgba(40,32,27,.94); border: 1px solid var(--rim); display: flex; padding: 4px; box-shadow: 0 10px 30px rgba(0,0,0,.5); }
+.tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 999px; color: var(--muted); gap: 1px; }
+.tab svg { width: 24px; height: 24px; }
+.tab.on { color: var(--brand); background: rgba(255,255,255,.06); }
+.tab .t-cap { font-size: calc(11px * min(var(--ts), 1.3)); font-weight: 600; }
+/* Sheet (option c) */
+.scrim { position: absolute; inset: 0; background: rgba(0,0,0,.55); }
+.sheet { position: absolute; inset-inline: 0; bottom: 0; max-width: var(--readable); margin-inline: auto; border-start-start-radius: calc(32px * var(--s)); border-start-end-radius: calc(32px * var(--s)); background: rgba(31,24,20,.98); border: 1px solid var(--rim); padding: calc(10px * var(--s)) calc(16px * var(--s)) calc(28px * var(--s) + var(--bottom)); }
+.grab { width: 38px; height: 5px; border-radius: 9px; background: var(--muted); opacity: .6; margin: 0 auto calc(12px * var(--s)); }
+.srow { display: flex; align-items: center; gap: calc(12px * var(--s)); min-height: 56px; padding: calc(8px * var(--s)) calc(10px * var(--s)); border-radius: calc(16px * var(--s)); }
+.srow.on { background: var(--brand-soft); }
+.srow .art { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; background: linear-gradient(150deg, var(--header-top), var(--header-bottom)); color: var(--selected); flex: none; }
+.srow .art svg { width: 24px; height: 24px; }
+.picker { display: inline-flex; align-items: center; gap: 6px; min-height: 48px; }
+.picker svg { width: calc(22px * var(--ts)); height: calc(22px * var(--ts)); }
+.pattern { position: absolute; inset: 0; opacity: .18; background-image: radial-gradient(circle, rgba(235,217,198,.5) 1px, transparent 1.5px); background-size: 28px 28px; border-radius: inherit; pointer-events: none; }
+.status { position: absolute; top: 0; inset-inline: 0; height: var(--top); display: flex; align-items: center; justify-content: space-between; padding-inline: 28px; font-family: Jakarta; font-weight: 600; font-size: 15px; color: #fff; z-index: 5; direction: ltr; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const q = new URLSearchParams(location.search);
+const opt = q.get('opt') || 'b', state = q.get('state') || 'top', lang = q.get('lang') || 'ar';
+const W = +(q.get('w') || 393), H = +(q.get('h') || 852), ts = +(q.get('ts') || 1);
+const ar = lang === 'ar', tablet = W >= 700;
+const s = Math.min(W / 375, 1.1);
+document.documentElement.dir = ar ? 'rtl' : 'ltr';
+document.body.className = ar ? '' : 'en';
+const root = document.documentElement.style;
+root.setProperty('--ts', ts); root.setProperty('--s', s);
+root.setProperty('--top', (tablet ? 24 : 54) + 'px');
+root.setProperty('--bottom', (tablet ? 10 : 24) + 'px');
+root.setProperty('--readable', tablet ? '640px' : 'none');
+root.setProperty('--glow', ar ? '0% 0%' : '100% 0%');
+root.setProperty('--cols', W >= 1300 ? 5 : W >= 1000 ? 4 : W >= 700 ? 3 : 2);
+root.setProperty('--hubcols', W >= 1300 ? 3 : W >= 700 ? 2 : 1);
+
+const I = {
+  search: '<svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>',
+  gear: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M4.2 6.5l2.6 1.5M17.2 16l2.6 1.5M4.2 17.5l2.6-1.5M17.2 8l2.6-1.5"/><circle cx="12" cy="12" r="7"/></svg>',
+  home: '<svg viewBox="0 0 24 24"><path d="M3.5 11 12 4l8.5 7"/><path d="M6 9.5V20h12V9.5"/></svg>',
+  heart: '<svg viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/></svg>',
+  cup: '<svg viewBox="0 0 24 24"><path d="M4 9h13v5a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6z"/><path d="M17 10.5h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 3.5c0 1.5 1.5 1.5 1.5 3M12 3.5c0 1.5 1.5 1.5 1.5 3"/></svg>',
+  cake: '<svg viewBox="0 0 24 24"><path d="M4 20h16v-7H4z"/><path d="M4 15.5c2 1.5 4 1.5 5.3 0 1.4 1.5 4 1.5 5.4 0 1.3 1.5 3.3 1.5 5.3 0"/><path d="M12 13V9M12 6.5V5"/><rect x="9" y="9" width="6" height="4"/></svg>',
+  book: '<svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M9 8h7M9 11.5h5"/></svg>',
+  history: '<svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V10M9.5 21V10M14.5 21V10M19 21V10"/><path d="M2.5 10 12 4l9.5 6z"/></svg>',
+  chevDown: '<svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>',
+  chevFwd: ar ? '<svg viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></svg>' : '<svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg>',
+  back: ar ? '<svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg>' : '<svg viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></svg>',
+  check: '<svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>',
+};
+const T = ar ? {
+  app: 'يعني إيه؟', tag: 'أي كلمة مش فاهمها… نفهّمهالك',
+  hint: 'دوّر على كلمة، مشروب، أو حدث…', hintShort: 'دوّر…',
+  word: 'كلمة النهارده', sections: 'الأقسام', soon: 'جاي قريب',
+  tabs: ['الرئيسية', 'المفضلة', 'الإعدادات'],
+  secs: [
+    ['cup', 'مشروبات', '٤١ حاجة', 'فلات وايت، موكا، سحلب…'],
+    ['book', 'مصطلحات', '٢٣ حاجة', 'بيروقراطية، تسويف، نضج…'],
+    ['history', 'تاريخ', '١٢ حاجة', 'ثورة ٢٥ يناير، حرب أكتوبر…'],
+    ['cake', 'حلويات', '', ''],
+  ],
+  chips: ['قهوة', 'قهوة ساقعة', 'شاي', 'عصاير', 'مشروبات سخنة'],
+  wotd: ['Procrastination', 'تسويف', 'يعني تأجّل الحاجة لبعدين من غير سبب'],
+  cat: 'قهوة', yaani: 'يعني',
+  cards: [['Espresso', 'إسبريسو', 'فنجان قهوة صغير ومركّز'], ['Cortado', 'كورتادو', 'إسبريسو بشوية لبن سخن'], ['Flat White', 'فلات وايت', 'قهوة باللبن تقيلة في فنجان صغير'], ['Cappuccino', 'كابتشينو', 'إسبريسو ولبن ورغوة كتير'], ['Latte', 'لاتيه', 'إسبريسو بلبن كتير'], ['Mocha', 'موكا', 'لاتيه بشوكولاتة'], ['Spanish Latte', 'سبانيش لاتيه', 'لاتيه بلبن مكثّف'], ['Affogato', 'أفوجاتو', 'آيس كريم عليه إسبريسو']],
+  pickSection: 'اختار القسم',
+} : {
+  app: 'Yaani Eh?', tag: "Anything you don't get, explained",
+  hint: 'Search a word, a drink, an event…', hintShort: 'Search…',
+  word: 'Word of the day', sections: 'Sections', soon: 'Coming soon',
+  tabs: ['Home', 'Favorites', 'Settings'],
+  secs: [
+    ['cup', 'Drinks', '41 items', 'Flat white, mocha, sahlab…'],
+    ['book', 'Terms', '23 items', 'Bureaucracy, procrastination…'],
+    ['history', 'History', '12 items', 'January 25 revolution, October war…'],
+    ['cake', 'Desserts', '', ''],
+  ],
+  chips: ['Coffee', 'Iced coffee', 'Tea', 'Juices', 'Hot drinks'],
+  wotd: ['Procrastination', 'تسويف', 'Putting things off for no reason'],
+  cat: 'Coffee', yaani: 'Means',
+  cards: [['Espresso', 'إسبريسو', 'A tiny, strong cup of coffee'], ['Cortado', 'كورتادو', 'Espresso with a splash of warm milk'], ['Flat White', 'فلات وايت', 'Strong milky coffee in a small cup'], ['Cappuccino', 'كابتشينو', 'Espresso, hot milk and lots of foam'], ['Latte', 'لاتيه', 'Espresso with lots of hot milk'], ['Mocha', 'موكا', 'A latte with chocolate'], ['Spanish Latte', 'سبانيش لاتيه', 'A latte with condensed milk'], ['Affogato', 'أفوجاتو', 'Ice cream with espresso poured on']],
+  pickSection: 'Pick a section',
+};
+
+const search = (short) => `<div class="search t-body">${I.search}<span>${short ? T.hintShort : T.hint}</span></div>`;
+const chips = () => `<div class="chips">${T.chips.map((c, i) => `<div class="chip ${i ? '' : 'on'}"><span class="t-label">${c}</span></div>`).join('')}</div>`;
+const tabbar = () => `<div class="tabbar">${[I.home, I.heart, I.gear].map((ic, i) => `<div class="tab ${i ? '' : 'on'}">${ic}<span class="t-cap">${T.tabs[i]}</span></div>`).join('')}</div>`;
+const cards = (n) => `<div class="grid">${T.cards.slice(0, n).map(([nm, sp, y]) => `<div class="card"><div class="ph"><div class="ini">${nm[0]}</div><div class="nm">${nm}</div><div class="sp t-cap">${sp}</div></div><p class="t-call"><span class="yaani">${T.yaani}</span> ${y}</p></div>`).join('')}</div>`;
+const hero = (tag, [nm, sp, y]) => `<div class="hero"><span class="tag t-label">${tag}</span><div class="label"><div class="row"><span class="t-head" style="font-family:Jakarta">${nm}</span><span class="t-cap muted">${sp}</span></div><div class="t-call"><span class="yaani">${T.yaani}</span> ${y}</div></div></div>`;
+const titleBlock = (small) => `<div class="col grow"><div class="${small ? 't-title' : 't-large'}">${T.app}</div><div class="t-call" style="color:var(--on-header-muted)">${T.tag}</div></div>`;
+
+function optionA() {
+  const pills = `<div class="secs">${T.secs.map(([ic, nm, n], i) => `<div class="sec ${i ? '' : 'on'} ${n ? '' : 'soon'}">${I[ic]}<div class="t-head" style="margin-top:4px">${nm}</div><div class="t-cap ${n ? 'muted' : ''}">${n || `<span class="badge">${T.soon}</span>`}</div></div>`).join('')}</div>`;
+  if (state === 'scrolled') {
+    return `<div class="band slim"><div class="inner"><div class="row"><div class="iconbtn">${I.search}</div><div class="grow" style="overflow:hidden">${chips()}</div></div></div></div>
+      <div class="content"><div class="inner" style="max-width:none">${cards(8)}</div></div>`;
+  }
+  return `<div class="band"><div class="pattern"></div><div class="inner" style="position:relative">
+      <div class="row">${titleBlock(true)}</div>
+      <div style="height:calc(12px * var(--s))"></div>${search()}
+      <div style="height:calc(14px * var(--s))"></div>${pills}
+      <div style="height:calc(10px * var(--s))"></div>${chips()}
+    </div></div>
+    <div class="content">${hero(ar ? 'مشروب النهارده' : 'Drink of the day', T.cards[5])}<div class="h2 t-head">${T.cat}</div>${cards(8)}</div>`;
+}
+
+function optionB() {
+  if (state === 'section') {
+    return `<div class="band"><div class="pattern"></div><div class="inner" style="position:relative">
+        <div class="row"><div class="iconbtn">${I.back}</div><div class="col grow"><div class="t-title">${T.secs[0][1]}</div><div class="t-call" style="color:var(--on-header-muted)">${T.secs[0][2]}</div></div><div class="iconbtn">${I.search}</div></div>
+        <div style="height:calc(12px * var(--s))"></div>${chips()}
+      </div></div>
+      <div class="content">${hero(ar ? 'من المشروبات النهارده' : 'Today in drinks', T.cards[5])}<div class="h2 t-head">${T.cat}</div>${cards(8)}</div>`;
+  }
+  const hub = `<div class="hub">${T.secs.map(([ic, nm, n, ex]) => `<div class="scard ${n ? '' : 'soon'}"><div class="art">${I[ic]}</div><div class="col grow"><div class="t-head">${nm}</div>${n ? `<div class="t-cap muted">${n}</div><div class="t-call" style="margin-top:2px">${ex}</div>` : `<div style="margin-top:4px"><span class="badge t-cap">${T.soon}</span></div>`}</div>${n ? `<div class="chev">${I.chevFwd}</div>` : ''}</div>`).join('')}</div>`;
+  const wotd = hero(T.word, T.wotd);
+  if (state === 'scrolled') {
+    return `<div class="band slim"><div class="inner"><div class="row"><div class="grow">${search()}</div></div></div></div>
+      <div class="content"><div class="inner" style="max-width:${tablet ? 'none' : ''}"><div class="h2 t-head" style="margin-top:4px">${T.sections}</div>${hub}</div></div>`;
+  }
+  return `<div class="band"><div class="pattern"></div><div class="inner" style="position:relative">
+      <div class="row">${titleBlock(false)}</div>
+      <div style="height:calc(14px * var(--s))"></div>${search()}
+    </div></div>
+    <div class="content"><div style="max-width:${tablet ? '960px' : 'none'};margin-inline:auto">${wotd}<div class="h2 t-head">${T.sections}</div>${hub}</div></div>`;
+}
+
+function optionC() {
+  const picker = (big) => `<div class="picker ${big ? 't-large' : 't-head'}">${T.secs[0][1]}${I.chevDown}</div>`;
+  const band = `<div class="band"><div class="pattern"></div><div class="inner" style="position:relative">
+      <div class="t-label" style="color:var(--on-header-muted)">${T.app}</div>
+      ${picker(true)}
+      <div style="height:calc(10px * var(--s))"></div>${search()}
+      <div style="height:calc(10px * var(--s))"></div>${chips()}
+    </div></div>
+    <div class="content">${hero(ar ? 'من المشروبات النهارده' : 'Today in drinks', T.cards[5])}<div class="h2 t-head">${T.cat}</div>${cards(8)}</div>`;
+  if (state === 'scrolled') {
+    return `<div class="band slim"><div class="inner"><div class="row">${picker(false)}<div class="grow"></div><div class="iconbtn">${I.search}</div></div>${chips()}</div></div>
+      <div class="content">${cards(8)}</div>`;
+  }
+  if (state === 'sheet') {
+    return band + `<div class="scrim"></div><div class="sheet"><div class="grab"></div><div class="t-head" style="margin-bottom:8px;padding-inline:10px">${T.pickSection}</div>
+      ${T.secs.map(([ic, nm, n], i) => `<div class="srow ${i ? '' : 'on'}"><div class="art">${I[ic]}</div><div class="col grow"><div class="t-head">${nm}</div><div class="t-cap muted">${n || `<span class="badge">${T.soon}</span>`}</div></div>${i ? '' : `<div style="width:24px;color:var(--brand)">${I.check}</div>`}</div>`).join('')}
+    </div>`;
+  }
+  return band;
+}
+
+const body = { a: optionA, b: optionB, c: optionC }[opt]();
+const showTabs = state !== 'sheet' && state !== 'section';
+document.getElementById('app').innerHTML = `<div class="screen" style="width:${W}px;height:${H}px">
+  <div class="status"><span>9:41</span><span>●●● ▮</span></div>${body}${showTabs ? tabbar() : ''}</div>`;
+</script>
+</body>
+</html>

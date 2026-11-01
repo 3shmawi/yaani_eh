@@ -28,6 +28,10 @@ import '../helpers/screens.dart';
 void main() {
   const size = String.fromEnvironment('SCREENS_SIZE', defaultValue: '393x852');
   final points = size.split('x').map(double.parse).toList();
+  // The phone's text size setting (1.6 = the large accessibility sizes).
+  final textScale = double.parse(
+    const String.fromEnvironment('SCREENS_TEXT_SCALE', defaultValue: '1'),
+  );
 
   setUpAll(loadAppFonts);
 
@@ -35,7 +39,9 @@ void main() {
     tester.view
       ..physicalSize = Size(points[0] * 3, points[1] * 3)
       ..devicePixelRatio = 3;
+    tester.platformDispatcher.textScaleFactorTestValue = textScale;
     addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
