@@ -8,8 +8,8 @@ import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_icons.dart';
 import 'package:yaani_eh/core/theme/app_text_styles.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
-import 'package:yaani_eh/core/widgets/drink_card.dart';
-import 'package:yaani_eh/core/widgets/drink_photo.dart';
+import 'package:yaani_eh/core/widgets/item_card.dart';
+import 'package:yaani_eh/core/widgets/item_photo.dart';
 import 'package:yaani_eh/core/widgets/offline_banner.dart';
 import 'package:yaani_eh/core/widgets/state_views.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
@@ -21,13 +21,13 @@ import 'package:yaani_eh/l10n/l10n.dart';
 /// floating back button, and a sheet with the name, the plain
 /// explanation, trait pills, «طريقة التحضير», the price (while
 /// [AppContent.showPrices]) and similar drinks.
-class DrinkView extends StatelessWidget {
+class ItemView extends StatelessWidget {
   const new({
     required this.item,
     required this.facts,
     required this.similar,
     required this.onBack,
-    required this.onOpenDrink,
+    required this.onOpenItem,
     this.pronounce,
     this.saveButton,
     this.onOpenRecipe,
@@ -38,7 +38,7 @@ class DrinkView extends StatelessWidget {
   final ItemFacts facts;
   final List<CatalogItem> similar;
   final VoidCallback onBack;
-  final ValueChanged<CatalogItem> onOpenDrink;
+  final ValueChanged<CatalogItem> onOpenItem;
 
   /// The heart at the top-end corner (feature `favorites`).
   final Widget? saveButton;
@@ -115,7 +115,7 @@ class DrinkView extends StatelessWidget {
             Semantics(
               header: true,
               child: Text(
-                l10n.similarDrinks,
+                l10n.similarItems,
                 style: context.text(TextRole.headline).copyWith(color: p.ink),
               ),
             ),
@@ -130,10 +130,10 @@ class DrinkView extends StatelessWidget {
                 separatorBuilder: (_, _) => SizedBox(width: AppDimens.space2),
                 itemBuilder: (context, i) => SizedBox(
                   width: 132.r,
-                  child: DrinkCard(
+                  child: ItemCard(
                     item: similar[i],
                     compact: true,
-                    onTap: () => onOpenDrink(similar[i]),
+                    onTap: () => onOpenItem(similar[i]),
                   ),
                 ),
               ),
@@ -162,8 +162,8 @@ class DrinkView extends StatelessWidget {
             height: photoHeight,
             // The Home card's photo flies into this one.
             child: Hero(
-              tag: DrinkCard.heroTag(item.id),
-              child: DrinkPhoto(
+              tag: ItemCard.heroTag(item.id),
+              child: ItemPhoto(
                 name: item.menuName,
                 imagePath: item.imagePath,
                 size: PhotoSize.full,
@@ -189,7 +189,7 @@ class DrinkView extends StatelessWidget {
             ),
           ),
           CustomScrollView(
-            key: const Key('drink_scroll'),
+            key: const Key('item_scroll'),
             // On a tablet the photo stays full width; the text column is
             // readable width, centred.
             slivers: [
@@ -221,7 +221,7 @@ class DrinkView extends StatelessWidget {
             top: top + AppDimens.space2,
             start: AppDimens.space4,
             child: AppIconButton(
-              key: const Key('drink_back'),
+              key: const Key('item_back'),
               icon: AppIcons.back,
               tooltip: MaterialLocalizations.of(context).backButtonTooltip,
               tone: GlassTone.dark,
@@ -312,7 +312,7 @@ class _PriceCard extends StatelessWidget {
 }
 
 /// No such drink (old link, removed from the menu).
-class DrinkMissingView extends StatelessWidget {
+class ItemMissingView extends StatelessWidget {
   const new({required this.onBack, super.key});
 
   final VoidCallback onBack;
@@ -323,8 +323,8 @@ class DrinkMissingView extends StatelessWidget {
     return AppScaffold(
       body: StateMessage(
         icon: AppIcons.coffee,
-        title: l10n.drinkNotFoundTitle,
-        message: l10n.drinkNotFoundBody,
+        title: l10n.itemNotFoundTitle,
+        message: l10n.itemNotFoundBody,
         action: AppButton(label: l10n.notFoundGoHome, onPressed: onBack),
       ),
     );
@@ -332,7 +332,7 @@ class DrinkMissingView extends StatelessWidget {
 }
 
 /// While the device copy loads (an instant, usually).
-class DrinkLoadingView extends StatelessWidget {
+class ItemLoadingView extends StatelessWidget {
   const new({super.key});
 
   @override
@@ -358,7 +358,7 @@ class _RecipeRow extends StatelessWidget {
       hint: l10n.recipeSubtitle(recipe.totalMl),
       excludeSemantics: true,
       child: AppPressable(
-        key: const Key('drink_recipe'),
+        key: const Key('item_recipe'),
         onTap: onTap,
         child: Container(
           constraints: const BoxConstraints(minHeight: AppDimens.touchTarget),

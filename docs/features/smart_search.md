@@ -17,7 +17,7 @@ Franco, offline, on the device copy of the menu. Nothing found → «مالقي�
    «التفاصيل») + related drinks below.
 4. A description → «N مشروب لـ"…"» + ranked rows (photo, name, spelling,
    explanation with highlights, calories; prices are hidden).
-5. Tap anything → the drink (`/drink/:slug`); back returns to the results.
+5. Tap anything → the drink (`/item/:slug`); back returns to the results.
 6. Links: `yaanieh://search?q=latte` opens search pre-filled.
 
 ## Architecture
@@ -27,7 +27,7 @@ Franco, offline, on the device copy of the menu. Nothing found → «مالقي�
     accents, Franco digits kept), light Arabic prefixes (و، ال، بال، لل، ب),
     word positions, Levenshtein, word matching (exact 1, prefix 0.8, one
     typo 0.6 for words of 4+ letters).
-  - `domain/usecases/search_menu.dart` — `SearchMenu` (index built once per
+  - `domain/usecases/search_items.dart` — `SearchItems` (index built once per
     catalog change): names weigh 3×, descriptions 1×; 1–2 words must all
     match, longer queries 60%; a query that starts a name gets a bonus; an
     exact name (or one typo) becomes the answer; `SearchBoosts` multiplies
@@ -55,7 +55,7 @@ Franco, offline, on the device copy of the menu. Nothing found → «مالقي�
 None.
 
 ## Tests
-- Unit: `test/features/smart_search/domain/search_menu_test.dart` —
+- Unit: `test/features/smart_search/domain/search_items_test.dart` —
   normalization, prefixes, matching, answers in any script, typos, Franco,
   descriptions, boosts, "did you mean", hostile queries (SQL-like, script
   tags, 10 000 chars, emoji, bidi overrides, regex characters, tatweel).

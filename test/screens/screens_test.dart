@@ -7,7 +7,7 @@ import 'package:yaani_eh/core/router/app_routes.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_theme.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
-import 'package:yaani_eh/core/widgets/drink_card.dart';
+import 'package:yaani_eh/core/widgets/item_card.dart';
 import 'package:yaani_eh/core/widgets/offline_banner.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
 import 'package:yaani_eh/features/settings/domain/entities/app_settings.dart';
@@ -93,7 +93,7 @@ void main() {
 
       testWidgets('long press', (tester) async {
         await open(tester, lang, AppRoutes.home);
-        final card = find.widgetWithText(DrinkCard, 'Flat White');
+        final card = find.widgetWithText(ItemCard, 'Flat White');
         await tester.dragUntilVisible(
           card,
           find.byType(Scrollable).first,
@@ -107,9 +107,9 @@ void main() {
       });
 
       testWidgets('drink and recipe', (tester) async {
-        await open(tester, lang, AppRoutes.drink('flat_white'));
+        await open(tester, lang, AppRoutes.item('flat_white'));
         await shoot(tester, '${lang}_04_drink');
-        final recipe = find.byKey(const Key('drink_recipe'));
+        final recipe = find.byKey(const Key('item_recipe'));
         await tester.ensureVisible(recipe);
         await shoot(tester, '${lang}_05_drink_scrolled');
         await tester.tap(recipe);
@@ -117,7 +117,7 @@ void main() {
       });
 
       testWidgets('step by step', (tester) async {
-        await open(tester, lang, AppRoutes.drinkSteps('flat_white'));
+        await open(tester, lang, AppRoutes.itemSteps('flat_white'));
         await tester.tap(find.byKey(const Key('steps_next')));
         await shoot(tester, '${lang}_07_steps');
       });

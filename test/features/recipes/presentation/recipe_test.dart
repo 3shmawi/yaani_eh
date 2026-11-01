@@ -65,7 +65,7 @@ void main() {
             ),
             routes: [
               GoRoute(
-                path: 'drink/:slug/steps',
+                path: 'item/:slug/steps',
                 builder: (context, state) {
                   pushed.add(state.uri.path);
                   return const Text('steps');
@@ -165,7 +165,7 @@ void main() {
       await tester.tap(find.byKey(const Key('recipe_step_by_step')));
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('recipe_view')), findsNothing);
-      expect(pushed, [AppRoutes.drinkSteps('flat_white')]);
+      expect(pushed, [AppRoutes.itemSteps('flat_white')]);
     });
 
     testWidgets('a drink without a recipe opens nothing', (tester) async {

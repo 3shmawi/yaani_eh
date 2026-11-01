@@ -27,7 +27,7 @@ class AppTabsShell extends ConsumerWidget {
         AppTab(
           icon: AppIcons.home,
           activeIcon: AppIconsFill.home,
-          label: l10n.tabMenu,
+          label: l10n.tabBrowse,
         ),
         AppTab(
           icon: AppIcons.heart,

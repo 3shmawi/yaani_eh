@@ -12,14 +12,28 @@ abstract final class AppRoutes {
   /// The Favorites tab.
   static const favorites = '/favorites';
 
-  /// One drink: `/drink/flat_white`.
-  static const drinkPattern = '/drink/:slug';
-  static String drink(String slug) => '/drink/$slug';
+  /// One item (a drink, a term, …): `/item/flat_white`.
+  static const itemPattern = '/item/:slug';
+  static String item(String slug) => '/item/$slug';
 
-  /// A drink's «طريقة التحضير», one step at a time:
-  /// `/drink/flat_white/steps` (over the drink page).
-  static const drinkStepsSegment = 'steps';
-  static String drinkSteps(String slug) => '/drink/$slug/$drinkStepsSegment';
+  /// An item's details, one step at a time:
+  /// `/item/flat_white/steps` (over the item page).
+  static const itemStepsSegment = 'steps';
+  static String itemSteps(String slug) => '/item/$slug/$itemStepsSegment';
+
+  /// The old item path from earlier versions. Links to `/drink/...` still
+  /// work: the router sends them to the same place under `/item/...`.
+  static const legacyItemPrefix = '/drink';
+
+  /// `/drink/<rest>` → `/item/<rest>` (query kept); anything else → null.
+  static String? fromLegacy(Uri uri) {
+    final path = uri.path;
+    if (path != legacyItemPrefix && !path.startsWith('$legacyItemPrefix/')) {
+      return null;
+    }
+    final rest = path.substring(legacyItemPrefix.length);
+    return uri.replace(path: '/item$rest').toString();
+  }
 
   /// Search, optionally with a query: `/search?q=latte`.
   static const search = '/search';

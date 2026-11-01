@@ -19,7 +19,7 @@ export 'package:yaani_eh/core/backend/media.dart' show PhotoSize;
 /// file's. No photo, or nothing loaded yet: the brand gradient with the
 /// drink's first letter. Decorative for screen readers; the name is always
 /// in text next to it.
-class DrinkPhoto extends StatelessWidget {
+class ItemPhoto extends StatelessWidget {
   const new({
     required this.name,
     required this.size,
@@ -140,7 +140,7 @@ class _Sources extends StatelessWidget {
       placeholder: (_, _) =>
           previewWhileLoading && i == 0 ? _preview(i + 1) : fallback,
       errorWidget: (_, _, _) => _source(i + 1),
-      errorListener: (error) => DrinkPhoto.noteError(url, error),
+      errorListener: (error) => ItemPhoto.noteError(url, error),
     );
   }
 
@@ -158,7 +158,7 @@ class _Sources extends StatelessWidget {
       fadeInDuration: Duration.zero,
       placeholder: (_, _) => fallback,
       errorWidget: (_, _, _) => fallback,
-      errorListener: (error) => DrinkPhoto.noteError(url, error),
+      errorListener: (error) => ItemPhoto.noteError(url, error),
     );
   }
 }

@@ -8,10 +8,10 @@ import 'package:yaani_eh/core/router/not_found_page.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_theme.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
-import 'package:yaani_eh/features/browse_menu/presentation/menu_page.dart';
+import 'package:yaani_eh/features/browse/presentation/browse_page.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
 import 'package:yaani_eh/features/favorites/presentation/favorites_view.dart';
-import 'package:yaani_eh/features/item_details/presentation/drink_view.dart';
+import 'package:yaani_eh/features/item_details/presentation/item_view.dart';
 import 'package:yaani_eh/features/recipes/presentation/step_by_step_view.dart';
 import 'package:yaani_eh/features/smart_search/presentation/search_page.dart';
 import 'package:yaani_eh/features/welcome/presentation/welcome_view.dart';
@@ -69,21 +69,25 @@ void main() {
       '/does-not-exist',
       '/settings/../../etc/passwd',
       '/%2e%2e/admin',
-      '/drink/../../etc/passwd',
-      '/drink/%3Cscript%3Ealert(1)%3C%2Fscript%3E',
-      "/drink/latte');DROP TABLE items;--",
-      '/drink/FLAT_WHITE',
-      '/drink/${'a' * 200}',
-      '/drink/',
+      for (final base in ['/item', '/drink']) ...[
+        '$base/../../etc/passwd',
+        '$base/%3Cscript%3Ealert(1)%3C%2Fscript%3E',
+        "$base/latte');DROP TABLE items;--",
+        '$base/FLAT_WHITE',
+        '$base/${'a' * 200}',
+        '$base/',
+        '$base/../steps',
+        '$base/FLAT_WHITE/steps',
+        "$base/latte');DROP TABLE items;--/steps",
+        '$base/flat_white/steps/../../etc/passwd',
+        '$base/flat_white/steps/1',
+        '$base//steps',
+      ],
+      '/drinks/latte',
+      '/drinkx/latte',
       '/favorites/secret',
       '/favorites/../../etc/passwd',
       '/favorites%2F..%2Fadmin',
-      '/drink/../steps',
-      '/drink/FLAT_WHITE/steps',
-      "/drink/latte');DROP TABLE items;--/steps",
-      '/drink/flat_white/steps/../../etc/passwd',
-      '/drink/flat_white/steps/1',
-      '/drink//steps',
       // «ذوقي» was removed: its old links land safely on «not found».
       '/taste',
       '/taste?section=cafe',
@@ -104,7 +108,7 @@ void main() {
     appRouter.go('/?redirect=https://evil.example.com');
     await tester.pumpAndSettle();
 
-    expect(find.byType(MenuPage), findsOneWidget);
+    expect(find.byType(BrowsePage), findsOneWidget);
   });
 
   testWidgets('a fresh install opens on the welcome; links still work', (
@@ -118,9 +122,9 @@ void main() {
     expect(find.byType(WelcomeView), findsOneWidget);
 
     // A link opens what it links to, not the welcome.
-    appRouter.go('/drink/cortado');
+    appRouter.go(AppRoutes.item('cortado'));
     await tester.pumpAndSettle();
-    expect(find.byType(DrinkView), findsOneWidget);
+    expect(find.byType(ItemView), findsOneWidget);
 
     // A crafted query on Home is ignored: still the welcome.
     appRouter.go('/?redirect=https://evil.example.com');
@@ -129,7 +133,7 @@ void main() {
 
     await tester.tap(find.byKey(const Key('welcome_skip')));
     await tester.pumpAndSettle();
-    expect(find.byType(MenuPage), findsOneWidget);
+    expect(find.byType(BrowsePage), findsOneWidget);
     expect(welcome.seen, isTrue);
 
     // Seen: Home opens directly; /welcome still opens the welcome itself.
@@ -138,25 +142,39 @@ void main() {
     expect(find.byType(WelcomeView), findsOneWidget);
     appRouter.go('/');
     await tester.pumpAndSettle();
-    expect(find.byType(MenuPage), findsOneWidget);
+    expect(find.byType(BrowsePage), findsOneWidget);
   });
 
-  testWidgets('a drink link opens the drink; an unknown one is safe', (
-    tester,
-  ) async {
-    await pumpRouter(tester);
+  testWidgets(
+    'an item link (and an old /drink link) opens the item; an unknown one is safe',
+    (tester) async {
+      await pumpRouter(tester);
 
-    appRouter.go('/drink/cortado');
-    await tester.pumpAndSettle();
-    expect(find.byType(DrinkView), findsOneWidget);
+      appRouter.go(AppRoutes.item('cortado'));
+      await tester.pumpAndSettle();
+      expect(find.byType(ItemView), findsOneWidget);
 
-    appRouter.go('/drink/no_such_drink');
-    await tester.pumpAndSettle();
-    expect(find.byType(DrinkMissingView), findsOneWidget);
+      appRouter.go('/item/no_such_drink');
+      await tester.pumpAndSettle();
+      expect(find.byType(ItemMissingView), findsOneWidget);
 
-    appRouter.go('/');
-    await tester.pumpAndSettle();
-  });
+      // Old links from earlier versions land on the same item.
+      appRouter.go('/drink/cortado');
+      await tester.pumpAndSettle();
+      expect(find.byType(ItemView), findsOneWidget);
+      expect(
+        appRouter.routerDelegate.currentConfiguration.uri.path,
+        '/item/cortado',
+      );
+
+      appRouter.go('/drink/no_such_drink');
+      await tester.pumpAndSettle();
+      expect(find.byType(ItemMissingView), findsOneWidget);
+
+      appRouter.go('/');
+      await tester.pumpAndSettle();
+    },
+  );
 
   testWidgets('a steps link opens step by step, or says there is none', (
     tester,
@@ -164,8 +182,10 @@ void main() {
     await pumpRouter(tester);
 
     for (final path in [
-      AppRoutes.drinkSteps('flat_white'),
-      '/drink/flat_white/steps?step=999',
+      AppRoutes.itemSteps('flat_white'),
+      '/item/flat_white/steps?step=999',
+      '/item/flat_white/steps?redirect=https://evil.example.com',
+      '/drink/flat_white/steps',
       '/drink/flat_white/steps?redirect=https://evil.example.com',
     ]) {
       appRouter.go(path);
@@ -177,11 +197,11 @@ void main() {
     // Closing goes back to the drink, not out of the app.
     await tester.tap(find.byKey(const Key('steps_close')));
     await tester.pumpAndSettle();
-    expect(find.byType(DrinkView), findsOneWidget);
+    expect(find.byType(ItemView), findsOneWidget);
 
     // A drink without a recipe, and one that doesn't exist.
     for (final slug in ['latte', 'no_such_drink']) {
-      appRouter.go(AppRoutes.drinkSteps(slug));
+      appRouter.go(AppRoutes.itemSteps(slug));
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('steps_missing')), findsOneWidget);
     }
@@ -214,7 +234,7 @@ void main() {
     appRouter.go('/');
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('app_tab_bar')), findsOneWidget);
-    expect(find.byType(MenuPage), findsOneWidget);
+    expect(find.byType(BrowsePage), findsOneWidget);
 
     // Clear of the pinned chips and of «على ذوقك».
     final heart = find.byKey(const Key('favorite_espresso'));
@@ -247,9 +267,9 @@ void main() {
     // A drink opened from Favorites covers the tab bar; back returns.
     await tester.tap(find.text('Espresso').first);
     await tester.pumpAndSettle();
-    expect(find.byType(DrinkView), findsOneWidget);
+    expect(find.byType(ItemView), findsOneWidget);
     expect(find.byKey(const Key('app_tab_bar')), findsNothing);
-    await tester.tap(find.byKey(const Key('drink_back')));
+    await tester.tap(find.byKey(const Key('item_back')));
     await tester.pumpAndSettle();
     expect(find.byType(FavoritesView), findsOneWidget);
 
@@ -262,7 +282,7 @@ void main() {
           .first,
     );
     await tester.pumpAndSettle();
-    expect(find.byType(MenuPage), findsOneWidget);
+    expect(find.byType(BrowsePage), findsOneWidget);
   });
 
   testWidgets('search links: any query is shown safely, never executed', (

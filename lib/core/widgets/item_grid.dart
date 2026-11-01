@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
-import 'package:yaani_eh/core/widgets/drink_card.dart';
+import 'package:yaani_eh/core/widgets/item_card.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 
 /// Drink cards in a grid (Home, Favorites): two columns on phones, more on
 /// tablets (cards stay ~170 wide). The first cards rise in one after
 /// another ([firstIndex] continues the stagger across several grids).
-class DrinkGrid extends StatelessWidget {
+class ItemGrid extends StatelessWidget {
   const new({
     required this.items,
     this.firstIndex = 0,
@@ -49,7 +49,7 @@ class DrinkGrid extends StatelessWidget {
                 width: width,
                 child: AppReveal(
                   index: firstIndex + i,
-                  child: DrinkCard(
+                  child: ItemCard(
                     key: ValueKey(item.id),
                     item: item,
                     hero: hero,

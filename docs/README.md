@@ -1,4 +1,4 @@
-# Yaani Eh — documentation
+# Feature: browse (Home)
 
 Start with [`../CLAUDE.md`](../CLAUDE.md) (rules + stack), then:
 
@@ -16,7 +16,7 @@ Build in this order, one feature per PR (each with tests, doc and demo):
 | # | Feature | Status |
 |---|---|---|
 | 1 | `catalog_sync` — the menu downloads once and works offline | ✅ |
-| 2 | `browse_menu` — Home: category chips and drink cards | ✅ |
+| 2 | `browse` — Home: category chips and drink cards | ✅ |
 | 3 | `item_details` — drink page: traits, similar drinks (prices hidden) | ✅ |
 | 4 | `smart_search` — by name or description, offline | ✅ |
 | 5 | `pronunciation` — hear the drink's name (barista + original), the play pill on cards and the drink page | ✅ |
@@ -28,7 +28,7 @@ Update the status here when a feature merges.
 
 ## Features
 - [Catalog sync (offline menu)](features/catalog_sync.md)
-- [Browse menu (Home)](features/browse_menu.md)
+- [Browse (Home)](features/browse.md)
 - [Item details](features/item_details.md)
 - [Smart search](features/smart_search.md)
 - [Favorites (hearts, tab, long-press preview)](features/favorites.md)

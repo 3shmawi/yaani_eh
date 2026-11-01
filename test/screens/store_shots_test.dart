@@ -12,7 +12,7 @@ import 'package:yaani_eh/core/router/app_routes.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_theme.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
-import 'package:yaani_eh/core/widgets/drink_card.dart';
+import 'package:yaani_eh/core/widgets/item_card.dart';
 import 'package:yaani_eh/core/widgets/offline_banner.dart';
 import 'package:yaani_eh/features/catalog_sync/data/models/catalog_rows.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
@@ -94,7 +94,7 @@ void main() {
   }
 
   Future<void> center(WidgetTester tester, String name) async {
-    final card = find.widgetWithText(DrinkCard, name).first;
+    final card = find.widgetWithText(ItemCard, name).first;
     await tester.dragUntilVisible(
       card,
       find.byType(Scrollable).first,
@@ -120,7 +120,7 @@ void main() {
     });
 
     testWidgets('2 drink', (tester) async {
-      await open(tester, AppRoutes.drink('flat_white'));
+      await open(tester, AppRoutes.item('flat_white'));
       await tester.drag(
         find.byType(Scrollable).first,
         Offset(0, -size[1] * 0.3),
@@ -132,14 +132,14 @@ void main() {
       await open(tester, AppRoutes.home);
       await center(tester, 'Caramel Frappé');
       await tester.longPress(
-        find.widgetWithText(DrinkCard, 'Caramel Frappé').first,
+        find.widgetWithText(ItemCard, 'Caramel Frappé').first,
       );
       await shoot(tester, '$out/3_preview');
     });
 
     testWidgets('4 recipe', (tester) async {
-      await open(tester, AppRoutes.drink('cappuccino'));
-      final row = find.byKey(const Key('drink_recipe'));
+      await open(tester, AppRoutes.item('cappuccino'));
+      final row = find.byKey(const Key('item_recipe'));
       await tester.ensureVisible(row);
       await tester.pumpAndSettle();
       await tester.tap(row);
@@ -147,7 +147,7 @@ void main() {
     });
 
     testWidgets('5 steps', (tester) async {
-      await open(tester, AppRoutes.drinkSteps('flat_white'));
+      await open(tester, AppRoutes.itemSteps('flat_white'));
       await tester.tap(find.byKey(const Key('steps_next')));
       await shoot(tester, '$out/5_steps');
     });

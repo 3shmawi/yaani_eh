@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:yaani_eh/core/widgets/drink_card.dart';
+import 'package:yaani_eh/core/widgets/item_card.dart';
 
 import 'helpers/demo.dart';
 import 'helpers/demo_app.dart';
@@ -24,7 +24,7 @@ void main() {
 
   /// The card in the middle of the screen, clear of the pinned chips.
   Future<Finder> centered(WidgetTester tester, String name) async {
-    final card = find.widgetWithText(DrinkCard, name);
+    final card = find.widgetWithText(ItemCard, name);
     await tester.dragUntilVisible(
       card,
       find.byType(Scrollable).first,
@@ -39,7 +39,7 @@ void main() {
     tester,
   ) async {
     await DemoApp.start(pageSize: 100);
-    await pumpUntil(tester, find.byKey(const Key('drink_of_the_day')));
+    await pumpUntil(tester, find.byKey(const Key('item_of_the_day')));
     await tester.pumpAndSettle();
     await beat(tester, 1200);
 
@@ -49,7 +49,7 @@ void main() {
     await tester.longPress(flatWhite);
     await tester.pumpAndSettle();
     await beat(tester, 1800);
-    expect(find.byKey(const Key('drink_preview')), findsOneWidget);
+    expect(find.byKey(const Key('item_preview')), findsOneWidget);
 
     // Save it from the preview.
     await tester.tap(find.byKey(const Key('preview_save')));
@@ -69,16 +69,16 @@ void main() {
     await tester.pumpAndSettle();
     await beat(tester, 1800);
     final saved = tester
-        .widgetList<DrinkCard>(find.byType(DrinkCard))
+        .widgetList<ItemCard>(find.byType(ItemCard))
         .map((c) => c.item.slug)
         .toList();
     expect(saved, ['espresso', 'flat_white']);
 
     // 4. Open Flat White; its photo flies into the page. Back.
-    await tester.tap(find.widgetWithText(DrinkCard, 'Flat White'));
+    await tester.tap(find.widgetWithText(ItemCard, 'Flat White'));
     await tester.pumpAndSettle();
     await beat(tester, 1500);
-    await tester.tap(find.byKey(const Key('drink_back')));
+    await tester.tap(find.byKey(const Key('item_back')));
     await tester.pumpAndSettle();
     await beat(tester);
 
@@ -98,6 +98,6 @@ void main() {
     await tester.tap(toMenu);
     await tester.pumpAndSettle();
     await beat(tester, 1200);
-    expect(find.byKey(const Key('drink_of_the_day')), findsOneWidget);
+    expect(find.byKey(const Key('item_of_the_day')), findsOneWidget);
   });
 }

@@ -1,7 +1,7 @@
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 
 /// One category and its drinks, in menu order.
-class MenuSection {
+class BrowseSection {
   const new({required this.category, required this.items});
 
   final CatalogCategory category;
@@ -10,7 +10,7 @@ class MenuSection {
 
 /// A top-level section of Home («مشروبات»، «حلويات»…): one option of the
 /// header's switch. One without drinks yet is shown as coming soon.
-class MenuTab {
+class BrowseTab {
   const new({required this.section, required this.hasItems});
 
   final CatalogCategory section;
@@ -19,17 +19,17 @@ class MenuTab {
 
 /// What the Home screen shows: the open tab's categories, one after
 /// another, with a chip for each (tapping one scrolls to it).
-class MenuModel {
+class BrowseModel {
   const new({
     required this.tabs,
     required this.chips,
     required this.sections,
     this.selectedTabId,
-    this.drinkOfTheDay,
+    this.itemOfTheDay,
   });
 
   /// Every section, in order; the switch shows when there are two or more.
-  final List<MenuTab> tabs;
+  final List<BrowseTab> tabs;
 
   /// Null only when there are no sections at all.
   final String? selectedTabId;
@@ -38,12 +38,12 @@ class MenuModel {
   final List<CatalogCategory> chips;
 
   /// One per chip, in the same order.
-  final List<MenuSection> sections;
+  final List<BrowseSection> sections;
 
   /// From the open tab's drinks.
-  final CatalogItem? drinkOfTheDay;
+  final CatalogItem? itemOfTheDay;
 
-  MenuTab? get selectedTab =>
+  BrowseTab? get selectedTab =>
       tabs.where((t) => t.section.id == selectedTabId).firstOrNull;
 
   /// The open tab exists but has no drinks yet.
@@ -56,10 +56,10 @@ class MenuModel {
 /// Arranges the cached catalog into tabs, chips and sections. Pure:
 /// sections and categories are data, so a new one (desserts) appears with
 /// no code change, as coming soon until its first drink is published.
-class BuildMenu {
+class BuildBrowse {
   const new();
 
-  MenuModel call({
+  BrowseModel call({
     required List<CatalogItem> items,
     required List<CatalogCategory> categories,
     required DateTime today,
@@ -83,7 +83,7 @@ class BuildMenu {
 
     final tabs = [
       for (final s in sections)
-        MenuTab(section: s, hasItems: filled(s).isNotEmpty),
+        BrowseTab(section: s, hasItems: filled(s).isNotEmpty),
     ];
     // A tab that vanished in a sync (or none chosen yet): the first one
     // with drinks.
@@ -96,15 +96,15 @@ class BuildMenu {
         : filled(selected.section);
     final shown = [
       for (final c in chips)
-        MenuSection(category: c, items: byCategory[c.id] ?? const []),
+        BrowseSection(category: c, items: byCategory[c.id] ?? const []),
     ];
 
-    return MenuModel(
+    return BrowseModel(
       tabs: tabs,
       selectedTabId: selected?.section.id,
       chips: chips,
       sections: shown,
-      drinkOfTheDay: _ofTheDay([for (final s in shown) ...s.items], today),
+      itemOfTheDay: _ofTheDay([for (final s in shown) ...s.items], today),
     );
   }
 

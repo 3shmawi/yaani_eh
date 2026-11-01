@@ -6,9 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:yaani_eh/core/analytics/analytics.dart';
 import 'package:yaani_eh/core/router/app_routes.dart';
 import 'package:yaani_eh/core/widgets/search_field.dart';
-import 'package:yaani_eh/features/browse_menu/presentation/menu_controller.dart';
+import 'package:yaani_eh/features/browse/presentation/browse_controller.dart';
 import 'package:yaani_eh/features/item_details/domain/usecases/describe_item.dart';
-import 'package:yaani_eh/features/item_details/presentation/drink_controller.dart';
+import 'package:yaani_eh/features/item_details/presentation/item_controller.dart';
 import 'package:yaani_eh/features/smart_search/presentation/search_controller.dart';
 import 'package:yaani_eh/features/smart_search/presentation/search_view.dart';
 
@@ -82,10 +82,10 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     final answer = results?.answer;
     ItemFacts? facts;
     if (answer != null) {
-      final details = ref.watch(drinkDetailsProvider(answer.item.slug));
+      final details = ref.watch(itemStateProvider(answer.item.slug));
       facts = const DescribeItem()(
         item: answer.item,
-        traitSchema: details is DrinkFound ? details.traitSchema : null,
+        traitSchema: details is ItemFound ? details.traitSchema : null,
         lang: Localizations.localeOf(context).languageCode,
         now: ref.watch(todayProvider),
       );
@@ -116,7 +116,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
             'position': position,
           }),
         );
-        unawaited(context.push<void>(AppRoutes.drink(item.slug)));
+        unawaited(context.push<void>(AppRoutes.item(item.slug)));
       },
     );
   }

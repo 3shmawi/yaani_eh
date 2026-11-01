@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:yaani_eh/features/browse_menu/domain/usecases/build_menu.dart';
+import 'package:yaani_eh/features/browse/domain/usecases/build_browse.dart';
 import 'package:yaani_eh/features/catalog_sync/data/models/catalog_rows.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 
@@ -7,7 +7,7 @@ import '../../../../helpers/fake_catalog_remote.dart';
 import '../../../../helpers/fake_catalog_repository.dart';
 
 void main() {
-  const build = BuildMenu();
+  const build = BuildBrowse();
   final items = sampleCatalogItems();
   final categories = [
     for (final r in sampleCategories()) CatalogRows.category(r)!,
@@ -23,7 +23,7 @@ void main() {
     expect(menu.sections, hasLength(2));
     expect(menu.sections.first.items, hasLength(8));
     expect(menu.sections.last.items, hasLength(4));
-    expect(menu.drinkOfTheDay, isNotNull);
+    expect(menu.itemOfTheDay, isNotNull);
     expect(menu.comingSoon, isFalse);
     expect(menu.isEmpty, isFalse);
   });
@@ -42,7 +42,7 @@ void main() {
     expect(menu.comingSoon, isTrue);
     expect(menu.chips, isEmpty);
     expect(menu.sections, isEmpty);
-    expect(menu.drinkOfTheDay, isNull);
+    expect(menu.itemOfTheDay, isNull);
     expect(menu.isEmpty, isFalse);
   });
 
@@ -82,7 +82,7 @@ void main() {
     );
     expect(menu.comingSoon, isFalse);
     expect(menu.chips.single.slug, 'cakes');
-    expect(menu.drinkOfTheDay?.slug, 'cheesecake');
+    expect(menu.itemOfTheDay?.slug, 'cheesecake');
   });
 
   test('empty categories get no chip', () {
@@ -108,7 +108,7 @@ void main() {
 
   test('the drink of the day is stable all day and changes daily', () {
     CatalogItem? pick(DateTime t) =>
-        build(items: items, categories: categories, today: t).drinkOfTheDay;
+        build(items: items, categories: categories, today: t).itemOfTheDay;
     expect(pick(DateTime(2026, 10, 30, 8)), pick(DateTime(2026, 10, 30, 23)));
     final week = {
       for (var d = 0; d < 7; d++) pick(DateTime(2026, 11, 1 + d))!.slug,
@@ -120,6 +120,6 @@ void main() {
     final menu = build(items: const [], categories: categories, today: day);
     expect(menu.isEmpty, isTrue);
     expect(menu.chips, isEmpty);
-    expect(menu.drinkOfTheDay, isNull);
+    expect(menu.itemOfTheDay, isNull);
   });
 }

@@ -20,7 +20,7 @@ the end says «السعرات تقريبية» only.
 ## User flows
 1. Home → tap a card (or the drink of the day) → the drink.
 2. Scroll → tap a similar drink → its page; back returns step by step.
-3. A link `yaanieh://drink/flat_white` opens the drink directly (after the
+3. A link `yaanieh://item/flat_white` opens the drink directly (after the
    first download); back goes to Home.
 4. A link to a drink that no longer exists → «مش لاقيين المشروب ده» with a
    button home.
@@ -33,21 +33,21 @@ the end says «السعرات تقريبية» only.
     prices are shown) and `SimilarItems`
     (same category first, then closest temperature / sweetness / milk /
     caffeine).
-  - `presentation/drink_controller.dart` — `drinkDetailsProvider(slug)`:
-    `DrinkLoading` / `DrinkMissing` / `DrinkFound` (walks up to the section
+  - `presentation/item_controller.dart` — `itemStateProvider(slug)`:
+    `ItemLoading` / `ItemMissing` / `ItemFound` (walks up to the section
     for the schema).
-  - `presentation/drink_page.dart` → `drink_view.dart` (Details artboard),
+  - `presentation/item_page.dart` → `item_view.dart` (Details artboard),
     `widgets/trait_pills.dart`.
 - State: Riverpod (derived from the catalog streams; updates after a sync).
 - Data sources: the device copy from `catalog_sync`.
-- Routes / deep links: `/drink/:slug` (`AppRoutes.drink(slug)`), wrapped in
+- Routes / deep links: `/item/:slug` (`AppRoutes.item(slug)`), wrapped in
   `CatalogSyncPage`. Slugs must match `^[a-z0-9_]{1,60}$` (same rule as the
   database); anything else is the not-found page.
 
 ## Analytics events
 | Event | When | Properties |
 |---|---|---|
-| `drink_viewed` | a drink page opens | `drink` (slug) |
+| `item_viewed` | a drink page opens | `item` (slug) |
 
 ## Feature flags
 None.
@@ -56,7 +56,7 @@ None.
 - Unit: `test/features/item_details/domain/usecases/describe_item_test.dart`
   — labels in both languages, unknown types and hostile schemas ignored,
   price freshness, similar drinks.
-- Widget: `test/features/item_details/presentation/drink_page_test.dart` —
+- Widget: `test/features/item_details/presentation/item_page_test.dart` —
   content, Arabic RTL, stale / missing price, back and similar taps, dark,
   small phone with 1.3× text, missing drink, `expectAccessible`.
 - Security: `test/security/deep_link_test.dart` — traversal, script tags,
@@ -66,13 +66,13 @@ None.
 
 ## Decisions & edge cases
 - The heart (`favorites`) sits at the photo's top-end corner, across from
-  the back button (`DrinkView.saveButton`). The page covers the tab bar.
+  the back button (`ItemView.saveButton`). The page covers the tab bar.
 - The photo at the top is the **full** photo (`PhotoSize.full`, 1200×1600),
   decoded at the screen's width; its thumbnail (usually cached from the
   card) shows while it loads, and offline when the full photo was never
   downloaded. Similar-drink cards use thumbnails. See docs/content.md →
   Photos and thumbnails.
-- The pronounce pill (`pronunciation`, through `DrinkView.pronounce`) sits
+- The pronounce pill (`pronunciation`, through `ItemView.pronounce`) sits
   on the photo just above the sheet and scrolls with it; opening the page
   prefetches the drink's clips for offline use. The heart (`favorites`)
   joins with its feature.

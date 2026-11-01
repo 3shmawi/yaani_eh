@@ -51,8 +51,8 @@ whose drink page was opened online) plays offline afterwards.
     (`PlayNameButton`) are views (data + callbacks);
     `presentation/pronounce.dart` wires them: `ItemPronounce(item)` (drink
     page, prefetches its clips) and `ItemPlayButton(item)` (cards).
-- Where it shows: `DrinkView(pronounce:)` puts the pill on the photo just
-  above the sheet (it scrolls with the sheet); `MenuView(cardAction:)`
+- Where it shows: `ItemView(pronounce:)` puts the pill on the photo just
+  above the sheet (it scrolls with the sheet); `BrowseView(cardAction:)`
   puts the button in the drink of the day's top-end corner (Home artboard)
   and in each grid card's top-start corner (top-end is the heart's, coming
   with `favorites`). Not on compact cards (similar drinks) or search rows.
@@ -67,8 +67,8 @@ whose drink page was opened online) plays offline afterwards.
 ## Analytics events
 | Event | When | Properties |
 |---|---|---|
-| `pronunciation_played` | a clip starts playing | `drink` (slug), `voice` (`barista` / `original`), `speed` (`1` / `0.75`) |
-| `pronunciation_failed` | a clip can't play | `drink`, `voice`, `reason` (`offline` / `missing` / `other`) |
+| `pronunciation_played` | a clip starts playing | `item` (slug), `voice` (`barista` / `original`), `speed` (`1` / `0.75`) |
+| `pronunciation_failed` | a clip can't play | `item`, `voice`, `reason` (`offline` / `missing` / `other`) |
 
 No personal data.
 
@@ -91,8 +91,8 @@ None.
   LTR `0.75×`, dark + 1.3× text on a small phone, hostile names,
   `PlayNameButton` states, wired flows (prefetch, play, slow, offline note,
   card stop, one at a time), `expectAccessible`. Plus a case each in
-  `menu_page_test.dart` (buttons on cards, no navigation) and
-  `drink_page_test.dart` (pill on the photo, prefetch, play).
+  `browse_page_test.dart` (buttons on cards, no navigation) and
+  `item_page_test.dart` (pill on the photo, prefetch, play).
 - Integration (demo): `integration_test/pronunciation_test.dart`.
 
 ## Decisions & edge cases

@@ -8,7 +8,7 @@ import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
 import 'package:yaani_eh/features/favorites/domain/entities/favorite.dart';
 import 'package:yaani_eh/features/favorites/domain/repositories/favorites_repository.dart';
-import 'package:yaani_eh/features/favorites/domain/usecases/favorite_drinks.dart';
+import 'package:yaani_eh/features/favorites/domain/usecases/favorite_items.dart';
 
 /// Override in tests: `favoritesRepositoryProvider.overrideWithValue(…)`.
 final favoritesRepositoryProvider = Provider<FavoritesRepository>(
@@ -31,15 +31,15 @@ final favoriteIdsProvider = Provider<Set<String>>(
 );
 
 /// The saved drinks still on the menu, newest first; null while loading.
-final favoriteDrinksProvider = Provider<List<CatalogItem>?>((ref) {
+final favoriteItemsProvider = Provider<List<CatalogItem>?>((ref) {
   final favorites = ref.watch(favoritesProvider).value;
   final items = ref.watch(catalogItemsProvider).value;
   if (favorites == null || items == null) return null;
-  return const FavoriteDrinks()(favorites: favorites, items: items);
+  return const FavoriteItems()(favorites: favorites, items: items);
 });
 
 /// Where a heart was tapped, for analytics.
-enum FavoriteSource { card, drinkPage, preview, favorites }
+enum FavoriteSource { card, itemPage, preview, favorites }
 
 final favoritesControllerProvider = Provider<FavoritesController>(
   FavoritesController.new,
@@ -64,7 +64,7 @@ class FavoritesController {
       case Success():
         unawaited(
           Analytics.capture(save ? 'favorite_added' : 'favorite_removed', {
-            'drink': item.slug,
+            'item': item.slug,
             'from': from.name,
           }),
         );

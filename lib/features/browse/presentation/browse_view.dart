@@ -7,13 +7,13 @@ import 'package:yaani_eh/core/theme/app_icons.dart';
 import 'package:yaani_eh/core/theme/app_text_styles.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
 import 'package:yaani_eh/core/widgets/category_chips.dart';
-import 'package:yaani_eh/core/widgets/drink_grid.dart';
 import 'package:yaani_eh/core/widgets/header_band.dart';
+import 'package:yaani_eh/core/widgets/item_grid.dart';
 import 'package:yaani_eh/core/widgets/offline_banner.dart';
 import 'package:yaani_eh/core/widgets/search_field.dart';
 import 'package:yaani_eh/core/widgets/state_views.dart';
-import 'package:yaani_eh/features/browse_menu/domain/usecases/build_menu.dart';
-import 'package:yaani_eh/features/browse_menu/presentation/widgets/drink_of_the_day.dart';
+import 'package:yaani_eh/features/browse/domain/usecases/build_browse.dart';
+import 'package:yaani_eh/features/browse/presentation/widgets/item_of_the_day.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
@@ -23,7 +23,7 @@ import 'package:yaani_eh/l10n/l10n.dart';
 /// another. A chip scrolls to its category, and the highlighted chip
 /// follows the list. Once the band scrolls away, the chips stay pinned at
 /// the top. A section without drinks yet says it's coming soon.
-class MenuView extends StatefulWidget {
+class BrowseView extends StatefulWidget {
   const new({
     required this.menu,
     required this.onSelectTab,
@@ -38,8 +38,8 @@ class MenuView extends StatefulWidget {
   });
 
   /// Null while loading from the device.
-  final MenuModel? menu;
-  final ValueChanged<MenuTab> onSelectTab;
+  final BrowseModel? menu;
+  final ValueChanged<BrowseTab> onSelectTab;
   final VoidCallback onOpenSettings;
 
   /// A chip was tapped (the list scrolls by itself; this is for analytics).
@@ -62,10 +62,10 @@ class MenuView extends StatefulWidget {
   final ValueChanged<CatalogItem>? onPreviewItem;
 
   @override
-  State<MenuView> createState() => _MenuViewState();
+  State<BrowseView> createState() => _BrowseViewState();
 }
 
-class _MenuViewState extends State<MenuView> {
+class _BrowseViewState extends State<BrowseView> {
   final _scroll = ScrollController();
   final GlobalKey _chipsKey = GlobalKey();
   final _sectionKeys = <String, GlobalKey>{};
@@ -83,7 +83,7 @@ class _MenuViewState extends State<MenuView> {
   }
 
   @override
-  void didUpdateWidget(MenuView old) {
+  void didUpdateWidget(BrowseView old) {
     super.didUpdateWidget(old);
     if (old.menu?.selectedTabId != widget.menu?.selectedTabId) {
       // Another section: start it from the top.
@@ -178,7 +178,7 @@ class _MenuViewState extends State<MenuView> {
     final arabic = Localizations.localeOf(context).languageCode == 'ar';
     String name(CatalogCategory c) => arabic ? c.nameAr : c.nameEn;
     final chips = menu?.chips ?? const <CatalogCategory>[];
-    final tabs = menu?.tabs ?? const <MenuTab>[];
+    final tabs = menu?.tabs ?? const <BrowseTab>[];
     final active = _active ?? chips.firstOrNull?.id;
 
     Widget chipRow({Key? key}) => CategoryChips(
@@ -190,7 +190,7 @@ class _MenuViewState extends State<MenuView> {
 
     final header = HeaderBand(
       title: l10n.appEyebrow,
-      subtitle: l10n.menuTagline,
+      subtitle: l10n.browseTagline,
       trailing: AppIconButton(
         key: const Key('home_settings_button'),
         icon: AppIcons.settings,
@@ -209,7 +209,7 @@ class _MenuViewState extends State<MenuView> {
           ],
           if (tabs.length > 1) ...[
             AppSegmentedControl(
-              key: const Key('menu_sections'),
+              key: const Key('browse_sections'),
               segments: [
                 for (final t in tabs)
                   (
@@ -243,14 +243,14 @@ class _MenuViewState extends State<MenuView> {
     } else if (menu.isEmpty) {
       body = SliverFillRemaining(
         hasScrollBody: false,
-        child: EmptyView(message: l10n.menuEmpty),
+        child: EmptyView(message: l10n.browseEmpty),
       );
     } else if (menu.comingSoon) {
       final open = tabs.where((t) => t.hasItems).firstOrNull;
       body = SliverFillRemaining(
         hasScrollBody: false,
         child: EmptyView(
-          key: const Key('menu_coming_soon'),
+          key: const Key('browse_coming_soon'),
           icon: AppIcons.cake,
           title: l10n.comingSoonTitle(name(menu.selectedTab!.section)),
           message: l10n.comingSoonMessage,
@@ -273,9 +273,9 @@ class _MenuViewState extends State<MenuView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (menu.drinkOfTheDay case final today?) ...[
-                DrinkOfTheDay(
-                  key: const Key('drink_of_the_day'),
+              if (menu.itemOfTheDay case final today?) ...[
+                ItemOfTheDay(
+                  key: const Key('item_of_the_day'),
                   item: today,
                   onTap: widget.onOpenItem == null
                       ? null
@@ -290,7 +290,7 @@ class _MenuViewState extends State<MenuView> {
                   child: _SectionHeader(title: name(section.category)),
                 ),
                 SizedBox(height: AppDimens.space3),
-                DrinkGrid(
+                ItemGrid(
                   items: section.items,
                   // Card number on the screen, for the entry stagger.
                   firstIndex: menu.sections
@@ -324,7 +324,7 @@ class _MenuViewState extends State<MenuView> {
         children: [
           HeaderOverscroll(
             child: CustomScrollView(
-              key: const Key('menu_list'),
+              key: const Key('browse_list'),
               controller: _scroll,
               slivers: [
                 SliverToBoxAdapter(child: header),

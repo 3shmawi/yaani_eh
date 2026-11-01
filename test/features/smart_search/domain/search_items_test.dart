@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:yaani_eh/features/catalog_sync/data/models/catalog_rows.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/smart_search/domain/entities/search_text.dart';
-import 'package:yaani_eh/features/smart_search/domain/usecases/search_menu.dart';
+import 'package:yaani_eh/features/smart_search/domain/usecases/search_items.dart';
 
 import '../../../helpers/fake_catalog_remote.dart';
 
@@ -85,8 +85,8 @@ void main() {
     });
   });
 
-  group(SearchMenu, () {
-    final search = SearchMenu(_items());
+  group(SearchItems, () {
+    final search = SearchItems(_items());
 
     test('a name gets an answer, in any script', () {
       for (final query in ['Latte', 'latte', 'لاتيه', 'لاتيه ', 'LATTE']) {
@@ -164,14 +164,14 @@ void main() {
           final results = search(query);
           expect(
             results.query.length,
-            lessThanOrEqualTo(SearchMenu.maxQueryLength),
+            lessThanOrEqualTo(SearchItems.maxQueryLength),
           );
         });
       }
     });
 
     test('an empty catalog finds nothing', () {
-      expect(SearchMenu(const [])('latte').isEmpty, isTrue);
+      expect(SearchItems(const [])('latte').isEmpty, isTrue);
     });
   });
 }

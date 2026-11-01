@@ -6,12 +6,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
-import 'package:yaani_eh/core/widgets/drink_card.dart';
 import 'package:yaani_eh/core/widgets/header_band.dart';
-import 'package:yaani_eh/features/browse_menu/domain/usecases/build_menu.dart';
-import 'package:yaani_eh/features/browse_menu/presentation/menu_controller.dart';
-import 'package:yaani_eh/features/browse_menu/presentation/menu_page.dart';
-import 'package:yaani_eh/features/browse_menu/presentation/menu_view.dart';
+import 'package:yaani_eh/core/widgets/item_card.dart';
+import 'package:yaani_eh/features/browse/domain/usecases/build_browse.dart';
+import 'package:yaani_eh/features/browse/presentation/browse_controller.dart';
+import 'package:yaani_eh/features/browse/presentation/browse_page.dart';
+import 'package:yaani_eh/features/browse/presentation/browse_view.dart';
 import 'package:yaani_eh/features/catalog_sync/data/models/catalog_rows.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
@@ -27,25 +27,26 @@ final List<CatalogCategory> _categories = [
   for (final r in sampleCategories()) CatalogRows.category(r)!,
 ];
 
-MenuModel _menu({String? tab, List<CatalogItem>? items}) => const BuildMenu()(
-  items: items ?? sampleCatalogItems(),
-  categories: _categories,
-  today: _day,
-  selectedTabId: tab,
-);
+BrowseModel _menu({String? tab, List<CatalogItem>? items}) =>
+    const BuildBrowse()(
+      items: items ?? sampleCatalogItems(),
+      categories: _categories,
+      today: _day,
+      selectedTabId: tab,
+    );
 
 void main() {
-  group(MenuView, () {
+  group(BrowseView, () {
     Future<void> pumpView(
       WidgetTester tester, {
-      MenuModel? menu,
+      BrowseModel? menu,
       Locale locale = const Locale('en'),
       ThemeMode mode = ThemeMode.light,
-      ValueChanged<MenuTab>? onTab,
+      ValueChanged<BrowseTab>? onTab,
       ValueChanged<CatalogCategory>? onJump,
       VoidCallback? onSettings,
     }) => tester.pumpApp(
-      MenuView(
+      BrowseView(
         menu: menu,
         onSelectTab: onTab ?? (_) {},
         onJumpToCategory: onJump,
@@ -60,20 +61,20 @@ void main() {
     ) async {
       await pumpView(tester, menu: _menu());
       expect(find.text(l10nEn.appEyebrow), findsOneWidget);
-      expect(find.byKey(const Key('menu_sections')), findsOneWidget);
+      expect(find.byKey(const Key('browse_sections')), findsOneWidget);
       expect(find.text('Drinks'), findsOneWidget);
       expect(find.textContaining('Desserts'), findsOneWidget);
       expect(find.textContaining(l10nEn.comingSoonBadge), findsOneWidget);
       expect(find.text('All'), findsNothing);
       expect(find.text('Coffee'), findsWidgets); // chip + section
-      expect(find.byKey(const Key('drink_of_the_day')), findsOneWidget);
-      expect(find.byType(DrinkCard), findsWidgets);
+      expect(find.byKey(const Key('item_of_the_day')), findsOneWidget);
+      expect(find.byType(ItemCard), findsWidgets);
       await tester.expectAccessible();
     });
 
     testWidgets('every category of the section is on the list', (tester) async {
       await pumpView(tester, menu: _menu());
-      final list = find.byKey(const Key('menu_list'));
+      final list = find.byKey(const Key('browse_list'));
       await tester.dragUntilVisible(
         find.text('Cold Brew'),
         list,
@@ -103,7 +104,7 @@ void main() {
       );
       expect(selected.flagsCollection.isSelected, Tristate.isTrue);
       final heading = find.descendant(
-        of: find.byKey(const Key('menu_list')),
+        of: find.byKey(const Key('browse_list')),
         matching: find.text('Iced coffee'),
       );
       expect(
@@ -114,7 +115,7 @@ void main() {
 
     testWidgets('scrolling back up hides the pinned chips', (tester) async {
       await pumpView(tester, menu: _menu());
-      final list = find.byKey(const Key('menu_list'));
+      final list = find.byKey(const Key('browse_list'));
       await tester.drag(list, const Offset(0, -600));
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('category_chips_pinned')), findsOneWidget);
@@ -141,9 +142,9 @@ void main() {
         onTab: (t) => picked.add(t.section.slug),
       );
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('menu_coming_soon')), findsOneWidget);
+      expect(find.byKey(const Key('browse_coming_soon')), findsOneWidget);
       expect(find.text(l10nEn.comingSoonTitle('Desserts')), findsOneWidget);
-      expect(find.byType(DrinkCard), findsNothing);
+      expect(find.byType(ItemCard), findsNothing);
       expect(find.byKey(const Key('category_chips')), findsNothing);
       await tester.expectAccessible();
 
@@ -158,13 +159,13 @@ void main() {
       ];
       await pumpView(
         tester,
-        menu: const BuildMenu()(
+        menu: const BuildBrowse()(
           items: sampleCatalogItems(),
           categories: categories,
           today: _day,
         ),
       );
-      expect(find.byKey(const Key('menu_sections')), findsNothing);
+      expect(find.byKey(const Key('browse_sections')), findsNothing);
     });
 
     testWidgets('loading and empty states', (tester) async {
@@ -172,7 +173,7 @@ void main() {
       expect(find.bySemanticsLabel(l10nEn.loading), findsOneWidget);
 
       await pumpView(tester, menu: _menu(items: const []));
-      expect(find.text(l10nEn.menuEmpty), findsOneWidget);
+      expect(find.text(l10nEn.browseEmpty), findsOneWidget);
       await tester.expectAccessible();
     });
 
@@ -309,14 +310,14 @@ void main() {
     });
   });
 
-  group(DrinkCard, () {
+  group(ItemCard, () {
     Future<void> pumpCard(
       WidgetTester tester,
       CatalogItem item, {
       Locale locale = const Locale('en'),
     }) => tester.pumpApp(
       Center(
-        child: SizedBox(width: 170, child: DrinkCard(item: item)),
+        child: SizedBox(width: 170, child: ItemCard(item: item)),
       ),
       locale: locale,
     );
@@ -370,12 +371,12 @@ void main() {
           children: [
             // Two real «يعني» lines: one line long, two lines long.
             for (final item in items.where((i) => i.gistEn != null))
-              SizedBox(width: 170, child: DrinkCard(item: item)),
+              SizedBox(width: 170, child: ItemCard(item: item)),
           ],
         ),
       );
       final heights = [
-        for (final card in find.byType(DrinkCard).evaluate())
+        for (final card in find.byType(ItemCard).evaluate())
           tester.getSize(find.byWidget(card.widget)).height,
       ];
       expect(heights.toSet(), hasLength(1));
@@ -390,7 +391,7 @@ void main() {
       final item = CatalogRows.item({...sampleItems().first, 'gist_ar': long})!;
       await tester.pumpApp(
         Center(
-          child: SizedBox(width: 138, child: DrinkCard(item: item)),
+          child: SizedBox(width: 138, child: ItemCard(item: item)),
         ),
         locale: const Locale('ar'),
       );
@@ -407,13 +408,13 @@ void main() {
     ) async {
       Future<double> pressedScale() async {
         final gesture = await tester.startGesture(
-          tester.getCenter(find.byType(DrinkCard)),
+          tester.getCenter(find.byType(ItemCard)),
         );
         await tester.pumpAndSettle();
         final scale = tester
             .widget<AnimatedScale>(
               find.descendant(
-                of: find.byType(DrinkCard),
+                of: find.byType(ItemCard),
                 matching: find.byType(AnimatedScale),
               ),
             )
@@ -428,7 +429,7 @@ void main() {
         Center(
           child: SizedBox(
             width: 170,
-            child: DrinkCard(item: item, onTap: () {}),
+            child: ItemCard(item: item, onTap: () {}),
           ),
         ),
       );
@@ -452,7 +453,7 @@ void main() {
         Center(
           child: SizedBox(
             width: 170,
-            child: DrinkCard(
+            child: ItemCard(
               item: sampleCatalogItems().first,
               onTap: () => opened++,
             ),
@@ -463,13 +464,13 @@ void main() {
         find.bySemanticsLabel(RegExp('^Espresso، إسبريسو')),
         findsOneWidget,
       );
-      await tester.tap(find.byType(DrinkCard));
+      await tester.tap(find.byType(ItemCard));
       expect(opened, 1);
       handle.dispose();
     });
   });
 
-  group(MenuPage, () {
+  group(BrowsePage, () {
     testWidgets('reads the menu from the device; the switch opens desserts', (
       tester,
     ) async {
@@ -481,7 +482,7 @@ void main() {
             ),
             todayProvider.overrideWithValue(_day),
           ],
-          child: const MenuPage(),
+          child: const BrowsePage(),
         ),
       );
       await tester.pumpAndSettle();
@@ -489,7 +490,7 @@ void main() {
 
       await tester.tap(find.textContaining('Desserts'));
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('menu_coming_soon')), findsOneWidget);
+      expect(find.byKey(const Key('browse_coming_soon')), findsOneWidget);
       expect(find.text('Flat White'), findsNothing);
 
       await tester.tap(find.text(l10nEn.comingSoonAction));
@@ -513,11 +514,11 @@ void main() {
             todayProvider.overrideWithValue(_day),
             ...pronunciationOverrides(repo, player),
           ],
-          child: const MenuPage(),
+          child: const BrowsePage(),
         ),
       );
       await tester.pumpAndSettle();
-      final today = find.byKey(const Key('drink_of_the_day'));
+      final today = find.byKey(const Key('item_of_the_day'));
       expect(
         find.descendant(of: today, matching: find.byType(PlayNameButton)),
         findsOneWidget,
@@ -525,7 +526,7 @@ void main() {
       // Affogato and Iced Mocha have no clips.
       expect(find.byKey(const Key('play_affogato')), findsNothing);
 
-      final card = find.widgetWithText(DrinkCard, 'Flat White');
+      final card = find.widgetWithText(ItemCard, 'Flat White');
       await tester.dragUntilVisible(
         card,
         find.byType(Scrollable).first,
@@ -533,7 +534,7 @@ void main() {
       );
       // Clear of the chips pinned at the top.
       await tester.drag(
-        find.byKey(const Key('menu_list')),
+        find.byKey(const Key('browse_list')),
         const Offset(0, 250),
       );
       await tester.pumpAndSettle();
@@ -550,7 +551,7 @@ void main() {
       await tester.pump();
       expect(player.played.single.file, '/clips/flat_white.barista.m4a');
       // Still on Home.
-      expect(find.byType(MenuView), findsOneWidget);
+      expect(find.byType(BrowseView), findsOneWidget);
       player.finish();
       await tester.pumpAndSettle();
       await tester.expectAccessible();

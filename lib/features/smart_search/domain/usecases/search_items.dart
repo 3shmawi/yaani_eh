@@ -64,7 +64,7 @@ class SearchResults {
 /// Two-way, on-device search over the cached catalog: a name gets an
 /// answer, a description ("milk and coffee", `laban w ahwa`) gets a ranked
 /// list. Build once per catalog change; each query is cheap.
-class SearchMenu {
+class SearchItems {
   new(List<CatalogItem> items) : _entries = [for (final i in items) _Entry(i)];
 
   final List<_Entry> _entries;

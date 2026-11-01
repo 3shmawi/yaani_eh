@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yaani_eh/features/favorites/domain/entities/favorite.dart';
-import 'package:yaani_eh/features/favorites/domain/usecases/favorite_drinks.dart';
+import 'package:yaani_eh/features/favorites/domain/usecases/favorite_items.dart';
 
 import '../../../helpers/fake_catalog_repository.dart';
 
@@ -8,7 +8,7 @@ void main() {
   final items = sampleCatalogItems();
 
   test('saved drinks still on the menu, newest first', () {
-    final drinks = const FavoriteDrinks()(
+    final drinks = const FavoriteItems()(
       items: items,
       favorites: [
         Favorite(itemId: items[0].id, savedAt: DateTime.utc(2026, 10, 4)),
@@ -21,7 +21,7 @@ void main() {
 
   test('the same date keeps the order they came in', () {
     final same = DateTime.utc(2026, 10, 4);
-    final drinks = const FavoriteDrinks()(
+    final drinks = const FavoriteItems()(
       items: items,
       favorites: [
         for (final i in [3, 0, 2, 1])
@@ -32,7 +32,7 @@ void main() {
   });
 
   test('a drink taken off the menu is left out', () {
-    final drinks = const FavoriteDrinks()(
+    final drinks = const FavoriteItems()(
       items: items,
       favorites: [
         Favorite(itemId: items[0].id, savedAt: DateTime.utc(2026, 10, 4)),

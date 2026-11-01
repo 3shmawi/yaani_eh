@@ -5,21 +5,21 @@ import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_control
 import 'package:yaani_eh/features/item_details/domain/usecases/describe_item.dart';
 
 /// Everything the details screen needs about one drink.
-sealed class DrinkDetails {
+sealed class ItemState {
   const new();
 }
 
 /// Still reading the device copy.
-final class DrinkLoading extends DrinkDetails {
+final class ItemLoading extends ItemState {
   const new();
 }
 
 /// No such drink (an old link, or it was removed from the menu).
-final class DrinkMissing extends DrinkDetails {
+final class ItemMissing extends ItemState {
   const new();
 }
 
-final class DrinkFound extends DrinkDetails {
+final class ItemFound extends ItemState {
   const new({
     required this.item,
     required this.traitSchema,
@@ -35,13 +35,13 @@ final class DrinkFound extends DrinkDetails {
 
 /// Details for the drink with this slug, from the device copy; updates
 /// when a sync changes it.
-final ProviderFamily<DrinkDetails, String> drinkDetailsProvider =
-    Provider.family<DrinkDetails, String>((ref, slug) {
+final ProviderFamily<ItemState, String> itemStateProvider =
+    Provider.family<ItemState, String>((ref, slug) {
       final items = ref.watch(catalogItemsProvider).value;
       final categories = ref.watch(catalogCategoriesProvider).value;
-      if (items == null || categories == null) return const DrinkLoading();
+      if (items == null || categories == null) return const ItemLoading();
       final item = items.where((i) => i.slug == slug).firstOrNull;
-      if (item == null) return const DrinkMissing();
+      if (item == null) return const ItemMissing();
 
       final byId = {for (final c in categories) c.id: c};
       var category = byId[item.categoryId];
@@ -53,7 +53,7 @@ final ProviderFamily<DrinkDetails, String> drinkDetailsProvider =
       ) {
         category = byId[category.parentId];
       }
-      return DrinkFound(
+      return ItemFound(
         item: item,
         traitSchema: category?.traitSchema,
         similar: const SimilarItems()(item, items),
