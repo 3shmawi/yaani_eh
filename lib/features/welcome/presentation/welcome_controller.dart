@@ -20,11 +20,8 @@ enum WelcomeExit {
   /// «تخطّي» on the first pages.
   skip,
 
-  /// «افتح المنيو على طول» on the last page.
-  menu,
-
-  /// «قولنا ذوقك» on the last page: the quiz next.
-  taste,
+  /// «يلا بينا» on the last page: Home next.
+  start,
 }
 
 class WelcomeSeen extends Notifier<bool> {

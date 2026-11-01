@@ -11,7 +11,6 @@ import 'package:yaani_eh/l10n/l10n.dart';
 /// catalog's own names (content, not UI copy).
 const _menu = ['Flat White', 'Cortado', 'Affogato', 'Cold Brew'];
 const _affogato = 'Affogato';
-const _match = 'Iced Spanish Latte';
 
 /// A flat white, for the cup on the second page.
 const _flatWhite = Recipe(
@@ -31,7 +30,7 @@ const _flatWhite = Recipe(
 class WelcomeArt extends StatelessWidget {
   const new menu({super.key}) : _page = 0;
   const new hear({super.key}) : _page = 1;
-  const new taste({super.key}) : _page = 2;
+  const new more({super.key}) : _page = 2;
 
   final int _page;
 
@@ -46,7 +45,7 @@ class WelcomeArt extends StatelessWidget {
         child: switch (_page) {
           0 => const _MenuArt(),
           1 => const _HearArt(),
-          _ => const _TasteArt(),
+          _ => const _MoreArt(),
         },
       ),
     ),
@@ -311,19 +310,19 @@ class _HearArt extends StatelessWidget {
   }
 }
 
-/// Taste chips, some chosen, and a drink «على ذوقك».
-class _TasteArt extends StatelessWidget {
+/// What's in it for you: the sections (more coming), a saved item, and
+/// «works offline».
+class _MoreArt extends StatelessWidget {
   const new();
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final chips = [
-      (l10n.recipeCold, true),
-      (l10n.recipeHot, false),
-      (l10n.welcomeArtSweet, true),
-      (l10n.welcomeArtMilk, true),
-      (l10n.welcomeArtStrong, false),
+      (l10n.welcomeArtSectionMenus, true),
+      (l10n.welcomeArtSectionTerms, false),
+      (l10n.welcomeArtSectionHistory, false),
+      (l10n.welcomeArtSectionMore, false),
     ];
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -363,23 +362,13 @@ class _TasteArt extends StatelessWidget {
         SizedBox(height: AppDimens.space4),
         _BandCard(
           child: Padding(
-            padding: EdgeInsetsDirectional.all(AppDimens.space3),
+            padding: EdgeInsetsDirectional.all(AppDimens.space4),
             child: Row(
               children: [
-                Container(
-                  width: AppDimens.welcomeMatchPhotoWidth,
-                  height: AppDimens.welcomeMatchPhotoHeight,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(AppDimens.radiusMd),
-                    gradient: const LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        AppColors.layerCondensed,
-                        AppColors.layerMilkCoffee,
-                      ],
-                    ),
-                  ),
+                Icon(
+                  AppIconsFill.heart,
+                  color: AppColors.bandAccent,
+                  size: AppDimens.icon,
                 ),
                 SizedBox(width: AppDimens.space3),
                 Expanded(
@@ -387,22 +376,14 @@ class _TasteArt extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        l10n.tasteForYou,
-                        style: _style(
-                          context,
-                          TextRole.caption,
-                          AppColors.bandAccent,
-                        ),
-                      ),
-                      Text(
-                        _match,
+                        l10n.welcomeArtSavedWord,
                         style: AppTextStyles.forText(
-                          _match,
+                          l10n.welcomeArtSavedWord,
                           TextRole.headline,
                         ).copyWith(color: AppColors.bandCardInk),
                       ),
                       Text(
-                        l10n.welcomeArtMatch,
+                        l10n.welcomeArtSavedMeaning,
                         style: _style(
                           context,
                           TextRole.caption,
@@ -412,14 +393,25 @@ class _TasteArt extends StatelessWidget {
                     ],
                   ),
                 ),
-                Icon(
-                  AppIcons.heart,
-                  color: AppColors.bandAccent,
-                  size: AppDimens.icon,
-                ),
               ],
             ),
           ),
+        ),
+        SizedBox(height: AppDimens.space3),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              AppIcons.wifiSlash,
+              color: AppColors.onHeaderMuted,
+              size: AppDimens.iconChip,
+            ),
+            SizedBox(width: AppDimens.space2),
+            Text(
+              l10n.welcomeArtOffline,
+              style: _style(context, TextRole.label, AppColors.onHeaderMuted),
+            ),
+          ],
         ),
       ],
     );

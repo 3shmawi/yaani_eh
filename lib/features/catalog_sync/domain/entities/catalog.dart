@@ -24,7 +24,7 @@ class CatalogCategory {
   final String nameEn;
   final String? icon;
 
-  /// Sections only: the traits the taste quiz asks about (raw JSON list).
+  /// Sections only: the traits its items show (raw JSON list).
   final List<Object?>? traitSchema;
   final int sortOrder;
 
