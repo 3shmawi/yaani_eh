@@ -148,3 +148,15 @@ section at a glance. If b is picked, it also adds:
   ~34 pt, under the 48 pt touch target; it's now at least 48.
 - Not changed here (Step 4): the café wording («اطلب وإنت فاهم», the search
   hint, «مشروب النهارده»).
+
+## As built
+`./scripts/screens.sh` after the change (glass in its solid look):
+Home, Home scrolled, a section, its cards, an empty section.
+![built, Arabic](0004-home-header/built_phone_ar.jpg)
+![built, English](0004-home-header/built_phone_en.jpg)
+
+At 1.6× text (393 pt and 320 pt), and the Settings tab:
+![built, large text](0004-home-header/built_large_text.jpg)
+
+iPad 1032×1376, 1376×1032 (Home and a section), 1032×1376 at 1.6×:
+![built, iPad](0004-home-header/built_tablet.jpg)
