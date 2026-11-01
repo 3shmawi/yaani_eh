@@ -11,7 +11,7 @@ import 'package:yaani_eh/core/widgets/search_field.dart';
 import 'package:yaani_eh/core/widgets/state_views.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/item_details/domain/usecases/describe_item.dart';
-import 'package:yaani_eh/features/smart_search/domain/usecases/search_menu.dart';
+import 'package:yaani_eh/features/smart_search/domain/usecases/search_items.dart';
 import 'package:yaani_eh/features/smart_search/presentation/widgets/answer_card.dart';
 import 'package:yaani_eh/features/smart_search/presentation/widgets/result_row.dart';
 import 'package:yaani_eh/l10n/l10n.dart';

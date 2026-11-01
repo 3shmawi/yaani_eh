@@ -4,7 +4,7 @@ import 'package:yaani_eh/core/text/bidi.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_text_styles.dart';
-import 'package:yaani_eh/core/widgets/drink_photo.dart';
+import 'package:yaani_eh/core/widgets/item_photo.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/smart_search/domain/entities/search_text.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
@@ -31,7 +31,7 @@ class ResultRow extends StatelessWidget {
     final p = context.palette;
     final arabic = Localizations.localeOf(context).languageCode == 'ar';
     final explanation = arabic ? item.explanationAr : item.explanationEn;
-    final meta = drinkMeta(context, item);
+    final meta = itemMeta(context, item);
     final radius = BorderRadius.circular(AppDimens.radiusLg);
     return Semantics(
       button: onTap != null,
@@ -58,7 +58,7 @@ class ResultRow extends StatelessWidget {
                     top: 0,
                     bottom: 0,
                     width: AppDimens.rowImage,
-                    child: DrinkPhoto(
+                    child: ItemPhoto(
                       name: item.menuName,
                       imagePath: item.imagePath,
                       size: PhotoSize.thumbnail,
@@ -156,7 +156,7 @@ TextSpan highlighted(BuildContext context, String text, Set<String> highlight) {
 
 /// "70–150 EGP" when prices are shown and known, else "190 kcal", else
 /// null.
-String? drinkMeta(BuildContext context, CatalogItem item) {
+String? itemMeta(BuildContext context, CatalogItem item) {
   final l10n = context.l10n;
   final min = item.priceMinEgp;
   final max = item.priceMaxEgp ?? min;

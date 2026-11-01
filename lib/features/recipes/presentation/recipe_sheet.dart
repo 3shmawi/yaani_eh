@@ -10,10 +10,10 @@ import 'package:yaani_eh/features/recipes/presentation/recipe_view.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
 /// Where «طريقة التحضير» was opened from (analytics).
-enum RecipeSource { preview, drinkPage }
+enum RecipeSource { preview, itemPage }
 
 /// Opens «طريقة التحضير» for [item] in a glass sheet; «خطوة بخطوة» closes
-/// it and opens `/drink/<slug>/steps`. Does nothing for a drink without a
+/// it and opens `/item/<slug>/steps`. Does nothing for an item without a
 /// recipe (callers hide the way in).
 Future<void> showRecipeSheet(
   BuildContext context,
@@ -23,7 +23,7 @@ Future<void> showRecipeSheet(
   final recipe = item.recipe;
   if (recipe == null) return;
   unawaited(
-    Analytics.capture('recipe_opened', {'drink': item.slug, 'from': from.name}),
+    Analytics.capture('recipe_opened', {'item': item.slug, 'from': from.name}),
   );
   final router = GoRouter.maybeOf(context);
   await showAppSheet(
@@ -36,7 +36,7 @@ Future<void> showRecipeSheet(
       onStepByStep: () {
         Navigator.of(sheet).pop();
         if (router != null) {
-          unawaited(router.push<void>(AppRoutes.drinkSteps(item.slug)));
+          unawaited(router.push<void>(AppRoutes.itemSteps(item.slug)));
         }
       },
     ),

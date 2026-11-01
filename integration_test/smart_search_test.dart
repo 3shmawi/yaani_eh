@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:yaani_eh/features/item_details/presentation/drink_view.dart';
+import 'package:yaani_eh/features/item_details/presentation/item_view.dart';
 import 'package:yaani_eh/features/smart_search/presentation/search_page.dart';
 import 'package:yaani_eh/features/smart_search/presentation/widgets/answer_card.dart';
 import 'package:yaani_eh/features/smart_search/presentation/widgets/result_row.dart';
@@ -52,6 +52,6 @@ void main() {
     await tester.tap(find.byType(ResultRow).first);
     await tester.pumpAndSettle();
     await beat(tester, 1800);
-    expect(find.byType(DrinkView), findsOneWidget);
+    expect(find.byType(ItemView), findsOneWidget);
   });
 }

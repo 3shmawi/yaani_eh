@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:yaani_eh/core/widgets/drink_card.dart';
+import 'package:yaani_eh/core/widgets/item_card.dart';
 
 import 'helpers/demo.dart';
 import 'helpers/demo_app.dart';
@@ -17,12 +17,12 @@ void main() {
     tester,
   ) async {
     await DemoApp.start(pageSize: 100);
-    await pumpUntil(tester, find.byKey(const Key('drink_of_the_day')));
+    await pumpUntil(tester, find.byKey(const Key('item_of_the_day')));
     await tester.pumpAndSettle();
     await beat(tester, 1200);
 
     // 1. Long-press Flat White, in the middle of the screen.
-    final card = find.widgetWithText(DrinkCard, 'Flat White');
+    final card = find.widgetWithText(ItemCard, 'Flat White');
     await tester.dragUntilVisible(
       card,
       find.byType(Scrollable).first,
@@ -67,6 +67,6 @@ void main() {
     await tester.pumpAndSettle();
     await beat(tester, 1200);
     expect(find.byKey(const Key('step_by_step')), findsNothing);
-    expect(find.widgetWithText(DrinkCard, 'Flat White'), findsOneWidget);
+    expect(find.widgetWithText(ItemCard, 'Flat White'), findsOneWidget);
   });
 }

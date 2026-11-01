@@ -6,10 +6,10 @@ import 'package:yaani_eh/core/analytics/analytics.dart';
 import 'package:yaani_eh/core/monitoring/monitoring.dart';
 import 'package:yaani_eh/core/router/app_routes.dart';
 import 'package:yaani_eh/core/router/not_found_page.dart';
-import 'package:yaani_eh/features/browse_menu/presentation/menu_page.dart';
+import 'package:yaani_eh/features/browse/presentation/browse_page.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_page.dart';
 import 'package:yaani_eh/features/favorites/presentation/favorites_page.dart';
-import 'package:yaani_eh/features/item_details/presentation/drink_page.dart';
+import 'package:yaani_eh/features/item_details/presentation/item_page.dart';
 import 'package:yaani_eh/features/recipes/presentation/step_by_step_page.dart';
 import 'package:yaani_eh/features/settings/presentation/settings_page.dart';
 import 'package:yaani_eh/features/smart_search/presentation/search_page.dart';
@@ -23,6 +23,8 @@ final rootNavigatorKey = GlobalKey<NavigatorState>();
 final appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
   initialLocation: AppRoutes.home,
+  // Old `/drink/...` links (shared before items were general) keep working.
+  redirect: (context, state) => AppRoutes.fromLegacy(state.uri),
   observers: [
     ...Monitoring.navigatorObservers,
     ...Analytics.navigatorObservers,
@@ -59,7 +61,7 @@ final appRouter = GoRouter(
                   ? null
                   : AppRoutes.welcome,
               builder: (context, state) =>
-                  const CatalogSyncPage(child: MenuPage()),
+                  const CatalogSyncPage(child: BrowsePage()),
             ),
           ],
         ),
@@ -75,18 +77,17 @@ final appRouter = GoRouter(
       ],
     ),
     GoRoute(
-      path: AppRoutes.drinkPattern,
+      path: AppRoutes.itemPattern,
       // Untrusted input (deep links): anything that isn't a slug is a 404.
       redirect: (context, state) {
         final slug = state.pathParameters['slug'] ?? '';
         return AppRoutes.slugPattern.hasMatch(slug) ? null : '/not-found';
       },
-      builder: (context, state) => CatalogSyncPage(
-        child: DrinkPage(slug: state.pathParameters['slug']!),
-      ),
+      builder: (context, state) =>
+          CatalogSyncPage(child: ItemPage(slug: state.pathParameters['slug']!)),
       routes: [
         GoRoute(
-          path: AppRoutes.drinkStepsSegment,
+          path: AppRoutes.itemStepsSegment,
           pageBuilder: (context, state) => MaterialPage(
             key: state.pageKey,
             fullscreenDialog: true,

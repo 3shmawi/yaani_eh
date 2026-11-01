@@ -1,4 +1,4 @@
-# Feature: browse menu
+# Feature: browse (Home)
 
 > Keep this page current — it is how a new developer or AI agent learns the feature.
 
@@ -30,20 +30,20 @@ app update.
 4. Offline → same screen from the device, with the offline pill.
 
 ## Architecture
-- Layers / main files: `lib/features/browse_menu/`
-  - `domain/usecases/build_menu.dart` — `BuildMenu` (pure): the tabs
+- Layers / main files: `lib/features/browse/`
+  - `domain/usecases/build_browse.dart` — `BuildBrowse` (pure): the tabs
     (every section, in order; one without drinks is coming soon), the open
     tab (the first with drinks when none is chosen or it vanished in a
     sync), its chips (only categories with drinks) and sections, and the
     drink of the day from the open tab (stable for a day, by date).
-  - `presentation/menu_controller.dart` — `selectedTabProvider`,
-    `menuProvider` (rebuilds when the catalog syncs), `todayProvider`.
-  - `presentation/menu_page.dart` → `menu_view.dart` (Main artboard);
-    widgets `DrinkCard` (`core/widgets/drink_card.dart`), `DrinkOfTheDay`.
+  - `presentation/browse_controller.dart` — `selectedTabProvider`,
+    `browseProvider` (rebuilds when the catalog syncs), `todayProvider`.
+  - `presentation/browse_page.dart` → `browse_view.dart` (Main artboard);
+    widgets `ItemCard` (`core/widgets/item_card.dart`), `ItemOfTheDay`.
   - The «يعني» line: `CatalogItem.gist(arabic:)` — `gist_ar` / `gist_en`
     from `catalog_sync`, or the explanation's first sentence until a drink
     has one.
-  - Shared: `core/widgets/category_chips.dart`, `core/widgets/drink_photo.dart`
+  - Shared: `core/widgets/category_chips.dart`, `core/widgets/item_photo.dart`
     (cached photo or brand gradient + initial), `core/backend/media.dart`
     (public Storage URLs), `AppGlass(minimal: true)` for many cards.
 - State: Riverpod.
@@ -53,30 +53,30 @@ app update.
 ## Analytics events
 | Event | When | Properties |
 |---|---|---|
-| `menu_section_selected` | a section is opened in the switch | `section` (slug), `coming_soon` (bool: it has no items yet; tells us how many people look for desserts) |
-| `menu_category_selected` | a chip is tapped (the list scrolls to it) | `category` (slug) |
+| `browse_section_selected` | a section is opened in the switch | `section` (slug), `coming_soon` (bool: it has no items yet; tells us how many people look for desserts) |
+| `browse_category_selected` | a chip is tapped (the list scrolls to it) | `category` (slug) |
 
 ## Feature flags
 None.
 
 ## Tests
-- Unit: `test/features/browse_menu/domain/usecases/build_menu_test.dart` —
+- Unit: `test/features/browse/domain/usecases/build_browse_test.dart` —
   the first section with drinks opens, a section without drinks is coming
   soon, a vanished section falls back, desserts go live with their first
   item, empty categories get no chip.
-- Widget: `test/features/browse_menu/presentation/menu_page_test.dart` —
+- Widget: `test/features/browse/presentation/browse_page_test.dart` —
   states (loading, empty, coming soon), the switch, a chip scrolling to its
   category and lighting up in the pinned row, the pinned row hiding again,
   one section without a switch,
-  `DrinkCard` (name, spelling, «يعني» line and its fallback, no price,
+  `ItemCard` (name, spelling, «يعني» line and its fallback, no price,
   cards in a row line up, press feedback and Reduce Motion, one
   screen-reader label), the entry stagger, Arabic / dark / small phone
   with 1.3× text / tablet, `expectAccessible`.
-- Integration (demo): `integration_test/browse_menu_test.dart`.
+- Integration (demo): `integration_test/browse_test.dart`.
 
 ## Decisions & edge cases
 - Photos: cards and the drink of the day load the **thumbnail**
-  (`DrinkPhoto(size: PhotoSize.thumbnail)` → `<name>.thumb.webp`, ~35 KB),
+  (`ItemPhoto(size: PhotoSize.thumbnail)` → `<name>.thumb.webp`, ~35 KB),
   falling back to the full photo when it's missing (docs/content.md →
   Photos and thumbnails). Decoded at the card's size on screen
   (`memCacheWidth`), cached on the phone after the first view
@@ -96,10 +96,10 @@ None.
 - Motion (`AppMotion`, all off with Reduce Motion): the first 8 cards rise
   in one after another (`AppReveal`, 280 ms, 45 ms apart, once); a card
   shrinks to 0.97 while pressed (`AppPressable`; a scroll cancels it); its
-  photo flies into the drink page (`Hero`, `DrinkCard.heroTag`, Home grid
+  photo flies into the drink page (`Hero`, `ItemCard.heroTag`, Home grid
   only so a tag is never on screen twice).
 - The search field in the header opens `smart_search`.
-- The speaker button (`pronunciation`, through `MenuView.cardAction`) sits
+- The speaker button (`pronunciation`, through `BrowseView.cardAction`) sits
   in the drink of the day's top-end corner and each card's top-start
   corner, for drinks that have a clip; it plays without opening the drink.
 - Header order: search first (what most people came for), then the
@@ -120,10 +120,10 @@ None.
   espresso band and glared in dark mode; the page colour fails in dark
   (1.3:1 against the band).
 - From `favorites`: the heart in each card's top-end corner, the long-press
-  preview (`MenuView.onPreviewItem`) and the floating tab bar, which Home
+  preview (`BrowseView.onPreviewItem`) and the floating tab bar, which Home
   sits under (its list ends `AppDimens.tabBarHeight` higher). Cards and the
   drink of the day open the drink (`item_details`). The grid is the shared
-  `DrinkGrid` (`core/widgets/drink_grid.dart`), the same as Favorites.
+  `ItemGrid` (`core/widgets/item_grid.dart`), the same as Favorites.
 - Calories are labelled approximate at the end of the list («السعرات
   تقريبية»).
 
@@ -150,3 +150,10 @@ what it is. Flutter, Liquid Glass controls, content in Supabase.
 الاسم زي ما هو مكتوب، بيتقال إزاي، ويعني إيه.
 
 **Hashtags:** #flutter #buildinpublic #liquidglass #supabase #yaanieh
+
+### Renamed to «browse» (generic names)
+The feature was `browse_menu` with `MenuPage`/`DrinkCard`; it's now
+`browse` with `BrowsePage`/`ItemCard`, since Home will hold more than café
+menus (terms, history). Analytics events were renamed with it
+(`menu_*` → `browse_*`, `drink_*` → `item_*`, property `drink` → `item`):
+dashboards must use the new names from this release on. No visual change.

@@ -3,11 +3,11 @@ import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_text_styles.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
-import 'package:yaani_eh/core/widgets/drink_photo.dart';
+import 'package:yaani_eh/core/widgets/item_photo.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
-/// The browse unit (Design System → DrinkCard): a 3:4 photo tile with its
+/// The browse unit (Design System → ItemCard): a 3:4 photo tile with its
 /// controls in clear glass and, at its bottom, over a soft shadow (no box),
 ///
 /// 1. the menu name, exactly as cafe menus print it (to find it),
@@ -20,7 +20,7 @@ import 'package:yaani_eh/l10n/l10n.dart';
 ///    shows whole; it always takes at least two lines so a row lines up.
 ///
 /// No price here: the drink page has it.
-class DrinkCard extends StatelessWidget {
+class ItemCard extends StatelessWidget {
   const new({
     required this.item,
     this.onTap,
@@ -55,7 +55,7 @@ class DrinkCard extends StatelessWidget {
   final bool hero;
 
   /// The drink page's photo uses the same tag.
-  static Object heroTag(String itemId) => 'drink_photo_$itemId';
+  static Object heroTag(String itemId) => 'item_photo_$itemId';
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +69,7 @@ class DrinkCard extends StatelessWidget {
         ? AppColors.photoScrimStrong
         : AppColors.photoScrim;
 
-    Widget picture = DrinkPhoto(
+    Widget picture = ItemPhoto(
       name: item.menuName,
       imagePath: item.imagePath,
       size: PhotoSize.thumbnail,
@@ -158,7 +158,7 @@ class DrinkCard extends StatelessWidget {
       ),
     );
     if (!compact) {
-      photo = AspectRatio(aspectRatio: DrinkPhoto.aspectRatio, child: photo);
+      photo = AspectRatio(aspectRatio: ItemPhoto.aspectRatio, child: photo);
     }
 
     final body = gist == null
@@ -174,7 +174,7 @@ class DrinkCard extends StatelessWidget {
                   start: AppDimens.space1,
                   end: AppDimens.space1,
                 ),
-                child: ExcludeSemantics(child: DrinkMeaning(gist: gist)),
+                child: ExcludeSemantics(child: ItemMeaning(gist: gist)),
               ),
             ],
           );
@@ -203,7 +203,7 @@ class DrinkCard extends StatelessWidget {
 /// «يعني قهوة بلبن كتير»: the lead word in `brand`, the meaning in ink.
 /// Takes at least [minLines] of space, so the cards in a row line up, and
 /// shows whole however long it is.
-class DrinkMeaning extends StatelessWidget {
+class ItemMeaning extends StatelessWidget {
   const new({required this.gist, this.minLines = 2, super.key});
 
   final String gist;

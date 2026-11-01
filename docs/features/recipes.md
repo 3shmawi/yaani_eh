@@ -20,7 +20,7 @@ Designed in https://claude.ai/artifact/5pzpJCAdghkuTqHCNBotax (screens 2–4).
 3. In the sheet → «خطوة بخطوة» → one step per page; swipe or «الخطوة
    الجاية»; the back chevron goes one step back; the last button is «خلصت،
    بالهنا» and closes it. The ✕ closes it any time.
-4. A link `yaanieh://drink/flat_white/steps` opens step by step over the
+4. A link `yaanieh://item/flat_white/steps` opens step by step over the
    drink page.
 5. A drink without a recipe has no row in the preview or on its page; a
    steps link to it (or to an unknown drink) says «لسه مكتبناش طريقة
@@ -39,7 +39,7 @@ Designed in https://claude.ai/artifact/5pzpJCAdghkuTqHCNBotax (screens 2–4).
     drink again).
 - Presentation: `lib/features/recipes/presentation/`
   - `recipe_sheet.dart`: `showRecipeSheet(context, item, from:)` (analytics,
-    `showAppSheet`), and «خطوة بخطوة» → `/drink/<slug>/steps`.
+    `showAppSheet`), and «خطوة بخطوة» → `/item/<slug>/steps`.
   - `recipe_view.dart`: `RecipeView` (header, cup + legend, facts, steps,
     button), `RecipeStepRow`, `AmountTag`.
   - `widgets/recipe_cup.dart`: `RecipeCup` + `CupPainter`, `CupShape`.
@@ -48,16 +48,16 @@ Designed in https://claude.ai/artifact/5pzpJCAdghkuTqHCNBotax (screens 2–4).
   - `step_by_step_page.dart` → `step_by_step_view.dart`.
 - Shared building blocks: `showAppSheet` / `AppSheet` and
   `AppButtonKind.band` (+ `expand`) in `app_ui.dart`.
-- State: Riverpod (`drinkDetailsProvider` from `item_details`).
-- Routes / deep links: `/drink/:slug/steps` (`AppRoutes.drinkSteps`), a
+- State: Riverpod (`itemStateProvider` from `item_details`).
+- Routes / deep links: `/item/:slug/steps` (`AppRoutes.itemSteps`), a
   child of the drink route, so the slug rule applies (docs/deep_links.md).
 
 ## Analytics events
 | Event | When | Properties |
 |---|---|---|
-| `recipe_opened` | the sheet opens | `drink` (slug), `from` (`preview`, `drinkPage`) |
-| `recipe_step_mode_started` | step by step opens | `drink` |
-| `recipe_finished` | «خلصت، بالهنا» on the last step | `drink` |
+| `recipe_opened` | the sheet opens | `item` (slug), `from` (`preview`, `itemPage`) |
+| `recipe_step_mode_started` | step by step opens | `item` |
+| `recipe_finished` | «خلصت، بالهنا» on the last step | `item` |
 
 ## Feature flags
 None.
@@ -78,13 +78,13 @@ None.
   Motion), step by step (next / previous / swipe, a selection haptic per
   step, done and close, RTL swipe, small phone, `expectAccessible`), the
   page (found, no recipe, unknown drink). The preview row and the drink-page
-  row: `favorites_test.dart`, `drink_page_test.dart`.
+  row: `favorites_test.dart`, `item_page_test.dart`.
 - Database: `supabase/tests/catalog_rls.test.sql` (every drink has a
   recipe; malformed ones are rejected; anon reads, can't change).
 - Security: `test/security/deep_link_test.dart` — steps links open step by
   step (also with crafted queries), close goes back to the drink, a drink
   without a recipe or an unknown one says so, crafted paths
-  (`/drink/../steps`, capitals, SQL, `/steps/1`, `//steps`) show not-found.
+  (`/item/../steps` and `/drink/../steps`, capitals, SQL, `/steps/1`, `//steps`) show not-found.
 - Integration (demo): `integration_test/recipes_test.dart`.
 
 ## Decisions & edge cases

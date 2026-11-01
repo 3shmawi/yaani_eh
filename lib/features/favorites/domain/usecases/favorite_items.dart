@@ -4,7 +4,7 @@ import 'package:yaani_eh/features/favorites/domain/entities/favorite.dart';
 /// The saved drinks that are still on the menu, newest first. A saved
 /// drink that was hidden or removed in a sync is left out (and comes back
 /// if it's published again).
-class FavoriteDrinks {
+class FavoriteItems {
   const new();
 
   List<CatalogItem> call({

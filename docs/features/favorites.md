@@ -28,26 +28,26 @@ a «جديد» tag; feature `recipes`), «احفظ في المفضلة» / «ش�
 ## Architecture
 - Layers / main files: `lib/features/favorites/`
   - `domain/`: `Favorite`, `FavoritesRepository` (watch, add, remove),
-    `FavoriteDrinks` (saved drinks still on the menu, newest first).
+    `FavoriteItems` (saved drinks still on the menu, newest first).
   - `data/`: `FavoritesDatabase` (its own drift file `favorites`, apart from
     the menu copy, so a menu resync never touches it) and
     `FavoritesRepositoryImpl` (`guard`, no retries: it's local). Saving
     twice keeps the first date. Dates are kept to the second, so two drinks
     saved in the same second come back last-saved first (by row id).
   - `presentation/`: `favorites_controller.dart` (`favoritesProvider`,
-    `favoriteIdsProvider`, `favoriteDrinksProvider`,
+    `favoriteIdsProvider`, `favoriteItemsProvider`,
     `FavoritesController.toggle`), `FavoriteButton`, `FavoritesPage` →
-    `FavoritesView`, `drink_preview.dart` (`showDrinkPreview`,
-    `DrinkPreview`).
+    `FavoritesView`, `item_preview.dart` (`showItemPreview`,
+    `ItemPreview`).
 - Shared building blocks (`lib/core/`):
   - `AppTabScaffold` + `AppTab` (`app_ui.dart`): the glass tab bar
     (`GlassTabBar.bottom`), with a count badge.
   - `showAppPreviewMenu` + `AppPreviewAction` (`app_ui.dart`): the
     long-press preview.
   - `AppIconButton(selectedLook: AppSelectedLook.chosen)`: the saved heart.
-  - `DrinkGrid` (`core/widgets/drink_grid.dart`): the cards of Home and
+  - `ItemGrid` (`core/widgets/item_grid.dart`): the cards of Home and
     Favorites.
-  - `DrinkCard.trailingAction` / `onLongPress`.
+  - `ItemCard.trailingAction` / `onLongPress`.
 - Tabs: `app/app_tabs_shell.dart`, a `StatefulShellRoute` in
   `app_router.dart` with one navigator per tab, so each keeps its scroll.
   Drink, search and settings pages cover the tab bar.
@@ -59,9 +59,9 @@ a «جديد» tag; feature `recipes`), «احفظ في المفضلة» / «ش�
 ## Analytics events
 | Event | When | Properties |
 |---|---|---|
-| `favorite_added` | a drink is saved | `drink` (slug), `from` (`card`, `drinkPage`, `preview`, `favorites`) |
-| `favorite_removed` | a drink is removed | `drink`, `from` |
-| `drink_previewed` | the long-press preview opens | `drink` |
+| `favorite_added` | a drink is saved | `item` (slug), `from` (`card`, `itemPage`, `preview`, `favorites`) |
+| `favorite_removed` | a drink is removed | `item`, `from` |
+| `item_previewed` | the long-press preview opens | `item` |
 
 ## Feature flags
 None.
@@ -70,7 +70,7 @@ None.
 - Unit: `test/features/favorites/data/repositories/favorites_repository_impl_test.dart`
   (fresh install, newest first, remove, saving twice keeps the first date,
   the stream follows every change, an injection-like id stays data),
-  `test/features/favorites/domain/favorite_drinks_test.dart`.
+  `test/features/favorites/domain/favorite_items_test.dart`.
 - Widget: `test/features/favorites/presentation/favorites_test.dart` — the
   heart (save, remove, labels, the chosen look, a failed write changes
   nothing), Favorites (loading, empty with its way back, cards and count,

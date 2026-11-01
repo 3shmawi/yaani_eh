@@ -8,7 +8,7 @@ import 'package:file/memory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:yaani_eh/core/widgets/drink_photo.dart';
+import 'package:yaani_eh/core/widgets/item_photo.dart';
 
 import '../../helpers/pump_app.dart';
 
@@ -68,7 +68,7 @@ Widget _photo(
 }) => Center(
   child: SizedBox.fromSize(
     size: box,
-    child: DrinkPhoto(
+    child: ItemPhoto(
       key: key,
       name: 'Latte',
       imagePath: path,
@@ -90,7 +90,7 @@ void main() {
 
   setUp(() {
     cache = _FakeCache();
-    DrinkPhoto.resetKnownMissing();
+    ItemPhoto.resetKnownMissing();
     PaintingBinding.instance.imageCache
       ..clear()
       ..clearLiveImages();
@@ -98,23 +98,23 @@ void main() {
 
   tearDown(() => cache.closePending());
 
-  group('DrinkPhoto.decodeWidth', () {
+  group('ItemPhoto.decodeWidth', () {
     test('the box width in pixels for a 3:4 box or a wider one', () {
-      expect(DrinkPhoto.decodeWidth(const Size(120, 160), 3), 360);
-      expect(DrinkPhoto.decodeWidth(const Size(343, 190), 2), 686);
-      expect(DrinkPhoto.decodeWidth(const Size(100.2, 50), 2), 201);
+      expect(ItemPhoto.decodeWidth(const Size(120, 160), 3), 360);
+      expect(ItemPhoto.decodeWidth(const Size(343, 190), 2), 686);
+      expect(ItemPhoto.decodeWidth(const Size(100.2, 50), 2), 201);
     });
 
     test('wider than the box when the box is taller than 3:4 (cover)', () {
       // 104×200 box: the photo is scaled to 200 high → 150 wide.
-      expect(DrinkPhoto.decodeWidth(const Size(104, 200), 3), 450);
+      expect(ItemPhoto.decodeWidth(const Size(104, 200), 3), 450);
     });
 
     test('no finite size → decode as is', () {
-      expect(DrinkPhoto.decodeWidth(Size.infinite, 3), isNull);
-      expect(DrinkPhoto.decodeWidth(Size.zero, 3), isNull);
-      expect(DrinkPhoto.decodeWidth(const Size(100, 100), 0), isNull);
-      expect(DrinkPhoto.decodeWidth(const Size(100, double.infinity), 2), 200);
+      expect(ItemPhoto.decodeWidth(Size.infinite, 3), isNull);
+      expect(ItemPhoto.decodeWidth(Size.zero, 3), isNull);
+      expect(ItemPhoto.decodeWidth(const Size(100, 100), 0), isNull);
+      expect(ItemPhoto.decodeWidth(const Size(100, double.infinity), 2), 200);
     });
   });
 
@@ -144,7 +144,7 @@ void main() {
 
       expect(cache.requests, [_thumb, _full]);
       expect(_shown(tester), contains(_full));
-      expect(DrinkPhoto.isKnownMissing(_thumb), isTrue);
+      expect(ItemPhoto.isKnownMissing(_thumb), isTrue);
 
       // Another card for the same drink goes straight to the full photo.
       await tester.pumpApp(
@@ -163,7 +163,7 @@ void main() {
       await tester.pump();
 
       expect(cache.requests, [_thumb, _full]);
-      expect(DrinkPhoto.isKnownMissing(_thumb), isFalse);
+      expect(ItemPhoto.isKnownMissing(_thumb), isFalse);
 
       cache.errors.clear();
       PaintingBinding.instance.imageCache.clear();

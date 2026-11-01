@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
-import 'package:yaani_eh/features/smart_search/domain/usecases/search_menu.dart';
+import 'package:yaani_eh/features/smart_search/domain/usecases/search_items.dart';
 
 /// The search index, rebuilt whenever the catalog syncs.
-final searchIndexProvider = Provider<SearchMenu?>((ref) {
+final searchIndexProvider = Provider<SearchItems?>((ref) {
   final items = ref.watch(catalogItemsProvider).value;
-  return items == null ? null : SearchMenu(items);
+  return items == null ? null : SearchItems(items);
 });
 
 /// Extra ranking signals; none yet (override to add some).

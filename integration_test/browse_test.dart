@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:yaani_eh/core/widgets/drink_card.dart';
+import 'package:yaani_eh/core/widgets/item_card.dart';
 
 import 'helpers/demo.dart';
 import 'helpers/demo_app.dart';
@@ -25,18 +25,18 @@ void main() {
     await DemoApp.start(pageSize: 100);
 
     // 1. Home: drink of the day, then the coffee cards.
-    await pumpUntil(tester, find.byKey(const Key('drink_of_the_day')));
+    await pumpUntil(tester, find.byKey(const Key('item_of_the_day')));
     await tester.pumpAndSettle();
     await beat(tester, 1800);
 
     // 2. Scroll through the glass cards (any screen size).
-    final list = find.byKey(const Key('menu_list'));
+    final list = find.byKey(const Key('browse_list'));
     await tester.dragUntilVisible(
-      find.byType(DrinkCard).first,
+      find.byType(ItemCard).first,
       list,
       const Offset(0, -200),
     );
-    expect(find.byType(DrinkCard), findsWidgets);
+    expect(find.byType(ItemCard), findsWidgets);
     await tester.drag(list, const Offset(0, -450));
     await tester.pumpAndSettle();
     await beat(tester, 1200);
@@ -54,7 +54,7 @@ void main() {
     );
     await tester.dragUntilVisible(meaning, list, const Offset(0, -150));
     // The whole card in the middle of the screen, like a thumb would put it.
-    final flatWhite = find.widgetWithText(DrinkCard, 'Flat White');
+    final flatWhite = find.widgetWithText(ItemCard, 'Flat White');
     await Scrollable.ensureVisible(tester.element(flatWhite), alignment: 0.5);
     await tester.pumpAndSettle();
     await beat(tester, 1500);
@@ -64,8 +64,8 @@ void main() {
     await tester.tap(flatWhite);
     await tester.pumpAndSettle();
     await beat(tester, 1500);
-    expect(find.byKey(const Key('drink_back')), findsOneWidget);
-    await tester.tap(find.byKey(const Key('drink_back')));
+    expect(find.byKey(const Key('item_back')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('item_back')));
     await tester.pumpAndSettle();
     await beat(tester);
     await tester.drag(list, const Offset(0, 1200));
@@ -102,14 +102,14 @@ void main() {
     );
     await tester.pumpAndSettle();
     await beat(tester, 1800);
-    expect(find.byKey(const Key('menu_coming_soon')), findsOneWidget);
-    expect(find.byType(DrinkCard), findsNothing);
+    expect(find.byKey(const Key('browse_coming_soon')), findsOneWidget);
+    expect(find.byType(ItemCard), findsNothing);
     final back = either('See what’s here now', 'شوف المتاح دلوقتي');
     await tester.ensureVisible(back); // below the fold on small phones
     await tester.pumpAndSettle();
     await tester.tap(back);
     await tester.pumpAndSettle();
     await beat(tester, 1500);
-    expect(find.byKey(const Key('drink_of_the_day')), findsOneWidget);
+    expect(find.byKey(const Key('item_of_the_day')), findsOneWidget);
   });
 }

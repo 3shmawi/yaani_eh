@@ -4,13 +4,13 @@ import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_text_styles.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
-import 'package:yaani_eh/core/widgets/drink_photo.dart';
+import 'package:yaani_eh/core/widgets/item_photo.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
 /// The wide card at the top of Home: one drink a day, with its explanation
 /// right on the card (Home artboard).
-class DrinkOfTheDay extends StatelessWidget {
+class ItemOfTheDay extends StatelessWidget {
   const new({required this.item, this.onTap, this.action, super.key});
 
   final CatalogItem item;
@@ -29,7 +29,7 @@ class DrinkOfTheDay extends StatelessWidget {
     final card = Semantics(
       button: onTap != null,
       label:
-          '${l10n.drinkOfTheDay}: ${item.menuName}، ${item.menuNameAr}. '
+          '${l10n.itemOfTheDay}: ${item.menuName}، ${item.menuNameAr}. '
           '$explanation',
       onTap: onTap,
       child: ExcludeSemantics(
@@ -42,7 +42,7 @@ class DrinkOfTheDay extends StatelessWidget {
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: DrinkPhoto(
+                    child: ItemPhoto(
                       name: item.menuName,
                       imagePath: item.imagePath,
                       size: PhotoSize.thumbnail,
@@ -64,7 +64,7 @@ class DrinkOfTheDay extends StatelessWidget {
                               vertical: AppDimens.space1,
                             ),
                             child: Text(
-                              l10n.drinkOfTheDay,
+                              l10n.itemOfTheDay,
                               style: context
                                   .text(TextRole.caption)
                                   .copyWith(fontWeight: FontWeight.w600),

@@ -72,7 +72,7 @@ class PronunciationController extends Notifier<PronunciationState> {
         );
         unawaited(
           Analytics.capture('pronunciation_played', {
-            'drink': item.slug,
+            'item': item.slug,
             'voice': voice.name,
             'speed': speed.factor,
           }),
@@ -140,7 +140,7 @@ class PronunciationController extends Notifier<PronunciationState> {
     state = state.copyWith(playback: failed);
     unawaited(
       Analytics.capture('pronunciation_failed', {
-        'drink': item.slug,
+        'item': item.slug,
         'voice': voice.name,
         'reason': failureReason(failure),
       }),

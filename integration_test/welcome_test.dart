@@ -42,13 +42,13 @@ void main() {
 
     // 3. «يلا بينا»: Home, with the menu already downloaded.
     await tester.tap(find.byKey(const Key('welcome_start')));
-    await pumpUntil(tester, find.byKey(const Key('drink_of_the_day')));
+    await pumpUntil(tester, find.byKey(const Key('item_of_the_day')));
     await tester.pumpAndSettle();
     await beat(tester, 1200);
 
     // 4. Opened again: straight to Home.
     await app.relaunch(tester);
-    await pumpUntil(tester, find.byKey(const Key('drink_of_the_day')));
+    await pumpUntil(tester, find.byKey(const Key('item_of_the_day')));
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('welcome')), findsNothing);
     await beat(tester, 1000);

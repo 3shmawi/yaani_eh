@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:yaani_eh/core/widgets/drink_card.dart';
+import 'package:yaani_eh/core/widgets/item_card.dart';
 import 'package:yaani_eh/features/pronunciation/presentation/widgets/play_name_button.dart';
 import 'package:yaani_eh/features/pronunciation/presentation/widgets/pronounce_pill.dart';
 
@@ -20,7 +20,7 @@ void main() {
     tester,
   ) async {
     final app = await DemoApp.start(pageSize: 100);
-    await pumpUntil(tester, find.byKey(const Key('drink_of_the_day')));
+    await pumpUntil(tester, find.byKey(const Key('item_of_the_day')));
     await tester.pumpAndSettle();
     await beat(tester, 1200);
 
@@ -40,7 +40,7 @@ void main() {
     // 1. Home: the drink of the day's speaker.
     await tester.tap(
       find.descendant(
-        of: find.byKey(const Key('drink_of_the_day')),
+        of: find.byKey(const Key('item_of_the_day')),
         matching: find.byType(PlayNameButton),
       ),
     );
@@ -49,9 +49,9 @@ void main() {
     expect(app.player.played, hasLength(1));
 
     // 2. Open Flat White: the pill sits on its photo.
-    final menu = find.byKey(const Key('menu_list'));
+    final menu = find.byKey(const Key('browse_list'));
     Future<void> open(String name) async {
-      final card = find.widgetWithText(DrinkCard, name);
+      final card = find.widgetWithText(ItemCard, name);
       await tester.dragUntilVisible(card, menu, const Offset(0, -200));
       await tester.pumpAndSettle();
       await beat(tester);
@@ -86,7 +86,7 @@ void main() {
     await beat(tester);
 
     // 6. A drink never opened: it says why it can't play.
-    await tester.tap(find.byKey(const Key('drink_back')).last);
+    await tester.tap(find.byKey(const Key('item_back')).last);
     await tester.pumpAndSettle();
     await beat(tester);
     final unheard = sampleItems(withAudio: true).firstWhere(

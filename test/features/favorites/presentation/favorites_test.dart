@@ -4,13 +4,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:yaani_eh/core/network/app_failure.dart';
 import 'package:yaani_eh/core/theme/app_icons.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
-import 'package:yaani_eh/core/widgets/drink_card.dart';
+import 'package:yaani_eh/core/widgets/item_card.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
-import 'package:yaani_eh/features/favorites/presentation/drink_preview.dart';
 import 'package:yaani_eh/features/favorites/presentation/favorites_controller.dart';
 import 'package:yaani_eh/features/favorites/presentation/favorites_page.dart';
 import 'package:yaani_eh/features/favorites/presentation/favorites_view.dart';
+import 'package:yaani_eh/features/favorites/presentation/item_preview.dart';
 import 'package:yaani_eh/features/favorites/presentation/widgets/favorite_button.dart';
 
 import '../../../helpers/fake_catalog_repository.dart';
@@ -124,7 +124,7 @@ void main() {
       await pumpView(tester, drinks: items.take(3).toList());
       expect(find.text(l10nEn.favoritesTitle), findsOneWidget);
       expect(find.text(l10nEn.favoritesCount(3)), findsOneWidget);
-      expect(find.byType(DrinkCard), findsNWidgets(3));
+      expect(find.byType(ItemCard), findsNWidgets(3));
       await tester.expectAccessible();
     });
 
@@ -170,14 +170,14 @@ void main() {
         saved: [espresso.id, items[2].id],
       );
       final cards = tester
-          .widgetList<DrinkCard>(find.byType(DrinkCard))
+          .widgetList<ItemCard>(find.byType(ItemCard))
           .map((c) => c.item.slug)
           .toList();
       expect(cards, [items[2].slug, espresso.slug]);
 
       await tester.tap(find.byKey(Key('favorite_${espresso.slug}')));
       await tester.pumpAndSettle();
-      expect(find.byType(DrinkCard), findsOneWidget);
+      expect(find.byType(ItemCard), findsOneWidget);
       expect(find.text(l10nEn.favoritesCount(1)), findsOneWidget);
     });
   });
@@ -191,9 +191,9 @@ void main() {
         return Center(
           child: SizedBox(
             width: 170,
-            child: DrinkCard(
+            child: ItemCard(
               item: espresso,
-              onLongPress: () => showDrinkPreview(
+              onLongPress: () => showItemPreview(
                 context,
                 ref,
                 espresso,
@@ -211,9 +211,9 @@ void main() {
       final opened = <CatalogItem>[];
       final repo = await pumpScoped(tester, harness(opened.add));
 
-      await tester.longPress(find.byType(DrinkCard));
+      await tester.longPress(find.byType(ItemCard));
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('drink_preview')), findsOneWidget);
+      expect(find.byKey(const Key('item_preview')), findsOneWidget);
       expect(find.text('A tiny, strong cup of coffee'), findsWidgets);
       expect(find.byKey(const Key('preview_hear')), findsOneWidget);
       // Espresso has no recipe yet.
@@ -222,11 +222,11 @@ void main() {
 
       await tester.tap(find.byKey(const Key('preview_save')));
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('drink_preview')), findsNothing);
+      expect(find.byKey(const Key('item_preview')), findsNothing);
       expect(repo.saved, {espresso.id});
 
       // Saved: the row offers to remove it now.
-      await tester.longPress(find.byType(DrinkCard));
+      await tester.longPress(find.byType(ItemCard));
       await tester.pumpAndSettle();
       expect(find.text(l10nEn.previewUnsave), findsOneWidget);
       await tester.tap(find.byKey(const Key('preview_open')));
@@ -242,32 +242,32 @@ void main() {
           builder: (context, ref, _) => Center(
             child: SizedBox(
               width: 170,
-              child: DrinkCard(
+              child: ItemCard(
                 item: flatWhite,
                 onLongPress: () =>
-                    showDrinkPreview(context, ref, flatWhite, onOpen: () {}),
+                    showItemPreview(context, ref, flatWhite, onOpen: () {}),
               ),
             ),
           ),
         ),
       );
-      await tester.longPress(find.byType(DrinkCard));
+      await tester.longPress(find.byType(ItemCard));
       await tester.pumpAndSettle();
       expect(find.text(l10nEn.previewNew), findsOneWidget);
 
       await tester.tap(find.byKey(const Key('preview_recipe')));
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('drink_preview')), findsNothing);
+      expect(find.byKey(const Key('item_preview')), findsNothing);
       expect(find.byKey(const Key('recipe_view')), findsOneWidget);
     });
 
     testWidgets('a tap outside closes it', (tester) async {
       await pumpScoped(tester, harness((_) {}));
-      await tester.longPress(find.byType(DrinkCard));
+      await tester.longPress(find.byType(ItemCard));
       await tester.pumpAndSettle();
       await tester.tapAt(const Offset(5, 5));
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('drink_preview')), findsNothing);
+      expect(find.byKey(const Key('item_preview')), findsNothing);
     });
 
     testWidgets('no clip, no «hear» row', (tester) async {
@@ -281,17 +281,17 @@ void main() {
             builder: (context, ref, _) => Center(
               child: SizedBox(
                 width: 170,
-                child: DrinkCard(
+                child: ItemCard(
                   item: quiet,
                   onLongPress: () =>
-                      showDrinkPreview(context, ref, quiet, onOpen: () {}),
+                      showItemPreview(context, ref, quiet, onOpen: () {}),
                 ),
               ),
             ),
           ),
         ),
       );
-      await tester.longPress(find.byType(DrinkCard));
+      await tester.longPress(find.byType(ItemCard));
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('preview_hear')), findsNothing);
       expect(find.byKey(const Key('preview_save')), findsOneWidget);

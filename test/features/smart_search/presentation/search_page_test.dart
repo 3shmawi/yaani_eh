@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yaani_eh/core/router/app_routes.dart';
 import 'package:yaani_eh/core/widgets/search_field.dart';
-import 'package:yaani_eh/features/browse_menu/presentation/menu_controller.dart';
+import 'package:yaani_eh/features/browse/presentation/browse_controller.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
 import 'package:yaani_eh/features/smart_search/presentation/search_page.dart';

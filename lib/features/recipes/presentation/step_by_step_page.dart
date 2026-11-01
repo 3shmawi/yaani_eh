@@ -9,11 +9,11 @@ import 'package:yaani_eh/core/router/app_routes.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_icons.dart';
 import 'package:yaani_eh/core/widgets/state_views.dart';
-import 'package:yaani_eh/features/item_details/presentation/drink_controller.dart';
+import 'package:yaani_eh/features/item_details/presentation/item_controller.dart';
 import 'package:yaani_eh/features/recipes/presentation/step_by_step_view.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
-/// `/drink/:slug/steps`: wires a drink's recipe to [StepByStepView]. A
+/// `/item/:slug/steps`: wires a drink's recipe to [StepByStepView]. A
 /// drink that's gone, or has no recipe yet, says so with a way back.
 class StepByStepPage extends ConsumerStatefulWidget {
   const new({required this.slug, super.key});
@@ -32,21 +32,21 @@ class _StepByStepPageState extends ConsumerState<StepByStepPage> {
     if (context.canPop()) {
       context.pop();
     } else {
-      context.go(AppRoutes.drink(widget.slug));
+      context.go(AppRoutes.item(widget.slug));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final details = ref.watch(drinkDetailsProvider(widget.slug));
-    final found = details is DrinkFound ? details : null;
+    final details = ref.watch(itemStateProvider(widget.slug));
+    final found = details is ItemFound ? details : null;
     final recipe = found?.item.recipe;
     if (found == null || recipe == null) {
       return Material(
         color: context.palette.surface,
         child: SafeArea(
-          child: details is DrinkLoading
+          child: details is ItemLoading
               ? const LoadingView()
               : EmptyView(
                   key: const Key('steps_missing'),
@@ -63,7 +63,7 @@ class _StepByStepPageState extends ConsumerState<StepByStepPage> {
       _logged = true;
       unawaited(
         Analytics.capture('recipe_step_mode_started', {
-          'drink': found.item.slug,
+          'item': found.item.slug,
         }),
       );
     }
@@ -74,7 +74,7 @@ class _StepByStepPageState extends ConsumerState<StepByStepPage> {
       onFinished: () {
         unawaited(HapticFeedback.mediumImpact());
         unawaited(
-          Analytics.capture('recipe_finished', {'drink': found.item.slug}),
+          Analytics.capture('recipe_finished', {'item': found.item.slug}),
         );
         _close();
       },

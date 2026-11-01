@@ -83,17 +83,17 @@
   "firstLoadOfflineBody": "We couldn't load the menu. Once you're back online we load it once, then it works offline.",
   "firstLoadFailedTitle": "We couldn't load the menu",
   "autoRetryHint": "We retry by ourselves every 30 seconds",
-  "menuTagline": "Order like you know it",
-  "menuCount": "{count, plural, =1{1 drink} other{{count} drinks}}",
-  "@menuCount": {
+  "browseTagline": "Order like you know it",
+  "browseCount": "{count, plural, =1{1 drink} other{{count} drinks}}",
+  "@browseCount": {
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
-  "menuEmpty": "The menu is empty for now. Check back soon.",
-  "drinkOfTheDay": "Drink of the day",
+  "browseEmpty": "The menu is empty for now. Check back soon.",
+  "itemOfTheDay": "Drink of the day",
   "priceRange": "{range} EGP",
   "@priceRange": {
     "placeholders": {
@@ -111,8 +111,8 @@
     }
   },
   "approximateNote": "Calories and prices are approximate.",
-  "drinkNotFoundTitle": "We can't find this drink",
-  "drinkNotFoundBody": "It may have been taken off the menu.",
+  "itemNotFoundTitle": "We can't find this drink",
+  "itemNotFoundBody": "It may have been taken off the menu.",
   "priceAtCafes": "Price at cafés",
   "priceChecked": "Checked {date}",
   "@priceChecked": {
@@ -124,7 +124,7 @@
   },
   "priceMissing": "We're still collecting prices for this drink.",
   "priceStale": "Price may have changed",
-  "similarDrinks": "Similar drinks",
+  "similarItems": "Similar drinks",
   "kcal": "kcal",
   "currency": "EGP",
   "searchPlaceholder": "Type a drink name… or describe it",
@@ -245,7 +245,7 @@
       }
     }
   },
-  "tabMenu": "Menu",
+  "tabBrowse": "Menu",
   "tabFavorites": "Favorites",
   "favoritesTitle": "Favorites",
   "favoritesCount": "{count, plural, =0{None yet} =1{1 drink} other{{count} drinks}}",

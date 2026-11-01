@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_icons.dart';
-import 'package:yaani_eh/core/widgets/drink_grid.dart';
 import 'package:yaani_eh/core/widgets/header_band.dart';
+import 'package:yaani_eh/core/widgets/item_grid.dart';
 import 'package:yaani_eh/core/widgets/offline_banner.dart';
 import 'package:yaani_eh/core/widgets/state_views.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
@@ -60,7 +60,7 @@ class FavoritesView extends StatelessWidget {
           AppDimens.tabBarHeight + AppDimens.space8,
         ),
         sliver: SliverToBoxAdapter(
-          child: DrinkGrid(
+          child: ItemGrid(
             key: const Key('favorites_grid'),
             items: drinks,
             onOpenItem: onOpenItem,

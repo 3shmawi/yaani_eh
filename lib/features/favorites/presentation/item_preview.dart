@@ -8,8 +8,8 @@ import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_icons.dart';
 import 'package:yaani_eh/core/theme/app_text_styles.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
-import 'package:yaani_eh/core/widgets/drink_card.dart';
-import 'package:yaani_eh/core/widgets/drink_photo.dart';
+import 'package:yaani_eh/core/widgets/item_card.dart';
+import 'package:yaani_eh/core/widgets/item_photo.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/favorites/presentation/favorites_controller.dart';
 import 'package:yaani_eh/features/pronunciation/domain/usecases/clips_for.dart';
@@ -21,7 +21,7 @@ import 'package:yaani_eh/l10n/l10n.dart';
 /// spelling, «يعني» line, the start of the explanation), with «اسمع الاسم»
 /// (when it has a clip), «طريقة التحضير» (when it has a recipe), save /
 /// remove and «افتح المشروب».
-Future<void> showDrinkPreview(
+Future<void> showItemPreview(
   BuildContext context,
   WidgetRef ref,
   CatalogItem item, {
@@ -29,11 +29,11 @@ Future<void> showDrinkPreview(
 }) {
   final l10n = context.l10n;
   final saved = ref.read(favoriteIdsProvider).contains(item.id);
-  unawaited(Analytics.capture('drink_previewed', {'drink': item.slug}));
+  unawaited(Analytics.capture('item_previewed', {'item': item.slug}));
   return showAppPreviewMenu(
     context,
     closeLabel: l10n.previewClose,
-    preview: DrinkPreview(item: item),
+    preview: ItemPreview(item: item),
     actions: [
       if (const ClipsFor()(item).isNotEmpty)
         AppPreviewAction(
@@ -72,7 +72,7 @@ Future<void> showDrinkPreview(
 }
 
 /// The card inside the preview.
-class DrinkPreview extends StatelessWidget {
+class ItemPreview extends StatelessWidget {
   const new({required this.item, super.key});
 
   final CatalogItem item;
@@ -83,13 +83,13 @@ class DrinkPreview extends StatelessWidget {
     final arabic = Localizations.localeOf(context).languageCode == 'ar';
     final explanation = arabic ? item.explanationAr : item.explanationEn;
     return Column(
-      key: const Key('drink_preview'),
+      key: const Key('item_preview'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: [
         AspectRatio(
           aspectRatio: AppDimens.previewPhotoRatio,
-          child: DrinkPhoto(
+          child: ItemPhoto(
             name: item.menuName,
             imagePath: item.imagePath,
             size: PhotoSize.thumbnail,
@@ -116,7 +116,7 @@ class DrinkPreview extends StatelessWidget {
                 ).copyWith(color: p.inkMuted),
               ),
               SizedBox(height: AppDimens.space2),
-              DrinkMeaning(gist: item.gist(arabic: arabic), minLines: 1),
+              ItemMeaning(gist: item.gist(arabic: arabic), minLines: 1),
               SizedBox(height: AppDimens.space2),
               Text(
                 explanation,

@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yaani_eh/core/config/app_content.dart';
-import 'package:yaani_eh/core/widgets/drink_card.dart';
-import 'package:yaani_eh/features/browse_menu/presentation/menu_controller.dart';
+import 'package:yaani_eh/core/widgets/item_card.dart';
+import 'package:yaani_eh/features/browse/presentation/browse_controller.dart';
 import 'package:yaani_eh/features/catalog_sync/data/models/catalog_rows.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
 import 'package:yaani_eh/features/item_details/domain/usecases/describe_item.dart';
-import 'package:yaani_eh/features/item_details/presentation/drink_controller.dart';
-import 'package:yaani_eh/features/item_details/presentation/drink_page.dart';
-import 'package:yaani_eh/features/item_details/presentation/drink_view.dart';
+import 'package:yaani_eh/features/item_details/presentation/item_controller.dart';
+import 'package:yaani_eh/features/item_details/presentation/item_page.dart';
+import 'package:yaani_eh/features/item_details/presentation/item_view.dart';
 import 'package:yaani_eh/features/pronunciation/presentation/widgets/pronounce_pill.dart';
 
 import '../../../helpers/fake_catalog_remote.dart';
@@ -33,7 +33,7 @@ CatalogItem _flatWhite({
 })!;
 
 void main() {
-  group(DrinkView, () {
+  group(ItemView, () {
     Future<void> pumpView(
       WidgetTester tester, {
       CatalogItem? item,
@@ -44,7 +44,7 @@ void main() {
     }) {
       final drink = item ?? _flatWhite();
       return tester.pumpApp(
-        DrinkView(
+        ItemView(
           item: drink,
           facts: const DescribeItem()(
             item: drink,
@@ -57,7 +57,7 @@ void main() {
               .take(4)
               .toList(),
           onBack: onBack ?? () {},
-          onOpenDrink: onOpen ?? (_) {},
+          onOpenItem: onOpen ?? (_) {},
         ),
         locale: locale,
         themeMode: mode,
@@ -76,7 +76,7 @@ void main() {
       );
       expect(find.text('Hot'), findsOneWidget);
       expect(find.text('With milk'), findsOneWidget);
-      expect(find.text(l10nEn.similarDrinks), findsOneWidget);
+      expect(find.text(l10nEn.similarItems), findsOneWidget);
       await tester.expectAccessible();
     });
 
@@ -118,11 +118,11 @@ void main() {
         onBack: () => back++,
         onOpen: (i) => opened.add(i.slug),
       );
-      await tester.tap(find.byKey(const Key('drink_back')));
+      await tester.tap(find.byKey(const Key('item_back')));
       expect(back, 1);
-      await tester.ensureVisible(find.byType(DrinkCard).first);
+      await tester.ensureVisible(find.byType(ItemCard).first);
       await tester.pumpAndSettle();
-      await tester.tap(find.byType(DrinkCard).first);
+      await tester.tap(find.byType(ItemCard).first);
       expect(opened, hasLength(1));
     });
 
@@ -147,7 +147,7 @@ void main() {
     });
   });
 
-  group(DrinkPage, () {
+  group(ItemPage, () {
     Future<void> pumpPage(WidgetTester tester, String slug) => tester.pumpApp(
       ProviderScope(
         overrides: [
@@ -156,14 +156,14 @@ void main() {
           ),
           todayProvider.overrideWithValue(_now),
         ],
-        child: DrinkPage(slug: slug),
+        child: ItemPage(slug: slug),
       ),
     );
 
     testWidgets('shows a drink from the device copy', (tester) async {
       await pumpPage(tester, 'cortado');
       await tester.pumpAndSettle();
-      expect(find.byType(DrinkView), findsOneWidget);
+      expect(find.byType(ItemView), findsOneWidget);
       expect(find.text('Cortado'), findsWidgets);
     });
 
@@ -183,7 +183,7 @@ void main() {
             todayProvider.overrideWithValue(_now),
             ...pronunciationOverrides(repo, player),
           ],
-          child: const DrinkPage(slug: 'flat_white'),
+          child: const ItemPage(slug: 'flat_white'),
         ),
       );
       await tester.pumpAndSettle();
@@ -209,7 +209,7 @@ void main() {
     testWidgets("«how it's made» opens the recipe sheet", (tester) async {
       await pumpPage(tester, 'flat_white');
       await tester.pumpAndSettle();
-      final row = find.byKey(const Key('drink_recipe'));
+      final row = find.byKey(const Key('item_recipe'));
       await tester.ensureVisible(row);
       await tester.pumpAndSettle();
       expect(find.text("How it's made · 180 ml"), findsOneWidget);
@@ -223,7 +223,7 @@ void main() {
     testWidgets("no recipe yet, no «how it's made»", (tester) async {
       await pumpPage(tester, 'cortado');
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('drink_recipe')), findsNothing);
+      expect(find.byKey(const Key('item_recipe')), findsNothing);
     });
 
     testWidgets('a drink without clips has no pill', (tester) async {
@@ -235,8 +235,8 @@ void main() {
     testWidgets('an unknown drink shows a friendly message', (tester) async {
       await pumpPage(tester, 'unicorn_latte');
       await tester.pumpAndSettle();
-      expect(find.byType(DrinkMissingView), findsOneWidget);
-      expect(find.text(l10nEn.drinkNotFoundTitle), findsOneWidget);
+      expect(find.byType(ItemMissingView), findsOneWidget);
+      expect(find.text(l10nEn.itemNotFoundTitle), findsOneWidget);
       await tester.expectAccessible();
     });
 
@@ -254,9 +254,9 @@ void main() {
         ..listen(catalogCategoriesProvider, (_, _) {});
       await container.read(catalogItemsProvider.future);
       await container.read(catalogCategoriesProvider.future);
-      final details = container.read(drinkDetailsProvider('latte'));
-      expect(details, isA<DrinkFound>());
-      expect((details as DrinkFound).traitSchema, cafeTraitSchema);
+      final details = container.read(itemStateProvider('latte'));
+      expect(details, isA<ItemFound>());
+      expect((details as ItemFound).traitSchema, cafeTraitSchema);
       expect(details.similar, isNotEmpty);
     });
   });

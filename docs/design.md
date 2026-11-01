@@ -24,7 +24,7 @@ component READMEs under `project/components/`, and the screen's
 | Icons (SF Symbols look: outline + fill) | `app_icons.dart` (`AppIcons`, `AppIconsFill`), from `CupertinoIcons` (cupertino_icons, MIT) on every platform, so the glass controls read like iOS; coffee and cake (not in that set) from Phosphor Regular, bundled in `assets/fonts/Phosphor`. `AppIcons.back` / `forward` mirror in RTL (back points right in Arabic, like iOS); `CupertinoIcons.chevron_back` itself doesn't |
 | Glass (clear / frosted, tone, lite) | `AppGlass` in `lib/core/ui/app_ui.dart` (+ `glass_tone.dart`) |
 | Button, IconButton, Card | `AppButton`, `AppIconButton`, `AppCard` in `app_ui.dart` |
-| DrinkCard (photo tile with the name on a soft shadow, glass controls, the «يعني» line under it) | `core/widgets/drink_card.dart`; type `TextRole.cardTitle` / `cardBody` |
+| ItemCard (photo tile with the name on a soft shadow, glass controls, the «يعني» line under it) | `core/widgets/item_card.dart`; type `TextRole.cardTitle` / `cardBody` |
 | Segmented control (the Home sections switch), selected = warm milk | `AppSegmentedControl` in `app_ui.dart`, drawn by liquid_glass_widgets' `GlassSegmentedControl`: iOS 26's liquid indicator that squashes, stretches and can be dragged; `AppColors.selected` (same in both themes); a `badge` follows the label («حلويات · قريبًا») |
 | TabBar (floating glass pill, count badge) | `AppTabScaffold` + `AppTab` in `app_ui.dart` (`GlassTabBar.bottom`); screens under it keep their last items clear with `AppDimens.tabBarHeight` |
 | Context menu (long-press preview) | `showAppPreviewMenu` + `AppPreviewAction` in `app_ui.dart`: blur + scrim, the preview, frosted rows; same on iOS and Android |

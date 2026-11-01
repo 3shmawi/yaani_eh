@@ -22,10 +22,10 @@ void main() {
     await beat(tester, 1500);
 
     // 2. Done: the menu is on the phone.
-    await pumpUntil(tester, find.byKey(const Key('drink_of_the_day')));
+    await pumpUntil(tester, find.byKey(const Key('item_of_the_day')));
     await beat(tester, 1200);
     await tester.drag(
-      find.byKey(const Key('menu_list')),
+      find.byKey(const Key('browse_list')),
       const Offset(0, -500),
     );
     await tester.pumpAndSettle();
@@ -36,16 +36,16 @@ void main() {
     await beat(tester);
     await app.relaunch(tester);
     await app.setOnline(tester, online: false);
-    await pumpUntil(tester, find.byKey(const Key('menu_list')));
+    await pumpUntil(tester, find.byKey(const Key('browse_list')));
     await tester.pumpAndSettle();
     await beat(tester, 1200);
 
     // 4. The whole menu is still there, with the offline note.
-    expect(find.byKey(const Key('menu_list')), findsOneWidget);
+    expect(find.byKey(const Key('browse_list')), findsOneWidget);
     expect(find.byIcon(AppIcons.wifiSlash), findsOneWidget);
     await tester.dragUntilVisible(
       find.text('Iced Mocha'),
-      find.byKey(const Key('menu_list')),
+      find.byKey(const Key('browse_list')),
       const Offset(0, -250),
     );
     await tester.pumpAndSettle();
