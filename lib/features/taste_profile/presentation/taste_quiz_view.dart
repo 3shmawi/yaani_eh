@@ -103,116 +103,119 @@ class _TasteQuizViewState extends State<TasteQuizView> {
           children: [
             if (!flat) const Positioned.fill(child: HeaderPattern()),
             SafeArea(
-              child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(
-                  AppDimens.space5,
-                  AppDimens.space2,
-                  AppDimens.space5,
-                  AppDimens.space4,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _Progress(done: _index + 1, total: total),
-                        ),
-                        SizedBox(width: AppDimens.space3),
-                        AppIconButton(
-                          key: const Key('taste_close'),
-                          icon: AppIcons.close,
-                          tooltip: l10n.tasteClose,
-                          tone: GlassTone.dark,
-                          onPressed: () => widget.onClose(_index),
-                        ),
-                      ],
-                    ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        padding: EdgeInsetsDirectional.only(
-                          top: AppDimens.space8,
-                          bottom: AppDimens.space4,
-                        ),
-                        child: AnimatedSwitcher(
-                          duration: MediaQuery.disableAnimationsOf(context)
-                              ? Duration.zero
-                              : AppMotion.select,
-                          child: Column(
-                            key: ValueKey(_index),
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Text(
-                                l10n.tasteQuestionOf(_index + 1, total),
-                                style: context
-                                    .text(TextRole.label)
-                                    .copyWith(color: AppColors.onHeaderMuted),
-                              ),
-                              SizedBox(height: AppDimens.space2),
-                              Semantics(
-                                header: true,
-                                child: Text(
-                                  q.question(arabic: arabic),
-                                  style: context
-                                      .text(TextRole.largeTitle)
-                                      .copyWith(color: AppColors.onHeader),
-                                ),
-                              ),
-                              SizedBox(height: AppDimens.space2),
-                              Text(
-                                l10n.tasteHint,
-                                style: context
-                                    .text(TextRole.callout)
-                                    .copyWith(color: AppColors.onHeaderMuted),
-                              ),
-                              SizedBox(height: AppDimens.space6),
-                              for (final (i, option) in q.options.indexed) ...[
-                                if (i > 0) SizedBox(height: AppDimens.space3),
-                                _Choice(
-                                  key: Key('taste_option_${q.key}_$i'),
-                                  label: option.label(arabic: arabic),
-                                  icon: _iconFor(q, option),
-                                  selected: _answers[q.key] == option.value,
-                                  onTap: () => _choose(option),
-                                ),
-                              ],
-                            ],
+              child: AppReadableWidth(
+                child: Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(
+                    AppDimens.space5,
+                    AppDimens.space2,
+                    AppDimens.space5,
+                    AppDimens.space4,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _Progress(done: _index + 1, total: total),
                           ),
-                        ),
+                          SizedBox(width: AppDimens.space3),
+                          AppIconButton(
+                            key: const Key('taste_close'),
+                            icon: AppIcons.close,
+                            tooltip: l10n.tasteClose,
+                            tone: GlassTone.dark,
+                            onPressed: () => widget.onClose(_index),
+                          ),
+                        ],
                       ),
-                    ),
-                    Row(
-                      children: [
-                        AnimatedOpacity(
-                          opacity: _index == 0 ? 0 : 1,
-                          duration: AppMotion.select,
-                          child: IgnorePointer(
-                            ignoring: _index == 0,
-                            child: ExcludeSemantics(
-                              excluding: _index == 0,
-                              child: AppIconButton(
-                                key: const Key('taste_previous'),
-                                icon: AppIcons.back,
-                                tooltip: l10n.tastePrevious,
-                                tone: GlassTone.dark,
-                                onPressed: _back,
-                              ),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          padding: EdgeInsetsDirectional.only(
+                            top: AppDimens.space8,
+                            bottom: AppDimens.space4,
+                          ),
+                          child: AnimatedSwitcher(
+                            duration: MediaQuery.disableAnimationsOf(context)
+                                ? Duration.zero
+                                : AppMotion.select,
+                            child: Column(
+                              key: ValueKey(_index),
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Text(
+                                  l10n.tasteQuestionOf(_index + 1, total),
+                                  style: context
+                                      .text(TextRole.label)
+                                      .copyWith(color: AppColors.onHeaderMuted),
+                                ),
+                                SizedBox(height: AppDimens.space2),
+                                Semantics(
+                                  header: true,
+                                  child: Text(
+                                    q.question(arabic: arabic),
+                                    style: context
+                                        .text(TextRole.largeTitle)
+                                        .copyWith(color: AppColors.onHeader),
+                                  ),
+                                ),
+                                SizedBox(height: AppDimens.space2),
+                                Text(
+                                  l10n.tasteHint,
+                                  style: context
+                                      .text(TextRole.callout)
+                                      .copyWith(color: AppColors.onHeaderMuted),
+                                ),
+                                SizedBox(height: AppDimens.space6),
+                                for (final (i, option)
+                                    in q.options.indexed) ...[
+                                  if (i > 0) SizedBox(height: AppDimens.space3),
+                                  _Choice(
+                                    key: Key('taste_option_${q.key}_$i'),
+                                    label: option.label(arabic: arabic),
+                                    icon: _iconFor(q, option),
+                                    selected: _answers[q.key] == option.value,
+                                    onTap: () => _choose(option),
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
                         ),
-                        SizedBox(width: AppDimens.space3),
-                        Expanded(
-                          child: AppButton(
-                            key: const Key('taste_skip'),
-                            kind: AppButtonKind.band,
-                            expand: true,
-                            label: l10n.tasteNoPreference,
-                            onPressed: _skip,
+                      ),
+                      Row(
+                        children: [
+                          AnimatedOpacity(
+                            opacity: _index == 0 ? 0 : 1,
+                            duration: AppMotion.select,
+                            child: IgnorePointer(
+                              ignoring: _index == 0,
+                              child: ExcludeSemantics(
+                                excluding: _index == 0,
+                                child: AppIconButton(
+                                  key: const Key('taste_previous'),
+                                  icon: AppIcons.back,
+                                  tooltip: l10n.tastePrevious,
+                                  tone: GlassTone.dark,
+                                  onPressed: _back,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                          SizedBox(width: AppDimens.space3),
+                          Expanded(
+                            child: AppButton(
+                              key: const Key('taste_skip'),
+                              kind: AppButtonKind.band,
+                              expand: true,
+                              label: l10n.tasteNoPreference,
+                              onPressed: _skip,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

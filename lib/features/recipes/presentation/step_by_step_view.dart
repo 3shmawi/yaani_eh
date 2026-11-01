@@ -82,84 +82,86 @@ class _StepByStepViewState extends State<StepByStepView> {
           children: [
             if (!flat) const Positioned.fill(child: HeaderPattern()),
             SafeArea(
-              child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(
-                  AppDimens.space4,
-                  AppDimens.space2,
-                  AppDimens.space4,
-                  AppDimens.space4,
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _Progress(
-                            done: _index + 1,
+              child: AppReadableWidth(
+                child: Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(
+                    AppDimens.space4,
+                    AppDimens.space2,
+                    AppDimens.space4,
+                    AppDimens.space4,
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _Progress(
+                              done: _index + 1,
+                              total: _steps.length,
+                            ),
+                          ),
+                          SizedBox(width: AppDimens.space3),
+                          AppIconButton(
+                            key: const Key('steps_close'),
+                            icon: AppIcons.close,
+                            tooltip: l10n.recipeClose,
+                            tone: GlassTone.dark,
+                            onPressed: widget.onClose,
+                          ),
+                        ],
+                      ),
+                      Expanded(
+                        child: PageView.builder(
+                          key: const Key('steps_pages'),
+                          controller: _pages,
+                          itemCount: _steps.length,
+                          onPageChanged: (i) {
+                            unawaited(HapticFeedback.selectionClick());
+                            setState(() => _index = i);
+                          },
+                          itemBuilder: (context, i) => _StepPage(
+                            key: Key('steps_page_$i'),
+                            number: i + 1,
                             total: _steps.length,
+                            step: _steps[i],
                           ),
                         ),
-                        SizedBox(width: AppDimens.space3),
-                        AppIconButton(
-                          key: const Key('steps_close'),
-                          icon: AppIcons.close,
-                          tooltip: l10n.recipeClose,
-                          tone: GlassTone.dark,
-                          onPressed: widget.onClose,
-                        ),
-                      ],
-                    ),
-                    Expanded(
-                      child: PageView.builder(
-                        key: const Key('steps_pages'),
-                        controller: _pages,
-                        itemCount: _steps.length,
-                        onPageChanged: (i) {
-                          unawaited(HapticFeedback.selectionClick());
-                          setState(() => _index = i);
-                        },
-                        itemBuilder: (context, i) => _StepPage(
-                          key: Key('steps_page_$i'),
-                          number: i + 1,
-                          total: _steps.length,
-                          step: _steps[i],
-                        ),
                       ),
-                    ),
-                    Row(
-                      children: [
-                        AnimatedOpacity(
-                          opacity: _index == 0 ? 0 : 1,
-                          duration: AppMotion.select,
-                          child: IgnorePointer(
-                            ignoring: _index == 0,
-                            child: ExcludeSemantics(
-                              excluding: _index == 0,
-                              child: AppIconButton(
-                                key: const Key('steps_previous'),
-                                icon: AppIcons.back,
-                                tooltip: l10n.stepPrevious,
-                                tone: GlassTone.dark,
-                                onPressed: () => _go(_index - 1),
+                      Row(
+                        children: [
+                          AnimatedOpacity(
+                            opacity: _index == 0 ? 0 : 1,
+                            duration: AppMotion.select,
+                            child: IgnorePointer(
+                              ignoring: _index == 0,
+                              child: ExcludeSemantics(
+                                excluding: _index == 0,
+                                child: AppIconButton(
+                                  key: const Key('steps_previous'),
+                                  icon: AppIcons.back,
+                                  tooltip: l10n.stepPrevious,
+                                  tone: GlassTone.dark,
+                                  onPressed: () => _go(_index - 1),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(width: AppDimens.space3),
-                        Expanded(
-                          child: AppButton(
-                            key: const Key('steps_next'),
-                            kind: AppButtonKind.band,
-                            expand: true,
-                            label: _last ? l10n.stepDone : l10n.stepNext,
-                            onPressed: _last
-                                ? widget.onFinished
-                                : () => _go(_index + 1),
+                          SizedBox(width: AppDimens.space3),
+                          Expanded(
+                            child: AppButton(
+                              key: const Key('steps_next'),
+                              kind: AppButtonKind.band,
+                              expand: true,
+                              label: _last ? l10n.stepDone : l10n.stepNext,
+                              onPressed: _last
+                                  ? widget.onFinished
+                                  : () => _go(_index + 1),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

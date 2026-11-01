@@ -38,12 +38,16 @@ is used for advertising.
 
 ## App Store Connect
 
-- **Screenshots:** `store/ios/screenshots/<ar-SA|en-US>/`, JPEG. There are 7 for
-  iPhone 6.9" (1320×2868).
-- **iPhone only for now** (`TARGETED_DEVICE_FAMILY = 1`). The app has no
-  tablet layout yet, so it isn't offered on iPad and needs no iPad
-  screenshots. To support iPad again: set it back to `1,2`, build a tablet
-  layout, and turn the iPad line on in `scripts/store_shots.sh`.
+- **Screenshots:** `store/ios/screenshots/<ar-SA|en-US>/`, JPEG, 8 per size:
+  iPhone 6.9" (`<n>_iphone69.jpg`, 1320×2868) and iPad 13" (`<n>_ipad13.jpg`,
+  2064×2752, required because the app runs on iPad). fastlane deliver
+  2.241.2 recognises both by their size. Sizes checked on
+  developer.apple.com (Screenshot specifications) on 2026-11-01.
+- **iPhone and iPad** (`TARGETED_DEVICE_FAMILY = "1,2"`), every orientation
+  on iPad, so Split View and Stage Manager work. Grids (Home, Favorites) use
+  the full width; single-column screens (drink, settings, search results,
+  sheets, the quiz, step by step, the welcome) stay at most
+  `AppDimens.readableWidth` (640 pt) wide, centred.
 - **App Privacy:** Data Used to Track You: none. Data Not Linked to You:
   - Usage Data → Product Interaction (Analytics, App Functionality)
   - Diagnostics → Crash Data, Performance Data, Other Diagnostic Data (App Functionality)
@@ -54,8 +58,8 @@ is used for advertising.
   The result is 4+.
 - **Export compliance:** the app only uses HTTPS (standard OS encryption).
   `ITSAppUsesNonExemptEncryption = false` is in `ios/Runner/Info.plist`, so
-  App Store Connect doesn't ask on each build. Confirm this is right for you;
-  it's a legal declaration.
+  App Store Connect doesn't ask on each build (confirmed by the owner on
+  2026-11-01).
 - **Content rights:** the app doesn't contain, show or access third-party
   content it has no rights to. Drink names are generic. There are no photos
   yet; check this again when photos are added.
@@ -75,7 +79,7 @@ is used for advertising.
 ## Google Play Console
 
 - **Graphics:** `store/android/<ar|en-US>/images/`. There's `icon.png` (512×512),
-  `featureGraphic.png` (1024×500), and 7 screenshots each in
+  `featureGraphic.png` (1024×500), and 8 screenshots each in
   `phoneScreenshots` (1080×1920), `sevenInchScreenshots` (1200×1920) and
   `tenInchScreenshots` (1600×2560).
 - **App access:** all functionality is available without special access.

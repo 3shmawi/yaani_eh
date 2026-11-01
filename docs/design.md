@@ -91,7 +91,13 @@ dart run flutter_flavorizr -p android:icons,ios:icons   # projects with flavors
 
 ## Screen checklist (each screen in the design → code)
 - Matches the design at 375×812, and still works on a small phone (320 wide),
-  a large phone and a tablet.
+  a large phone and a tablet, portrait and landscape (iPad runs every
+  orientation, Split View and Stage Manager). Grids may use the full width;
+  a single column (text, a list of rows, a form, a sheet, a full-screen
+  flow) goes in `AppReadableWidth` / `SliverAppReadableWidth` (at most
+  `AppDimens.readableWidth`, centred). `AppScaffold` bodies and
+  `showAppSheet` already do this. Check with `./scripts/screens.sh 1032x1376`
+  and `1376x1032`.
 - Has all states: loading (skeleton/adaptive spinner), empty, error with
   retry, success, offline.
 - Arabic RTL and dark mode checked (the app runs dark only for now; see

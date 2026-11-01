@@ -125,6 +125,10 @@ leaks").
   tablets (`AppDimens.designFor`). Text is never screen-scaled (no `.sp`):
   like iOS it's the same on every phone and follows only the phone's own
   text size.
+- Tablets (iPad included, every orientation): grids use the full width; a
+  single column goes in `AppReadableWidth` / `SliverAppReadableWidth`
+  (`AppScaffold` and `showAppSheet` already do). Screenshot-review at
+  `1032x1376` and `1376x1032` too.
 - RTL-safe layout: `EdgeInsetsDirectional`, `AlignmentDirectional`,
   `start`/`end` — never `left`/`right`. Number ranges and `0.75×` go through
   `Bidi.range` / `Bidi.ltr` (otherwise RTL shows `150–70`).

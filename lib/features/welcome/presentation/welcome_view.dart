@@ -52,80 +52,82 @@ class _WelcomeViewState extends State<WelcomeView> {
     return BandBackground(
       key: const Key('welcome'),
       child: SafeArea(
-        child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(
-            AppDimens.space6,
-            AppDimens.space2,
-            AppDimens.space6,
-            AppDimens.space4,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Align(
-                alignment: AlignmentDirectional.centerEnd,
-                child: _last
-                    ? reserved
-                    : AppButton(
-                        key: const Key('welcome_skip'),
-                        label: l10n.welcomeSkip,
-                        kind: AppButtonKind.bandText,
-                        onPressed: () =>
-                            widget.onExit(WelcomeExit.skip, _page + 1),
+        child: AppReadableWidth(
+          child: Padding(
+            padding: EdgeInsetsDirectional.fromSTEB(
+              AppDimens.space6,
+              AppDimens.space2,
+              AppDimens.space6,
+              AppDimens.space4,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: _last
+                      ? reserved
+                      : AppButton(
+                          key: const Key('welcome_skip'),
+                          label: l10n.welcomeSkip,
+                          kind: AppButtonKind.bandText,
+                          onPressed: () =>
+                              widget.onExit(WelcomeExit.skip, _page + 1),
+                        ),
+                ),
+                Expanded(
+                  child: PageView(
+                    controller: _controller,
+                    onPageChanged: (page) => setState(() => _page = page),
+                    children: [
+                      _Page(
+                        art: const WelcomeArt.menu(),
+                        title: l10n.welcomeMenuTitle,
+                        body: l10n.welcomeMenuBody,
                       ),
-              ),
-              Expanded(
-                child: PageView(
-                  controller: _controller,
-                  onPageChanged: (page) => setState(() => _page = page),
-                  children: [
-                    _Page(
-                      art: const WelcomeArt.menu(),
-                      title: l10n.welcomeMenuTitle,
-                      body: l10n.welcomeMenuBody,
-                    ),
-                    _Page(
-                      art: const WelcomeArt.hear(),
-                      title: l10n.welcomeHearTitle,
-                      body: l10n.welcomeHearBody,
-                    ),
-                    _Page(
-                      art: const WelcomeArt.taste(),
-                      title: l10n.welcomeTasteTitle,
-                      body: l10n.welcomeTasteBody,
-                    ),
-                  ],
+                      _Page(
+                        art: const WelcomeArt.hear(),
+                        title: l10n.welcomeHearTitle,
+                        body: l10n.welcomeHearBody,
+                      ),
+                      _Page(
+                        art: const WelcomeArt.taste(),
+                        title: l10n.welcomeTasteTitle,
+                        body: l10n.welcomeTasteBody,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(height: AppDimens.space4),
-              _Dots(index: _page, count: _pages),
-              SizedBox(height: AppDimens.space4),
-              if (_last)
-                AppButton(
-                  key: const Key('welcome_taste'),
-                  label: l10n.welcomeStartTaste,
-                  kind: AppButtonKind.band,
-                  expand: true,
-                  onPressed: () => widget.onExit(WelcomeExit.taste, _pages),
-                )
-              else
-                AppButton(
-                  key: const Key('welcome_next'),
-                  label: l10n.welcomeNext,
-                  kind: AppButtonKind.band,
-                  expand: true,
-                  onPressed: _next,
-                ),
-              if (_last)
-                AppButton(
-                  key: const Key('welcome_menu'),
-                  label: l10n.welcomeOpenMenu,
-                  kind: AppButtonKind.bandText,
-                  onPressed: () => widget.onExit(WelcomeExit.menu, _pages),
-                )
-              else
-                reserved,
-            ],
+                SizedBox(height: AppDimens.space4),
+                _Dots(index: _page, count: _pages),
+                SizedBox(height: AppDimens.space4),
+                if (_last)
+                  AppButton(
+                    key: const Key('welcome_taste'),
+                    label: l10n.welcomeStartTaste,
+                    kind: AppButtonKind.band,
+                    expand: true,
+                    onPressed: () => widget.onExit(WelcomeExit.taste, _pages),
+                  )
+                else
+                  AppButton(
+                    key: const Key('welcome_next'),
+                    label: l10n.welcomeNext,
+                    kind: AppButtonKind.band,
+                    expand: true,
+                    onPressed: _next,
+                  ),
+                if (_last)
+                  AppButton(
+                    key: const Key('welcome_menu'),
+                    label: l10n.welcomeOpenMenu,
+                    kind: AppButtonKind.bandText,
+                    onPressed: () => widget.onExit(WelcomeExit.menu, _pages),
+                  )
+                else
+                  reserved,
+              ],
+            ),
           ),
         ),
       ),

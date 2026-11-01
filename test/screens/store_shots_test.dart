@@ -12,12 +12,14 @@ import 'package:yaani_eh/core/router/app_routes.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_theme.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
+import 'package:yaani_eh/core/widgets/category_chips.dart';
 import 'package:yaani_eh/core/widgets/drink_card.dart';
 import 'package:yaani_eh/core/widgets/offline_banner.dart';
 import 'package:yaani_eh/features/catalog_sync/data/models/catalog_rows.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/repositories/catalog_repository.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
+import 'package:yaani_eh/features/taste_profile/domain/entities/taste.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
 import '../helpers/fake_favorites.dart';
@@ -48,6 +50,7 @@ void main() {
     WidgetTester tester,
     String path, {
     Iterable<String> saved = const [],
+    Map<String, TasteProfile> taste = const {},
   }) async {
     tester.view
       ..physicalSize = Size(size[0] * ratio, size[1] * ratio)
@@ -58,7 +61,7 @@ void main() {
         overrides: [
           catalogRepositoryProvider.overrideWithValue(catalog),
           ...welcomeOverrides(),
-          ...tasteOverrides(),
+          ...tasteOverrides(FakeTasteRepository(taste)),
           ...favoritesOverrides(FakeFavoritesRepository(saved: saved)),
           ...pronunciationOverrides(
             FakePronunciationRepository(),
@@ -174,6 +177,32 @@ void main() {
         ],
       );
       await shoot(tester, '$out/7_favorites');
+    });
+
+    testWidgets('8 taste', (tester) async {
+      await open(
+        tester,
+        AppRoutes.home,
+        taste: {
+          'cafe': const TasteProfile({
+            'temp': 'cold',
+            'sweetness': 2,
+            'milk': true,
+          }),
+        },
+      );
+      final row = find.byKey(const Key('taste_row'));
+      // The row's title just under the pinned chips, on every size.
+      await Scrollable.ensureVisible(tester.element(row));
+      await tester.pumpAndSettle();
+      final chips = tester.getRect(find.byType(CategoryChips).first).bottom;
+      final top = tester.getRect(row).top;
+      await tester.drag(
+        find.byType(Scrollable).first,
+        Offset(0, chips - top + 8),
+      );
+      await tester.pumpAndSettle();
+      await shoot(tester, '$out/8_taste');
     });
   }, skip: !takeScreens);
 }
