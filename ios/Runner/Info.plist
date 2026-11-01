@@ -70,5 +70,25 @@
 		</array>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>FlutterDeepLinkingEnabled</key>
+		<true/>
+		<key>com.posthog.posthog.AUTO_INIT</key>
+		<false/>
+		<key>CFBundleLocalizations</key>
+		<array>
+			<string>en</string>
+			<string>ar</string>
+		</array>
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleURLName</key>
+				<string>com.mohager.yaanieh</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>yaanieh</string>
+				</array>
+			</dict>
+		</array>
 	</dict>
 </plist>
