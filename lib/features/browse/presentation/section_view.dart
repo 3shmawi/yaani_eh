@@ -328,14 +328,14 @@ class _SectionViewState extends State<SectionView> {
                 child: Row(
                   children: [
                     SizedBox(width: AppDimens.space2),
-                    _backButton(),
+                    _backButton(key: const Key('section_back_pinned')),
                     Expanded(
                       child: SizedBox(
                         height: AppDimens.touchTarget,
                         child: chipRow(key: const Key('category_chips_pinned')),
                       ),
                     ),
-                    ?_searchButton(),
+                    ?_searchButton(key: const Key('section_search_pinned')),
                     SizedBox(width: AppDimens.space2),
                   ],
                 ),

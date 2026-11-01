@@ -99,8 +99,9 @@ void main() {
     await tester.pumpAndSettle();
     await beat(tester);
 
-    // 6. Back Home: desserts are coming soon. Then back to the sections.
-    await tester.tap(find.byKey(const Key('section_back')).first);
+    // 6. Back Home (from the pinned bar: the band has scrolled away):
+    // desserts are coming soon. Then back to the sections.
+    await tester.tap(find.byKey(const Key('section_back_pinned')));
     await tester.pumpAndSettle();
     await beat(tester);
     final desserts = find.byKey(const Key('section_desserts'));

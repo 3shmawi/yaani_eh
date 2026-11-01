@@ -101,11 +101,8 @@ void main() {
       final pinned = find.byKey(const Key('category_chips_pinned'));
       expect(pinned, findsOneWidget);
       // Back and search stay in the pinned bar.
-      final bar = find.byKey(const Key('section_pinned'));
-      expect(
-        find.descendant(of: bar, matching: find.byType(AppIconButton)),
-        findsNWidgets(2),
-      );
+      expect(find.byKey(const Key('section_back_pinned')), findsOneWidget);
+      expect(find.byKey(const Key('section_search_pinned')), findsOneWidget);
       final selected = tester.getSemantics(
         find.descendant(of: pinned, matching: find.text('Iced coffee')),
       );
