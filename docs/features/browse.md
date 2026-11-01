@@ -85,7 +85,8 @@ None.
   still opens, one button label per card, search pinned on scroll,
   loading / no sections / nothing published, Arabic / dark, 320 pt with
   1.6× text, iPad portrait 2 columns and landscape 3 with search at a
-  readable width, `expectAccessible`) and `section_page_test.dart`
+  readable width, the band, item of the day and sections sharing their
+  start edge on iPad in English and Arabic, `expectAccessible`) and `section_page_test.dart`
   (section: header with back, count and search, a chip scrolling to its
   category and lighting up in the pinned bar with back and search, coming
   soon and unknown sections, `ItemCard`, the entry stagger, Arabic / dark
@@ -135,7 +136,10 @@ None.
 - Section cards: one column on a phone; on a tablet as many as fit at
   `AppDimens.sectionCardMinWidth` (2 in portrait, 3 in landscape), cards in
   a row sharing their height, the grid at most `AppDimens.hubMaxWidth`.
-  The band's content stays in `AppReadableWidth`.
+  The band's content (title, tagline, search) has the same width and
+  edges as the hub below it, so everything starts on one line; search
+  keeps a readable width (`AppDimens.readableWidth`) at the start edge,
+  and so does the pinned search.
 - A section link opened from outside the app has nothing under it: back
   goes Home (`context.go`).
 - The list is built at once (not lazily), so a chip can scroll to any

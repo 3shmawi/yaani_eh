@@ -18,7 +18,7 @@ class HeaderBand extends StatelessWidget {
     this.trailing,
     this.leading,
     this.compact = false,
-    this.readable = false,
+    this.contentWidth,
     super.key,
   });
 
@@ -39,10 +39,10 @@ class HeaderBand extends StatelessWidget {
   /// A page under Home (a section): a smaller title next to [leading].
   final bool compact;
 
-  /// Keep the band's content in [AppReadableWidth] (Home: one column of
-  /// titles and search, centred on a tablet); the band itself still runs
-  /// edge to edge.
-  final bool readable;
+  /// The widest the band's content gets, centred (Home on a tablet: the
+  /// same width as the hub below, so their edges line up); the band itself
+  /// still runs edge to edge. Null: the full width.
+  final double? contentWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -102,8 +102,8 @@ class HeaderBand extends StatelessWidget {
                 AppDimens.space4,
                 AppDimens.space5,
               ),
-              child: _Readable(
-                on: readable,
+              child: _MaxWidth(
+                width: contentWidth,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
@@ -168,15 +168,22 @@ class HeaderBand extends StatelessWidget {
   }
 }
 
-class _Readable extends StatelessWidget {
-  const new({required this.on, required this.child});
+class _MaxWidth extends StatelessWidget {
+  const new({required this.width, required this.child});
 
-  final bool on;
+  final double? width;
   final Widget child;
 
   @override
-  Widget build(BuildContext context) =>
-      on ? AppReadableWidth(child: child) : child;
+  Widget build(BuildContext context) => switch (width) {
+    null => child,
+    final w => Center(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: w),
+        child: child,
+      ),
+    ),
+  };
 }
 
 /// A whole screen on the header band's gradient and pattern (the

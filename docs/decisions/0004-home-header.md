@@ -139,7 +139,8 @@ section at a glance. If b is picked, it also adds:
   the chips and search. The list itself is today's, unchanged. It stays
   under the tab bar (same branch as Home).
 - Settings is the third tab (الرئيسية · المفضلة · الإعدادات).
-- iPad: the band's content in `AppReadableWidth`; section cards in a grid
+- iPad: the band's content as wide as the hub below it (same edges), search
+  at a readable width at the start edge; section cards in a grid
   with at least `AppDimens.sectionCardMinWidth` (360) per card (1 column on
   a phone, 2 in portrait, 3 in landscape), at most `AppDimens.hubMaxWidth`.
 - Analytics: `browse_section_selected` is replaced by

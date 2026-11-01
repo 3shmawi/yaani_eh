@@ -3,7 +3,6 @@ import 'package:flutter/rendering.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_text_styles.dart';
-import 'package:yaani_eh/core/ui/app_ui.dart';
 import 'package:yaani_eh/core/widgets/header_band.dart';
 import 'package:yaani_eh/core/widgets/offline_banner.dart';
 import 'package:yaani_eh/core/widgets/search_field.dart';
@@ -87,12 +86,17 @@ class _BrowseViewState extends State<BrowseView> {
     final header = HeaderBand(
       title: l10n.appEyebrow,
       subtitle: l10n.browseTagline,
-      readable: true,
+      contentWidth: AppDimens.hubMaxWidth,
       bottom: search == null
           ? null
-          : KeyedSubtree(
-              key: _searchKey,
-              child: SearchField(key: const Key('home_search'), onTap: search),
+          : _SearchWidth(
+              child: KeyedSubtree(
+                key: _searchKey,
+                child: SearchField(
+                  key: const Key('home_search'),
+                  onTap: search,
+                ),
+              ),
             ),
     );
 
@@ -114,41 +118,36 @@ class _BrowseViewState extends State<BrowseView> {
             // Clear of the floating tab bar.
             AppDimens.tabBarHeight + AppDimens.space8,
           ),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: AppDimens.hubMaxWidth,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (hub.itemOfTheDay case final today?) ...[
-                    ItemOfTheDay(
-                      key: const Key('item_of_the_day'),
-                      item: today,
-                      onTap: widget.onOpenItem == null
-                          ? null
-                          : () => widget.onOpenItem!(today),
-                      action: widget.cardAction?.call(today),
-                    ),
-                    SizedBox(height: AppDimens.space6),
-                  ],
-                  Semantics(
-                    header: true,
-                    child: Text(
-                      l10n.hubSectionsTitle,
-                      style: context
-                          .text(TextRole.headline)
-                          .copyWith(color: context.palette.ink),
-                    ),
+          child: _HubWidth(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (hub.itemOfTheDay case final today?) ...[
+                  ItemOfTheDay(
+                    key: const Key('item_of_the_day'),
+                    item: today,
+                    onTap: widget.onOpenItem == null
+                        ? null
+                        : () => widget.onOpenItem!(today),
+                    action: widget.cardAction?.call(today),
                   ),
-                  SizedBox(height: AppDimens.space3),
-                  _SectionGrid(
-                    sections: hub.sections,
-                    onOpen: widget.onOpenSection,
-                  ),
+                  SizedBox(height: AppDimens.space6),
                 ],
-              ),
+                Semantics(
+                  header: true,
+                  child: Text(
+                    l10n.hubSectionsTitle,
+                    style: context
+                        .text(TextRole.headline)
+                        .copyWith(color: context.palette.ink),
+                  ),
+                ),
+                SizedBox(height: AppDimens.space3),
+                _SectionGrid(
+                  sections: hub.sections,
+                  onOpen: widget.onOpenSection,
+                ),
+              ],
             ),
           ),
         ),
@@ -181,7 +180,9 @@ class _BrowseViewState extends State<BrowseView> {
                   padding: EdgeInsetsDirectional.symmetric(
                     horizontal: AppDimens.space4,
                   ),
-                  child: AppReadableWidth(child: SearchField(onTap: search)),
+                  child: _HubWidth(
+                    child: _SearchWidth(child: SearchField(onTap: search)),
+                  ),
                 ),
               ),
             ),
@@ -189,6 +190,40 @@ class _BrowseViewState extends State<BrowseView> {
       ),
     );
   }
+}
+
+/// Home's column on a tablet: at most [AppDimens.hubMaxWidth], centred.
+/// The header, the item of the day, the sections and the pinned search all
+/// use it, so their edges line up.
+class _HubWidth extends StatelessWidget {
+  const new({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Center(
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: AppDimens.hubMaxWidth),
+      child: child,
+    ),
+  );
+}
+
+/// Search at a readable width on a tablet, at the start edge of the hub
+/// (under the title), not centred.
+class _SearchWidth extends StatelessWidget {
+  const new({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Align(
+    alignment: AlignmentDirectional.centerStart,
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: AppDimens.readableWidth),
+      child: child,
+    ),
+  );
 }
 
 /// Section cards: one column on a phone, more where each still gets

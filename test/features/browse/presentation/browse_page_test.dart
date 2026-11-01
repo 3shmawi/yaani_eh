@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,6 +13,7 @@ import 'package:yaani_eh/features/browse/presentation/widgets/section_card.dart'
 import 'package:yaani_eh/features/catalog_sync/data/models/catalog_rows.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
+import 'package:yaani_eh/l10n/l10n.dart';
 
 import '../../../helpers/fake_catalog_remote.dart';
 import '../../../helpers/fake_catalog_repository.dart';
@@ -237,6 +240,47 @@ void main() {
       expect(desserts.dy, greaterThan(cafe.dy));
       await tester.expectAccessible();
     });
+
+    for (final locale in const [Locale('en'), Locale('ar')]) {
+      for (final size in const [Size(1032, 1376), Size(1376, 1032)]) {
+        testWidgets('iPad ${size.width.toInt()}×${size.height.toInt()} '
+            '(${locale.languageCode}): the band, the item of the day and the '
+            'sections share their start edge', (tester) async {
+          await pumpView(tester, hub: _hub(more: true), locale: locale);
+          tester.view
+            ..physicalSize = size * 2
+            ..devicePixelRatio = 2;
+          await tester.pumpAndSettle();
+          final rtl = locale.languageCode == 'ar';
+          double start(Finder f) =>
+              rtl ? tester.getTopRight(f).dx : tester.getTopLeft(f).dx;
+          final l10n = lookupAppLocalizations(locale);
+          final edge = start(find.byKey(const Key('item_of_the_day')));
+          for (final f in [
+            find.text(l10n.appEyebrow),
+            find.byKey(const Key('home_search')),
+            find.text(l10n.hubSectionsTitle),
+            find.byKey(const Key('section_cafe')),
+          ]) {
+            expect(start(f), closeTo(edge, 0.5), reason: '$f');
+          }
+          // The item of the day and the grid also end together.
+          double end(Finder f) =>
+              rtl ? tester.getTopLeft(f).dx : tester.getTopRight(f).dx;
+          final cardEnds = [
+            for (final slug in ['cafe', 'desserts', 'terms'])
+              end(find.byKey(Key('section_$slug'))),
+          ];
+          final gridEnd = rtl
+              ? cardEnds.reduce(math.min)
+              : cardEnds.reduce(math.max);
+          expect(
+            end(find.byKey(const Key('item_of_the_day'))),
+            closeTo(gridEnd, 0.5),
+          );
+        });
+      }
+    }
 
     for (final (name, size, columns) in [
       ('iPad portrait', const Size(1032, 1376), 2),
