@@ -19,8 +19,19 @@ repository variable). The first release uses the version in `pubspec.yaml`.
 A manual run (Actions → Release → Run workflow) can force patch/minor/major.
 
 ## Pipeline
-1. **Checks** — format, analyze, unit/widget tests (+ integration tests on an
-   Android emulator for PRs).
+1. **Checks** — format, analyze, unit/widget tests. PRs also run every
+   integration test on an iPhone simulator (macOS runner, full Liquid Glass)
+   and build a debug Android APK. Android flows aren't run in CI: the
+   GitHub-hosted emulator has no GPU and went offline at the end of every
+   app run, losing the results. Run them on a phone or local emulator when
+   a change is Android-specific.
+   The iOS integration job is the slow one, so it runs only when the PR
+   changes something the app is built from (`lib/`, `ios/`,
+   `integration_test/`, `assets/`, `env/`, pubspec, `.fvmrc`, `ci.yml`);
+   otherwise it is skipped (a skipped job counts as passed). It caches Swift
+   packages, DerivedData and `build/ios` (`actions/cache` v6.1.0, checked
+   2026-11-01; saved after green runs only), so later builds are
+   incremental.
 2. **Android** — signed release AAB (prod) → Play track `PLAY_TRACK`
    (default `internal`).
 3. **iOS** — signing files fetched from App Store Connect with the API key →
@@ -58,6 +69,13 @@ Changes under `supabase/` merged to `main` → `supabase.yml` runs
 `supabase db push` (migrations) and deploys Edge Functions. Needs
 `SUPABASE_ACCESS_TOKEN` + `SUPABASE_DB_PASSWORD` (the project ref is read
 from `SUPABASE_URL`). PRs touching `supabase/` run the RLS tests first.
+
+If `SUPABASE_ACCESS_TOKEN` is a scoped token, it must have **API Keys:
+read-write**: `supabase link` reads the project's API keys, and without that
+scope every deploy fails at the link step (prod went un-migrated from
+2026-10-31 until the token was fixed on 2026-11-01). After changing the
+token, re-run Actions → **Supabase deploy** (workflow_dispatch) so nothing
+merged in the meantime is skipped.
 
 ## Store listing
 Texts, screenshots and graphics in `store/`, uploaded by Actions → **Store
@@ -110,8 +128,11 @@ are pinned by hand — bump them here and in the kit together:
 On your Mac, inside the clone: `tool/setup_secrets.sh` (`--dry-run` first to
 preview). Shared values come from `~/.app-secrets/shared.env`; this app's
 Android upload keystore is generated once into
-`~/.app-secrets/apps/yaani_eh/` with a random password — **back that
-folder up**, Play needs the same key for every update.
+`~/.app-secrets/apps/yaani_eh/` with a random password and the
+alias `<repo>-upload` (not a common word: GitHub stars out a secret's text
+in every log) — **back that folder up**, Play needs the same key for every
+update. Each upload to GitHub is tried up to 4 times, so a network blip
+doesn't stop the run halfway; re-running the script is always safe.
 
 | Secret | Content |
 |---|---|
@@ -152,7 +173,7 @@ Create `android/key.properties` (git-ignored):
 ```
 storeFile=/absolute/path/upload-keystore.jks
 storePassword=…
-keyAlias=upload
+keyAlias=<the ANDROID_KEY_ALIAS in ~/.app-secrets/apps/yaani_eh/app.env>
 keyPassword=…
 ```
 Without it, release builds fall back to debug signing.

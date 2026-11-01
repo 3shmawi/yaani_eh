@@ -16,6 +16,10 @@ also a deep link.
 | `/drink/<rest>` | Old links from earlier versions: redirected to `/item/<rest>` (query kept), so shared links keep working. `/drinks/...` and other look-alikes are not-found |
 
 ## Custom scheme (works now)
+Declared in `AndroidManifest.xml` (`android:scheme="yaanieh"`) and in
+`ios/Runner/Info.plist` (`CFBundleURLTypes`; until 2026-11-01 iOS lacked it,
+so the scheme didn't open the app on iPhone).
+`test/security/platform_config_test.dart` checks the iOS keys.
 `yaanieh://settings` — test with:
 ```bash
 adb shell am start -a android.intent.action.VIEW -d "yaanieh://settings"
