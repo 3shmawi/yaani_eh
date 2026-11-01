@@ -1,7 +1,5 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_text_styles.dart';
@@ -44,9 +42,6 @@ class CategoryChips extends StatelessWidget {
             selected: option.id == selectedId,
             tone: tone,
             onTap: () {
-              if (option.id != selectedId) {
-                unawaited(HapticFeedback.selectionClick());
-              }
               onSelected(option.id);
             },
           );

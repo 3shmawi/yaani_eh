@@ -873,7 +873,6 @@ class _AppSegmentedControlState extends State<AppSegmentedControl> {
           final id = segments[i].id;
           if (id == widget.selectedId || id == _reported) return;
           _reported = id;
-          unawaited(HapticFeedback.selectionClick());
           widget.onSelected(id);
         },
         indicatorColor: AppColors.selected,
@@ -898,7 +897,6 @@ Future<void> showAppSheet(
   required WidgetBuilder builder,
   required String closeLabel,
 }) {
-  unawaited(HapticFeedback.lightImpact());
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -1199,9 +1197,6 @@ class AppTabScaffold extends StatelessWidget {
                   key: const Key('app_tab_bar'),
                   selectedIndex: selectedIndex,
                   onTabSelected: (i) {
-                    if (i != selectedIndex) {
-                      unawaited(HapticFeedback.selectionClick());
-                    }
                     onSelected(i);
                   },
                   barHeight: AppDimens.tabBarHeight,
@@ -1291,6 +1286,42 @@ class _TabIcon extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// A light haptic tick on every tap anywhere in the app (not on scrolls or
+/// drags): a pointer that goes down and up within the touch slop and a short
+/// time. Wrap the app once; individual widgets don't add their own tap
+/// haptics.
+class AppTapHaptics extends StatefulWidget {
+  const AppTapHaptics({required this.child, super.key});
+
+  final Widget child;
+
+  @override
+  State<AppTapHaptics> createState() => _AppTapHapticsState();
+}
+
+class _AppTapHapticsState extends State<AppTapHaptics> {
+  final _downs = <int, ({Offset position, Duration time})>{};
+
+  @override
+  Widget build(BuildContext context) {
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: (e) =>
+          _downs[e.pointer] = (position: e.position, time: e.timeStamp),
+      onPointerCancel: (e) => _downs.remove(e.pointer),
+      onPointerUp: (e) {
+        final down = _downs.remove(e.pointer);
+        if (down == null) return;
+        final isTap =
+            (e.position - down.position).distance < kTouchSlop &&
+            e.timeStamp - down.time < kLongPressTimeout;
+        if (isTap) unawaited(HapticFeedback.selectionClick());
+      },
+      child: widget.child,
     );
   }
 }

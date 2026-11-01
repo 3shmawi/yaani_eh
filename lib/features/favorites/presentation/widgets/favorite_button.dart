@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_icons.dart';
@@ -43,10 +42,7 @@ class FavoriteButton extends ConsumerWidget {
       tone: tone,
       minimal: minimal,
       onPressed: () async {
-        final nowSaved = await ref
-            .read(favoritesControllerProvider)
-            .toggle(item, from);
-        if (nowSaved) await HapticFeedback.lightImpact();
+        await ref.read(favoritesControllerProvider).toggle(item, from);
       },
     );
     if (MediaQuery.disableAnimationsOf(context)) return button;
