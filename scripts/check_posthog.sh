@@ -6,12 +6,15 @@
 # The most common reason for "no events": a US-cloud key with the EU host
 # (or the other way round). PostHog then drops every event without an error.
 #
-# Usage: scripts/check_posthog.sh [env name]   (default: prod)
+# Usage: scripts/check_posthog.sh [env name]   (default: DEFAULT_ENV)
 # Never prints the key.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-file="env/${1:-prod}.json"
+default_env=prod
+# shellcheck source=/dev/null
+[ -f .project-kit.env ] && default_env=$(. ./.project-kit.env && echo "${DEFAULT_ENV:-prod}")
+file="env/${1:-$default_env}.json"
 [ -f "$file" ] || { echo "✗ $file not found (copy env/example.json and fill it)"; exit 1; }
 
 read -r key host < <(python3 - "$file" <<'PY'
