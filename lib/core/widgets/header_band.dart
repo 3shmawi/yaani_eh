@@ -137,8 +137,8 @@ class HeaderBand extends StatelessWidget {
   }
 }
 
-/// A whole screen on the header band's gradient and pattern (the taste
-/// quiz, the welcome): flat espresso when glass is lite. Text and controls
+/// A whole screen on the header band's gradient and pattern (the
+/// welcome): flat espresso when glass is lite. Text and controls
 /// on it use the `onHeader` colours and the dark glass tone.
 class BandBackground extends StatelessWidget {
   const new({required this.child, super.key});

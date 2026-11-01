@@ -102,12 +102,6 @@ abstract final class AppDimens {
   static double get progressHeight => 4.h;
   static double get legendSwatch => 12.r;
 
-  /// «ذوقي»: an answer card in the quiz.
-  static double get choiceHeight => 64.r;
-
-  /// A card in the «على ذوقك» row on Home.
-  static double get tasteCardWidth => 150.r;
-
   /// The welcome: the picture above each page's title (it shrinks to fit
   /// a small phone or large text), the cards in it, and the page dots.
   static double get welcomeArtWidth => 340.r;
@@ -115,8 +109,6 @@ abstract final class AppDimens {
   static double get welcomeMenuCard => 200.r;
   static double get welcomeExplainCard => 240.r;
   static double get welcomePhoto => 104.r;
-  static double get welcomeMatchPhotoWidth => 72.r;
-  static double get welcomeMatchPhotoHeight => 88.r;
   static double get welcomeDot => 6.r;
   static double get welcomeDotActive => 22.r;
 

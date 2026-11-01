@@ -23,7 +23,7 @@ devices=(
   "seven|600x960@2|1200x1920|sevenInchScreenshots"
   "ten|800x1280@2|1600x2560|tenInchScreenshots"
 )
-shots=(1_home 2_drink 3_preview 4_recipe 5_steps 6_search 7_favorites 8_taste)
+shots=(1_home 2_drink 3_preview 4_recipe 5_steps 6_search 7_favorites)
 
 for entry in "${devices[@]}"; do
   IFS='|' read -r id render size dest <<<"$entry"

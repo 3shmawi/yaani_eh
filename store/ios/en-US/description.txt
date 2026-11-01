@@ -12,11 +12,8 @@ Step by step shows one step at a time in big text, so you can follow it in your 
 HEAR THE NAME
 Not sure how to say "Affogato"? Hear it the way a barista says it, and the original pronunciation.
 
-SEARCH BY TASTE
+SEARCH BY DESCRIPTION
 Type what you feel like: "something cold with chocolate", "strong but not bitter". Search understands descriptions in Arabic and English, even with Franco spelling.
-
-MADE FOR YOUR TASTE
-Tell us what you like in 4 quick questions: hot or iced, how sweet, with milk or not. The menu puts the drinks that fit first, each with why. Your answers stay on your phone.
 
 KEEP THE ONES YOU LIKE
 Tap the heart to save a drink. Long-press any card for a quick look without leaving the menu.

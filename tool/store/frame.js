@@ -15,7 +15,6 @@ const CAPTIONS = {
     '5_steps': ['اعمله في البيت', 'خطوة بخطوة، بخط كبير'],
     '6_search': ['دوّر بالوصف', 'اكتب اللي نفسك فيه، مش لازم الاسم'],
     '7_favorites': ['احفظ اللي عجبك', 'على موبايلك، من غير حساب ولا نت'],
-    '8_taste': ['على ذوقك', '4 أسئلة، والمنيو يترتّب لك'],
   },
   en: {
     '1_home': ['Café menus that make sense', 'Every drink as the menu prints it, and what it is'],
@@ -23,9 +22,8 @@ const CAPTIONS = {
     '3_preview': ['Long-press for a quick look', 'Without leaving the menu'],
     '4_recipe': ["What's in the cup, to scale", 'See it before you order it'],
     '5_steps': ['Make it at home', 'Step by step, in big text'],
-    '6_search': ['Search by taste', 'Describe what you want, no name needed'],
+    '6_search': ['Search by description', 'Describe what you want, no name needed'],
     '7_favorites': ['Keep the ones you like', 'On your phone, no account, works offline'],
-    '8_taste': ['Sorted to your taste', '4 quick questions, and the menu is yours'],
   },
 };
 

@@ -31,8 +31,8 @@ Franco, offline, on the device copy of the menu. Nothing found → «مالقي�
     catalog change): names weigh 3×, descriptions 1×; 1–2 words must all
     match, longer queries 60%; a query that starts a name gets a bonus; an
     exact name (or one typo) becomes the answer; `SearchBoosts` multiplies
-    the score (`text × (1 + boost)`) — favorites, taste and recently viewed
-    plug in there with their features. Queries are capped at 60 characters
+    the score (`text × (1 + boost)`) — favorites and recently viewed
+    can plug in there with their features. Queries are capped at 60 characters
     and 8 words.
   - `presentation/` — `search_controller.dart` (index, query, results
     providers), `search_page.dart` (150 ms debounce) → `search_view.dart`;
@@ -71,10 +71,8 @@ None.
   fills the row's height, so rows are laid out once (no `IntrinsicHeight`).
 - No server search: the catalog is small and on the device, so search is
   instant and offline; the index rebuilds when a sync changes the menu.
-- The tab bar (Home / Search / Favorites / My taste) arrives with
+- The tab bar (Home / Search / Favorites) arrives with
   `favorites`; until then search opens from the Home header.
-- «ابعته» (send us the drink) on the empty state comes with
-  `suggest_item`.
 
 ## Demo & post
 **Hook (first 2 seconds):** «كتبت لبن ورغوة…» / "I typed 'milk and foam'…"

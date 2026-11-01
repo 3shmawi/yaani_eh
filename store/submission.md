@@ -32,7 +32,7 @@ Re-check both pages before the first upload.
 | An anonymous install ID | PostHog | Analytics (counting installs, not people) | No | No |
 
 Not collected: name, email, phone, location, contacts, photos, payment,
-health, browsing history, search text. Favorites and «ذوقي» answers stay on the phone and are
+health, browsing history, search text. Favorites stay on the phone and are
 never sent. Data is encrypted in transit (HTTPS). No data is sold, and none
 is used for advertising.
 
@@ -79,7 +79,7 @@ is used for advertising.
 ## Google Play Console
 
 - **Graphics:** `store/android/<ar|en-US>/images/`. There's `icon.png` (512×512),
-  `featureGraphic.png` (1024×500), and 8 screenshots each in
+  `featureGraphic.png` (1024×500), and 7 screenshots each in
   `phoneScreenshots` (1080×1920), `sevenInchScreenshots` (1200×1920) and
   `tenInchScreenshots` (1600×2560).
 - **App access:** all functionality is available without special access.

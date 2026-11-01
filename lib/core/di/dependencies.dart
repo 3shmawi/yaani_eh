@@ -15,8 +15,6 @@ import 'package:yaani_eh/features/pronunciation/data/repositories/pronunciation_
 import 'package:yaani_eh/features/pronunciation/domain/repositories/pronunciation_repository.dart';
 import 'package:yaani_eh/features/settings/data/repositories/shared_prefs_settings_repository.dart';
 import 'package:yaani_eh/features/settings/domain/repositories/settings_repository.dart';
-import 'package:yaani_eh/features/taste_profile/data/repositories/shared_prefs_taste_repository.dart';
-import 'package:yaani_eh/features/taste_profile/domain/repositories/taste_repository.dart';
 import 'package:yaani_eh/features/welcome/data/repositories/shared_prefs_welcome_repository.dart';
 import 'package:yaani_eh/features/welcome/domain/repositories/welcome_repository.dart';
 
@@ -28,14 +26,11 @@ abstract final class Dependencies {
   static late PronunciationRepository pronunciationRepository;
   static late ClipPlayer clipPlayer;
   static late FavoritesRepository favoritesRepository;
-  static late TasteRepository tasteRepository;
   static late WelcomeRepository welcomeRepository;
 
   static Future<void> init([DependencyOverrides? overrides]) async {
     final prefs = await SharedPreferences.getInstance();
     settingsRepository = SharedPrefsSettingsRepository(prefs);
-    tasteRepository =
-        overrides?.tasteRepository ?? SharedPrefsTasteRepository(prefs);
     welcomeRepository =
         overrides?.welcomeRepository ?? SharedPrefsWelcomeRepository(prefs);
     catalogRepository = CatalogRepositoryImpl(
@@ -66,7 +61,6 @@ class DependencyOverrides {
     this.pronunciationRepository,
     this.clipPlayer,
     this.favoritesDatabase,
-    this.tasteRepository,
     this.welcomeRepository,
   });
 
@@ -84,9 +78,6 @@ class DependencyOverrides {
 
   /// e.g. `FavoritesDatabase(NativeDatabase.memory())`: nothing saved yet.
   final FavoritesDatabase? favoritesDatabase;
-
-  /// «ذوقي» kept in memory: no taste yet, and nothing left behind.
-  final TasteRepository? tasteRepository;
 
   /// Whether the first-open welcome was seen: demos skip it, except the
   /// welcome's own.

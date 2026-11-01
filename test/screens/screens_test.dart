@@ -13,13 +13,11 @@ import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_control
 import 'package:yaani_eh/features/settings/domain/entities/app_settings.dart';
 import 'package:yaani_eh/features/settings/domain/repositories/settings_repository.dart';
 import 'package:yaani_eh/features/settings/presentation/settings_controller.dart';
-import 'package:yaani_eh/features/taste_profile/domain/entities/taste.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
 import '../helpers/fake_catalog_repository.dart';
 import '../helpers/fake_favorites.dart';
 import '../helpers/fake_pronunciation.dart';
-import '../helpers/fake_taste.dart';
 import '../helpers/fake_welcome.dart';
 import '../helpers/screens.dart';
 
@@ -33,12 +31,7 @@ void main() {
 
   setUpAll(loadAppFonts);
 
-  Future<void> open(
-    WidgetTester tester,
-    String lang,
-    String path, {
-    Map<String, TasteProfile> taste = const {},
-  }) async {
+  Future<void> open(WidgetTester tester, String lang, String path) async {
     tester.view
       ..physicalSize = Size(points[0] * 3, points[1] * 3)
       ..devicePixelRatio = 3;
@@ -50,7 +43,6 @@ void main() {
             FakeCatalogRepository(has: true),
           ),
           ...welcomeOverrides(),
-          ...tasteOverrides(FakeTasteRepository(taste)),
           ...favoritesOverrides(FakeFavoritesRepository()),
           ...pronunciationOverrides(
             FakePronunciationRepository(),
@@ -140,26 +132,6 @@ void main() {
         await shoot(tester, '${lang}_09_favorites_empty');
       });
 
-      testWidgets('taste quiz', (tester) async {
-        await open(tester, lang, AppRoutes.taste);
-        await tester.tap(find.byKey(const Key('taste_option_temp_1')));
-        await tester.pumpAndSettle();
-        await shoot(tester, '${lang}_11_taste_quiz');
-      });
-
-      testWidgets('home on your taste', (tester) async {
-        await open(
-          tester,
-          lang,
-          AppRoutes.home,
-          taste: {
-            'cafe': const TasteProfile({'temp': 'cold', 'milk': true}),
-          },
-        );
-        await tester.drag(find.byType(Scrollable).first, const Offset(0, -260));
-        await shoot(tester, '${lang}_12_home_taste');
-      });
-
       testWidgets('welcome', (tester) async {
         await open(tester, lang, AppRoutes.welcome);
         await shoot(tester, '${lang}_13_welcome_menu');
@@ -168,7 +140,7 @@ void main() {
         await shoot(tester, '${lang}_14_welcome_hear');
         await tester.tap(find.byKey(const Key('welcome_next')));
         await tester.pumpAndSettle();
-        await shoot(tester, '${lang}_15_welcome_taste');
+        await shoot(tester, '${lang}_15_welcome_more');
       });
 
       testWidgets('settings', (tester) async {
