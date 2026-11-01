@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 
-import 'package:flutter/animation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -75,6 +74,16 @@ abstract final class AppDimens {
   static double get icon => 24.r;
   static double get iconChip => 20.r;
   static double get tabBarHeight => 60.h;
+
+  /// The tab bar's selected pill when tapped or dragged: how far it may
+  /// stretch past its cell, and how much the icon in it grows. Small: the
+  /// package's iOS 26 defaults (12×8, 1.15×) looked like a big blob.
+  static const tabIndicatorStretch = EdgeInsets.symmetric(
+    horizontal: 4,
+    vertical: 2,
+  );
+  static const tabIconMagnification = 1.05;
+  static const tabPressScale = 1.02;
 
   /// The count on a tab's icon (saved drinks).
   static double get badgeSize => 16.r;

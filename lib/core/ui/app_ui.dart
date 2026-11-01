@@ -1205,6 +1205,9 @@ class AppTabScaffold extends StatelessWidget {
                     onSelected(i);
                   },
                   barHeight: AppDimens.tabBarHeight,
+                  indicatorExpansion: AppDimens.tabIndicatorStretch,
+                  magnification: AppDimens.tabIconMagnification,
+                  pressScale: AppDimens.tabPressScale,
                   // Frosted, like the app's other reading glass: the
                   // package's default clear tint read as light grey over
                   // the dark page, and the tabs on it barely showed.
