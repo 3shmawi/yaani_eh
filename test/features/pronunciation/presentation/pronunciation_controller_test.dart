@@ -40,14 +40,14 @@ void main() {
 
   test('a tap loads, plays, then goes idle when the clip ends', () async {
     repo.hold = Completer();
-    final run = controller().toggle(flatWhite, Voice.barista);
+    final run = controller().toggle(flatWhite, Voice.spoken);
     await pumpEventQueue();
     expect(state().playback, isA<PlaybackLoading>());
 
     repo.hold!.complete();
     await pumpEventQueue();
     final playing = state().playback as PlaybackPlaying;
-    expect(playing.isFor(flatWhite.id, Voice.barista), isTrue);
+    expect(playing.isFor(flatWhite.id, Voice.spoken), isTrue);
     expect(player.played.single.file, '/clips/flat_white.barista.m4a');
     expect(player.played.single.speed, 1);
 
@@ -67,7 +67,7 @@ void main() {
   });
 
   test('only one name at a time: a new tap stops the old one', () async {
-    unawaited(controller().toggle(flatWhite, Voice.barista));
+    unawaited(controller().toggle(flatWhite, Voice.spoken));
     await pumpEventQueue();
     unawaited(controller().toggle(latte, Voice.original));
     await pumpEventQueue();
@@ -83,10 +83,10 @@ void main() {
 
   test('a slow download that is overtaken never plays', () async {
     repo.hold = Completer();
-    unawaited(controller().toggle(flatWhite, Voice.barista));
+    unawaited(controller().toggle(flatWhite, Voice.spoken));
     await pumpEventQueue();
     repo.hold = null;
-    unawaited(controller().toggle(latte, Voice.barista));
+    unawaited(controller().toggle(latte, Voice.spoken));
     await pumpEventQueue();
     expect(player.played.single.file, '/clips/latte.barista.m4a');
   });
@@ -94,7 +94,7 @@ void main() {
   test('0.75× applies to the next clip', () async {
     controller().toggleSpeed();
     expect(state().speed, PlaybackSpeed.slow);
-    unawaited(controller().toggle(flatWhite, Voice.barista));
+    unawaited(controller().toggle(flatWhite, Voice.spoken));
     await pumpEventQueue();
     expect(player.played.single.speed, 0.75);
     controller().toggleSpeed();
@@ -104,7 +104,7 @@ void main() {
   test('cards play the barista clip first, else the original', () async {
     unawaited(controller().toggleFirst(flatWhite));
     await pumpEventQueue();
-    expect((state().playback as PlaybackPlaying).voice, Voice.barista);
+    expect((state().playback as PlaybackPlaying).voice, Voice.spoken);
 
     // Tapping the card again stops it, whichever voice is playing.
     await controller().toggleFirst(flatWhite);
@@ -121,11 +121,11 @@ void main() {
   test('a failure shows for a few seconds, then clears', () {
     fakeAsync((async) {
       repo.failures['flat_white.barista.m4a'] = const NetworkFailure();
-      unawaited(controller().toggle(flatWhite, Voice.barista));
+      unawaited(controller().toggle(flatWhite, Voice.spoken));
       async.flushMicrotasks();
       final failed = state().playback as PlaybackFailed;
       expect(failed.failure, isA<NetworkFailure>());
-      expect(failed.isFor(flatWhite.id, Voice.barista), isTrue);
+      expect(failed.isFor(flatWhite.id, Voice.spoken), isTrue);
       expect(player.played, isEmpty);
 
       async.elapse(PronunciationController.failureShownFor);
@@ -136,9 +136,9 @@ void main() {
   test('a new tap replaces a shown failure', () {
     fakeAsync((async) {
       repo.failures['flat_white.barista.m4a'] = const NotFoundFailure();
-      unawaited(controller().toggle(flatWhite, Voice.barista));
+      unawaited(controller().toggle(flatWhite, Voice.spoken));
       async.flushMicrotasks();
-      unawaited(controller().toggle(latte, Voice.barista));
+      unawaited(controller().toggle(latte, Voice.spoken));
       async
         ..flushMicrotasks()
         ..elapse(PronunciationController.failureShownFor);
@@ -148,7 +148,7 @@ void main() {
 
   test('a clip the player can not play → failed, not a crash', () async {
     player.throwOnPlay = StateError('bad file');
-    await controller().toggle(flatWhite, Voice.barista);
+    await controller().toggle(flatWhite, Voice.spoken);
     final failed = state().playback as PlaybackFailed;
     expect(failed.failure, isA<UnknownFailure>());
   });

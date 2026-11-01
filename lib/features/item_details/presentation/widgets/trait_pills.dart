@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:yaani_eh/core/config/app_content.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
-import 'package:yaani_eh/core/theme/app_icons.dart';
 import 'package:yaani_eh/core/theme/app_text_styles.dart';
 import 'package:yaani_eh/features/item_details/domain/usecases/describe_item.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
@@ -42,33 +40,15 @@ class TraitPills extends StatelessWidget {
           ),
         for (final trait in facts.traits)
           _Pill(child: Text(trait, style: style)),
-        if (AppContent.showPrices && facts.priceIsStale)
-          _Pill(
-            outlined: true,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(AppIcons.warningCircle, size: 16, color: p.warning),
-                SizedBox(width: AppDimens.space1),
-                Flexible(
-                  child: Text(
-                    l10n.priceStale,
-                    style: style.copyWith(color: p.warning),
-                  ),
-                ),
-              ],
-            ),
-          ),
       ],
     );
   }
 }
 
 class _Pill extends StatelessWidget {
-  const new({required this.child, this.outlined = false});
+  const new({required this.child});
 
   final Widget child;
-  final bool outlined;
 
   @override
   Widget build(BuildContext context) {
@@ -80,9 +60,8 @@ class _Pill extends StatelessWidget {
         vertical: AppDimens.space1,
       ),
       decoration: BoxDecoration(
-        color: outlined ? null : p.brandSoft,
+        color: p.brandSoft,
         borderRadius: BorderRadius.circular(AppDimens.radiusPill),
-        border: outlined ? Border.all(color: p.warning) : null,
       ),
       child: child,
     );

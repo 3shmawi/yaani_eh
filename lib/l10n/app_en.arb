@@ -94,14 +94,6 @@
   },
   "browseEmpty": "The menu is empty for now. Check back soon.",
   "itemOfTheDay": "Drink of the day",
-  "priceRange": "{range} EGP",
-  "@priceRange": {
-    "placeholders": {
-      "range": {
-        "type": "String"
-      }
-    }
-  },
   "calories": "{count} kcal",
   "@calories": {
     "placeholders": {
@@ -110,20 +102,8 @@
       }
     }
   },
-  "approximateNote": "Calories and prices are approximate.",
   "itemNotFoundTitle": "We can't find this drink",
   "itemNotFoundBody": "It may have been taken off the menu.",
-  "priceAtCafes": "Price at cafés",
-  "priceChecked": "Checked {date}",
-  "@priceChecked": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
-  "priceMissing": "We're still collecting prices for this drink.",
-  "priceStale": "Price may have changed",
   "similarItems": "Similar drinks",
   "kcal": "kcal",
   "currency": "EGP",
@@ -172,9 +152,9 @@
   "searchIdleBody": "Works offline, in Arabic, English or Franco.",
   "searchTry": "Try",
   "searchExamples": "Frappé|milk and coffee|iced|Cortado",
-  "pronounceBarista": "Barista",
-  "@pronounceBarista": {
-    "description": "Pronounce pill: how baristas in Egypt say the drink's name."
+  "pronounceSpoken": "As said",
+  "@pronounceSpoken": {
+    "description": "Pronounce pill: the name as people in Egypt say it (for drinks, the barista)."
   },
   "pronounceOriginal": "Original",
   "@pronounceOriginal": {
@@ -184,8 +164,8 @@
   "@pronounceSlower": {
     "description": "Screen-reader label of the 0.75× speed toggle."
   },
-  "pronounceBaristaOf": "Play barista pronunciation of {name}",
-  "@pronounceBaristaOf": {
+  "pronounceSpokenOf": "Play {name} as people say it",
+  "@pronounceSpokenOf": {
     "placeholders": {
       "name": {
         "type": "String"
@@ -461,5 +441,34 @@
   "welcomeArtOffline": "Works offline",
   "@welcomeArtSavedWord": {
     "description": "A saved item's name in the welcome's picture: content, kept in Latin like the menu."
+  },
+  "detailsStory": "The story",
+  "@detailsStory": {
+    "description": "Default title of a history item's details, when its section doesn't name them."
+  },
+  "detailsUsage": "How to use it",
+  "@detailsUsage": {
+    "description": "Default title of a term's details, when its section doesn't name them."
+  },
+  "detailsEvents": "{count, plural, =1{1 event} other{{count} events}}",
+  "@detailsEvents": {
+    "description": "Subtitle of a story's details row: how many events.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "detailsNeedUpdate": "Update the app to see the details",
+  "@detailsNeedUpdate": {
+    "description": "Shown instead of details the installed app can't show yet (content newer than the app)."
+  },
+  "detailsNeedUpdateHint": "Opens the store",
+  "@detailsNeedUpdateHint": {
+    "description": "Screen-reader hint for the update row."
+  },
+  "stepsDone": "Done",
+  "@stepsDone": {
+    "description": "Last button of step by step for anything that isn't a recipe."
   }
 }

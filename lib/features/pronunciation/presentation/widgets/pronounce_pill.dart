@@ -70,13 +70,13 @@ class PronouncePill extends StatelessWidget {
                   child: _Segment(
                     key: Key('pronounce_${voice.name}'),
                     label: switch (voice) {
-                      Voice.barista => l10n.pronounceBarista,
+                      Voice.spoken => l10n.pronounceSpoken,
                       Voice.original => l10n.pronounceOriginal,
                     },
                     semanticsLabel: switch ((voice, states[voice])) {
                       (_, SegmentState.playing || SegmentState.loading) =>
                         l10n.pronounceStopOf(name),
-                      (Voice.barista, _) => l10n.pronounceBaristaOf(name),
+                      (Voice.spoken, _) => l10n.pronounceSpokenOf(name),
                       (Voice.original, _) => l10n.pronounceOriginalOf(name),
                     },
                     state: states[voice] ?? SegmentState.idle,

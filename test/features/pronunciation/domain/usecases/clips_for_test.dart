@@ -11,7 +11,7 @@ CatalogItem _item({String? barista, String? original}) => CatalogItem(
   menuNameAr: 'فلات وايت',
   explanationAr: 'ا',
   explanationEn: 'e',
-  audioBaristaPath: barista,
+  audioSpokenPath: barista,
   audioOriginalPath: original,
 );
 
@@ -20,7 +20,7 @@ void main() {
 
   test('barista first, then original', () {
     expect(clips(_item(barista: 'b.m4a', original: 'o.m4a')), const [
-      Clip(voice: Voice.barista, path: 'b.m4a'),
+      Clip(voice: Voice.spoken, path: 'b.m4a'),
       Clip(voice: Voice.original, path: 'o.m4a'),
     ]);
   });
@@ -39,7 +39,7 @@ void main() {
 
   test('one voice', () {
     final item = _item(barista: 'b.m4a');
-    expect(clips.voice(item, Voice.barista)?.path, 'b.m4a');
+    expect(clips.voice(item, Voice.spoken)?.path, 'b.m4a');
     expect(clips.voice(item, Voice.original), isNull);
   });
 

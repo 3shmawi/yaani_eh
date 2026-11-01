@@ -76,6 +76,39 @@ class $CategoriesTable extends Categories
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _detailKindMeta = const VerificationMeta(
+    'detailKind',
+  );
+  @override
+  late final GeneratedColumn<String> detailKind = GeneratedColumn<String>(
+    'detail_kind',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _detailsTitleArMeta = const VerificationMeta(
+    'detailsTitleAr',
+  );
+  @override
+  late final GeneratedColumn<String> detailsTitleAr = GeneratedColumn<String>(
+    'details_title_ar',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _detailsTitleEnMeta = const VerificationMeta(
+    'detailsTitleEn',
+  );
+  @override
+  late final GeneratedColumn<String> detailsTitleEn = GeneratedColumn<String>(
+    'details_title_en',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _sortOrderMeta = const VerificationMeta(
     'sortOrder',
   );
@@ -97,6 +130,9 @@ class $CategoriesTable extends Categories
     nameEn,
     icon,
     traitSchema,
+    detailKind,
+    detailsTitleAr,
+    detailsTitleEn,
     sortOrder,
   ];
   @override
@@ -161,6 +197,30 @@ class $CategoriesTable extends Categories
         ),
       );
     }
+    if (data.containsKey('detail_kind')) {
+      context.handle(
+        _detailKindMeta,
+        detailKind.isAcceptableOrUnknown(data['detail_kind']!, _detailKindMeta),
+      );
+    }
+    if (data.containsKey('details_title_ar')) {
+      context.handle(
+        _detailsTitleArMeta,
+        detailsTitleAr.isAcceptableOrUnknown(
+          data['details_title_ar']!,
+          _detailsTitleArMeta,
+        ),
+      );
+    }
+    if (data.containsKey('details_title_en')) {
+      context.handle(
+        _detailsTitleEnMeta,
+        detailsTitleEn.isAcceptableOrUnknown(
+          data['details_title_en']!,
+          _detailsTitleEnMeta,
+        ),
+      );
+    }
     if (data.containsKey('sort_order')) {
       context.handle(
         _sortOrderMeta,
@@ -204,6 +264,18 @@ class $CategoriesTable extends Categories
         DriftSqlType.string,
         data['${effectivePrefix}trait_schema'],
       ),
+      detailKind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}detail_kind'],
+      ),
+      detailsTitleAr: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}details_title_ar'],
+      ),
+      detailsTitleEn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}details_title_en'],
+      ),
       sortOrder: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}sort_order'],
@@ -227,6 +299,11 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
 
   /// JSON list (sections only).
   final String? traitSchema;
+
+  /// Sections only: recipe | story | usage (see DetailKind).
+  final String? detailKind;
+  final String? detailsTitleAr;
+  final String? detailsTitleEn;
   final int sortOrder;
   const CategoryRow({
     required this.id,
@@ -236,6 +313,9 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     required this.nameEn,
     this.icon,
     this.traitSchema,
+    this.detailKind,
+    this.detailsTitleAr,
+    this.detailsTitleEn,
     required this.sortOrder,
   });
   @override
@@ -254,6 +334,15 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     if (!nullToAbsent || traitSchema != null) {
       map['trait_schema'] = Variable<String>(traitSchema);
     }
+    if (!nullToAbsent || detailKind != null) {
+      map['detail_kind'] = Variable<String>(detailKind);
+    }
+    if (!nullToAbsent || detailsTitleAr != null) {
+      map['details_title_ar'] = Variable<String>(detailsTitleAr);
+    }
+    if (!nullToAbsent || detailsTitleEn != null) {
+      map['details_title_en'] = Variable<String>(detailsTitleEn);
+    }
     map['sort_order'] = Variable<int>(sortOrder);
     return map;
   }
@@ -271,6 +360,15 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       traitSchema: traitSchema == null && nullToAbsent
           ? const Value.absent()
           : Value(traitSchema),
+      detailKind: detailKind == null && nullToAbsent
+          ? const Value.absent()
+          : Value(detailKind),
+      detailsTitleAr: detailsTitleAr == null && nullToAbsent
+          ? const Value.absent()
+          : Value(detailsTitleAr),
+      detailsTitleEn: detailsTitleEn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(detailsTitleEn),
       sortOrder: Value(sortOrder),
     );
   }
@@ -288,6 +386,9 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       nameEn: serializer.fromJson<String>(json['nameEn']),
       icon: serializer.fromJson<String?>(json['icon']),
       traitSchema: serializer.fromJson<String?>(json['traitSchema']),
+      detailKind: serializer.fromJson<String?>(json['detailKind']),
+      detailsTitleAr: serializer.fromJson<String?>(json['detailsTitleAr']),
+      detailsTitleEn: serializer.fromJson<String?>(json['detailsTitleEn']),
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
     );
   }
@@ -302,6 +403,9 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       'nameEn': serializer.toJson<String>(nameEn),
       'icon': serializer.toJson<String?>(icon),
       'traitSchema': serializer.toJson<String?>(traitSchema),
+      'detailKind': serializer.toJson<String?>(detailKind),
+      'detailsTitleAr': serializer.toJson<String?>(detailsTitleAr),
+      'detailsTitleEn': serializer.toJson<String?>(detailsTitleEn),
       'sortOrder': serializer.toJson<int>(sortOrder),
     };
   }
@@ -314,6 +418,9 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     String? nameEn,
     Value<String?> icon = const Value.absent(),
     Value<String?> traitSchema = const Value.absent(),
+    Value<String?> detailKind = const Value.absent(),
+    Value<String?> detailsTitleAr = const Value.absent(),
+    Value<String?> detailsTitleEn = const Value.absent(),
     int? sortOrder,
   }) => CategoryRow(
     id: id ?? this.id,
@@ -323,6 +430,13 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     nameEn: nameEn ?? this.nameEn,
     icon: icon.present ? icon.value : this.icon,
     traitSchema: traitSchema.present ? traitSchema.value : this.traitSchema,
+    detailKind: detailKind.present ? detailKind.value : this.detailKind,
+    detailsTitleAr: detailsTitleAr.present
+        ? detailsTitleAr.value
+        : this.detailsTitleAr,
+    detailsTitleEn: detailsTitleEn.present
+        ? detailsTitleEn.value
+        : this.detailsTitleEn,
     sortOrder: sortOrder ?? this.sortOrder,
   );
   CategoryRow copyWithCompanion(CategoriesCompanion data) {
@@ -336,6 +450,15 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       traitSchema: data.traitSchema.present
           ? data.traitSchema.value
           : this.traitSchema,
+      detailKind: data.detailKind.present
+          ? data.detailKind.value
+          : this.detailKind,
+      detailsTitleAr: data.detailsTitleAr.present
+          ? data.detailsTitleAr.value
+          : this.detailsTitleAr,
+      detailsTitleEn: data.detailsTitleEn.present
+          ? data.detailsTitleEn.value
+          : this.detailsTitleEn,
       sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
     );
   }
@@ -350,6 +473,9 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
           ..write('nameEn: $nameEn, ')
           ..write('icon: $icon, ')
           ..write('traitSchema: $traitSchema, ')
+          ..write('detailKind: $detailKind, ')
+          ..write('detailsTitleAr: $detailsTitleAr, ')
+          ..write('detailsTitleEn: $detailsTitleEn, ')
           ..write('sortOrder: $sortOrder')
           ..write(')'))
         .toString();
@@ -364,6 +490,9 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     nameEn,
     icon,
     traitSchema,
+    detailKind,
+    detailsTitleAr,
+    detailsTitleEn,
     sortOrder,
   );
   @override
@@ -377,6 +506,9 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
           other.nameEn == this.nameEn &&
           other.icon == this.icon &&
           other.traitSchema == this.traitSchema &&
+          other.detailKind == this.detailKind &&
+          other.detailsTitleAr == this.detailsTitleAr &&
+          other.detailsTitleEn == this.detailsTitleEn &&
           other.sortOrder == this.sortOrder);
 }
 
@@ -388,6 +520,9 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
   final Value<String> nameEn;
   final Value<String?> icon;
   final Value<String?> traitSchema;
+  final Value<String?> detailKind;
+  final Value<String?> detailsTitleAr;
+  final Value<String?> detailsTitleEn;
   final Value<int> sortOrder;
   final Value<int> rowid;
   const CategoriesCompanion({
@@ -398,6 +533,9 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     this.nameEn = const Value.absent(),
     this.icon = const Value.absent(),
     this.traitSchema = const Value.absent(),
+    this.detailKind = const Value.absent(),
+    this.detailsTitleAr = const Value.absent(),
+    this.detailsTitleEn = const Value.absent(),
     this.sortOrder = const Value.absent(),
     this.rowid = const Value.absent(),
   });
@@ -409,6 +547,9 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     required String nameEn,
     this.icon = const Value.absent(),
     this.traitSchema = const Value.absent(),
+    this.detailKind = const Value.absent(),
+    this.detailsTitleAr = const Value.absent(),
+    this.detailsTitleEn = const Value.absent(),
     this.sortOrder = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
@@ -423,6 +564,9 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     Expression<String>? nameEn,
     Expression<String>? icon,
     Expression<String>? traitSchema,
+    Expression<String>? detailKind,
+    Expression<String>? detailsTitleAr,
+    Expression<String>? detailsTitleEn,
     Expression<int>? sortOrder,
     Expression<int>? rowid,
   }) {
@@ -434,6 +578,9 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
       if (nameEn != null) 'name_en': nameEn,
       if (icon != null) 'icon': icon,
       if (traitSchema != null) 'trait_schema': traitSchema,
+      if (detailKind != null) 'detail_kind': detailKind,
+      if (detailsTitleAr != null) 'details_title_ar': detailsTitleAr,
+      if (detailsTitleEn != null) 'details_title_en': detailsTitleEn,
       if (sortOrder != null) 'sort_order': sortOrder,
       if (rowid != null) 'rowid': rowid,
     });
@@ -447,6 +594,9 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     Value<String>? nameEn,
     Value<String?>? icon,
     Value<String?>? traitSchema,
+    Value<String?>? detailKind,
+    Value<String?>? detailsTitleAr,
+    Value<String?>? detailsTitleEn,
     Value<int>? sortOrder,
     Value<int>? rowid,
   }) {
@@ -458,6 +608,9 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
       nameEn: nameEn ?? this.nameEn,
       icon: icon ?? this.icon,
       traitSchema: traitSchema ?? this.traitSchema,
+      detailKind: detailKind ?? this.detailKind,
+      detailsTitleAr: detailsTitleAr ?? this.detailsTitleAr,
+      detailsTitleEn: detailsTitleEn ?? this.detailsTitleEn,
       sortOrder: sortOrder ?? this.sortOrder,
       rowid: rowid ?? this.rowid,
     );
@@ -487,6 +640,15 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     if (traitSchema.present) {
       map['trait_schema'] = Variable<String>(traitSchema.value);
     }
+    if (detailKind.present) {
+      map['detail_kind'] = Variable<String>(detailKind.value);
+    }
+    if (detailsTitleAr.present) {
+      map['details_title_ar'] = Variable<String>(detailsTitleAr.value);
+    }
+    if (detailsTitleEn.present) {
+      map['details_title_en'] = Variable<String>(detailsTitleEn.value);
+    }
     if (sortOrder.present) {
       map['sort_order'] = Variable<int>(sortOrder.value);
     }
@@ -506,6 +668,9 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
           ..write('nameEn: $nameEn, ')
           ..write('icon: $icon, ')
           ..write('traitSchema: $traitSchema, ')
+          ..write('detailKind: $detailKind, ')
+          ..write('detailsTitleAr: $detailsTitleAr, ')
+          ..write('detailsTitleEn: $detailsTitleEn, ')
           ..write('sortOrder: $sortOrder, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -609,60 +774,6 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _caloriesMeta = const VerificationMeta(
-    'calories',
-  );
-  @override
-  late final GeneratedColumn<int> calories = GeneratedColumn<int>(
-    'calories',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _sizeMlMeta = const VerificationMeta('sizeMl');
-  @override
-  late final GeneratedColumn<int> sizeMl = GeneratedColumn<int>(
-    'size_ml',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _priceMinEgpMeta = const VerificationMeta(
-    'priceMinEgp',
-  );
-  @override
-  late final GeneratedColumn<int> priceMinEgp = GeneratedColumn<int>(
-    'price_min_egp',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _priceMaxEgpMeta = const VerificationMeta(
-    'priceMaxEgp',
-  );
-  @override
-  late final GeneratedColumn<int> priceMaxEgp = GeneratedColumn<int>(
-    'price_max_egp',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _priceUpdatedAtMeta = const VerificationMeta(
-    'priceUpdatedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> priceUpdatedAt =
-      GeneratedColumn<DateTime>(
-        'price_updated_at',
-        aliasedName,
-        true,
-        type: DriftSqlType.dateTime,
-        requiredDuringInsert: false,
-      );
   static const VerificationMeta _imagePathMeta = const VerificationMeta(
     'imagePath',
   );
@@ -674,12 +785,12 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _audioBaristaPathMeta = const VerificationMeta(
-    'audioBaristaPath',
+  static const VerificationMeta _audioSpokenPathMeta = const VerificationMeta(
+    'audioSpokenPath',
   );
   @override
-  late final GeneratedColumn<String> audioBaristaPath = GeneratedColumn<String>(
-    'audio_barista_path',
+  late final GeneratedColumn<String> audioSpokenPath = GeneratedColumn<String>(
+    'audio_spoken_path',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -719,10 +830,12 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
-  static const VerificationMeta _recipeMeta = const VerificationMeta('recipe');
+  static const VerificationMeta _detailsMeta = const VerificationMeta(
+    'details',
+  );
   @override
-  late final GeneratedColumn<String> recipe = GeneratedColumn<String>(
-    'recipe',
+  late final GeneratedColumn<String> details = GeneratedColumn<String>(
+    'details',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -739,17 +852,12 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
     explanationEn,
     gistAr,
     gistEn,
-    calories,
-    sizeMl,
-    priceMinEgp,
-    priceMaxEgp,
-    priceUpdatedAt,
     imagePath,
-    audioBaristaPath,
+    audioSpokenPath,
     audioOriginalPath,
     traits,
     sortOrder,
-    recipe,
+    details,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -837,57 +945,18 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
         gistEn.isAcceptableOrUnknown(data['gist_en']!, _gistEnMeta),
       );
     }
-    if (data.containsKey('calories')) {
-      context.handle(
-        _caloriesMeta,
-        calories.isAcceptableOrUnknown(data['calories']!, _caloriesMeta),
-      );
-    }
-    if (data.containsKey('size_ml')) {
-      context.handle(
-        _sizeMlMeta,
-        sizeMl.isAcceptableOrUnknown(data['size_ml']!, _sizeMlMeta),
-      );
-    }
-    if (data.containsKey('price_min_egp')) {
-      context.handle(
-        _priceMinEgpMeta,
-        priceMinEgp.isAcceptableOrUnknown(
-          data['price_min_egp']!,
-          _priceMinEgpMeta,
-        ),
-      );
-    }
-    if (data.containsKey('price_max_egp')) {
-      context.handle(
-        _priceMaxEgpMeta,
-        priceMaxEgp.isAcceptableOrUnknown(
-          data['price_max_egp']!,
-          _priceMaxEgpMeta,
-        ),
-      );
-    }
-    if (data.containsKey('price_updated_at')) {
-      context.handle(
-        _priceUpdatedAtMeta,
-        priceUpdatedAt.isAcceptableOrUnknown(
-          data['price_updated_at']!,
-          _priceUpdatedAtMeta,
-        ),
-      );
-    }
     if (data.containsKey('image_path')) {
       context.handle(
         _imagePathMeta,
         imagePath.isAcceptableOrUnknown(data['image_path']!, _imagePathMeta),
       );
     }
-    if (data.containsKey('audio_barista_path')) {
+    if (data.containsKey('audio_spoken_path')) {
       context.handle(
-        _audioBaristaPathMeta,
-        audioBaristaPath.isAcceptableOrUnknown(
-          data['audio_barista_path']!,
-          _audioBaristaPathMeta,
+        _audioSpokenPathMeta,
+        audioSpokenPath.isAcceptableOrUnknown(
+          data['audio_spoken_path']!,
+          _audioSpokenPathMeta,
         ),
       );
     }
@@ -912,10 +981,10 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
         sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
       );
     }
-    if (data.containsKey('recipe')) {
+    if (data.containsKey('details')) {
       context.handle(
-        _recipeMeta,
-        recipe.isAcceptableOrUnknown(data['recipe']!, _recipeMeta),
+        _detailsMeta,
+        details.isAcceptableOrUnknown(data['details']!, _detailsMeta),
       );
     }
     return context;
@@ -963,33 +1032,13 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
         DriftSqlType.string,
         data['${effectivePrefix}gist_en'],
       ),
-      calories: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}calories'],
-      ),
-      sizeMl: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}size_ml'],
-      ),
-      priceMinEgp: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}price_min_egp'],
-      ),
-      priceMaxEgp: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}price_max_egp'],
-      ),
-      priceUpdatedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}price_updated_at'],
-      ),
       imagePath: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}image_path'],
       ),
-      audioBaristaPath: attachedDatabase.typeMapping.read(
+      audioSpokenPath: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}audio_barista_path'],
+        data['${effectivePrefix}audio_spoken_path'],
       ),
       audioOriginalPath: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -1003,9 +1052,9 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
         DriftSqlType.int,
         data['${effectivePrefix}sort_order'],
       )!,
-      recipe: attachedDatabase.typeMapping.read(
+      details: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}recipe'],
+        data['${effectivePrefix}details'],
       ),
     );
   }
@@ -1026,21 +1075,17 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
   final String explanationEn;
   final String? gistAr;
   final String? gistEn;
-  final int? calories;
-  final int? sizeMl;
-  final int? priceMinEgp;
-  final int? priceMaxEgp;
-  final DateTime? priceUpdatedAt;
   final String? imagePath;
-  final String? audioBaristaPath;
+  final String? audioSpokenPath;
   final String? audioOriginalPath;
 
   /// JSON object.
   final String traits;
   final int sortOrder;
 
-  /// «طريقة التحضير», JSON in the server's shape.
-  final String? recipe;
+  /// The section's kind of details, JSON in the server's shape
+  /// (`{kind, …}`).
+  final String? details;
   const ItemRow({
     required this.id,
     required this.categoryId,
@@ -1051,17 +1096,12 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     required this.explanationEn,
     this.gistAr,
     this.gistEn,
-    this.calories,
-    this.sizeMl,
-    this.priceMinEgp,
-    this.priceMaxEgp,
-    this.priceUpdatedAt,
     this.imagePath,
-    this.audioBaristaPath,
+    this.audioSpokenPath,
     this.audioOriginalPath,
     required this.traits,
     required this.sortOrder,
-    this.recipe,
+    this.details,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1079,34 +1119,19 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     if (!nullToAbsent || gistEn != null) {
       map['gist_en'] = Variable<String>(gistEn);
     }
-    if (!nullToAbsent || calories != null) {
-      map['calories'] = Variable<int>(calories);
-    }
-    if (!nullToAbsent || sizeMl != null) {
-      map['size_ml'] = Variable<int>(sizeMl);
-    }
-    if (!nullToAbsent || priceMinEgp != null) {
-      map['price_min_egp'] = Variable<int>(priceMinEgp);
-    }
-    if (!nullToAbsent || priceMaxEgp != null) {
-      map['price_max_egp'] = Variable<int>(priceMaxEgp);
-    }
-    if (!nullToAbsent || priceUpdatedAt != null) {
-      map['price_updated_at'] = Variable<DateTime>(priceUpdatedAt);
-    }
     if (!nullToAbsent || imagePath != null) {
       map['image_path'] = Variable<String>(imagePath);
     }
-    if (!nullToAbsent || audioBaristaPath != null) {
-      map['audio_barista_path'] = Variable<String>(audioBaristaPath);
+    if (!nullToAbsent || audioSpokenPath != null) {
+      map['audio_spoken_path'] = Variable<String>(audioSpokenPath);
     }
     if (!nullToAbsent || audioOriginalPath != null) {
       map['audio_original_path'] = Variable<String>(audioOriginalPath);
     }
     map['traits'] = Variable<String>(traits);
     map['sort_order'] = Variable<int>(sortOrder);
-    if (!nullToAbsent || recipe != null) {
-      map['recipe'] = Variable<String>(recipe);
+    if (!nullToAbsent || details != null) {
+      map['details'] = Variable<String>(details);
     }
     return map;
   }
@@ -1126,35 +1151,20 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
       gistEn: gistEn == null && nullToAbsent
           ? const Value.absent()
           : Value(gistEn),
-      calories: calories == null && nullToAbsent
-          ? const Value.absent()
-          : Value(calories),
-      sizeMl: sizeMl == null && nullToAbsent
-          ? const Value.absent()
-          : Value(sizeMl),
-      priceMinEgp: priceMinEgp == null && nullToAbsent
-          ? const Value.absent()
-          : Value(priceMinEgp),
-      priceMaxEgp: priceMaxEgp == null && nullToAbsent
-          ? const Value.absent()
-          : Value(priceMaxEgp),
-      priceUpdatedAt: priceUpdatedAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(priceUpdatedAt),
       imagePath: imagePath == null && nullToAbsent
           ? const Value.absent()
           : Value(imagePath),
-      audioBaristaPath: audioBaristaPath == null && nullToAbsent
+      audioSpokenPath: audioSpokenPath == null && nullToAbsent
           ? const Value.absent()
-          : Value(audioBaristaPath),
+          : Value(audioSpokenPath),
       audioOriginalPath: audioOriginalPath == null && nullToAbsent
           ? const Value.absent()
           : Value(audioOriginalPath),
       traits: Value(traits),
       sortOrder: Value(sortOrder),
-      recipe: recipe == null && nullToAbsent
+      details: details == null && nullToAbsent
           ? const Value.absent()
-          : Value(recipe),
+          : Value(details),
     );
   }
 
@@ -1173,19 +1183,14 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
       explanationEn: serializer.fromJson<String>(json['explanationEn']),
       gistAr: serializer.fromJson<String?>(json['gistAr']),
       gistEn: serializer.fromJson<String?>(json['gistEn']),
-      calories: serializer.fromJson<int?>(json['calories']),
-      sizeMl: serializer.fromJson<int?>(json['sizeMl']),
-      priceMinEgp: serializer.fromJson<int?>(json['priceMinEgp']),
-      priceMaxEgp: serializer.fromJson<int?>(json['priceMaxEgp']),
-      priceUpdatedAt: serializer.fromJson<DateTime?>(json['priceUpdatedAt']),
       imagePath: serializer.fromJson<String?>(json['imagePath']),
-      audioBaristaPath: serializer.fromJson<String?>(json['audioBaristaPath']),
+      audioSpokenPath: serializer.fromJson<String?>(json['audioSpokenPath']),
       audioOriginalPath: serializer.fromJson<String?>(
         json['audioOriginalPath'],
       ),
       traits: serializer.fromJson<String>(json['traits']),
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
-      recipe: serializer.fromJson<String?>(json['recipe']),
+      details: serializer.fromJson<String?>(json['details']),
     );
   }
   @override
@@ -1201,17 +1206,12 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
       'explanationEn': serializer.toJson<String>(explanationEn),
       'gistAr': serializer.toJson<String?>(gistAr),
       'gistEn': serializer.toJson<String?>(gistEn),
-      'calories': serializer.toJson<int?>(calories),
-      'sizeMl': serializer.toJson<int?>(sizeMl),
-      'priceMinEgp': serializer.toJson<int?>(priceMinEgp),
-      'priceMaxEgp': serializer.toJson<int?>(priceMaxEgp),
-      'priceUpdatedAt': serializer.toJson<DateTime?>(priceUpdatedAt),
       'imagePath': serializer.toJson<String?>(imagePath),
-      'audioBaristaPath': serializer.toJson<String?>(audioBaristaPath),
+      'audioSpokenPath': serializer.toJson<String?>(audioSpokenPath),
       'audioOriginalPath': serializer.toJson<String?>(audioOriginalPath),
       'traits': serializer.toJson<String>(traits),
       'sortOrder': serializer.toJson<int>(sortOrder),
-      'recipe': serializer.toJson<String?>(recipe),
+      'details': serializer.toJson<String?>(details),
     };
   }
 
@@ -1225,17 +1225,12 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     String? explanationEn,
     Value<String?> gistAr = const Value.absent(),
     Value<String?> gistEn = const Value.absent(),
-    Value<int?> calories = const Value.absent(),
-    Value<int?> sizeMl = const Value.absent(),
-    Value<int?> priceMinEgp = const Value.absent(),
-    Value<int?> priceMaxEgp = const Value.absent(),
-    Value<DateTime?> priceUpdatedAt = const Value.absent(),
     Value<String?> imagePath = const Value.absent(),
-    Value<String?> audioBaristaPath = const Value.absent(),
+    Value<String?> audioSpokenPath = const Value.absent(),
     Value<String?> audioOriginalPath = const Value.absent(),
     String? traits,
     int? sortOrder,
-    Value<String?> recipe = const Value.absent(),
+    Value<String?> details = const Value.absent(),
   }) => ItemRow(
     id: id ?? this.id,
     categoryId: categoryId ?? this.categoryId,
@@ -1246,23 +1241,16 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     explanationEn: explanationEn ?? this.explanationEn,
     gistAr: gistAr.present ? gistAr.value : this.gistAr,
     gistEn: gistEn.present ? gistEn.value : this.gistEn,
-    calories: calories.present ? calories.value : this.calories,
-    sizeMl: sizeMl.present ? sizeMl.value : this.sizeMl,
-    priceMinEgp: priceMinEgp.present ? priceMinEgp.value : this.priceMinEgp,
-    priceMaxEgp: priceMaxEgp.present ? priceMaxEgp.value : this.priceMaxEgp,
-    priceUpdatedAt: priceUpdatedAt.present
-        ? priceUpdatedAt.value
-        : this.priceUpdatedAt,
     imagePath: imagePath.present ? imagePath.value : this.imagePath,
-    audioBaristaPath: audioBaristaPath.present
-        ? audioBaristaPath.value
-        : this.audioBaristaPath,
+    audioSpokenPath: audioSpokenPath.present
+        ? audioSpokenPath.value
+        : this.audioSpokenPath,
     audioOriginalPath: audioOriginalPath.present
         ? audioOriginalPath.value
         : this.audioOriginalPath,
     traits: traits ?? this.traits,
     sortOrder: sortOrder ?? this.sortOrder,
-    recipe: recipe.present ? recipe.value : this.recipe,
+    details: details.present ? details.value : this.details,
   );
   ItemRow copyWithCompanion(ItemsCompanion data) {
     return ItemRow(
@@ -1283,27 +1271,16 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
           : this.explanationEn,
       gistAr: data.gistAr.present ? data.gistAr.value : this.gistAr,
       gistEn: data.gistEn.present ? data.gistEn.value : this.gistEn,
-      calories: data.calories.present ? data.calories.value : this.calories,
-      sizeMl: data.sizeMl.present ? data.sizeMl.value : this.sizeMl,
-      priceMinEgp: data.priceMinEgp.present
-          ? data.priceMinEgp.value
-          : this.priceMinEgp,
-      priceMaxEgp: data.priceMaxEgp.present
-          ? data.priceMaxEgp.value
-          : this.priceMaxEgp,
-      priceUpdatedAt: data.priceUpdatedAt.present
-          ? data.priceUpdatedAt.value
-          : this.priceUpdatedAt,
       imagePath: data.imagePath.present ? data.imagePath.value : this.imagePath,
-      audioBaristaPath: data.audioBaristaPath.present
-          ? data.audioBaristaPath.value
-          : this.audioBaristaPath,
+      audioSpokenPath: data.audioSpokenPath.present
+          ? data.audioSpokenPath.value
+          : this.audioSpokenPath,
       audioOriginalPath: data.audioOriginalPath.present
           ? data.audioOriginalPath.value
           : this.audioOriginalPath,
       traits: data.traits.present ? data.traits.value : this.traits,
       sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
-      recipe: data.recipe.present ? data.recipe.value : this.recipe,
+      details: data.details.present ? data.details.value : this.details,
     );
   }
 
@@ -1319,17 +1296,12 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
           ..write('explanationEn: $explanationEn, ')
           ..write('gistAr: $gistAr, ')
           ..write('gistEn: $gistEn, ')
-          ..write('calories: $calories, ')
-          ..write('sizeMl: $sizeMl, ')
-          ..write('priceMinEgp: $priceMinEgp, ')
-          ..write('priceMaxEgp: $priceMaxEgp, ')
-          ..write('priceUpdatedAt: $priceUpdatedAt, ')
           ..write('imagePath: $imagePath, ')
-          ..write('audioBaristaPath: $audioBaristaPath, ')
+          ..write('audioSpokenPath: $audioSpokenPath, ')
           ..write('audioOriginalPath: $audioOriginalPath, ')
           ..write('traits: $traits, ')
           ..write('sortOrder: $sortOrder, ')
-          ..write('recipe: $recipe')
+          ..write('details: $details')
           ..write(')'))
         .toString();
   }
@@ -1345,17 +1317,12 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     explanationEn,
     gistAr,
     gistEn,
-    calories,
-    sizeMl,
-    priceMinEgp,
-    priceMaxEgp,
-    priceUpdatedAt,
     imagePath,
-    audioBaristaPath,
+    audioSpokenPath,
     audioOriginalPath,
     traits,
     sortOrder,
-    recipe,
+    details,
   );
   @override
   bool operator ==(Object other) =>
@@ -1370,17 +1337,12 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
           other.explanationEn == this.explanationEn &&
           other.gistAr == this.gistAr &&
           other.gistEn == this.gistEn &&
-          other.calories == this.calories &&
-          other.sizeMl == this.sizeMl &&
-          other.priceMinEgp == this.priceMinEgp &&
-          other.priceMaxEgp == this.priceMaxEgp &&
-          other.priceUpdatedAt == this.priceUpdatedAt &&
           other.imagePath == this.imagePath &&
-          other.audioBaristaPath == this.audioBaristaPath &&
+          other.audioSpokenPath == this.audioSpokenPath &&
           other.audioOriginalPath == this.audioOriginalPath &&
           other.traits == this.traits &&
           other.sortOrder == this.sortOrder &&
-          other.recipe == this.recipe);
+          other.details == this.details);
 }
 
 class ItemsCompanion extends UpdateCompanion<ItemRow> {
@@ -1393,17 +1355,12 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
   final Value<String> explanationEn;
   final Value<String?> gistAr;
   final Value<String?> gistEn;
-  final Value<int?> calories;
-  final Value<int?> sizeMl;
-  final Value<int?> priceMinEgp;
-  final Value<int?> priceMaxEgp;
-  final Value<DateTime?> priceUpdatedAt;
   final Value<String?> imagePath;
-  final Value<String?> audioBaristaPath;
+  final Value<String?> audioSpokenPath;
   final Value<String?> audioOriginalPath;
   final Value<String> traits;
   final Value<int> sortOrder;
-  final Value<String?> recipe;
+  final Value<String?> details;
   final Value<int> rowid;
   const ItemsCompanion({
     this.id = const Value.absent(),
@@ -1415,17 +1372,12 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     this.explanationEn = const Value.absent(),
     this.gistAr = const Value.absent(),
     this.gistEn = const Value.absent(),
-    this.calories = const Value.absent(),
-    this.sizeMl = const Value.absent(),
-    this.priceMinEgp = const Value.absent(),
-    this.priceMaxEgp = const Value.absent(),
-    this.priceUpdatedAt = const Value.absent(),
     this.imagePath = const Value.absent(),
-    this.audioBaristaPath = const Value.absent(),
+    this.audioSpokenPath = const Value.absent(),
     this.audioOriginalPath = const Value.absent(),
     this.traits = const Value.absent(),
     this.sortOrder = const Value.absent(),
-    this.recipe = const Value.absent(),
+    this.details = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ItemsCompanion.insert({
@@ -1438,17 +1390,12 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     required String explanationEn,
     this.gistAr = const Value.absent(),
     this.gistEn = const Value.absent(),
-    this.calories = const Value.absent(),
-    this.sizeMl = const Value.absent(),
-    this.priceMinEgp = const Value.absent(),
-    this.priceMaxEgp = const Value.absent(),
-    this.priceUpdatedAt = const Value.absent(),
     this.imagePath = const Value.absent(),
-    this.audioBaristaPath = const Value.absent(),
+    this.audioSpokenPath = const Value.absent(),
     this.audioOriginalPath = const Value.absent(),
     this.traits = const Value.absent(),
     this.sortOrder = const Value.absent(),
-    this.recipe = const Value.absent(),
+    this.details = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        categoryId = Value(categoryId),
@@ -1467,17 +1414,12 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     Expression<String>? explanationEn,
     Expression<String>? gistAr,
     Expression<String>? gistEn,
-    Expression<int>? calories,
-    Expression<int>? sizeMl,
-    Expression<int>? priceMinEgp,
-    Expression<int>? priceMaxEgp,
-    Expression<DateTime>? priceUpdatedAt,
     Expression<String>? imagePath,
-    Expression<String>? audioBaristaPath,
+    Expression<String>? audioSpokenPath,
     Expression<String>? audioOriginalPath,
     Expression<String>? traits,
     Expression<int>? sortOrder,
-    Expression<String>? recipe,
+    Expression<String>? details,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1490,17 +1432,12 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
       if (explanationEn != null) 'explanation_en': explanationEn,
       if (gistAr != null) 'gist_ar': gistAr,
       if (gistEn != null) 'gist_en': gistEn,
-      if (calories != null) 'calories': calories,
-      if (sizeMl != null) 'size_ml': sizeMl,
-      if (priceMinEgp != null) 'price_min_egp': priceMinEgp,
-      if (priceMaxEgp != null) 'price_max_egp': priceMaxEgp,
-      if (priceUpdatedAt != null) 'price_updated_at': priceUpdatedAt,
       if (imagePath != null) 'image_path': imagePath,
-      if (audioBaristaPath != null) 'audio_barista_path': audioBaristaPath,
+      if (audioSpokenPath != null) 'audio_spoken_path': audioSpokenPath,
       if (audioOriginalPath != null) 'audio_original_path': audioOriginalPath,
       if (traits != null) 'traits': traits,
       if (sortOrder != null) 'sort_order': sortOrder,
-      if (recipe != null) 'recipe': recipe,
+      if (details != null) 'details': details,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1515,17 +1452,12 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     Value<String>? explanationEn,
     Value<String?>? gistAr,
     Value<String?>? gistEn,
-    Value<int?>? calories,
-    Value<int?>? sizeMl,
-    Value<int?>? priceMinEgp,
-    Value<int?>? priceMaxEgp,
-    Value<DateTime?>? priceUpdatedAt,
     Value<String?>? imagePath,
-    Value<String?>? audioBaristaPath,
+    Value<String?>? audioSpokenPath,
     Value<String?>? audioOriginalPath,
     Value<String>? traits,
     Value<int>? sortOrder,
-    Value<String?>? recipe,
+    Value<String?>? details,
     Value<int>? rowid,
   }) {
     return ItemsCompanion(
@@ -1538,17 +1470,12 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
       explanationEn: explanationEn ?? this.explanationEn,
       gistAr: gistAr ?? this.gistAr,
       gistEn: gistEn ?? this.gistEn,
-      calories: calories ?? this.calories,
-      sizeMl: sizeMl ?? this.sizeMl,
-      priceMinEgp: priceMinEgp ?? this.priceMinEgp,
-      priceMaxEgp: priceMaxEgp ?? this.priceMaxEgp,
-      priceUpdatedAt: priceUpdatedAt ?? this.priceUpdatedAt,
       imagePath: imagePath ?? this.imagePath,
-      audioBaristaPath: audioBaristaPath ?? this.audioBaristaPath,
+      audioSpokenPath: audioSpokenPath ?? this.audioSpokenPath,
       audioOriginalPath: audioOriginalPath ?? this.audioOriginalPath,
       traits: traits ?? this.traits,
       sortOrder: sortOrder ?? this.sortOrder,
-      recipe: recipe ?? this.recipe,
+      details: details ?? this.details,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1583,26 +1510,11 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     if (gistEn.present) {
       map['gist_en'] = Variable<String>(gistEn.value);
     }
-    if (calories.present) {
-      map['calories'] = Variable<int>(calories.value);
-    }
-    if (sizeMl.present) {
-      map['size_ml'] = Variable<int>(sizeMl.value);
-    }
-    if (priceMinEgp.present) {
-      map['price_min_egp'] = Variable<int>(priceMinEgp.value);
-    }
-    if (priceMaxEgp.present) {
-      map['price_max_egp'] = Variable<int>(priceMaxEgp.value);
-    }
-    if (priceUpdatedAt.present) {
-      map['price_updated_at'] = Variable<DateTime>(priceUpdatedAt.value);
-    }
     if (imagePath.present) {
       map['image_path'] = Variable<String>(imagePath.value);
     }
-    if (audioBaristaPath.present) {
-      map['audio_barista_path'] = Variable<String>(audioBaristaPath.value);
+    if (audioSpokenPath.present) {
+      map['audio_spoken_path'] = Variable<String>(audioSpokenPath.value);
     }
     if (audioOriginalPath.present) {
       map['audio_original_path'] = Variable<String>(audioOriginalPath.value);
@@ -1613,8 +1525,8 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     if (sortOrder.present) {
       map['sort_order'] = Variable<int>(sortOrder.value);
     }
-    if (recipe.present) {
-      map['recipe'] = Variable<String>(recipe.value);
+    if (details.present) {
+      map['details'] = Variable<String>(details.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -1634,17 +1546,12 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
           ..write('explanationEn: $explanationEn, ')
           ..write('gistAr: $gistAr, ')
           ..write('gistEn: $gistEn, ')
-          ..write('calories: $calories, ')
-          ..write('sizeMl: $sizeMl, ')
-          ..write('priceMinEgp: $priceMinEgp, ')
-          ..write('priceMaxEgp: $priceMaxEgp, ')
-          ..write('priceUpdatedAt: $priceUpdatedAt, ')
           ..write('imagePath: $imagePath, ')
-          ..write('audioBaristaPath: $audioBaristaPath, ')
+          ..write('audioSpokenPath: $audioSpokenPath, ')
           ..write('audioOriginalPath: $audioOriginalPath, ')
           ..write('traits: $traits, ')
           ..write('sortOrder: $sortOrder, ')
-          ..write('recipe: $recipe, ')
+          ..write('details: $details, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2193,6 +2100,9 @@ typedef $$CategoriesTableCreateCompanionBuilder = CategoriesCompanion Function({
   required String nameEn,
   Value<String?> icon,
   Value<String?> traitSchema,
+  Value<String?> detailKind,
+  Value<String?> detailsTitleAr,
+  Value<String?> detailsTitleEn,
   Value<int> sortOrder,
   Value<int> rowid,
 });
@@ -2204,6 +2114,9 @@ typedef $$CategoriesTableUpdateCompanionBuilder = CategoriesCompanion Function({
   Value<String> nameEn,
   Value<String?> icon,
   Value<String?> traitSchema,
+  Value<String?> detailKind,
+  Value<String?> detailsTitleAr,
+  Value<String?> detailsTitleEn,
   Value<int> sortOrder,
   Value<int> rowid,
 });
@@ -2249,6 +2162,21 @@ class $$CategoriesTableFilterComposer
 
   ColumnFilters<String> get traitSchema => $composableBuilder(
     column: $table.traitSchema,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get detailKind => $composableBuilder(
+    column: $table.detailKind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get detailsTitleAr => $composableBuilder(
+    column: $table.detailsTitleAr,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get detailsTitleEn => $composableBuilder(
+    column: $table.detailsTitleEn,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2302,6 +2230,21 @@ class $$CategoriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get detailKind => $composableBuilder(
+    column: $table.detailKind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get detailsTitleAr => $composableBuilder(
+    column: $table.detailsTitleAr,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get detailsTitleEn => $composableBuilder(
+    column: $table.detailsTitleEn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get sortOrder => $composableBuilder(
     column: $table.sortOrder,
     builder: (column) => ColumnOrderings(column),
@@ -2337,6 +2280,21 @@ class $$CategoriesTableAnnotationComposer
 
   GeneratedColumn<String> get traitSchema => $composableBuilder(
     column: $table.traitSchema,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get detailKind => $composableBuilder(
+    column: $table.detailKind,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get detailsTitleAr => $composableBuilder(
+    column: $table.detailsTitleAr,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get detailsTitleEn => $composableBuilder(
+    column: $table.detailsTitleEn,
     builder: (column) => column,
   );
 
@@ -2382,6 +2340,9 @@ class $$CategoriesTableTableManager
                 Value<String> nameEn = const Value.absent(),
                 Value<String?> icon = const Value.absent(),
                 Value<String?> traitSchema = const Value.absent(),
+                Value<String?> detailKind = const Value.absent(),
+                Value<String?> detailsTitleAr = const Value.absent(),
+                Value<String?> detailsTitleEn = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CategoriesCompanion(
@@ -2392,6 +2353,9 @@ class $$CategoriesTableTableManager
                 nameEn: nameEn,
                 icon: icon,
                 traitSchema: traitSchema,
+                detailKind: detailKind,
+                detailsTitleAr: detailsTitleAr,
+                detailsTitleEn: detailsTitleEn,
                 sortOrder: sortOrder,
                 rowid: rowid,
               ),
@@ -2404,6 +2368,9 @@ class $$CategoriesTableTableManager
                 required String nameEn,
                 Value<String?> icon = const Value.absent(),
                 Value<String?> traitSchema = const Value.absent(),
+                Value<String?> detailKind = const Value.absent(),
+                Value<String?> detailsTitleAr = const Value.absent(),
+                Value<String?> detailsTitleEn = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CategoriesCompanion.insert(
@@ -2414,6 +2381,9 @@ class $$CategoriesTableTableManager
                 nameEn: nameEn,
                 icon: icon,
                 traitSchema: traitSchema,
+                detailKind: detailKind,
+                detailsTitleAr: detailsTitleAr,
+                detailsTitleEn: detailsTitleEn,
                 sortOrder: sortOrder,
                 rowid: rowid,
               ),
@@ -2461,17 +2431,12 @@ typedef $$ItemsTableCreateCompanionBuilder = ItemsCompanion Function({
   required String explanationEn,
   Value<String?> gistAr,
   Value<String?> gistEn,
-  Value<int?> calories,
-  Value<int?> sizeMl,
-  Value<int?> priceMinEgp,
-  Value<int?> priceMaxEgp,
-  Value<DateTime?> priceUpdatedAt,
   Value<String?> imagePath,
-  Value<String?> audioBaristaPath,
+  Value<String?> audioSpokenPath,
   Value<String?> audioOriginalPath,
   Value<String> traits,
   Value<int> sortOrder,
-  Value<String?> recipe,
+  Value<String?> details,
   Value<int> rowid,
 });
 typedef $$ItemsTableUpdateCompanionBuilder = ItemsCompanion Function({
@@ -2484,17 +2449,12 @@ typedef $$ItemsTableUpdateCompanionBuilder = ItemsCompanion Function({
   Value<String> explanationEn,
   Value<String?> gistAr,
   Value<String?> gistEn,
-  Value<int?> calories,
-  Value<int?> sizeMl,
-  Value<int?> priceMinEgp,
-  Value<int?> priceMaxEgp,
-  Value<DateTime?> priceUpdatedAt,
   Value<String?> imagePath,
-  Value<String?> audioBaristaPath,
+  Value<String?> audioSpokenPath,
   Value<String?> audioOriginalPath,
   Value<String> traits,
   Value<int> sortOrder,
-  Value<String?> recipe,
+  Value<String?> details,
   Value<int> rowid,
 });
 
@@ -2552,38 +2512,13 @@ class $$ItemsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get calories => $composableBuilder(
-    column: $table.calories,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get sizeMl => $composableBuilder(
-    column: $table.sizeMl,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get priceMinEgp => $composableBuilder(
-    column: $table.priceMinEgp,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get priceMaxEgp => $composableBuilder(
-    column: $table.priceMaxEgp,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get priceUpdatedAt => $composableBuilder(
-    column: $table.priceUpdatedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
   ColumnFilters<String> get imagePath => $composableBuilder(
     column: $table.imagePath,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get audioBaristaPath => $composableBuilder(
-    column: $table.audioBaristaPath,
+  ColumnFilters<String> get audioSpokenPath => $composableBuilder(
+    column: $table.audioSpokenPath,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2602,8 +2537,8 @@ class $$ItemsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get recipe => $composableBuilder(
-    column: $table.recipe,
+  ColumnFilters<String> get details => $composableBuilder(
+    column: $table.details,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -2662,38 +2597,13 @@ class $$ItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get calories => $composableBuilder(
-    column: $table.calories,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get sizeMl => $composableBuilder(
-    column: $table.sizeMl,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get priceMinEgp => $composableBuilder(
-    column: $table.priceMinEgp,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get priceMaxEgp => $composableBuilder(
-    column: $table.priceMaxEgp,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get priceUpdatedAt => $composableBuilder(
-    column: $table.priceUpdatedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get imagePath => $composableBuilder(
     column: $table.imagePath,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get audioBaristaPath => $composableBuilder(
-    column: $table.audioBaristaPath,
+  ColumnOrderings<String> get audioSpokenPath => $composableBuilder(
+    column: $table.audioSpokenPath,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -2712,8 +2622,8 @@ class $$ItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get recipe => $composableBuilder(
-    column: $table.recipe,
+  ColumnOrderings<String> get details => $composableBuilder(
+    column: $table.details,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -2762,32 +2672,11 @@ class $$ItemsTableAnnotationComposer
   GeneratedColumn<String> get gistEn =>
       $composableBuilder(column: $table.gistEn, builder: (column) => column);
 
-  GeneratedColumn<int> get calories =>
-      $composableBuilder(column: $table.calories, builder: (column) => column);
-
-  GeneratedColumn<int> get sizeMl =>
-      $composableBuilder(column: $table.sizeMl, builder: (column) => column);
-
-  GeneratedColumn<int> get priceMinEgp => $composableBuilder(
-    column: $table.priceMinEgp,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get priceMaxEgp => $composableBuilder(
-    column: $table.priceMaxEgp,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<DateTime> get priceUpdatedAt => $composableBuilder(
-    column: $table.priceUpdatedAt,
-    builder: (column) => column,
-  );
-
   GeneratedColumn<String> get imagePath =>
       $composableBuilder(column: $table.imagePath, builder: (column) => column);
 
-  GeneratedColumn<String> get audioBaristaPath => $composableBuilder(
-    column: $table.audioBaristaPath,
+  GeneratedColumn<String> get audioSpokenPath => $composableBuilder(
+    column: $table.audioSpokenPath,
     builder: (column) => column,
   );
 
@@ -2802,8 +2691,8 @@ class $$ItemsTableAnnotationComposer
   GeneratedColumn<int> get sortOrder =>
       $composableBuilder(column: $table.sortOrder, builder: (column) => column);
 
-  GeneratedColumn<String> get recipe =>
-      $composableBuilder(column: $table.recipe, builder: (column) => column);
+  GeneratedColumn<String> get details =>
+      $composableBuilder(column: $table.details, builder: (column) => column);
 }
 
 class $$ItemsTableTableManager
@@ -2843,17 +2732,12 @@ class $$ItemsTableTableManager
                 Value<String> explanationEn = const Value.absent(),
                 Value<String?> gistAr = const Value.absent(),
                 Value<String?> gistEn = const Value.absent(),
-                Value<int?> calories = const Value.absent(),
-                Value<int?> sizeMl = const Value.absent(),
-                Value<int?> priceMinEgp = const Value.absent(),
-                Value<int?> priceMaxEgp = const Value.absent(),
-                Value<DateTime?> priceUpdatedAt = const Value.absent(),
                 Value<String?> imagePath = const Value.absent(),
-                Value<String?> audioBaristaPath = const Value.absent(),
+                Value<String?> audioSpokenPath = const Value.absent(),
                 Value<String?> audioOriginalPath = const Value.absent(),
                 Value<String> traits = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
-                Value<String?> recipe = const Value.absent(),
+                Value<String?> details = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ItemsCompanion(
                 id: id,
@@ -2865,17 +2749,12 @@ class $$ItemsTableTableManager
                 explanationEn: explanationEn,
                 gistAr: gistAr,
                 gistEn: gistEn,
-                calories: calories,
-                sizeMl: sizeMl,
-                priceMinEgp: priceMinEgp,
-                priceMaxEgp: priceMaxEgp,
-                priceUpdatedAt: priceUpdatedAt,
                 imagePath: imagePath,
-                audioBaristaPath: audioBaristaPath,
+                audioSpokenPath: audioSpokenPath,
                 audioOriginalPath: audioOriginalPath,
                 traits: traits,
                 sortOrder: sortOrder,
-                recipe: recipe,
+                details: details,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -2889,17 +2768,12 @@ class $$ItemsTableTableManager
                 required String explanationEn,
                 Value<String?> gistAr = const Value.absent(),
                 Value<String?> gistEn = const Value.absent(),
-                Value<int?> calories = const Value.absent(),
-                Value<int?> sizeMl = const Value.absent(),
-                Value<int?> priceMinEgp = const Value.absent(),
-                Value<int?> priceMaxEgp = const Value.absent(),
-                Value<DateTime?> priceUpdatedAt = const Value.absent(),
                 Value<String?> imagePath = const Value.absent(),
-                Value<String?> audioBaristaPath = const Value.absent(),
+                Value<String?> audioSpokenPath = const Value.absent(),
                 Value<String?> audioOriginalPath = const Value.absent(),
                 Value<String> traits = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
-                Value<String?> recipe = const Value.absent(),
+                Value<String?> details = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ItemsCompanion.insert(
                 id: id,
@@ -2911,17 +2785,12 @@ class $$ItemsTableTableManager
                 explanationEn: explanationEn,
                 gistAr: gistAr,
                 gistEn: gistEn,
-                calories: calories,
-                sizeMl: sizeMl,
-                priceMinEgp: priceMinEgp,
-                priceMaxEgp: priceMaxEgp,
-                priceUpdatedAt: priceUpdatedAt,
                 imagePath: imagePath,
-                audioBaristaPath: audioBaristaPath,
+                audioSpokenPath: audioSpokenPath,
                 audioOriginalPath: audioOriginalPath,
                 traits: traits,
                 sortOrder: sortOrder,
-                recipe: recipe,
+                details: details,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

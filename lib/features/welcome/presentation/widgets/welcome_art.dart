@@ -248,7 +248,7 @@ class _HearArt extends StatelessWidget {
                       ).copyWith(color: AppColors.onHeader),
                     ),
                     Text(
-                      '${l10n.welcomeArtAffogato} · ${l10n.pronounceBarista}',
+                      '${l10n.welcomeArtAffogato} · ${l10n.pronounceSpoken}',
                       style: _style(
                         context,
                         TextRole.caption,

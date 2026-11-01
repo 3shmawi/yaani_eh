@@ -31,14 +31,12 @@ class SupabaseCatalogRemote implements CatalogRemoteDataSource {
   final SupabaseClient _client;
 
   static const _categoryColumns =
-      'id,parent_id,slug,name_ar,name_en,icon,trait_schema,sort_order,'
-      'updated_at';
+      'id,parent_id,slug,name_ar,name_en,icon,trait_schema,detail_kind,'
+      'details_title_ar,details_title_en,sort_order,updated_at';
   static const _itemColumns =
       'id,category_id,slug,menu_name,menu_name_ar,explanation_ar,'
-      'explanation_en,gist_ar,gist_en,calories,size_ml,price_min_egp,'
-      'price_max_egp,'
-      'price_updated_at,image_path,audio_barista_path,audio_original_path,'
-      'traits,sort_order,recipe,updated_at';
+      'explanation_en,gist_ar,gist_en,image_path,audio_spoken_path,'
+      'audio_original_path,traits,sort_order,details,updated_at';
 
   @override
   Future<List<Object?>> categories({required DateTime since}) => _client

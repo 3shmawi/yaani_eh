@@ -59,14 +59,14 @@ void main() {
         _onPhoto(_pill(onToggle: tapped.add, onToggleSpeed: () => speedTaps++)),
       );
 
-      expect(find.text(l10nEn.pronounceBarista), findsOneWidget);
+      expect(find.text(l10nEn.pronounceSpoken), findsOneWidget);
       expect(find.text(l10nEn.pronounceOriginal), findsOneWidget);
       expect(find.textContaining('0.75×'), findsOneWidget);
 
       await tester.tap(find.byKey(const Key('pronounce_original')));
-      await tester.tap(find.byKey(const Key('pronounce_barista')));
+      await tester.tap(find.byKey(const Key('pronounce_spoken')));
       await tester.tap(find.byKey(const Key('pronounce_speed')));
-      expect(tapped, [Voice.original, Voice.barista]);
+      expect(tapped, [Voice.original, Voice.spoken]);
       expect(speedTaps, 1);
       await tester.expectAccessible();
     });
@@ -75,7 +75,7 @@ void main() {
       tester,
     ) async {
       await tester.pumpApp(_onPhoto(_pill(voices: [Voice.original])));
-      expect(find.text(l10nEn.pronounceBarista), findsNothing);
+      expect(find.text(l10nEn.pronounceSpoken), findsNothing);
       expect(find.text(l10nEn.pronounceOriginal), findsOneWidget);
 
       await tester.pumpApp(_onPhoto(_pill(voices: const [])));
@@ -94,7 +94,7 @@ void main() {
         ),
       );
       expect(
-        find.bySemanticsLabel('Play barista pronunciation of Flat White'),
+        find.bySemanticsLabel('Play Flat White as people say it'),
         findsOneWidget,
       );
       // The playing one says it stops.
@@ -114,7 +114,7 @@ void main() {
 
     testWidgets('playing: brand fill and the sound bars', (tester) async {
       await tester.pumpApp(
-        _onPhoto(_pill(states: {Voice.barista: SegmentState.playing})),
+        _onPhoto(_pill(states: {Voice.spoken: SegmentState.playing})),
       );
       expect(find.byType(SoundBars), findsOneWidget);
       await tester.expectAccessible();
@@ -123,7 +123,7 @@ void main() {
     testWidgets('the bars move, unless Reduce Motion is on', (tester) async {
       await tester.pumpApp(
         _onPhoto(
-          _pill(states: {Voice.barista: SegmentState.playing}),
+          _pill(states: {Voice.spoken: SegmentState.playing}),
           reduceMotion: false,
         ),
       );
@@ -142,7 +142,7 @@ void main() {
       expect(barHeight(), isNot(before));
 
       await tester.pumpApp(
-        _onPhoto(_pill(states: {Voice.barista: SegmentState.playing})),
+        _onPhoto(_pill(states: {Voice.spoken: SegmentState.playing})),
       );
       final still = barHeight();
       await tester.pump(const Duration(milliseconds: 300));
@@ -151,7 +151,7 @@ void main() {
 
     testWidgets('loading shows a spinner in the segment', (tester) async {
       await tester.pumpApp(
-        _onPhoto(_pill(states: {Voice.barista: SegmentState.loading})),
+        _onPhoto(_pill(states: {Voice.spoken: SegmentState.loading})),
       );
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
@@ -166,7 +166,7 @@ void main() {
         await tester.pumpApp(
           _onPhoto(
             _pill(
-              states: {Voice.barista: SegmentState.failed},
+              states: {Voice.spoken: SegmentState.failed},
               failure: failure,
             ),
           ),
@@ -181,11 +181,11 @@ void main() {
         _onPhoto(_pill(speed: PlaybackSpeed.slow)),
         locale: const Locale('ar'),
       );
-      expect(find.text(_ar.pronounceBarista), findsOneWidget);
+      expect(find.text(_ar.pronounceSpoken), findsOneWidget);
       expect(find.text(_ar.pronounceOriginal), findsOneWidget);
       // Barista is the first segment: on the right in RTL.
       expect(
-        tester.getCenter(find.text(_ar.pronounceBarista)).dx,
+        tester.getCenter(find.text(_ar.pronounceSpoken)).dx,
         greaterThan(tester.getCenter(find.text(_ar.pronounceOriginal)).dx),
       );
       // The speed label is LTR-isolated so it never reads «×0.75».
@@ -202,7 +202,7 @@ void main() {
       await tester.pumpApp(
         _onPhoto(
           _pill(
-            states: {Voice.barista: SegmentState.failed},
+            states: {Voice.spoken: SegmentState.failed},
             failure: const NetworkFailure(),
           ),
         ),
@@ -222,7 +222,7 @@ void main() {
       const hostile = "<script>alert('x')</script> \u202E'; drop --";
       await tester.pumpApp(_onPhoto(_pill(name: hostile)));
       expect(
-        find.bySemanticsLabel('Play barista pronunciation of $hostile'),
+        find.bySemanticsLabel('Play $hostile as people say it'),
         findsOneWidget,
       );
       expect(tester.takeException(), isNull);
@@ -313,14 +313,14 @@ void main() {
     testWidgets('slow speed reaches the player', (tester) async {
       await pump(tester, ItemPronounce(item: flatWhite));
       await tester.tap(find.byKey(const Key('pronounce_speed')));
-      await tester.tap(find.byKey(const Key('pronounce_barista')));
+      await tester.tap(find.byKey(const Key('pronounce_spoken')));
       await tester.pump();
       expect(player.played.single.speed, 0.75);
     });
 
     testWidgets('only the voices with clips show', (tester) async {
       await pump(tester, ItemPronounce(item: coldBrew));
-      expect(find.byKey(const Key('pronounce_barista')), findsOneWidget);
+      expect(find.byKey(const Key('pronounce_spoken')), findsOneWidget);
       expect(find.byKey(const Key('pronounce_original')), findsNothing);
 
       await pump(tester, ItemPronounce(item: affogato));
@@ -332,7 +332,7 @@ void main() {
     ) async {
       repo.failures['flat_white.barista.m4a'] = const NetworkFailure();
       await pump(tester, ItemPronounce(item: flatWhite));
-      await tester.tap(find.byKey(const Key('pronounce_barista')));
+      await tester.tap(find.byKey(const Key('pronounce_spoken')));
       await tester.pump();
       expect(find.text(l10nEn.pronounceOffline), findsOneWidget);
 

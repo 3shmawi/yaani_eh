@@ -13,20 +13,25 @@ import 'package:yaani_eh/features/recipes/presentation/recipe_look.dart';
 import 'package:yaani_eh/features/recipes/presentation/recipe_view.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
-/// «خطوة بخطوة»: one step at a time in big text on the header band, for
-/// making the drink at home. Swipe or tap «الخطوة الجاية»; a selection tick
-/// is felt on every step. The last step's button is «خلصت، بالهنا».
+/// «خطوة بخطوة»: one step at a time in big text on the header band: a
+/// recipe's steps for making the drink at home, or a story's events.
+/// Swipe or tap «الخطوة الجاية»; a selection tick is felt on every step.
+/// The last step's button is «خلصت، بالهنا» (or [doneLabel]).
 class StepByStepView extends StatefulWidget {
   const new({
     required this.item,
-    required this.recipe,
+    required this.steps,
     required this.onClose,
     required this.onFinished,
+    this.doneLabel,
     super.key,
   });
 
   final CatalogItem item;
-  final Recipe recipe;
+  final List<DetailStep> steps;
+
+  /// The last step's button; null → «خلصت، بالهنا» (a recipe).
+  final String? doneLabel;
   final VoidCallback onClose;
 
   /// The last step's button.
@@ -40,7 +45,7 @@ class _StepByStepViewState extends State<StepByStepView> {
   final _pages = PageController();
   var _index = 0;
 
-  List<RecipeStep> get _steps => widget.recipe.steps;
+  List<DetailStep> get _steps => widget.steps;
   bool get _last => _index == _steps.length - 1;
 
   @override
@@ -152,7 +157,9 @@ class _StepByStepViewState extends State<StepByStepView> {
                               key: const Key('steps_next'),
                               kind: AppButtonKind.band,
                               expand: true,
-                              label: _last ? l10n.stepDone : l10n.stepNext,
+                              label: _last
+                                  ? widget.doneLabel ?? l10n.stepDone
+                                  : l10n.stepNext,
                               onPressed: _last
                                   ? widget.onFinished
                                   : () => _go(_index + 1),
@@ -214,13 +221,14 @@ class _StepPage extends StatelessWidget {
 
   final int number;
   final int total;
-  final RecipeStep step;
+  final DetailStep step;
 
   @override
   Widget build(BuildContext context) {
     final arabic = Localizations.localeOf(context).languageCode == 'ar';
     final note = step.note(arabic: arabic);
     final amount = step.amount(arabic: arabic);
+    final date = step.date(arabic: arabic);
     return Center(
       child: SingleChildScrollView(
         padding: EdgeInsetsDirectional.symmetric(
@@ -252,6 +260,10 @@ class _StepPage extends StatelessWidget {
                   .text(TextRole.label)
                   .copyWith(color: AppColors.onHeaderMuted),
             ),
+            if (date != null) ...[
+              SizedBox(height: AppDimens.space2),
+              AmountTag(amount: date, onBand: true),
+            ],
             SizedBox(height: AppDimens.space2),
             Semantics(
               header: true,

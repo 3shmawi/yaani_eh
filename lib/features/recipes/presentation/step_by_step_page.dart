@@ -9,12 +9,14 @@ import 'package:yaani_eh/core/router/app_routes.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_icons.dart';
 import 'package:yaani_eh/core/widgets/state_views.dart';
+import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/item_details/presentation/item_controller.dart';
 import 'package:yaani_eh/features/recipes/presentation/step_by_step_view.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
-/// `/item/:slug/steps`: wires a drink's recipe to [StepByStepView]. A
-/// drink that's gone, or has no recipe yet, says so with a way back.
+/// `/item/:slug/steps`: wires an item's steps (a recipe, a story) to
+/// [StepByStepView]. An item that's gone, or has no steps, says so with a
+/// way back.
 class StepByStepPage extends ConsumerStatefulWidget {
   const new({required this.slug, super.key});
 
@@ -41,8 +43,8 @@ class _StepByStepPageState extends ConsumerState<StepByStepPage> {
     final l10n = context.l10n;
     final details = ref.watch(itemStateProvider(widget.slug));
     final found = details is ItemFound ? details : null;
-    final recipe = found?.item.recipe;
-    if (found == null || recipe == null) {
+    final steps = found?.item.details?.steps ?? const <DetailStep>[];
+    if (found == null || steps.isEmpty) {
       return Material(
         color: context.palette.surface,
         child: SafeArea(
@@ -69,7 +71,8 @@ class _StepByStepPageState extends ConsumerState<StepByStepPage> {
     }
     return StepByStepView(
       item: found.item,
-      recipe: recipe,
+      steps: steps,
+      doneLabel: found.item.recipe == null ? l10n.stepsDone : null,
       onClose: _close,
       onFinished: () {
         unawaited(HapticFeedback.mediumImpact());

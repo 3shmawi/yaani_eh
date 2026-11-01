@@ -4,7 +4,7 @@ import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
 import 'package:yaani_eh/features/item_details/domain/usecases/describe_item.dart';
 
-/// Everything the details screen needs about one drink.
+/// Everything the details screen needs about one item.
 sealed class ItemState {
   const new();
 }
@@ -14,7 +14,7 @@ final class ItemLoading extends ItemState {
   const new();
 }
 
-/// No such drink (an old link, or it was removed from the menu).
+/// No such item (an old link, or it was removed).
 final class ItemMissing extends ItemState {
   const new();
 }
@@ -24,9 +24,13 @@ final class ItemFound extends ItemState {
     required this.item,
     required this.traitSchema,
     required this.similar,
+    this.section,
   });
 
   final CatalogItem item;
+
+  /// The item's section (its kind of details and what they're called).
+  final CatalogCategory? section;
 
   /// The item's section schema (for the trait pills).
   final List<Object?>? traitSchema;
@@ -55,6 +59,7 @@ final ProviderFamily<ItemState, String> itemStateProvider =
       }
       return ItemFound(
         item: item,
+        section: category != null && category.isSection ? category : null,
         traitSchema: category?.traitSchema,
         similar: const SimilarItems()(item, items),
       );

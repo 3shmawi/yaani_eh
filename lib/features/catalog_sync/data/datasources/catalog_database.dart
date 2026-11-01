@@ -16,6 +16,11 @@ class Categories extends Table {
 
   /// JSON list (sections only).
   TextColumn get traitSchema => text().nullable()();
+
+  /// Sections only: recipe | story | usage (see DetailKind).
+  TextColumn get detailKind => text().nullable()();
+  TextColumn get detailsTitleAr => text().nullable()();
+  TextColumn get detailsTitleEn => text().nullable()();
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();
 
   @override
@@ -33,21 +38,17 @@ class Items extends Table {
   TextColumn get explanationEn => text()();
   TextColumn get gistAr => text().nullable()();
   TextColumn get gistEn => text().nullable()();
-  IntColumn get calories => integer().nullable()();
-  IntColumn get sizeMl => integer().nullable()();
-  IntColumn get priceMinEgp => integer().nullable()();
-  IntColumn get priceMaxEgp => integer().nullable()();
-  DateTimeColumn get priceUpdatedAt => dateTime().nullable()();
   TextColumn get imagePath => text().nullable()();
-  TextColumn get audioBaristaPath => text().nullable()();
+  TextColumn get audioSpokenPath => text().nullable()();
   TextColumn get audioOriginalPath => text().nullable()();
 
   /// JSON object.
   TextColumn get traits => text().withDefault(const Constant('{}'))();
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();
 
-  /// «طريقة التحضير», JSON in the server's shape.
-  TextColumn get recipe => text().nullable()();
+  /// The section's kind of details, JSON in the server's shape
+  /// (`{kind, …}`).
+  TextColumn get details => text().nullable()();
 
   @override
   Set<Column<Object>> get primaryKey => {id};
@@ -82,7 +83,7 @@ class CatalogDatabase extends _$CatalogDatabase {
     : super(executor ?? driftDatabase(name: 'catalog'));
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -102,7 +103,37 @@ class CatalogDatabase extends _$CatalogDatabase {
       }
       if (from < 3) {
         // «طريقة التحضير»: the same, so every drink comes back with it.
-        await m.addColumn(items, items.recipe);
+        // (The column is gone since v4; this only matters when coming
+        // from v2, and the v4 step below rebuilds the table anyway.)
+        await customStatement('ALTER TABLE items ADD COLUMN recipe TEXT');
+        await (delete(syncMeta)..where((r) => r.key.equals('cursor'))).go();
+      }
+      if (from < 4) {
+        // Generic items: details (any kind) instead of recipe, the spoken
+        // clip, calories/size in traits, no prices. The table is rebuilt
+        // with the old values moved over, so the offline copy keeps its
+        // recipes; the next sync then fetches everything again.
+        await m.alterTable(
+          TableMigration(
+            items,
+            columnTransformer: {
+              items.details: const CustomExpression<String>(
+                'CASE WHEN recipe IS NULL THEN NULL '
+                r"ELSE json_set(recipe, '$.kind', 'recipe') END",
+              ),
+              items.audioSpokenPath: const CustomExpression<String>(
+                'audio_barista_path',
+              ),
+              items.traits: const CustomExpression<String>(
+                'json_patch(traits, json_object( '
+                "'calories', calories, 'size_ml', size_ml))",
+              ),
+            },
+          ),
+        );
+        await m.addColumn(categories, categories.detailKind);
+        await m.addColumn(categories, categories.detailsTitleAr);
+        await m.addColumn(categories, categories.detailsTitleEn);
         await (delete(syncMeta)..where((r) => r.key.equals('cursor'))).go();
       }
     },
