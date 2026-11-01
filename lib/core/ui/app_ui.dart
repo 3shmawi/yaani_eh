@@ -792,6 +792,10 @@ class _AppPressableState extends State<AppPressable> {
     return GestureDetector(
       // The card's own Semantics carries the tap and its label.
       excludeFromSemantics: true,
+      // The whole card takes the tap, padding included. Deferring to the
+      // children missed taps on the iOS simulator, where full glass draws
+      // the card and nothing inside it took the hit.
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
       onLongPress: widget.onLongPress == null
           ? null

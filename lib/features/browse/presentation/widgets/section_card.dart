@@ -40,7 +40,11 @@ class SectionCard extends StatelessWidget {
       child: ExcludeSemantics(
         child: AppPressable(
           onTap: onTap,
-          child: AppCard(
+          // Frosted like AppCard, but minimal glass: a list of cards
+          // (docs/design.md), and the iOS simulator flagged slow frames
+          // with every card at full quality under the tab bar.
+          child: AppGlass(
+            minimal: true,
             padding: EdgeInsets.all(AppDimens.space3),
             child: ConstrainedBox(
               constraints: const BoxConstraints(

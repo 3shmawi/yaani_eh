@@ -113,7 +113,9 @@ Future<void> pumpUntil(
 Future<void> openDrinks(WidgetTester tester) async {
   final card = find.byKey(const Key('section_cafe'));
   await pumpUntil(tester, card);
-  await tester.ensureVisible(card);
+  // In the middle of the screen: at the bottom edge the floating tab bar
+  // would take the tap.
+  await Scrollable.ensureVisible(tester.element(card), alignment: 0.5);
   await tester.pumpAndSettle();
   await tester.tap(card);
   await pumpUntil(tester, find.byKey(const Key('browse_list')));

@@ -81,7 +81,12 @@ class _Downloading extends StatelessWidget {
               AppDimens.space4,
               AppDimens.space10,
               AppDimens.space4,
-              AppDimens.space10,
+              // The tip card stays clear of the floating tab bar (this
+              // screen opens under the tabs on first launch) and of the
+              // home indicator.
+              AppDimens.tabBarHeight +
+                  AppDimens.space8 +
+                  MediaQuery.paddingOf(context).bottom,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

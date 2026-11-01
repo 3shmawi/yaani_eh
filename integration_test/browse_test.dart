@@ -32,6 +32,8 @@ void main() {
     final home = find.byKey(const Key('home_list'));
     final drinks = find.byKey(const Key('section_cafe'));
     await tester.dragUntilVisible(drinks, home, const Offset(0, -150));
+    // In the middle, clear of the floating tab bar.
+    await Scrollable.ensureVisible(tester.element(drinks), alignment: 0.5);
     await tester.pumpAndSettle();
     await beat(tester, 1500);
 
@@ -103,6 +105,7 @@ void main() {
     await beat(tester);
     final desserts = find.byKey(const Key('section_desserts'));
     await tester.dragUntilVisible(desserts, home, const Offset(0, -150));
+    await Scrollable.ensureVisible(tester.element(desserts), alignment: 0.5);
     await tester.pumpAndSettle();
     await beat(tester, 1200);
     await tester.tap(desserts);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yaani_eh/core/network/app_failure.dart';
+import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/widgets/brand_mark.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
@@ -30,6 +31,19 @@ void main() {
       );
       expect(bar.value, closeTo(0.4, 0.001));
       await tester.expectAccessible();
+    });
+
+    testWidgets('the tip sits above the floating tab bar', (tester) async {
+      await tester.pumpApp(
+        CatalogSyncView(
+          progress: const SyncProgress(saved: 24, total: 60),
+          failure: null,
+          onRetry: () {},
+        ),
+      );
+      final screen = tester.view.physicalSize / tester.view.devicePixelRatio;
+      final tipBottom = tester.getBottomLeft(find.text(l10nEn.didYouKnow)).dy;
+      expect(tipBottom, lessThan(screen.height - AppDimens.tabBarHeight));
     });
 
     testWidgets('screen readers hear the progress', (tester) async {

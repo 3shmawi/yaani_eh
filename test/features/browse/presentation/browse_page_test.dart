@@ -108,6 +108,22 @@ void main() {
       expect(opened, ['desserts', 'cafe']);
     });
 
+    testWidgets('the whole card takes the tap, padding included', (
+      tester,
+    ) async {
+      final opened = <String>[];
+      await pumpView(
+        tester,
+        hub: _hub(),
+        onOpen: (s) => opened.add(s.section.slug),
+      );
+      final card = find.byKey(const Key('section_cafe'));
+      // Just inside the top-start corner: no text or icon there.
+      await tester.tapAt(tester.getTopRight(card) + const Offset(-3, 3));
+      await tester.tapAt(tester.getBottomLeft(card) + const Offset(3, -3));
+      expect(opened, ['cafe', 'cafe']);
+    });
+
     testWidgets('a card reads as one button: name and count', (tester) async {
       final handle = tester.ensureSemantics();
       await pumpView(tester, hub: _hub());
