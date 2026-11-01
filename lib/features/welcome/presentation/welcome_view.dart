@@ -90,9 +90,9 @@ class _WelcomeViewState extends State<WelcomeView> {
                       body: l10n.welcomeHearBody,
                     ),
                     _Page(
-                      art: const WelcomeArt.taste(),
-                      title: l10n.welcomeTasteTitle,
-                      body: l10n.welcomeTasteBody,
+                      art: const WelcomeArt.more(),
+                      title: l10n.welcomeMoreTitle,
+                      body: l10n.welcomeMoreBody,
                     ),
                   ],
                 ),
@@ -102,11 +102,11 @@ class _WelcomeViewState extends State<WelcomeView> {
               SizedBox(height: AppDimens.space4),
               if (_last)
                 AppButton(
-                  key: const Key('welcome_taste'),
-                  label: l10n.welcomeStartTaste,
+                  key: const Key('welcome_start'),
+                  label: l10n.welcomeStart,
                   kind: AppButtonKind.band,
                   expand: true,
-                  onPressed: () => widget.onExit(WelcomeExit.taste, _pages),
+                  onPressed: () => widget.onExit(WelcomeExit.start, _pages),
                 )
               else
                 AppButton(
@@ -116,15 +116,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                   expand: true,
                   onPressed: _next,
                 ),
-              if (_last)
-                AppButton(
-                  key: const Key('welcome_menu'),
-                  label: l10n.welcomeOpenMenu,
-                  kind: AppButtonKind.bandText,
-                  onPressed: () => widget.onExit(WelcomeExit.menu, _pages),
-                )
-              else
-                reserved,
+              reserved,
             ],
           ),
         ),

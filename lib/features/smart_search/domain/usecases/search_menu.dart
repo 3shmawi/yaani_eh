@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/smart_search/domain/entities/search_text.dart';
 
-/// Extra ranking signals (favorites, taste, recently viewed). Each returns
+/// Extra ranking signals (favorites, recently viewed). Each returns
 /// how much to boost an item, e.g. 0.5 for a favorite; the score is
 /// `text × (1 + boost)`.
 abstract interface class SearchBoosts {

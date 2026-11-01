@@ -18,9 +18,7 @@ class WelcomePage extends ConsumerWidget {
     return WelcomeView(
       onExit: (exit, page) {
         ref.read(welcomeSeenProvider.notifier).finish(exit, page: page);
-        context.go(
-          exit == WelcomeExit.taste ? AppRoutes.taste : AppRoutes.home,
-        );
+        context.go(AppRoutes.home);
       },
     );
   }

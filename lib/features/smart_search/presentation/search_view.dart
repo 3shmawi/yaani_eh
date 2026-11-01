@@ -137,12 +137,6 @@ class SearchView extends StatelessWidget {
                           .copyWith(color: p.ink),
                     ),
                   ),
-                  Text(
-                    l10n.searchRankHint,
-                    style: context
-                        .text(TextRole.caption)
-                        .copyWith(color: p.inkMuted),
-                  ),
                 ],
               ),
             ),

@@ -13,7 +13,6 @@ import 'package:yaani_eh/features/favorites/data/datasources/favorites_database.
 
 import '../../test/helpers/fake_catalog_remote.dart';
 import '../../test/helpers/fake_pronunciation.dart';
-import '../../test/helpers/fake_taste.dart';
 import '../../test/helpers/fake_welcome.dart';
 import 'demo.dart';
 
@@ -53,7 +52,6 @@ class DemoApp {
         pronunciationRepository: clips,
         clipPlayer: player,
         favoritesDatabase: FavoritesDatabase(NativeDatabase.memory()),
-        tasteRepository: FakeTasteRepository(),
         welcomeRepository: FakeWelcomeRepository(seen: welcomed),
       ),
     );

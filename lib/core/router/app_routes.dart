@@ -9,12 +9,6 @@ abstract final class AppRoutes {
   /// The first-open welcome. Home redirects here until it's been seen.
   static const welcome = '/welcome';
 
-  /// «ذوقي», the taste quiz: `/taste`, or for one section
-  /// `/taste?section=cafe`.
-  static const taste = '/taste';
-  static String tasteFor(String section) =>
-      Uri(path: taste, queryParameters: {'section': section}).toString();
-
   /// The Favorites tab.
   static const favorites = '/favorites';
 

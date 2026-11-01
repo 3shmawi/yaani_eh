@@ -27,7 +27,7 @@ void main() {
       );
     }
 
-    testWidgets('«التالي» walks the three pages; the last offers both ways', (
+    testWidgets('«التالي» walks the three pages; the last opens Home', (
       tester,
     ) async {
       await pumpView(tester);
@@ -42,14 +42,14 @@ void main() {
 
       await tester.tap(find.byKey(const Key('welcome_next')));
       await tester.pumpAndSettle();
-      expect(find.text(l10nEn.welcomeTasteTitle), findsOneWidget);
+      expect(find.text(l10nEn.welcomeMoreTitle), findsOneWidget);
       expect(find.byKey(const Key('welcome_next')), findsNothing);
       expect(find.byKey(const Key('welcome_skip')), findsNothing);
       await tester.expectAccessible();
 
-      await tester.tap(find.byKey(const Key('welcome_taste')));
-      await tester.tap(find.byKey(const Key('welcome_menu')));
-      expect(exits, [(WelcomeExit.taste, 3), (WelcomeExit.menu, 3)]);
+      expect(find.byKey(const Key('welcome_start')), findsOneWidget);
+      await tester.tap(find.byKey(const Key('welcome_start')));
+      expect(exits, [(WelcomeExit.start, 3)]);
     });
 
     testWidgets('swiping moves between pages', (tester) async {
@@ -88,7 +88,7 @@ void main() {
         await tester.tap(find.byKey(const Key('welcome_next')));
         await tester.pumpAndSettle();
       }
-      expect(find.byKey(const Key('welcome_taste')), findsOneWidget);
+      expect(find.byKey(const Key('welcome_start')), findsOneWidget);
       expect(tester.takeException(), isNull);
       await tester.expectAccessible();
     });
@@ -117,10 +117,6 @@ void main() {
         initialLocation: AppRoutes.welcome,
         routes: [
           GoRoute(path: AppRoutes.home, builder: (_, _) => const Text('home')),
-          GoRoute(
-            path: AppRoutes.taste,
-            builder: (_, _) => const Text('taste'),
-          ),
           GoRoute(
             path: AppRoutes.welcome,
             builder: (_, _) => const WelcomePage(),
@@ -154,16 +150,16 @@ void main() {
       expect(welcome.seen, isTrue);
     });
 
-    testWidgets('«قولنا ذوقك» opens the quiz', (tester) async {
+    testWidgets('«يلا بينا» opens Home', (tester) async {
       await pumpPage(tester);
       await tester.pumpAndSettle();
       for (var i = 0; i < 2; i++) {
         await tester.tap(find.byKey(const Key('welcome_next')));
         await tester.pumpAndSettle();
       }
-      await tester.tap(find.byKey(const Key('welcome_taste')));
+      await tester.tap(find.byKey(const Key('welcome_start')));
       await tester.pumpAndSettle();
-      expect(find.text('taste'), findsOneWidget);
+      expect(find.text('home'), findsOneWidget);
       expect(welcome.seen, isTrue);
     });
 
@@ -185,7 +181,7 @@ void main() {
     expect(container.read(welcomeSeenProvider), isFalse);
     container
         .read(welcomeSeenProvider.notifier)
-        .finish(WelcomeExit.menu, page: 3);
+        .finish(WelcomeExit.start, page: 3);
     expect(container.read(welcomeSeenProvider), isTrue);
   });
 }

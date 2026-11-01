@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
 import 'package:yaani_eh/features/smart_search/domain/usecases/search_menu.dart';
-import 'package:yaani_eh/features/taste_profile/presentation/taste_controller.dart';
 
 /// The search index, rebuilt whenever the catalog syncs.
 final searchIndexProvider = Provider<SearchMenu?>((ref) {
@@ -9,11 +8,8 @@ final searchIndexProvider = Provider<SearchMenu?>((ref) {
   return items == null ? null : SearchMenu(items);
 });
 
-/// Ranking signals: drinks close to the reader's taste (`taste_profile`)
-/// come first.
-final searchBoostsProvider = Provider<SearchBoosts>(
-  (ref) => ref.watch(tasteBoostsProvider),
-);
+/// Extra ranking signals; none yet (override to add some).
+final searchBoostsProvider = Provider<SearchBoosts>((ref) => const NoBoosts());
 
 /// What the reader typed (debounced by the page).
 final searchQueryProvider = NotifierProvider<SearchQuery, String>(
