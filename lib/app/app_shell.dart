@@ -39,9 +39,7 @@ class AppShell extends StatelessWidget {
           context,
           ConnectionScope(
             child: AppTapHaptics(
-              child: AppUpdateListener(
-                child: child ?? const SizedBox.shrink(),
-              ),
+              child: AppUpdateListener(child: child ?? const SizedBox.shrink()),
             ),
           ),
         ),
