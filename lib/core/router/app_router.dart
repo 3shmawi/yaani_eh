@@ -47,6 +47,9 @@ final appRouter = GoRouter(
       ),
       branches: [
         StatefulShellBranch(
+          // Each tab has its own navigator: without this, PostHog never
+          // sees its screens (the router's observers watch the root only).
+          observers: Analytics.navigatorObservers,
           routes: [
             GoRoute(
               path: AppRoutes.home,
@@ -84,6 +87,9 @@ final appRouter = GoRouter(
           ],
         ),
         StatefulShellBranch(
+          // Each tab has its own navigator: without this, PostHog never
+          // sees its screens (the router's observers watch the root only).
+          observers: Analytics.navigatorObservers,
           routes: [
             GoRoute(
               path: AppRoutes.favorites,
