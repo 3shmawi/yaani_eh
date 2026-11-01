@@ -69,7 +69,9 @@ abstract final class AppDimens {
   static const touchTarget = 48.0;
   static double get controlHeight => 44.h;
   static double get chipHeight => 34.h;
-  static double get searchHeight => 48.h;
+
+  /// Never below [touchTarget]: on a short phone `48.h` is ~34.
+  static double get searchHeight => math.max(48.h, touchTarget);
   static double get icon => 24.r;
   static double get iconChip => 20.r;
   static double get tabBarHeight => 60.h;
@@ -117,6 +119,14 @@ abstract final class AppDimens {
   /// tablet it sits centred instead of stretching edge to edge. Grids (Home,
   /// Favorites) use the full width. In points, like iPadOS's readable width.
   static const double readableWidth = 640;
+
+  /// Home's section cards: the narrowest a card may get before the grid
+  /// drops a column (1 on a phone, 2 on an iPad in portrait, 3 in
+  /// landscape), the widest the grid gets, and the card's picture.
+  static const double sectionCardMinWidth = 360;
+  static const double hubMaxWidth = 1200;
+  static double get sectionArt => 64.r;
+  static double get sectionArtIcon => 32.r;
 
   /// How tall a sheet may get, as a share of the screen.
   static const double sheetMaxShare = 0.92;

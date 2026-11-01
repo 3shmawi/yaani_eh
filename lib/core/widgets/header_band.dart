@@ -16,6 +16,9 @@ class HeaderBand extends StatelessWidget {
     this.subtitle,
     this.bottom,
     this.trailing,
+    this.leading,
+    this.compact = false,
+    this.readable = false,
     super.key,
   });
 
@@ -29,6 +32,17 @@ class HeaderBand extends StatelessWidget {
 
   /// A control at the end of the title row (clear glass, dark tone).
   final Widget? trailing;
+
+  /// A control at the start of the title row (back), centred on it.
+  final Widget? leading;
+
+  /// A page under Home (a section): a smaller title next to [leading].
+  final bool compact;
+
+  /// Keep the band's content in [AppReadableWidth] (Home: one column of
+  /// titles and search, centred on a tablet); the band itself still runs
+  /// edge to edge.
+  final bool readable;
 
   @override
   Widget build(BuildContext context) {
@@ -88,46 +102,63 @@ class HeaderBand extends StatelessWidget {
                 AppDimens.space4,
                 AppDimens.space5,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (eyebrow != null)
-                              Text(
-                                eyebrow!,
-                                style: context
-                                    .text(TextRole.label)
-                                    .copyWith(color: AppColors.onHeaderMuted),
-                              ),
-                            if (title != null)
-                              Semantics(
-                                header: true,
-                                child: Text(
-                                  title!,
+              child: _Readable(
+                on: readable,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      crossAxisAlignment: leading == null
+                          ? CrossAxisAlignment.start
+                          : CrossAxisAlignment.center,
+                      children: [
+                        if (leading != null) ...[
+                          leading!,
+                          SizedBox(width: AppDimens.space3),
+                        ],
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (eyebrow != null)
+                                Text(
+                                  eyebrow!,
                                   style: context
-                                      .text(TextRole.largeTitle)
-                                      .copyWith(color: AppColors.onHeader),
+                                      .text(TextRole.label)
+                                      .copyWith(color: AppColors.onHeaderMuted),
                                 ),
-                              ),
-                            if (subtitle != null) Text(subtitle!, style: muted),
-                          ],
+                              if (title != null)
+                                Semantics(
+                                  header: true,
+                                  child: Text(
+                                    title!,
+                                    style: context
+                                        .text(
+                                          compact
+                                              ? TextRole.title
+                                              : TextRole.largeTitle,
+                                        )
+                                        .copyWith(color: AppColors.onHeader),
+                                  ),
+                                ),
+                              if (subtitle != null)
+                                Text(subtitle!, style: muted),
+                            ],
+                          ),
                         ),
-                      ),
-                      ?trailing,
+                        if (trailing != null) ...[
+                          SizedBox(width: AppDimens.space3),
+                          trailing!,
+                        ],
+                      ],
+                    ),
+                    if (bottom != null) ...[
+                      SizedBox(height: AppDimens.space4),
+                      bottom!,
                     ],
-                  ),
-                  if (bottom != null) ...[
-                    SizedBox(height: AppDimens.space4),
-                    bottom!,
                   ],
-                ],
+                ),
               ),
             ),
           ),
@@ -135,6 +166,17 @@ class HeaderBand extends StatelessWidget {
       ),
     );
   }
+}
+
+class _Readable extends StatelessWidget {
+  const new({required this.on, required this.child});
+
+  final bool on;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) =>
+      on ? AppReadableWidth(child: child) : child;
 }
 
 /// A whole screen on the header band's gradient and pattern (the
@@ -227,5 +269,32 @@ class _HeaderOverscrollState extends State<HeaderOverscroll> {
         child: widget.child,
       ),
     ],
+  );
+}
+
+/// The slim espresso bar at the top of the screen once a band has
+/// scrolled away (Home: search; a section: back, chips, search), like the
+/// band's own bottom, under the status bar.
+class PinnedBar extends StatelessWidget {
+  const new({required this.child, super.key});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => DecoratedBox(
+    decoration: BoxDecoration(
+      color: AppColors.espresso,
+      borderRadius: BorderRadius.vertical(
+        bottom: Radius.circular(AppDimens.radiusLg),
+      ),
+      boxShadow: context.palette.glassShadow,
+    ),
+    child: Padding(
+      padding: EdgeInsetsDirectional.only(
+        top: MediaQuery.paddingOf(context).top + AppDimens.space2,
+        bottom: AppDimens.space2,
+      ),
+      child: child,
+    ),
   );
 }

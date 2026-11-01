@@ -18,10 +18,12 @@ import 'package:yaani_eh/features/catalog_sync/data/models/catalog_rows.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/repositories/catalog_repository.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
+import 'package:yaani_eh/features/settings/presentation/settings_controller.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
 import '../helpers/fake_favorites.dart';
 import '../helpers/fake_pronunciation.dart';
+import '../helpers/fake_settings.dart';
 import '../helpers/fake_welcome.dart';
 import '../helpers/screens.dart';
 
@@ -61,6 +63,9 @@ void main() {
           ...pronunciationOverrides(
             FakePronunciationRepository(),
             FakeClipPlayer(),
+          ),
+          settingsRepositoryProvider.overrideWithValue(
+            FakeSettingsRepository(),
           ),
         ],
         child: AppUi.testWrap(

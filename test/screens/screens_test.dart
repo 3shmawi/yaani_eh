@@ -94,11 +94,20 @@ void main() {
         await open(tester, lang, AppRoutes.home);
         await shoot(tester, '${lang}_01_home');
         await tester.drag(find.byType(Scrollable).first, const Offset(0, -700));
-        await shoot(tester, '${lang}_02_home_cards');
+        await shoot(tester, '${lang}_01b_home_scrolled');
+      });
+
+      testWidgets('section', (tester) async {
+        await open(tester, lang, AppRoutes.section('cafe'));
+        await shoot(tester, '${lang}_02_section');
+        await tester.drag(find.byType(Scrollable).first, const Offset(0, -700));
+        await shoot(tester, '${lang}_02b_section_cards');
+        await open(tester, lang, AppRoutes.section('desserts'));
+        await shoot(tester, '${lang}_02c_section_soon');
       });
 
       testWidgets('long press', (tester) async {
-        await open(tester, lang, AppRoutes.home);
+        await open(tester, lang, AppRoutes.section('cafe'));
         final card = find.widgetWithText(ItemCard, 'Flat White');
         await tester.dragUntilVisible(
           card,

@@ -1,6 +1,6 @@
 # 0004 — Home header for many sections
 
-Date: 2026-11-01 · Status: **proposed** (waiting for a pick: a, b or c)
+Date: 2026-11-01 · Status: accepted (b)
 
 ## Context
 Home's header band was designed for one café menu with a desserts tab
@@ -127,4 +127,24 @@ section at a glance. If b is picked, it also adds:
   becomes "a section card is opened").
 
 ## Decision
-To be filled in once an option is picked.
+**b, Home as a hub** (picked 2026-11-01).
+- Home (`/`, `BrowseView`): a short band with the app's name, tagline and
+  search (the only action), then the item of the day from any section,
+  «الأقسام» and one `SectionCard` per section from the backend (icon from
+  `categories.icon` via `AppIcons.forSection`, name, count, the first
+  three names). An empty section shows «جاي قريب» and still opens. Once
+  the band scrolls away, search stays pinned (`PinnedBar`).
+- A section (`/section/:slug`, `SectionView`): band with back, name, count
+  and a search button, then its chips; on scroll a slim bar keeps back,
+  the chips and search. The list itself is today's, unchanged. It stays
+  under the tab bar (same branch as Home).
+- Settings is the third tab (الرئيسية · المفضلة · الإعدادات).
+- iPad: the band's content in `AppReadableWidth`; section cards in a grid
+  with at least `AppDimens.sectionCardMinWidth` (360) per card (1 column on
+  a phone, 2 in portrait, 3 in landscape), at most `AppDimens.hubMaxWidth`.
+- Analytics: `browse_section_selected` is replaced by
+  `browse_section_opened` (`section`, `coming_soon`).
+- Found on the way: on a short phone `AppDimens.searchHeight` (`48.h`) was
+  ~34 pt, under the 48 pt touch target; it's now at least 48.
+- Not changed here (Step 4): the café wording («اطلب وإنت فاهم», the search
+  hint, «مشروب النهارده»).

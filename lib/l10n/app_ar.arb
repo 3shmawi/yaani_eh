@@ -85,11 +85,11 @@
   "pronounceMissing": "التسجيل ده مش متاح دلوقتي.",
   "pronounceError": "مقدرناش نشغّل الاسم. جرّب تاني.",
   "cardMeaning": "يعني {gist}",
-  "comingSoonBadge": "قريبًا",
-  "comingSoonTitle": "{section} جاية قريب",
-  "comingSoonMessage": "هنشرحها بنفس الطريقة: الاسم زي ما هو مكتوب، بيتقال إزاي، ويعني إيه.",
-  "comingSoonAction": "شوف المتاح دلوقتي",
-  "tabBrowse": "المنيو",
+  "comingSoonBadge": "جاي قريب",
+  "comingSoonTitle": "{section}: جاي قريب",
+  "comingSoonMessage": "هنشرحها بنفس الطريقة: الكلمة زي ما بتشوفها، بتتقال إزاي، ويعني إيه.",
+  "comingSoonAction": "ارجع للأقسام",
+  "tabBrowse": "الرئيسية",
   "tabFavorites": "المفضلة",
   "favoritesTitle": "المفضلة",
   "favoritesCount": "{count, plural, =0{لسه مفيش} =1{مشروب واحد} =2{مشروبين} few{{count} مشروبات} many{{count} مشروب} other{{count} مشروب}}",
@@ -148,5 +148,10 @@
   "welcomeArtSectionMore": "جاي قريب",
   "welcomeArtSavedWord": "Flat White",
   "welcomeArtSavedMeaning": "قهوة قوية بلبن في كوباية صغيرة",
-  "welcomeArtOffline": "شغال من غير نت"
+  "welcomeArtOffline": "شغال من غير نت",
+  "hubSectionsTitle": "الأقسام",
+  "sectionItemCount": "{count, plural, =0{لسه مفيش} =1{حاجة واحدة} =2{حاجتين} few{{count} حاجات} other{{count} حاجة}}",
+  "sectionCardLabel": "{section}، {detail}",
+  "sectionMissingTitle": "القسم ده مش موجود",
+  "sectionMissingBody": "يمكن اتنقل. كل الأقسام في الرئيسية."
 }

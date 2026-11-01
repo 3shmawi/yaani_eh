@@ -3,7 +3,8 @@
 ## What it does
 Lets the user choose the app language (Arabic, English, or the phone's
 language). Choices apply instantly and are saved on the device. Arabic
-switches the whole UI to right-to-left.
+switches the whole UI to right-to-left. Settings is the third tab
+(«الإعدادات»), not a button on Home's band (docs/decisions/0004-home-header.md).
 
 **Defaults:** a first launch opens in **Arabic** (the app is for Egyptian
 Arabic speakers, whatever the phone's language) and **dark**. «زي لغة
@@ -22,10 +23,11 @@ stored and the light theme still built and tested, so setting the flag to
 - State holder: `lib/features/settings/presentation/` (Riverpod (Notifier))
 - UI: `settings_view.dart` is pure UI (state in, callbacks out);
   `settings_page.dart` connects it to the state holder.
-- Route: `/settings` (`AppRoutes.settings`).
+- Route: `/settings` (`AppRoutes.settings`), the third branch of the tab
+  shell in `app_router.dart`.
 
 ## Tests
 - Repository: `test/features/settings/data/`
 - State holder: `test/features/settings/presentation/`
 - View: `test/features/settings/presentation/settings_view_test.dart`
-- Integration: `integration_test/app_test.dart` (home → settings)
+- Integration: `integration_test/app_test.dart` (home → the Settings tab)

@@ -60,6 +60,20 @@ abstract final class AppIcons {
   static const IconData stepServe = CupertinoIcons.checkmark_alt;
   static const coffee = IconData(0xe1c2, fontFamily: _phosphor);
   static const cake = IconData(0xe780, fontFamily: _phosphor);
+  static const IconData book = CupertinoIcons.book;
+  static const IconData history = CupertinoIcons.clock;
+  static const IconData section = CupertinoIcons.square_grid_2x2;
+
+  /// A section's icon from its name in the backend (`categories.icon`).
+  /// Unknown or missing names get a neutral one, so a new section never
+  /// needs an app update to show.
+  static IconData forSection(String? name) => switch (name) {
+    'coffee' || 'cup' => coffee,
+    'cake' => cake,
+    'book' || 'terms' => book,
+    'history' || 'clock' => history,
+    _ => section,
+  };
 }
 
 /// Filled weight: active tab, saved heart, playing name.
@@ -69,4 +83,5 @@ abstract final class AppIconsFill {
   static const IconData search = CupertinoIcons.search;
   static const IconData sliders = CupertinoIcons.slider_horizontal_3;
   static const IconData speaker = CupertinoIcons.speaker_2_fill;
+  static const IconData settings = CupertinoIcons.gear_alt_fill;
 }
