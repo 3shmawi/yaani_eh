@@ -22,7 +22,7 @@ const CAPTIONS = {
     '3_preview': ['Long-press for a quick look', 'Without leaving the menu'],
     '4_recipe': ["What's in the cup, to scale", 'See it before you order it'],
     '5_steps': ['Make it at home', 'Step by step, in big text'],
-    '6_search': ['Search by taste', 'Describe what you want, no name needed'],
+    '6_search': ['Search by description', 'Describe what you want, no name needed'],
     '7_favorites': ['Keep the ones you like', 'On your phone, no account, works offline'],
   },
 };

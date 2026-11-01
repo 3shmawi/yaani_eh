@@ -190,26 +190,31 @@ class DrinkView extends StatelessWidget {
           ),
           CustomScrollView(
             key: const Key('drink_scroll'),
+            // On a tablet the photo stays full width; the text column is
+            // readable width, centred.
             slivers: [
-              SliverToBoxAdapter(
-                child: SizedBox(
-                  height: photoHeight - 48.h,
-                  child: Align(
-                    alignment: AlignmentDirectional.bottomStart,
-                    child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(
-                        AppDimens.space4,
-                        0,
-                        AppDimens.space4,
-                        AppDimens.space6,
+              for (final sliver in [
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: photoHeight - 48.h,
+                    child: Align(
+                      alignment: AlignmentDirectional.bottomStart,
+                      child: Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(
+                          AppDimens.space4,
+                          0,
+                          AppDimens.space4,
+                          AppDimens.space6,
+                        ),
+                        child: pronounce,
                       ),
-                      child: pronounce,
                     ),
                   ),
                 ),
-              ),
-              const SliverToBoxAdapter(child: OfflineBanner()),
-              SliverToBoxAdapter(child: sheet),
+                const SliverToBoxAdapter(child: OfflineBanner()),
+                SliverToBoxAdapter(child: sheet),
+              ])
+                SliverAppReadableWidth(sliver: sliver),
             ],
           ),
           PositionedDirectional(

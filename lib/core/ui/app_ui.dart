@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'dart:ui' show ImageFilter;
 
@@ -336,13 +337,50 @@ class AppScaffold extends StatelessWidget {
           child: Column(
             children: [
               const OfflineBanner(),
-              Expanded(child: body),
+              Expanded(child: AppReadableWidth(child: body)),
             ],
           ),
         ),
       ),
     );
   }
+}
+
+/// Keeps a single column at most [AppDimens.readableWidth] wide, centred,
+/// on a tablet; on a phone it changes nothing. Its child still gets a tight
+/// width, so `stretch` columns and lists lay out as on a phone.
+class AppReadableWidth extends StatelessWidget {
+  const new({required this.child, super.key});
+
+  final Widget child;
+
+  static double inset(double width) =>
+      math.max(0, (width - AppDimens.readableWidth) / 2);
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, box) => Padding(
+      padding: EdgeInsets.symmetric(horizontal: inset(box.maxWidth)),
+      child: child,
+    ),
+  );
+}
+
+/// [AppReadableWidth] for a sliver in a scroll view.
+class SliverAppReadableWidth extends StatelessWidget {
+  const new({required this.sliver, super.key});
+
+  final Widget sliver;
+
+  @override
+  Widget build(BuildContext context) => SliverLayoutBuilder(
+    builder: (context, constraints) => SliverPadding(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppReadableWidth.inset(constraints.crossAxisExtent),
+      ),
+      sliver: sliver,
+    ),
+  );
 }
 
 /// Lite mode: no glass shaders and no background capture at all (the
@@ -400,7 +438,7 @@ extension on AppScaffold {
                     ),
                   ),
                 const OfflineBanner(),
-                Expanded(child: body),
+                Expanded(child: AppReadableWidth(child: body)),
               ],
             ),
           ),
@@ -868,6 +906,7 @@ Future<void> showAppSheet(
     elevation: 0,
     constraints: BoxConstraints(
       maxHeight: MediaQuery.sizeOf(context).height * AppDimens.sheetMaxShare,
+      maxWidth: AppDimens.readableWidth,
     ),
     builder: (context) => AppSheet(child: builder(context)),
   );

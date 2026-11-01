@@ -12,7 +12,7 @@ Step by step shows one step at a time in big text, so you can follow it in your 
 HEAR THE NAME
 Not sure how to say "Affogato"? Hear it the way a barista says it, and the original pronunciation.
 
-SEARCH BY TASTE
+SEARCH BY DESCRIPTION
 Type what you feel like: "something cold with chocolate", "strong but not bitter". Search understands descriptions in Arabic and English, even with Franco spelling.
 
 KEEP THE ONES YOU LIKE
@@ -21,6 +21,6 @@ Tap the heart to save a drink. Long-press any card for a quick look without leav
 WORKS OFFLINE
 The whole menu downloads once and works without internet. Favorites stay on your phone. No account needed.
 
-Arabic and English, made for Egypt. Calories are approximate.
+On phones and tablets. Arabic and English, made for Egypt. Calories are approximate.
 
 Privacy policy: https://3shmawi.github.io/yaani_eh/privacy.html

@@ -112,6 +112,12 @@ abstract final class AppDimens {
   static double get welcomeDot => 6.r;
   static double get welcomeDotActive => 22.r;
 
+  /// The widest a single-column screen's content gets (drink, settings,
+  /// search results, sheets, the quiz, step by step, the welcome): on a
+  /// tablet it sits centred instead of stretching edge to edge. Grids (Home,
+  /// Favorites) use the full width. In points, like iPadOS's readable width.
+  static const double readableWidth = 640;
+
   /// How tall a sheet may get, as a share of the screen.
   static const double sheetMaxShare = 0.92;
 

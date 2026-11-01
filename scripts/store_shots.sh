@@ -18,8 +18,7 @@ python3 tool/store/catalog_fixture.py build/store/catalog.json
 # device id | points@scale to render | final store size | where it goes
 devices=(
   "iphone69|440x956@3|1320x2868|ios"
-  # iPad (2064×2752) when the app supports it again:
-  # "ipad13|1032x1376@2|2064x2752|ios"
+  "ipad13|1032x1376@2|2064x2752|ios"
   "phone|360x640@3|1080x1920|phoneScreenshots"
   "seven|600x960@2|1200x1920|sevenInchScreenshots"
   "ten|800x1280@2|1600x2560|tenInchScreenshots"

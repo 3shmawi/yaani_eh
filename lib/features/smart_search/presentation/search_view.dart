@@ -170,7 +170,7 @@ class SearchView extends StatelessWidget {
           slivers: [
             SliverToBoxAdapter(child: header),
             const SliverToBoxAdapter(child: OfflineBanner()),
-            ...body,
+            for (final sliver in body) SliverAppReadableWidth(sliver: sliver),
           ],
         ),
       ),
