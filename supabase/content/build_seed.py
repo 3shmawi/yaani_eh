@@ -1,7 +1,16 @@
 #!/usr/bin/env python3
-"""Builds the launch-content migration from the reviewed CSV.
+"""Builds content migrations. One folder per section in supabase/content/.
 
-    python3 supabase/content/build_seed.py
+    python3 supabase/content/build_seed.py                    # drinks
+    python3 supabase/content/build_seed.py --section terms    # any other
+
+Any other section: <slug>/section.json (name, icon, detail_kind, details
+title, chips) and <slug>/items.json (items with «يعني», explanation,
+details of the section's kind, search terms and sources) → the next free
+migration NNNN_content_<slug>.sql, written once. Shapes and rules:
+docs/content_guide.md.
+
+Drinks (the launch section, drinks/):
 
 Writes supabase/migrations/0003_seed_drinks.sql: the Café section, its
 categories and the drinks in drinks.csv, with their search terms. Every
@@ -28,6 +37,8 @@ import pathlib
 import re
 
 ROOT = pathlib.Path(__file__).resolve().parent
+# One folder per section; drinks keeps its launch files (CSV + JSON).
+DRINKS = ROOT / "drinks"
 OUT = ROOT.parent / "migrations" / "0003_seed_drinks.sql"
 GIST_OUT = ROOT.parent / "migrations" / "0004_item_gist.sql"
 RECIPE_OUT = ROOT.parent / "migrations" / "0007_item_recipes.sql"
@@ -114,7 +125,7 @@ def lit(value):
 
 
 def main():
-    rows = list(csv.DictReader(open(ROOT / "drinks.csv", encoding="utf-8-sig")))
+    rows = list(csv.DictReader(open(DRINKS / "drinks.csv", encoding="utf-8-sig")))
     unknown = {r["category"] for r in rows} - CATEGORIES.keys()
     assert not unknown, f"categories missing from CATEGORIES: {unknown}"
 
@@ -295,7 +306,7 @@ def recipe_json(slug, recipe, size_ml):
 
 def write_recipes(rows):
     """0007: the recipe column, then each drink's «طريقة التحضير»."""
-    recipes = json.loads((ROOT / "recipes.json").read_text(encoding="utf-8"))
+    recipes = json.loads((DRINKS / "recipes.json").read_text(encoding="utf-8"))
     recipes.pop("_about", None)
     slugs = [r["slug"] for r in rows]
     assert set(recipes) == set(slugs), f"recipes.json vs drinks.csv: {set(recipes) ^ set(slugs)}"
@@ -344,7 +355,7 @@ def write_recipes(rows):
 
 def write_explanations(rows):
     """0008: each explanation in everyday words, where it's still the launch text."""
-    new = json.loads((ROOT / "explanations.json").read_text(encoding="utf-8"))
+    new = json.loads((DRINKS / "explanations.json").read_text(encoding="utf-8"))
     new.pop("_about", None)
     slugs = [r["slug"] for r in rows]
     assert set(new) == set(slugs), f"explanations.json vs drinks.csv: {set(new) ^ set(slugs)}"
@@ -384,5 +395,137 @@ def write_explanations(rows):
     print(f"wrote {EXPLAIN_OUT.relative_to(ROOT.parent.parent)}: {len(rows)} drinks")
 
 
+# --- Any other section: supabase/content/<slug>/section.json + items.json --
+
+SLUG = re.compile(r"^[a-z0-9_]{1,60}$")
+KINDS = {"recipe", "story", "usage"}
+
+
+def check_steps(where, steps, most):
+    assert isinstance(steps, list) and 1 <= len(steps) <= most, f"{where}: 1..{most} steps"
+    for st in steps:
+        for lang in ("ar", "en"):
+            title = st.get(f"title_{lang}")
+            assert isinstance(title, str) and 1 <= len(title) <= 60, f"{where}: step title_{lang}"
+            for key, most_len in (("note", 160), ("amount", 40), ("date", 40)):
+                value = st.get(f"{key}_{lang}")
+                assert value is None or (isinstance(value, str) and len(value) <= most_len), (
+                    f"{where}: {key}_{lang} too long")
+
+
+def check_sections(where, sections):
+    assert isinstance(sections, list) and 1 <= len(sections) <= 6, f"{where}: 1..6 sections"
+    for sec in sections:
+        for lang in ("ar", "en"):
+            title = sec.get(f"title_{lang}")
+            lines = sec.get(f"lines_{lang}")
+            assert isinstance(title, str) and 1 <= len(title) <= 40, f"{where}: section title_{lang}"
+            assert isinstance(lines, list) and 1 <= len(lines) <= 8, f"{where}: 1..8 lines_{lang}"
+            for line in lines:
+                assert isinstance(line, str) and 1 <= len(line) <= 200, f"{where}: a line"
+
+
+def check_details(where, kind, details):
+    """The same shapes as item_details_valid() (migration 0009)."""
+    assert details.get("kind") == kind, f"{where}: details.kind must be {kind}"
+    if kind == "story":
+        check_steps(where, details.get("steps"), 12)
+        if "sections" in details:
+            check_sections(where, details["sections"])
+    elif kind == "usage":
+        check_sections(where, details.get("sections"))
+    else:
+        raise AssertionError(f"{where}: write recipes in drinks/recipes.json")
+    assert len(json.dumps(details, ensure_ascii=False).encode()) <= 16000, f"{where}: details too big"
+
+
+def build_section(slug):
+    """Writes the next free migration `NNNN_content_<slug>.sql` from
+    supabase/content/<slug>/ (section.json, items.json). Like the drinks
+    files, it is written once and then frozen: later edits go in Studio or a
+    new migration. Every item must cite its sources (`sources`, kept here,
+    not in the database)."""
+    folder = ROOT / slug
+    section = json.loads((folder / "section.json").read_text(encoding="utf-8"))
+    items = json.loads((folder / "items.json").read_text(encoding="utf-8"))
+    migrations = ROOT.parent / "migrations"
+    existing = sorted(migrations.glob(f"*_content_{slug}.sql"))
+    if existing:
+        print(f"kept {existing[0].name} (applied; never rewritten)")
+        return
+    assert section["slug"] == slug and SLUG.match(slug), "section slug"
+    kind = section["detail_kind"]
+    assert kind in KINDS, f"detail_kind must be one of {KINDS}"
+    chips = {c["slug"] for c in section["categories"]}
+    seen = set()
+    for item in items:
+        where = item.get("slug", "?")
+        assert SLUG.match(where) and where not in seen, f"{where}: bad or repeated slug"
+        seen.add(where)
+        assert item["category"] in chips, f"{where}: unknown category"
+        for lang in ("ar", "en"):
+            gist = item[f"gist_{lang}"]
+            assert 1 <= len(gist) <= 60, f"{where}: gist_{lang} is one short line"
+            assert 1 <= len(item[f"explanation_{lang}"]) <= 300, f"{where}: explanation_{lang}"
+        name = item["menu_name_ar"]
+        assert name not in item["gist_ar"], f"{where}: «يعني» can't repeat the word it explains"
+        assert item.get("sources"), f"{where}: cite at least one source"
+        check_details(where, kind, item["details"])
+
+    number = max(int(m.name[:4]) for m in migrations.glob("[0-9][0-9][0-9][0-9]_*.sql")) + 1
+    out_path = migrations / f"{number:04d}_content_{slug}.sql"
+    cat_cols = "(parent_id, slug, name_ar, name_en, icon, sort_order)"
+    out = [
+        f"-- «{section['name_ar']}» / {section['name_en']}: a section of kind {kind}.",
+        f"-- GENERATED by supabase/content/build_seed.py --section {slug} — don't edit.",
+        "-- Sources are cited in supabase/content/" + slug + "/items.json.",
+        "",
+        "insert into public.categories (slug, name_ar, name_en, icon, sort_order,",
+        "  detail_kind, details_title_ar, details_title_en)",
+        "values (" + ", ".join(lit(section[k]) for k in (
+            "slug", "name_ar", "name_en", "icon", "sort_order",
+            "detail_kind", "details_title_ar", "details_title_en")) + ")",
+        "on conflict (slug) do nothing;",
+        "",
+    ]
+    for c in section["categories"]:
+        out += [
+            f"insert into public.categories {cat_cols}",
+            f"select id, {lit(c['slug'])}, {lit(c['name_ar'])}, {lit(c['name_en'])}, "
+            f"{lit(c.get('icon'))}, {c.get('sort_order', 0)}",
+            f"from public.categories where slug = {lit(slug)}",
+            "on conflict (slug) do nothing;",
+        ]
+    out.append("")
+    for i, item in enumerate(items):
+        traits = json.dumps(item.get("traits", {}), ensure_ascii=False)
+        details = json.dumps(item["details"], ensure_ascii=False)
+        out += [
+            "insert into public.items (category_id, slug, menu_name, menu_name_ar,",
+            "  gist_ar, gist_en, explanation_ar, explanation_en, traits, details, sort_order)",
+            "select id, " + ", ".join(lit(item[k]) for k in (
+                "slug", "menu_name", "menu_name_ar", "gist_ar", "gist_en",
+                "explanation_ar", "explanation_en")) + f", {lit(traits)}::jsonb, {lit(details)}::jsonb, {i}",
+            f"from public.categories where slug = {lit(item['category'])}",
+            "on conflict (slug) do nothing;",
+        ]
+        for term in item.get("terms", []):
+            assert term["lang"] in ("ar", "en", "franco") and 1 <= len(term["term"]) <= 60
+            out += [
+                "insert into public.item_terms (item_id, term, lang)",
+                f"select id, {lit(term['term'])}, {lit(term['lang'])} from public.items "
+                f"where slug = {lit(item['slug'])}",
+                "on conflict (item_id, term, lang) do nothing;",
+            ]
+    out.append("")
+    out_path.write_text("\n".join(out), encoding="utf-8")
+    print(f"wrote {out_path.relative_to(ROOT.parent.parent)}: {len(items)} items")
+
+
 if __name__ == "__main__":
-    main()
+    import sys
+
+    if len(sys.argv) == 3 and sys.argv[1] == "--section":
+        build_section(sys.argv[2])
+    else:
+        main()
