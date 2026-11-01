@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:yaani_eh/core/router/app_router.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_theme.dart';
+import 'package:yaani_eh/core/ui/app_ui.dart';
 import 'package:yaani_eh/core/update/app_update_listener.dart';
 import 'package:yaani_eh/core/widgets/offline_banner.dart';
 import 'package:yaani_eh/features/settings/domain/entities/app_settings.dart';
@@ -37,7 +38,11 @@ class AppShell extends StatelessWidget {
         builder: (context, child) => AppTheme.localize(
           context,
           ConnectionScope(
-            child: AppUpdateListener(child: child ?? const SizedBox.shrink()),
+            child: AppTapHaptics(
+              child: AppUpdateListener(
+                child: child ?? const SizedBox.shrink(),
+              ),
+            ),
           ),
         ),
       ),
