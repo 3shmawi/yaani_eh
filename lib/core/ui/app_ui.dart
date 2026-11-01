@@ -1201,10 +1201,19 @@ class AppTabScaffold extends StatelessWidget {
                     onSelected(i);
                   },
                   barHeight: AppDimens.tabBarHeight,
+                  // Frosted, like the app's other reading glass: the
+                  // package's default clear tint read as light grey over
+                  // the dark page, and the tabs on it barely showed.
+                  settings: LiquidGlassSettings(
+                    glassColor: p.glassFill,
+                    blur: AppDimens.blurGlassStrong,
+                    saturation: AppDimens.glassSaturation,
+                    lightIntensity: 0.6,
+                  ),
                   selectedIconColor: p.brand,
-                  unselectedIconColor: p.inkMuted,
+                  unselectedIconColor: p.inkMutedGlass,
                   selectedLabelColor: p.brand,
-                  unselectedLabelColor: p.inkMuted,
+                  unselectedLabelColor: p.inkMutedGlass,
                   // The app's fonts (Readex Pro for Arabic), not the
                   // package's default.
                   selectedLabelStyle: context
@@ -1212,7 +1221,7 @@ class AppTabScaffold extends StatelessWidget {
                       .copyWith(color: p.brand, fontWeight: FontWeight.w600),
                   unselectedLabelStyle: context
                       .text(TextRole.caption)
-                      .copyWith(color: p.inkMuted),
+                      .copyWith(color: p.inkMutedGlass),
                   tabs: [
                     for (final t in tabs)
                       GlassTab(
