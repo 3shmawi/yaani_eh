@@ -259,6 +259,8 @@ if grep -q '^sentry:' pubspec.yaml 2>/dev/null; then
   fi
 fi
 # App config for the release build (Supabase/PostHog/Sentry keys).
+# Names any key that is still empty (the app turns that service off).
+[[ -f env/prod.json ]] && "$(dirname "$0")/../scripts/check_env.sh" env/prod.json
 set_file  ENV_PROD_JSON                    "env/prod.json"
 set_file  ENV_STAGING_JSON                 "env/staging.json"
 # Supabase: announce updates (secret key) and deploy migrations/functions.
