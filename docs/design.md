@@ -62,6 +62,18 @@ Screens use `lib/core/ui/app_ui.dart` (`AppScaffold`, `AppGlass`, `AppCard`,
   dark, and with iOS 27's transparency slider at "clear".
 - Accessibility: Reduce Motion and Increase Contrast are respected
   automatically; tests run with solid surfaces (`AppUi.testWrap`).
+- Lite mode (`AppUi.isLite`: Reduce Transparency / Increase Contrast,
+  widget tests, a device too slow for the shader, or
+  `--dart-define=GLASS_LITE=true` for GPU-less devices) draws plain
+  surfaces. New glass widgets in `app_ui.dart` need the same lite branch.
+- `AppScaffold` places the body **below** the glass bar
+  (`GlassScaffold(extendBody: false)`): screens add no spacer for the bar.
+  The bar, like iOS: back at the start edge (when the page can pop), the
+  title centred, `actions` at the end edge; icon buttons are 48×48.
+  `test/core/ui/app_scaffold_test.dart` checks the glass bar in English and
+  Arabic, because screen tests draw the lite bar.
+- iOS icons come from `CupertinoIcons` (`core/adaptive/`), whose font is the
+  `cupertino_icons` package: without it every iOS icon is a "?" box.
 - When Flutter ships official Cupertino Liquid Glass, swap the
   implementation inside `app_ui.dart` only.
 
