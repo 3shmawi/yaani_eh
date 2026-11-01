@@ -58,6 +58,12 @@ abstract final class AppIcons {
   static const IconData stepTop = CupertinoIcons.sparkles;
   static const IconData stepSqueeze = CupertinoIcons.drop_triangle;
   static const IconData stepServe = CupertinoIcons.checkmark_alt;
+
+  /// Item details by kind: a story (history), how to use a word (terms),
+  /// and details this version can't show yet.
+  static const IconData detailsStory = CupertinoIcons.book;
+  static const IconData detailsUsage = CupertinoIcons.chat_bubble_text;
+  static const IconData update = CupertinoIcons.arrow_down_circle;
   static const coffee = IconData(0xe1c2, fontFamily: _phosphor);
   static const cake = IconData(0xe780, fontFamily: _phosphor);
   static const IconData book = CupertinoIcons.book;

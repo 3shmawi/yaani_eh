@@ -39,7 +39,7 @@ from the app: only Studio / the service role.
   اللاتيه بس أقوى». Compare to what people already drink at home when you
   can («قهوة الكنكة»). Everyday words like «شاي أخضر», «آيس كريم» or
   «كراميل» are fine. Empty: the card shows the explanation's first
-  sentence. The lines live in `supabase/content/drinks.csv`;
+  sentence. The lines live in `supabase/content/drinks/drinks.csv`;
   `build_seed.py` refuses a line with a menu word (`MENU_WORDS`), and the
   pgTAP tests check the database too. `0004_item_gist.sql` filled the
   launch lines and is never rewritten: a change to a line in the CSV also
@@ -139,7 +139,7 @@ pronounce pill (docs/features/pronunciation.md):
   Arabic): say «حوالي 30».
 - The database checks the shape; the app also checks every field and, if
   anything is off, hides only «طريقة التحضير», never the drink.
-- Launch recipes are in `supabase/content/recipes.json`, checked by
+- Launch recipes are in `supabase/content/drinks/recipes.json`, checked by
   `build_seed.py` (sizes add up, known tones and icons, no menu words, no
   ranges) and written once into `0007_item_recipes.sql`. After launch, edit
   them in Studio.
@@ -150,13 +150,13 @@ The drink page's explanation (`explanation_ar`, `explanation_en`, ≤ 300
 characters) follows the same rule as the «يعني» line: words everyone
 knows, never another menu word («قهوة مركّزة», not «إسبريسو»; «في الخلاط»,
 not «متخفوق»). The launch texts were rewritten that way in
-`supabase/content/explanations.json` → `0008_item_explanations_everyday_words.sql`
+`supabase/content/drinks/explanations.json` → `0008_item_explanations_everyday_words.sql`
 (checked by `build_seed.py`; it only replaces a text that's still the launch
 one). pgTAP checks no explanation uses a menu word.
 
 ## Launch content
 
-`supabase/content/drinks.csv` (41 drinks, reviewed) → `python3
+`supabase/content/drinks/drinks.csv` (41 drinks, reviewed) → `python3
 supabase/content/build_seed.py` → `supabase/migrations/0003_seed_drinks.sql`.
 It runs once on deploy and never overwrites later edits in Studio. After
 launch, edit in Studio — not in the CSV.

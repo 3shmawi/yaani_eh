@@ -1,27 +1,12 @@
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 
-/// The facts a details screen shows about one drink, in one language.
+/// The facts a details screen shows about one item, in one language.
 class ItemFacts {
-  const new({
-    required this.traits,
-    required this.priceIsStale,
-    this.calories,
-    this.priceMin,
-    this.priceMax,
-    this.priceCheckedAt,
-  });
+  const new({required this.traits, this.calories});
 
   /// Trait pills, already in the reader's language ("سخن", "فيه لبن"…).
   final List<String> traits;
   final int? calories;
-  final int? priceMin;
-  final int? priceMax;
-  final DateTime? priceCheckedAt;
-
-  /// Checked more than [DescribeItem.staleAfter] ago (or never dated).
-  final bool priceIsStale;
-
-  bool get hasPrice => priceMin != null;
 }
 
 /// Turns an item and its section's `trait_schema` into display facts.
@@ -29,8 +14,6 @@ class ItemFacts {
 /// and labels, with no code change. Unknown trait types are skipped.
 class DescribeItem {
   const new();
-
-  static const staleAfter = Duration(days: 90);
 
   ItemFacts call({
     required CatalogItem item,
@@ -44,18 +27,7 @@ class DescribeItem {
       final label = _label(entry, item.traits[entry['key']], lang);
       if (label != null && label.isNotEmpty) traits.add(label);
     }
-    final checked = item.priceUpdatedAt;
-    final min = item.priceMinEgp;
-    return ItemFacts(
-      traits: traits,
-      calories: item.calories,
-      priceMin: min,
-      priceMax: item.priceMaxEgp ?? min,
-      priceCheckedAt: checked,
-      priceIsStale:
-          min != null &&
-          (checked == null || now.difference(checked) > staleAfter),
-    );
+    return ItemFacts(traits: traits, calories: item.calories);
   }
 
   static String? _label(

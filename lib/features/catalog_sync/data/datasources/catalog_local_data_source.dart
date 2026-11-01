@@ -44,6 +44,9 @@ class CatalogLocalDataSource {
           traitSchema: Value(
             c.traitSchema == null ? null : CatalogRows.encode(c.traitSchema),
           ),
+          detailKind: Value(c.detailKind?.name),
+          detailsTitleAr: Value(c.detailsTitleAr),
+          detailsTitleEn: Value(c.detailsTitleEn),
           sortOrder: Value(c.sortOrder),
         ),
     ]);
@@ -70,20 +73,15 @@ class CatalogLocalDataSource {
               explanationEn: i.explanationEn,
               gistAr: Value(i.gistAr),
               gistEn: Value(i.gistEn),
-              calories: Value(i.calories),
-              sizeMl: Value(i.sizeMl),
-              priceMinEgp: Value(i.priceMinEgp),
-              priceMaxEgp: Value(i.priceMaxEgp),
-              priceUpdatedAt: Value(i.priceUpdatedAt),
               imagePath: Value(i.imagePath),
-              audioBaristaPath: Value(i.audioBaristaPath),
+              audioSpokenPath: Value(i.audioSpokenPath),
               audioOriginalPath: Value(i.audioOriginalPath),
               traits: Value(CatalogRows.encode(i.traits)),
               sortOrder: Value(i.sortOrder),
-              recipe: Value(
-                i.recipe == null
+              details: Value(
+                i.details == null
                     ? null
-                    : CatalogRows.encode(CatalogRows.recipeJson(i.recipe!)),
+                    : CatalogRows.encode(CatalogRows.detailsJson(i.details!)),
               ),
             ),
         ])
@@ -183,18 +181,13 @@ class CatalogLocalDataSource {
       explanationEn: r.explanationEn,
       gistAr: r.gistAr,
       gistEn: r.gistEn,
-      calories: r.calories,
-      sizeMl: r.sizeMl,
-      priceMinEgp: r.priceMinEgp,
-      priceMaxEgp: r.priceMaxEgp,
-      priceUpdatedAt: r.priceUpdatedAt,
       imagePath: r.imagePath,
-      audioBaristaPath: r.audioBaristaPath,
+      audioSpokenPath: r.audioSpokenPath,
       audioOriginalPath: r.audioOriginalPath,
       traits: traits is Map<String, Object?> ? traits : const {},
       sortOrder: r.sortOrder,
       terms: terms,
-      recipe: CatalogRows.recipe(CatalogRows.decode(r.recipe)),
+      details: CatalogRows.details(CatalogRows.decode(r.details)),
     );
   }
 
@@ -208,6 +201,9 @@ class CatalogLocalDataSource {
       nameEn: r.nameEn,
       icon: r.icon,
       traitSchema: schema is List ? List<Object?>.of(schema) : null,
+      detailKind: DetailKind.parse(r.detailKind),
+      detailsTitleAr: r.detailsTitleAr,
+      detailsTitleEn: r.detailsTitleEn,
       sortOrder: r.sortOrder,
     );
   }

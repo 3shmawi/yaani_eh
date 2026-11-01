@@ -282,7 +282,7 @@ class RecipeStepRow extends StatelessWidget {
   });
 
   final int number;
-  final RecipeStep step;
+  final DetailStep step;
   final bool arabic;
   final bool last;
 
@@ -293,6 +293,7 @@ class RecipeStepRow extends StatelessWidget {
     final title = step.title(arabic: arabic);
     final note = step.note(arabic: arabic);
     final amount = step.amount(arabic: arabic);
+    final date = step.date(arabic: arabic);
     return MergeSemantics(
       child: IntrinsicHeight(
         child: Row(
@@ -336,6 +337,15 @@ class RecipeStepRow extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (date != null) ...[
+                      Text(
+                        date,
+                        style: context
+                            .text(TextRole.caption)
+                            .copyWith(color: p.brand),
+                      ),
+                      SizedBox(height: AppDimens.space1),
+                    ],
                     Text(
                       title,
                       style: context

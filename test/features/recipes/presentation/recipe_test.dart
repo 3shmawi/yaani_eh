@@ -240,7 +240,7 @@ void main() {
       await tester.pumpApp(
         StepByStepView(
           item: flatWhite,
-          recipe: recipe,
+          steps: recipe.steps,
           onClose: () => events.add('close'),
           onFinished: () => events.add('finished'),
         ),

@@ -47,7 +47,9 @@ the end says «السعرات تقريبية» only.
 ## Analytics events
 | Event | When | Properties |
 |---|---|---|
-| `item_viewed` | a drink page opens | `item` (slug) |
+| `item_viewed` | an item page opens | `item` (slug) |
+| `details_opened` | a story's or a term's details sheet opens | `item`, `kind` (`story`, `usage`) |
+| `update_from_details_tapped` | «حدّث التطبيق عشان تشوف التفاصيل» is tapped | — |
 
 ## Feature flags
 None.
@@ -65,6 +67,16 @@ None.
 - Integration (demo): `integration_test/item_details_test.dart`.
 
 ## Decisions & edge cases
+- **Details by kind** (docs/decisions/0005-generic-items.md): the row under
+  the pills is the item's kind of details, named by its section
+  (`details_title_*`). A recipe opens the recipe sheet (with its cup). A
+  story (dated events, then sections) and a term (sections) open
+  `DetailsView` in a glass sheet. «خطوة بخطوة» works for any steps. Details
+  of a kind newer than the app show «حدّث التطبيق عشان تشوف التفاصيل», which
+  opens the store (`openStoreProvider`: `app_versions.store_url`, https on
+  the App Store or Google Play only). Broken details hide the row, never
+  the item.
+- Calories and size come from the item's traits; prices are gone.
 - The heart (`favorites`) sits at the photo's top-end corner, across from
   the back button (`ItemView.saveButton`). The page covers the tab bar.
 - The photo at the top is the **full** photo (`PhotoSize.full`, 1200×1600),

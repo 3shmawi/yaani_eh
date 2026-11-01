@@ -199,15 +199,18 @@ void main() {
           'id': fakeId(91),
           'slug': 'Robert"); DROP TABLE items;--',
         },
-        {...remote.itemRows.first, 'id': fakeId(92), 'calories': 'many'},
-        {...remote.itemRows.first, 'id': fakeId(93), 'calories': -50},
+        {
+          ...remote.itemRows.first,
+          'id': fakeId(92),
+          'explanation_ar': 'ق' * 301,
+        },
+        {...remote.itemRows.first, 'id': fakeId(93), 'menu_name_ar': 42},
         {...remote.itemRows.first, 'id': fakeId(94), 'menu_name': 'x' * 500},
         {...remote.itemRows.first, 'id': fakeId(95), 'traits': 'not a map'},
         {
           ...remote.itemRows.first,
           'id': fakeId(96),
-          'price_min_egp': 200,
-          'price_max_egp': 100,
+          'category_id': "1' OR '1'='1",
         },
         {
           ...remote.itemRows.first,

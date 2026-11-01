@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_icons.dart';
-import 'package:yaani_eh/features/catalog_sync/domain/entities/recipe.dart';
+import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 
 /// What a cup layer looks like: its real-life colour.
 Color layerColor(RecipeTone tone) => switch (tone) {
@@ -38,19 +38,19 @@ Color layerColor(RecipeTone tone) => switch (tone) {
 };
 
 /// The picture of a step.
-IconData stepIcon(RecipeIcon icon) => switch (icon) {
-  RecipeIcon.grind => AppIcons.stepGrind,
-  RecipeIcon.shot => AppIcons.coffee,
-  RecipeIcon.boil => AppIcons.stepBoil,
-  RecipeIcon.steep => AppIcons.stepSteep,
-  RecipeIcon.milk => AppIcons.stepMilk,
-  RecipeIcon.steam => AppIcons.stepSteam,
-  RecipeIcon.pour => AppIcons.stepPour,
-  RecipeIcon.ice => AppIcons.stepIce,
-  RecipeIcon.blend => AppIcons.stepBlend,
-  RecipeIcon.stir => AppIcons.stepStir,
-  RecipeIcon.sweeten => AppIcons.stepSweeten,
-  RecipeIcon.top => AppIcons.stepTop,
-  RecipeIcon.squeeze => AppIcons.stepSqueeze,
-  RecipeIcon.serve || RecipeIcon.other => AppIcons.stepServe,
+IconData stepIcon(StepIcon? icon) => switch (icon) {
+  StepIcon.grind => AppIcons.stepGrind,
+  StepIcon.shot => AppIcons.coffee,
+  StepIcon.boil => AppIcons.stepBoil,
+  StepIcon.steep => AppIcons.stepSteep,
+  StepIcon.milk => AppIcons.stepMilk,
+  StepIcon.steam => AppIcons.stepSteam,
+  StepIcon.pour => AppIcons.stepPour,
+  StepIcon.ice => AppIcons.stepIce,
+  StepIcon.blend => AppIcons.stepBlend,
+  StepIcon.stir => AppIcons.stepStir,
+  StepIcon.sweeten => AppIcons.stepSweeten,
+  StepIcon.top => AppIcons.stepTop,
+  StepIcon.squeeze => AppIcons.stepSqueeze,
+  StepIcon.serve || StepIcon.other || null => AppIcons.stepServe,
 };

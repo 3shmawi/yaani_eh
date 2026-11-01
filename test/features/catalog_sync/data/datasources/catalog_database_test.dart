@@ -3,6 +3,7 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yaani_eh/features/catalog_sync/data/datasources/catalog_database.dart';
 import 'package:yaani_eh/features/catalog_sync/data/datasources/catalog_local_data_source.dart';
+import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 
 /// The menu as version 1 of the app stored it: no «يعني» columns.
 const _v1 = '''
@@ -28,6 +29,8 @@ CREATE TABLE sync_meta (
 INSERT INTO items (id, category_id, slug, menu_name, menu_name_ar,
   explanation_ar, explanation_en)
   VALUES ('i1', 'c1', 'latte', 'Latte', 'لاتيه', 'قهوة بلبن.', 'Milky.');
+INSERT INTO categories (id, slug, name_ar, name_en)
+  VALUES ('c1', 'cafe', 'مشروبات', 'Drinks');
 INSERT INTO sync_meta VALUES ('cursor', '2026-10-01T00:00:00.000Z');
 INSERT INTO sync_meta VALUES ('first_sync_done', 'true');
 PRAGMA user_version = 1;
@@ -41,10 +44,25 @@ final String _v2 = _v1
     )
     .replaceFirst('user_version = 1', 'user_version = 2');
 
+/// Version 3 (with «طريقة التحضير»): a drink with a recipe, calories, a
+/// barista clip and prices, the way the store build stores it.
+final String _v3 = _v2
+    .replaceFirst('traits TEXT NOT', 'recipe TEXT, traits TEXT NOT')
+    .replaceFirst(
+      "VALUES ('i1', 'c1', 'latte', 'Latte', 'لاتيه', 'قهوة بلبن.', 'Milky.');",
+      '''
+VALUES ('i1', 'c1', 'latte', 'Latte', 'لاتيه', 'قهوة بلبن.', 'Milky.');
+UPDATE items SET calories = 190, size_ml = 240, price_min_egp = 70,
+  audio_barista_path = 'drinks/latte.m4a', traits = '{"temp":"hot"}',
+  recipe = '{"minutes":2,"layers":[{"tone":"espresso","ml":60,"ar":"قهوة","en":"Coffee"}],"steps":[{"icon":"shot","title_ar":"اعمل شوت","title_en":"Pull a shot"}]}'
+  WHERE id = 'i1';''',
+    )
+    .replaceFirst('user_version = 2', 'user_version = 3');
+
 CatalogDatabase _open(String schema) => CatalogDatabase(
   NativeDatabase.memory(
     setup: (raw) => schema
-        .split(';')
+        .split(RegExp(r';\s*\n'))
         .map((sql) => sql.trim())
         .where((sql) => sql.isNotEmpty)
         .forEach(raw.execute),
@@ -52,19 +70,35 @@ CatalogDatabase _open(String schema) => CatalogDatabase(
 );
 
 void main() {
-  test('upgrading from v2 adds recipes and fetches everything again', () async {
+  test('upgrading from v3 moves recipe, clip and calories over', () async {
+    final db = _open(_v3);
+    addTearDown(db.close);
+    final local = CatalogLocalDataSource(db);
+
+    final item = (await local.watchItems().first).single;
+    // Offline right after the update, the drink keeps its recipe…
+    expect(item.details, isA<RecipeDetails>());
+    expect(item.recipe!.steps.single.titleEn, 'Pull a shot');
+    expect(item.audioSpokenPath, 'drinks/latte.m4a');
+    expect(item.calories, 190);
+    expect(item.sizeMl, 240);
+    expect(item.traits['temp'], 'hot');
+    // …and the next sync starts over, so sections get their kind too.
+    expect(await local.firstSyncDone(), isTrue);
+    expect(await local.cursor(), isNull);
+  });
+
+  test('upgrading from v2 keeps the menu and fetches it all again', () async {
     final db = _open(_v2);
     addTearDown(db.close);
     final local = CatalogLocalDataSource(db);
 
-    final row = await db.select(db.items).getSingle();
-    expect(row.menuName, 'Latte');
-    expect(row.recipe, isNull);
+    final item = (await local.watchItems().first).single;
+    expect(item.menuName, 'Latte');
+    expect(item.details, isNull);
+    expect(item.calories, isNull);
     expect(await local.firstSyncDone(), isTrue);
     expect(await local.cursor(), isNull);
-
-    await db.update(db.items).write(const ItemsCompanion(recipe: Value('{}')));
-    expect((await db.select(db.items).getSingle()).recipe, '{}');
   });
 
   test('upgrading from v1 keeps the menu and fetches it all again', () async {
@@ -75,16 +109,13 @@ void main() {
     final rows = await db.select(db.items).get();
     expect(rows.single.menuName, 'Latte');
     expect(rows.single.gistAr, isNull);
-    // Offline right after the update, the menu still opens…
+    expect(rows.single.details, isNull);
     expect(await local.firstSyncDone(), isTrue);
-    // …and the next sync starts over, so every drink gets its line.
     expect(await local.cursor(), isNull);
 
     await db
         .update(db.items)
         .write(const ItemsCompanion(gistAr: Value('قهوة بلبن كتير')));
     expect((await db.select(db.items).getSingle()).gistAr, 'قهوة بلبن كتير');
-    // Straight to the current version: the recipe column is there too.
-    expect((await db.select(db.items).getSingle()).recipe, isNull);
   });
 }

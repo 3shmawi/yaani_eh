@@ -3,8 +3,9 @@ import 'package:yaani_eh/core/network/app_failure.dart';
 
 /// Who says the drink's name.
 enum Voice {
-  /// How baristas in Egypt say it («زي الباريستا»).
-  barista,
+  /// The name as people in Egypt say it («زي ما بتتقال»; for drinks,
+  /// the barista).
+  spoken,
 
   /// The original Italian / English («الأصلي»).
   original,

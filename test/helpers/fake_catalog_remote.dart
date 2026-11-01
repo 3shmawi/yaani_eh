@@ -109,6 +109,9 @@ List<Map<String, Object?>> sampleCategories() => [
     'name_en': 'Drinks',
     'icon': 'coffee',
     'trait_schema': cafeTraitSchema,
+    'detail_kind': 'recipe',
+    'details_title_ar': 'طريقة التحضير',
+    'details_title_en': "How it's made",
     'sort_order': 0,
     'updated_at': '2026-10-01T10:00:00Z',
   },
@@ -273,22 +276,24 @@ List<Map<String, Object?>> sampleItems({bool withAudio = false}) {
         'explanation_en': d.$5,
         'gist_ar': _gists[d.$1]?.$1,
         'gist_en': _gists[d.$1]?.$2,
-        'calories': d.$6,
-        'size_ml': 350,
-        'price_min_egp': null,
-        'price_max_egp': null,
-        'price_updated_at': null,
         'image_path': null,
-        'audio_barista_path': withAudio && !_noAudio.contains(d.$1)
+        'audio_spoken_path': withAudio && !_noAudio.contains(d.$1)
             ? '${d.$1}.barista.m4a'
             : null,
         'audio_original_path':
             withAudio && !_noAudio.contains(d.$1) && d.$1 != 'cold_brew'
             ? '${d.$1}.original.m4a'
             : null,
-        'traits': {'temp': d.$7 ? 'cold' : 'hot', 'milk': true},
+        'traits': {
+          'temp': d.$7 ? 'cold' : 'hot',
+          'milk': true,
+          'calories': d.$6,
+          'size_ml': 350,
+        },
         'sort_order': i,
-        'recipe': sampleRecipes[d.$1],
+        'details': sampleRecipes[d.$1] == null
+            ? null
+            : {'kind': 'recipe', ...sampleRecipes[d.$1]!},
         'is_published': true,
         'updated_at':
             '2026-10-01T10:00:${(i + 10).toString().padLeft(2, '0')}Z',

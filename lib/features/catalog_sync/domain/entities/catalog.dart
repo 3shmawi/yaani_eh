@@ -1,6 +1,8 @@
 import 'package:meta/meta.dart';
+import 'package:yaani_eh/features/catalog_sync/domain/entities/item_details.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/recipe.dart';
 
+export 'package:yaani_eh/features/catalog_sync/domain/entities/item_details.dart';
 export 'package:yaani_eh/features/catalog_sync/domain/entities/recipe.dart';
 
 /// A section (root: Café, later Restaurants…) or a chip inside one
@@ -14,6 +16,9 @@ class CatalogCategory {
     this.parentId,
     this.icon,
     this.traitSchema,
+    this.detailKind,
+    this.detailsTitleAr,
+    this.detailsTitleEn,
     this.sortOrder = 0,
   });
 
@@ -26,7 +31,19 @@ class CatalogCategory {
 
   /// Sections only: the traits its items show (raw JSON list).
   final List<Object?>? traitSchema;
+
+  /// Sections only: the kind of details its items carry; null when it has
+  /// none or the kind is newer than this app.
+  final DetailKind? detailKind;
+
+  /// Sections only: what the details are called here, e.g. «طريقة
+  /// التحضير», «الحكاية»; null → the app's name for the kind.
+  final String? detailsTitleAr;
+  final String? detailsTitleEn;
   final int sortOrder;
+
+  String? detailsTitle({required bool arabic}) =>
+      arabic ? detailsTitleAr : detailsTitleEn;
 
   bool get isSection => parentId == null;
 }
@@ -55,8 +72,9 @@ class ItemTerm {
   int get hashCode => Object.hash(term, lang, kind);
 }
 
-/// One drink (later: dish or dessert), as menus print it plus a plain
-/// explanation. Calories and prices are approximate.
+/// One item of any section (a drink, a term, a moment in history): its
+/// name as people see it, the Arabic name, «يعني …», a plain explanation,
+/// and the one kind of [details] its section adds.
 class CatalogItem {
   const new({
     required this.id,
@@ -68,18 +86,13 @@ class CatalogItem {
     required this.explanationEn,
     this.gistAr,
     this.gistEn,
-    this.calories,
-    this.sizeMl,
-    this.priceMinEgp,
-    this.priceMaxEgp,
-    this.priceUpdatedAt,
     this.imagePath,
-    this.audioBaristaPath,
+    this.audioSpokenPath,
     this.audioOriginalPath,
     this.traits = const {},
     this.sortOrder = 0,
     this.terms = const [],
-    this.recipe,
+    this.details,
   });
 
   final String id;
@@ -98,22 +111,41 @@ class CatalogItem {
   /// `قهوة باللبن والتلج في الخلاط`.
   final String? gistAr;
   final String? gistEn;
-  final int? calories;
-  final int? sizeMl;
-  final int? priceMinEgp;
-  final int? priceMaxEgp;
-  final DateTime? priceUpdatedAt;
   final String? imagePath;
-  final String? audioBaristaPath;
+
+  /// The name as people say it («زي ما بتتقال»; for drinks, the barista).
+  final String? audioSpokenPath;
   final String? audioOriginalPath;
 
-  /// Values for the section's traits, e.g. `{temp: hot, sweetness: 0}`.
+  /// Values for the section's traits, e.g. `{temp: hot, calories: 110}`.
   final Map<String, Object?> traits;
   final int sortOrder;
   final List<ItemTerm> terms;
 
-  /// «طريقة التحضير»; null when it hasn't been written yet.
-  final Recipe? recipe;
+  /// The section's kind of details; null when not written yet.
+  final ItemDetails? details;
+
+  /// Drinks: «طريقة التحضير», when written.
+  Recipe? get recipe => switch (details) {
+    RecipeDetails(:final recipe) => recipe,
+    _ => null,
+  };
+
+  /// Approximate calories (drinks; a trait since they're section-specific).
+  int? get calories => _intTrait('calories', 0, 3000);
+
+  /// The cup, in ml (drinks).
+  int? get sizeMl => _intTrait('size_ml', 1, 3000);
+
+  /// A whole number in range, else null (content never breaks the item).
+  int? _intTrait(String key, int min, int max) {
+    final value = switch (traits[key]) {
+      final int v => v,
+      final double v when v.isFinite && v == v.roundToDouble() => v.toInt(),
+      _ => null,
+    };
+    return value != null && value >= min && value <= max ? value : null;
+  }
 
   /// The «يعني» line in one language; without one, the explanation's first
   /// sentence (cards keep it to two lines).

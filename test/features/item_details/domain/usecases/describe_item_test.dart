@@ -16,7 +16,13 @@ void main() {
   group(DescribeItem, () {
     test('traits come from the section schema, in the reader language', () {
       final item = _item({
-        'traits': {'temp': 'hot', 'sweetness': 0, 'milk': true, 'caffeine': 3},
+        'traits': {
+          'temp': 'hot',
+          'sweetness': 0,
+          'milk': true,
+          'caffeine': 3,
+          'calories': 110,
+        },
       });
       final ar = describe(
         item: item,
@@ -90,46 +96,16 @@ void main() {
       }
     });
 
-    test('prices: none, fresh, stale after 90 days, undated', () {
-      expect(
-        describe(
-          item: _item({}),
-          traitSchema: null,
-          lang: 'ar',
-          now: now,
-        ).hasPrice,
-        isFalse,
-      );
-      final fresh = describe(
+    test('calories come from the traits', () {
+      final facts = describe(
         item: _item({
-          'price_min_egp': 70,
-          'price_max_egp': 150,
-          'price_updated_at': '2026-09-01',
+          'traits': {'calories': 190},
         }),
         traitSchema: null,
         lang: 'ar',
         now: now,
       );
-      expect(fresh.hasPrice, isTrue);
-      expect(fresh.priceIsStale, isFalse);
-      expect(fresh.priceMax, 150);
-
-      final stale = describe(
-        item: _item({'price_min_egp': 70, 'price_updated_at': '2026-06-01'}),
-        traitSchema: null,
-        lang: 'ar',
-        now: now,
-      );
-      expect(stale.priceIsStale, isTrue);
-      expect(stale.priceMax, 70, reason: 'a single price');
-
-      final undated = describe(
-        item: _item({'price_min_egp': 70}),
-        traitSchema: null,
-        lang: 'ar',
-        now: now,
-      );
-      expect(undated.priceIsStale, isTrue);
+      expect(facts.calories, 190);
     });
   });
 

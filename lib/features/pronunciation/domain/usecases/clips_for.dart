@@ -1,14 +1,14 @@
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/pronunciation/domain/entities/pronunciation.dart';
 
-/// The clips an item has, barista first (the one cards play). A missing or
-/// empty path has no clip, so its button is hidden.
+/// The clips an item has, the spoken one first (the one cards play). A
+/// missing or empty path has no clip, so its button is hidden.
 class ClipsFor {
   const new();
 
   List<Clip> call(CatalogItem item) => [
-    if (_usable(item.audioBaristaPath) case final path?)
-      Clip(voice: Voice.barista, path: path),
+    if (_usable(item.audioSpokenPath) case final path?)
+      Clip(voice: Voice.spoken, path: path),
     if (_usable(item.audioOriginalPath) case final path?)
       Clip(voice: Voice.original, path: path),
   ];
