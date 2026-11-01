@@ -43,6 +43,10 @@ void main() {
     await tester.pumpAndSettle();
     await beat(tester, 1200);
 
+    // Home lists the sections; the drinks are one tap away.
+    await openDrinks(tester);
+    await beat(tester);
+
     // 1. Long-press Flat White: the preview says what it is.
     final flatWhite = await centered(tester, 'Flat White');
     await beat(tester);

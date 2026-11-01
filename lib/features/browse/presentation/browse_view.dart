@@ -2,63 +2,44 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
-import 'package:yaani_eh/core/theme/app_icons.dart';
 import 'package:yaani_eh/core/theme/app_text_styles.dart';
-import 'package:yaani_eh/core/ui/app_ui.dart';
-import 'package:yaani_eh/core/widgets/category_chips.dart';
 import 'package:yaani_eh/core/widgets/header_band.dart';
-import 'package:yaani_eh/core/widgets/item_grid.dart';
 import 'package:yaani_eh/core/widgets/offline_banner.dart';
 import 'package:yaani_eh/core/widgets/search_field.dart';
 import 'package:yaani_eh/core/widgets/state_views.dart';
 import 'package:yaani_eh/features/browse/domain/usecases/build_browse.dart';
 import 'package:yaani_eh/features/browse/presentation/widgets/item_of_the_day.dart';
+import 'package:yaani_eh/features/browse/presentation/widgets/section_card.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
-/// Home (the Main artboard): the header band with the app's name, the
-/// sections switch («مشروبات | حلويات») and the open section's category
-/// chips; then the drink of the day and every category's drinks, one after
-/// another. A chip scrolls to its category, and the highlighted chip
-/// follows the list. Once the band scrolls away, the chips stay pinned at
-/// the top. A section without drinks yet says it's coming soon.
+/// Home, a hub (docs/decisions/0004-home-header.md): a short header band
+/// (the app's name, tagline and search, its one action), the item of the
+/// day from any section, then one card per section from the backend.
+/// A card opens its section's page (`/section/:slug`). Once the band
+/// scrolls away, search stays pinned at the top.
 class BrowseView extends StatefulWidget {
   const new({
-    required this.menu,
-    required this.onSelectTab,
-    required this.onOpenSettings,
-    this.onJumpToCategory,
-    this.onOpenItem,
+    required this.hub,
+    required this.onOpenSection,
     this.onOpenSearch,
+    this.onOpenItem,
     this.cardAction,
-    this.cardTrailingAction,
-    this.onPreviewItem,
     super.key,
   });
 
   /// Null while loading from the device.
-  final BrowseModel? menu;
-  final ValueChanged<BrowseTab> onSelectTab;
-  final VoidCallback onOpenSettings;
+  final HubModel? hub;
+  final ValueChanged<HubSection> onOpenSection;
 
-  /// A chip was tapped (the list scrolls by itself; this is for analytics).
-  final ValueChanged<CatalogCategory>? onJumpToCategory;
-
-  /// Opening a drink (item_details).
-  final ValueChanged<CatalogItem>? onOpenItem;
-
-  /// The search field in the header opens the search screen.
+  /// The search field opens the search screen.
   final VoidCallback? onOpenSearch;
 
-  /// A control on each card and the drink of the day (the play button,
-  /// feature `pronunciation`).
+  /// The item of the day opens its page (item_details).
+  final ValueChanged<CatalogItem>? onOpenItem;
+
+  /// A control on the item of the day (the play button, `pronunciation`).
   final Widget Function(CatalogItem item)? cardAction;
-
-  /// The heart on each card's top-end corner (feature `favorites`).
-  final Widget Function(CatalogItem item)? cardTrailingAction;
-
-  /// A long press on a card: the quick preview (feature `favorites`).
-  final ValueChanged<CatalogItem>? onPreviewItem;
 
   @override
   State<BrowseView> createState() => _BrowseViewState();
@@ -66,13 +47,9 @@ class BrowseView extends StatefulWidget {
 
 class _BrowseViewState extends State<BrowseView> {
   final _scroll = ScrollController();
-  final GlobalKey _chipsKey = GlobalKey();
-  final _sectionKeys = <String, GlobalKey>{};
+  final GlobalKey _searchKey = GlobalKey();
 
-  /// The highlighted chip: the category at the top of the list.
-  String? _active;
-
-  /// The band's chips have scrolled away, so the pinned copy shows.
+  /// The band's search field has scrolled away, so the pinned one shows.
   bool _pinned = false;
 
   @override
@@ -82,185 +59,57 @@ class _BrowseViewState extends State<BrowseView> {
   }
 
   @override
-  void didUpdateWidget(BrowseView old) {
-    super.didUpdateWidget(old);
-    if (old.menu?.selectedTabId != widget.menu?.selectedTabId) {
-      // Another section: start it from the top.
-      _active = null;
-      _pinned = false;
-      if (_scroll.hasClients) _scroll.jumpTo(0);
-    }
-  }
-
-  @override
   void dispose() {
     _scroll.dispose();
     super.dispose();
   }
 
-  GlobalKey _keyFor(String categoryId) =>
-      _sectionKeys.putIfAbsent(categoryId, GlobalKey.new);
-
-  /// How far down the screen the pinned chips reach.
-  double get _pinnedBottom =>
-      MediaQuery.paddingOf(context).top +
-      AppDimens.touchTarget +
-      AppDimens.space2 * 2;
-
-  /// The scroll offset at which [key]'s top reaches the top of the list.
-  /// Asked of the viewport, so it's right even when [key] is off screen.
-  double? _offsetOf(GlobalKey key) {
-    final box = key.currentContext?.findRenderObject();
-    if (box == null || !box.attached) return null;
-    return RenderAbstractViewport.maybeOf(box)
+  void _follow() {
+    final box = _searchKey.currentContext?.findRenderObject();
+    if (box == null || !box.attached || !_scroll.hasClients) return;
+    final at = RenderAbstractViewport.maybeOf(box)
         ?.getOffsetToReveal(box, 0)
         .offset;
-  }
-
-  void _follow() {
-    final chips = widget.menu?.chips ?? const <CatalogCategory>[];
-    if (chips.isEmpty || !_scroll.hasClients) return;
-    final position = _scroll.position;
-    final chipsAt = _offsetOf(_chipsKey);
+    if (at == null) return;
     final pinned =
-        chipsAt != null &&
-        position.pixels >
-            chipsAt + AppDimens.touchTarget - MediaQuery.paddingOf(context).top;
-
-    var active = chips.first.id;
-    if (position.pixels >= position.maxScrollExtent - 1) {
-      // The last categories may never reach the top: at the end, it's
-      // the last one.
-      active = chips.last.id;
-    } else {
-      for (final c in chips) {
-        final at = _offsetOf(_keyFor(c.id));
-        if (at != null &&
-            at - position.pixels <= _pinnedBottom + AppDimens.space3) {
-          active = c.id;
-        }
-      }
-    }
-    if (pinned != _pinned || active != _active) {
-      setState(() {
-        _pinned = pinned;
-        _active = active;
-      });
-    }
-  }
-
-  void _jumpTo(CatalogCategory category) {
-    widget.onJumpToCategory?.call(category);
-    final at = _offsetOf(_keyFor(category.id));
-    if (at == null || !_scroll.hasClients) return;
-    setState(() => _active = category.id);
-    final position = _scroll.position;
-    final target = (at - _pinnedBottom - AppDimens.space2).clamp(
-      position.minScrollExtent,
-      position.maxScrollExtent,
-    );
-    if (MediaQuery.disableAnimationsOf(context)) {
-      _scroll.jumpTo(target);
-    } else {
-      _scroll.animateTo(
-        target,
-        duration: AppMotion.jump,
-        curve: AppMotion.enter,
-      );
-    }
+        _scroll.position.pixels >
+        at + AppDimens.searchHeight - MediaQuery.paddingOf(context).top;
+    if (pinned != _pinned) setState(() => _pinned = pinned);
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final menu = widget.menu;
-    final arabic = Localizations.localeOf(context).languageCode == 'ar';
-    String name(CatalogCategory c) => arabic ? c.nameAr : c.nameEn;
-    final chips = menu?.chips ?? const <CatalogCategory>[];
-    final tabs = menu?.tabs ?? const <BrowseTab>[];
-    final active = _active ?? chips.firstOrNull?.id;
-
-    Widget chipRow({Key? key}) => CategoryChips(
-      key: key,
-      options: [for (final c in chips) (id: c.id, label: name(c))],
-      selectedId: active,
-      onSelected: (id) => _jumpTo(chips.firstWhere((c) => c.id == id)),
-    );
+    final hub = widget.hub;
+    final search = widget.onOpenSearch;
 
     final header = HeaderBand(
       title: l10n.appEyebrow,
       subtitle: l10n.browseTagline,
-      trailing: AppIconButton(
-        key: const Key('home_settings_button'),
-        icon: AppIcons.settings,
-        tooltip: l10n.settingsTitle,
-        tone: GlassTone.dark,
-        onPressed: widget.onOpenSettings,
-      ),
-      bottom: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Search first (what most people came for), then the section,
-          // then its categories.
-          if (widget.onOpenSearch != null) ...[
-            SearchField(onTap: widget.onOpenSearch),
-            SizedBox(height: AppDimens.space3),
-          ],
-          if (tabs.length > 1) ...[
-            AppSegmentedControl(
-              key: const Key('browse_sections'),
-              segments: [
-                for (final t in tabs)
-                  (
-                    id: t.section.id,
-                    label: name(t.section),
-                    badge: t.hasItems ? null : l10n.comingSoonBadge,
-                  ),
-              ],
-              selectedId: menu?.selectedTabId,
-              onSelected: (id) => widget.onSelectTab(
-                tabs.firstWhere((t) => t.section.id == id),
+      contentWidth: AppDimens.hubMaxWidth,
+      bottom: search == null
+          ? null
+          : _SearchWidth(
+              child: KeyedSubtree(
+                key: _searchKey,
+                child: SearchField(
+                  key: const Key('home_search'),
+                  onTap: search,
+                ),
               ),
             ),
-            SizedBox(height: AppDimens.space3),
-          ],
-          if (chips.isNotEmpty)
-            KeyedSubtree(
-              key: _chipsKey,
-              // Runs under the band's side padding, edge to edge.
-              child: _EdgeToEdge(
-                child: chipRow(key: const Key('category_chips')),
-              ),
-            ),
-        ],
-      ),
     );
 
     final Widget body;
-    if (menu == null) {
+    if (hub == null) {
       body = const SliverFillRemaining(child: LoadingView());
-    } else if (menu.isEmpty) {
+    } else if (hub.sections.isEmpty) {
       body = SliverFillRemaining(
         hasScrollBody: false,
         child: EmptyView(message: l10n.browseEmpty),
       );
-    } else if (menu.comingSoon) {
-      final open = tabs.where((t) => t.hasItems).firstOrNull;
-      body = SliverFillRemaining(
-        hasScrollBody: false,
-        child: EmptyView(
-          key: const Key('browse_coming_soon'),
-          icon: AppIcons.cake,
-          title: l10n.comingSoonTitle(name(menu.selectedTab!.section)),
-          message: l10n.comingSoonMessage,
-          actionLabel: open == null ? null : l10n.comingSoonAction,
-          onAction: open == null ? null : () => widget.onSelectTab(open),
-        ),
-      );
     } else {
       body = SliverToBoxAdapter(
-        // Built at once (not lazily) so a chip can scroll to any category
-        // and the highlight can follow them all; a section is ~40 cards.
         child: Padding(
           padding: EdgeInsetsDirectional.fromSTEB(
             AppDimens.space4,
@@ -269,47 +118,37 @@ class _BrowseViewState extends State<BrowseView> {
             // Clear of the floating tab bar.
             AppDimens.tabBarHeight + AppDimens.space8,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (menu.itemOfTheDay case final today?) ...[
-                ItemOfTheDay(
-                  key: const Key('item_of_the_day'),
-                  item: today,
-                  onTap: widget.onOpenItem == null
-                      ? null
-                      : () => widget.onOpenItem!(today),
-                  action: widget.cardAction?.call(today),
-                ),
-                SizedBox(height: AppDimens.space6),
-              ],
-              for (final (i, section) in menu.sections.indexed) ...[
-                KeyedSubtree(
-                  key: _keyFor(section.category.id),
-                  child: _SectionHeader(title: name(section.category)),
+          child: _HubWidth(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (hub.itemOfTheDay case final today?) ...[
+                  ItemOfTheDay(
+                    key: const Key('item_of_the_day'),
+                    item: today,
+                    onTap: widget.onOpenItem == null
+                        ? null
+                        : () => widget.onOpenItem!(today),
+                    action: widget.cardAction?.call(today),
+                  ),
+                  SizedBox(height: AppDimens.space6),
+                ],
+                Semantics(
+                  header: true,
+                  child: Text(
+                    l10n.hubSectionsTitle,
+                    style: context
+                        .text(TextRole.headline)
+                        .copyWith(color: context.palette.ink),
+                  ),
                 ),
                 SizedBox(height: AppDimens.space3),
-                ItemGrid(
-                  items: section.items,
-                  // Card number on the screen, for the entry stagger.
-                  firstIndex: menu.sections
-                      .take(i)
-                      .fold(0, (n, s) => n + s.items.length),
-                  onOpenItem: widget.onOpenItem,
-                  onPreviewItem: widget.onPreviewItem,
-                  cardAction: widget.cardAction,
-                  cardTrailingAction: widget.cardTrailingAction,
+                _SectionGrid(
+                  sections: hub.sections,
+                  onOpen: widget.onOpenSection,
                 ),
-                SizedBox(height: AppDimens.space6),
               ],
-              Text(
-                l10n.approximateCalories,
-                textAlign: TextAlign.center,
-                style: context
-                    .text(TextRole.caption)
-                    .copyWith(color: context.palette.inkMuted),
-              ),
-            ],
+            ),
           ),
         ),
       );
@@ -321,7 +160,7 @@ class _BrowseViewState extends State<BrowseView> {
         children: [
           HeaderOverscroll(
             child: CustomScrollView(
-              key: const Key('browse_list'),
+              key: const Key('home_list'),
               controller: _scroll,
               slivers: [
                 SliverToBoxAdapter(child: header),
@@ -330,16 +169,20 @@ class _BrowseViewState extends State<BrowseView> {
               ],
             ),
           ),
-          if (_pinned && chips.isNotEmpty)
+          if (_pinned && search != null)
             PositionedDirectional(
               top: 0,
               start: 0,
               end: 0,
-              child: _PinnedChips(
-                // Already full width: the chips keep their own side padding.
-                child: SizedBox(
-                  height: AppDimens.touchTarget,
-                  child: chipRow(key: const Key('category_chips_pinned')),
+              child: PinnedBar(
+                key: const Key('home_search_pinned'),
+                child: Padding(
+                  padding: EdgeInsetsDirectional.symmetric(
+                    horizontal: AppDimens.space4,
+                  ),
+                  child: _HubWidth(
+                    child: _SearchWidth(child: SearchField(onTap: search)),
+                  ),
                 ),
               ),
             ),
@@ -349,65 +192,99 @@ class _BrowseViewState extends State<BrowseView> {
   }
 }
 
-/// The chips at the top of the screen once the band has scrolled away: a
-/// slim espresso strip under the status bar, like the band's own bottom.
-class _PinnedChips extends StatelessWidget {
+/// Home's column on a tablet: at most [AppDimens.hubMaxWidth], centred.
+/// The header, the item of the day, the sections and the pinned search all
+/// use it, so their edges line up.
+class _HubWidth extends StatelessWidget {
   const new({required this.child});
 
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
-    decoration: BoxDecoration(
-      color: AppColors.espresso,
-      borderRadius: BorderRadius.vertical(
-        bottom: Radius.circular(AppDimens.radiusLg),
-      ),
-      boxShadow: context.palette.glassShadow,
-    ),
-    child: Padding(
-      padding: EdgeInsetsDirectional.only(
-        top: MediaQuery.paddingOf(context).top + AppDimens.space2,
-        bottom: AppDimens.space2,
-      ),
+  Widget build(BuildContext context) => Center(
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: AppDimens.hubMaxWidth),
       child: child,
     ),
   );
 }
 
-/// Lets the chips run under the band's side padding.
-class _EdgeToEdge extends StatelessWidget {
+/// Search at a readable width on a tablet, at the start edge of the hub
+/// (under the title), not centred.
+class _SearchWidth extends StatelessWidget {
   const new({required this.child});
 
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-    height: AppDimens.touchTarget,
-    child: LayoutBuilder(
-      builder: (context, constraints) => OverflowBox(
-        maxWidth: constraints.maxWidth + AppDimens.space4 * 2,
-        minWidth: constraints.maxWidth + AppDimens.space4 * 2,
-        child: child,
-      ),
+  Widget build(BuildContext context) => Align(
+    alignment: AlignmentDirectional.centerStart,
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: AppDimens.readableWidth),
+      child: child,
     ),
   );
 }
 
-class _SectionHeader extends StatelessWidget {
-  const new({required this.title});
+/// Section cards: one column on a phone, more where each still gets
+/// [AppDimens.sectionCardMinWidth] (2 on an iPad in portrait, 3 in
+/// landscape). Cards in a row share their height.
+class _SectionGrid extends StatelessWidget {
+  const new({required this.sections, required this.onOpen});
 
-  final String title;
+  final List<HubSection> sections;
+  final ValueChanged<HubSection> onOpen;
 
   @override
-  Widget build(BuildContext context) => Semantics(
-    header: true,
-    child: Text(
-      title,
-      style: AppTextStyles.forText(
-        title,
-        TextRole.headline,
-      ).copyWith(color: context.palette.ink),
-    ),
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, box) {
+      final gap = AppDimens.space3;
+      final columns =
+          ((box.maxWidth + gap) / (AppDimens.sectionCardMinWidth + gap))
+              .floor()
+              .clamp(1, 3);
+      final rows = <List<HubSection>>[
+        for (var i = 0; i < sections.length; i += columns)
+          sections.sublist(i, (i + columns).clamp(0, sections.length)),
+      ];
+      Widget card(HubSection s) => SectionCard(
+        key: Key('section_${s.section.slug}'),
+        section: s,
+        onTap: () => onOpen(s),
+      );
+      if (columns == 1) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (final (i, s) in sections.indexed) ...[
+              if (i > 0) SizedBox(height: gap),
+              card(s),
+            ],
+          ],
+        );
+      }
+      return Column(
+        children: [
+          for (final (r, row) in rows.indexed) ...[
+            if (r > 0) SizedBox(height: gap),
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (var c = 0; c < columns; c++) ...[
+                    if (c > 0) SizedBox(width: gap),
+                    Expanded(
+                      child: c < row.length
+                          ? card(row[c])
+                          : const SizedBox.shrink(),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ],
+      );
+    },
   );
 }

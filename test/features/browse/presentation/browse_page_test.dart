@@ -1,25 +1,22 @@
-import 'dart:ui' show Tristate;
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:yaani_eh/core/theme/app_colors.dart';
-import 'package:yaani_eh/core/ui/app_ui.dart';
-import 'package:yaani_eh/core/widgets/header_band.dart';
-import 'package:yaani_eh/core/widgets/item_card.dart';
+import 'package:yaani_eh/core/theme/app_dimens.dart';
+import 'package:yaani_eh/core/widgets/search_field.dart';
 import 'package:yaani_eh/features/browse/domain/usecases/build_browse.dart';
 import 'package:yaani_eh/features/browse/presentation/browse_controller.dart';
 import 'package:yaani_eh/features/browse/presentation/browse_page.dart';
 import 'package:yaani_eh/features/browse/presentation/browse_view.dart';
+import 'package:yaani_eh/features/browse/presentation/widgets/section_card.dart';
 import 'package:yaani_eh/features/catalog_sync/data/models/catalog_rows.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
-import 'package:yaani_eh/features/pronunciation/presentation/widgets/play_name_button.dart';
+import 'package:yaani_eh/l10n/l10n.dart';
 
 import '../../../helpers/fake_catalog_remote.dart';
 import '../../../helpers/fake_catalog_repository.dart';
-import '../../../helpers/fake_pronunciation.dart';
 import '../../../helpers/pump_app.dart';
 
 final _day = DateTime(2026, 10, 30);
@@ -27,161 +24,172 @@ final List<CatalogCategory> _categories = [
   for (final r in sampleCategories()) CatalogRows.category(r)!,
 ];
 
-BrowseModel _menu({String? tab, List<CatalogItem>? items}) =>
-    const BuildBrowse()(
+/// Two more sections from the backend, so the grid has something to lay out.
+const _terms = CatalogCategory(
+  id: '00000000-0000-4000-8000-0000000c0010',
+  slug: 'terms',
+  nameAr: 'مصطلحات',
+  nameEn: 'Terms',
+  icon: 'book',
+  sortOrder: 2,
+);
+const _history = CatalogCategory(
+  id: '00000000-0000-4000-8000-0000000c0011',
+  slug: 'history',
+  nameAr: 'تاريخ',
+  nameEn: 'History',
+  icon: 'history',
+  sortOrder: 3,
+);
+
+HubModel _hub({List<CatalogItem>? items, bool more = false}) =>
+    const BuildHub()(
       items: items ?? sampleCatalogItems(),
-      categories: _categories,
+      categories: [
+        ..._categories,
+        if (more) ...[_terms, _history],
+      ],
       today: _day,
-      selectedTabId: tab,
     );
 
 void main() {
   group(BrowseView, () {
     Future<void> pumpView(
       WidgetTester tester, {
-      BrowseModel? menu,
+      HubModel? hub,
       Locale locale = const Locale('en'),
       ThemeMode mode = ThemeMode.light,
-      ValueChanged<BrowseTab>? onTab,
-      ValueChanged<CatalogCategory>? onJump,
-      VoidCallback? onSettings,
+      ValueChanged<HubSection>? onOpen,
+      VoidCallback? onSearch,
     }) => tester.pumpApp(
       BrowseView(
-        menu: menu,
-        onSelectTab: onTab ?? (_) {},
-        onJumpToCategory: onJump,
-        onOpenSettings: onSettings ?? () {},
+        hub: hub,
+        onOpenSection: onOpen ?? (_) {},
+        onOpenSearch: onSearch ?? () {},
       ),
       locale: locale,
       themeMode: mode,
     );
 
-    testWidgets('header, sections, chips, drink of the day and cards', (
+    testWidgets('a short band with search, then a card per section', (
       tester,
     ) async {
-      await pumpView(tester, menu: _menu());
+      await pumpView(tester, hub: _hub());
       expect(find.text(l10nEn.appEyebrow), findsOneWidget);
-      expect(find.byKey(const Key('browse_sections')), findsOneWidget);
-      expect(find.text('Drinks'), findsOneWidget);
-      expect(find.textContaining('Desserts'), findsOneWidget);
-      expect(find.textContaining(l10nEn.comingSoonBadge), findsOneWidget);
-      expect(find.text('All'), findsNothing);
-      expect(find.text('Coffee'), findsWidgets); // chip + section
+      expect(find.byKey(const Key('home_search')), findsOneWidget);
+      // Search is the band's one action: no settings button, no switch.
+      expect(find.byKey(const Key('home_settings_button')), findsNothing);
+      expect(find.byKey(const Key('browse_sections')), findsNothing);
       expect(find.byKey(const Key('item_of_the_day')), findsOneWidget);
-      expect(find.byType(ItemCard), findsWidgets);
+      expect(find.text(l10nEn.hubSectionsTitle), findsOneWidget);
+      expect(find.byType(SectionCard), findsNWidgets(2));
+      expect(find.text('Drinks'), findsOneWidget);
+      expect(find.text(l10nEn.sectionItemCount(12)), findsOneWidget);
       await tester.expectAccessible();
     });
 
-    testWidgets('every category of the section is on the list', (tester) async {
-      await pumpView(tester, menu: _menu());
-      final list = find.byKey(const Key('browse_list'));
-      await tester.dragUntilVisible(
-        find.text('Cold Brew'),
-        list,
-        const Offset(0, -300),
+    testWidgets('an empty section says «coming soon» and still opens', (
+      tester,
+    ) async {
+      final opened = <String>[];
+      await pumpView(
+        tester,
+        hub: _hub(),
+        onOpen: (s) => opened.add(s.section.slug),
       );
-      expect(find.text('Cold Brew'), findsOneWidget);
+      final desserts = find.byKey(const Key('section_desserts'));
+      await tester.ensureVisible(desserts);
+      expect(
+        find.descendant(
+          of: desserts,
+          matching: find.text(l10nEn.comingSoonBadge),
+        ),
+        findsOneWidget,
+      );
+      await tester.tap(desserts);
+      await tester.tap(find.byKey(const Key('section_cafe')));
+      expect(opened, ['desserts', 'cafe']);
     });
 
-    testWidgets('a chip scrolls to its category and lights up', (tester) async {
-      final jumped = <String>[];
-      await pumpView(tester, menu: _menu(), onJump: (c) => jumped.add(c.slug));
-      await tester.pumpAndSettle();
-      await tester.tap(
-        find.descendant(
-          of: find.byKey(const Key('category_chips')),
-          matching: find.text('Iced coffee'),
+    testWidgets('the whole card takes the tap, padding included', (
+      tester,
+    ) async {
+      final opened = <String>[];
+      await pumpView(
+        tester,
+        hub: _hub(),
+        onOpen: (s) => opened.add(s.section.slug),
+      );
+      final card = find.byKey(const Key('section_cafe'));
+      // Just inside the top-start corner: no text or icon there.
+      await tester.tapAt(tester.getTopRight(card) + const Offset(-3, 3));
+      await tester.tapAt(tester.getBottomLeft(card) + const Offset(3, -3));
+      expect(opened, ['cafe', 'cafe']);
+    });
+
+    testWidgets('a card reads as one button: name and count', (tester) async {
+      final handle = tester.ensureSemantics();
+      await pumpView(tester, hub: _hub());
+      expect(
+        find.bySemanticsLabel(
+          l10nEn.sectionCardLabel('Drinks', l10nEn.sectionItemCount(12)),
         ),
-      );
-      await tester.pumpAndSettle();
-      expect(jumped, ['iced_coffee']);
-      // The band scrolled away: the chips are pinned at the top, with
-      // «Iced coffee» selected, and its heading sits just under them.
-      final pinned = find.byKey(const Key('category_chips_pinned'));
-      expect(pinned, findsOneWidget);
-      final selected = tester.getSemantics(
-        find.descendant(of: pinned, matching: find.text('Iced coffee')),
-      );
-      expect(selected.flagsCollection.isSelected, Tristate.isTrue);
-      final heading = find.descendant(
-        of: find.byKey(const Key('browse_list')),
-        matching: find.text('Iced coffee'),
+        findsOneWidget,
       );
       expect(
-        tester.getTopLeft(heading.last).dy,
-        greaterThan(tester.getBottomLeft(pinned).dy - 1),
+        find.bySemanticsLabel(
+          l10nEn.sectionCardLabel('Desserts', l10nEn.comingSoonBadge),
+        ),
+        findsOneWidget,
       );
+      handle.dispose();
     });
 
-    testWidgets('scrolling back up hides the pinned chips', (tester) async {
-      await pumpView(tester, menu: _menu());
-      final list = find.byKey(const Key('browse_list'));
-      await tester.drag(list, const Offset(0, -600));
-      await tester.pumpAndSettle();
-      expect(find.byKey(const Key('category_chips_pinned')), findsOneWidget);
-      await tester.drag(list, const Offset(0, 2000));
-      await tester.pumpAndSettle();
-      expect(find.byKey(const Key('category_chips_pinned')), findsNothing);
-    });
-
-    testWidgets('the switch opens a section; desserts is coming soon', (
+    testWidgets('search opens; it stays pinned on top when scrolled', (
       tester,
     ) async {
-      final picked = <String>[];
-      await pumpView(
-        tester,
-        menu: _menu(),
-        onTab: (t) => picked.add(t.section.slug),
-      );
-      await tester.tap(find.textContaining('Desserts'));
-      expect(picked, ['desserts']);
+      var searches = 0;
+      await pumpView(tester, hub: _hub(more: true), onSearch: () => searches++);
+      await tester.tap(find.byKey(const Key('home_search')));
+      expect(searches, 1);
 
-      await pumpView(
-        tester,
-        menu: _menu(tab: dessertsId),
-        onTab: (t) => picked.add(t.section.slug),
-      );
+      final list = find.byKey(const Key('home_list'));
+      await tester.drag(list, const Offset(0, -400));
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('browse_coming_soon')), findsOneWidget);
-      expect(find.text(l10nEn.comingSoonTitle('Desserts')), findsOneWidget);
-      expect(find.byType(ItemCard), findsNothing);
-      expect(find.byKey(const Key('category_chips')), findsNothing);
-      await tester.expectAccessible();
-
-      await tester.tap(find.text(l10nEn.comingSoonAction));
-      expect(picked.last, 'cafe');
-    });
-
-    testWidgets('one section only: no switch', (tester) async {
-      final categories = [
-        for (final c in _categories)
-          if (c.slug != 'desserts') c,
-      ];
-      await pumpView(
-        tester,
-        menu: const BuildBrowse()(
-          items: sampleCatalogItems(),
-          categories: categories,
-          today: _day,
-        ),
+      final pinned = find.byKey(const Key('home_search_pinned'));
+      expect(pinned, findsOneWidget);
+      await tester.tap(
+        find.descendant(of: pinned, matching: find.byType(SearchField)),
       );
-      expect(find.byKey(const Key('browse_sections')), findsNothing);
+      expect(searches, 2);
+
+      await tester.drag(list, const Offset(0, 2000));
+      await tester.pumpAndSettle();
+      expect(pinned, findsNothing);
     });
 
-    testWidgets('loading and empty states', (tester) async {
+    testWidgets('loading, and no sections at all', (tester) async {
       await pumpView(tester);
       expect(find.bySemanticsLabel(l10nEn.loading), findsOneWidget);
 
-      await pumpView(tester, menu: _menu(items: const []));
+      await pumpView(
+        tester,
+        hub: const BuildHub()(
+          items: const [],
+          categories: const [],
+          today: _day,
+        ),
+      );
       expect(find.text(l10nEn.browseEmpty), findsOneWidget);
       await tester.expectAccessible();
     });
 
-    testWidgets('settings stays one tap away', (tester) async {
-      var opened = 0;
-      await pumpView(tester, menu: _menu(), onSettings: () => opened++);
-      await tester.tap(find.byKey(const Key('home_settings_button')));
-      expect(opened, 1);
+    testWidgets('nothing published yet: every section is coming soon', (
+      tester,
+    ) async {
+      await pumpView(tester, hub: _hub(items: const []));
+      expect(find.byKey(const Key('item_of_the_day')), findsNothing);
+      expect(find.byKey(const Key('section_soon_badge')), findsNWidgets(2));
     });
 
     for (final (name, locale, mode) in [
@@ -190,290 +198,119 @@ void main() {
       ('Arabic dark', const Locale('ar'), ThemeMode.dark),
     ]) {
       testWidgets('works in $name', (tester) async {
-        await pumpView(tester, menu: _menu(), locale: locale, mode: mode);
+        await pumpView(
+          tester,
+          hub: _hub(more: true),
+          locale: locale,
+          mode: mode,
+        );
         expect(tester.takeException(), isNull);
         await tester.expectAccessible();
       });
     }
 
-    testWidgets('Arabic: categories and explanations in Arabic, RTL', (
-      tester,
-    ) async {
-      await pumpView(tester, menu: _menu(), locale: const Locale('ar'));
+    testWidgets('Arabic: names in Arabic, RTL, «جاي قريب»', (tester) async {
+      await pumpView(tester, hub: _hub(), locale: const Locale('ar'));
       expect(find.text('مشروبات'), findsOneWidget);
-      expect(find.textContaining('قريبًا'), findsOneWidget);
-      expect(find.text('قهوة'), findsWidgets);
+      expect(find.text('جاي قريب'), findsOneWidget);
       expect(
         Directionality.of(tester.element(find.text('مشروبات'))),
         TextDirection.rtl,
       );
-    });
-
-    testWidgets('the first cards rise in one after another, then rest', (
-      tester,
-    ) async {
-      await pumpView(tester, menu: _menu());
-      final reveals = find.byType(AppReveal);
-      double opacity(int i) => tester
-          .widget<Opacity>(
-            find.descendant(of: reveals.at(i), matching: find.byType(Opacity)),
-          )
-          .opacity;
-      // The first card leads, the second follows…
-      await tester.pump(const Duration(milliseconds: 100));
-      expect(opacity(0), greaterThan(opacity(1)));
-      // …then every card rests fully shown, and nothing keeps animating.
-      await tester.pumpAndSettle();
-      expect(opacity(0), 1);
-      expect(tester.binding.hasScheduledFrame, isFalse);
-      expect(opacity(1), 1);
-    });
-
-    testWidgets('Reduce Motion: cards show at once', (tester) async {
-      tester.platformDispatcher.accessibilityFeaturesTestValue =
-          const FakeAccessibilityFeatures(disableAnimations: true);
-      addTearDown(
-        tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
-      );
-      await pumpView(tester, menu: _menu());
+      // The card's picture is at the start: the right edge in Arabic.
+      final card = find.byKey(const Key('section_cafe'));
       expect(
-        find.descendant(
-          of: find.byType(AppReveal),
-          matching: find.byType(Opacity),
-        ),
-        findsNothing,
+        tester.getCenter(find.text('مشروبات')).dx,
+        lessThan(tester.getCenter(card).dx + tester.getSize(card).width / 2),
       );
     });
 
-    testWidgets('pulled down past the top, the band stretches, no gap', (
-      tester,
-    ) async {
-      await pumpView(tester, menu: _menu());
-      await tester.pumpAndSettle();
-      final gesture = await tester.startGesture(const Offset(200, 300));
-      await gesture.moveBy(const Offset(0, 200));
-      await tester.pump();
-      final fill = tester.widget<ColoredBox>(
-        find.descendant(
-          of: find.byType(HeaderOverscroll),
-          matching: find.byWidgetPredicate(
-            (w) => w is ColoredBox && w.color == AppColors.headerTop,
-          ),
-        ),
-      );
-      expect(tester.getSize(find.byWidget(fill)).height, greaterThan(0));
-      await gesture.up();
-      await tester.pumpAndSettle();
-    }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
-
-    testWidgets('a chip ticks like an iOS picker, once', (tester) async {
-      final haptics = <String>[];
-      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-        SystemChannels.platform,
-        (call) async {
-          if (call.method == 'HapticFeedback.vibrate') {
-            haptics.add('${call.arguments}');
-          }
-          return null;
-        },
-      );
-      addTearDown(
-        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-          SystemChannels.platform,
-          null,
-        ),
-      );
-      await pumpView(tester, menu: _menu());
-      await tester.pumpAndSettle();
-      await tester.tap(
-        find.descendant(
-          of: find.byKey(const Key('category_chips')),
-          matching: find.text('Iced coffee'),
-        ),
-      );
-      await tester.pumpAndSettle();
-      expect(haptics, ['HapticFeedbackType.selectionClick']);
-    });
-
-    testWidgets('small phone with large text, and a tablet', (tester) async {
-      tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+    testWidgets('small phone with 1.6× text: no overflow', (tester) async {
+      tester.platformDispatcher.textScaleFactorTestValue = 1.6;
       addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-      await pumpView(tester, menu: _menu(), locale: const Locale('ar'));
+      await pumpView(tester, hub: _hub(more: true), locale: const Locale('ar'));
       tester.view.physicalSize = const Size(960, 1704); // 320×568
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
-
-      tester.view.physicalSize = const Size(2048, 2732); // iPad
-      tester.view.devicePixelRatio = 2;
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-    });
-  });
-
-  group(ItemCard, () {
-    Future<void> pumpCard(
-      WidgetTester tester,
-      CatalogItem item, {
-      Locale locale = const Locale('en'),
-    }) => tester.pumpApp(
-      Center(
-        child: SizedBox(width: 170, child: ItemCard(item: item)),
-      ),
-      locale: locale,
-    );
-
-    testWidgets('name, spelling and the «يعني» line, in Arabic', (
-      tester,
-    ) async {
-      await pumpCard(
-        tester,
-        sampleCatalogItems().first,
-        locale: const Locale('ar'),
+      // Cards stack in one column on a phone.
+      final cafe = tester.getTopLeft(find.byKey(const Key('section_cafe')));
+      final desserts = tester.getTopLeft(
+        find.byKey(const Key('section_desserts')),
       );
-      expect(find.text('Espresso'), findsOneWidget);
-      expect(find.text('إسبريسو'), findsOneWidget);
-      expect(find.text('يعني فنجان قهوة صغير ومركّز'), findsOneWidget);
+      expect(desserts.dy, greaterThan(cafe.dy));
       await tester.expectAccessible();
     });
 
-    testWidgets('English shows the meaning alone', (tester) async {
-      await pumpCard(tester, sampleCatalogItems().first);
-      expect(find.text('A tiny, strong cup of coffee'), findsOneWidget);
-    });
-
-    testWidgets('no «يعني» line yet: the first sentence of the explanation', (
-      tester,
-    ) async {
-      final latte = sampleCatalogItems().firstWhere((i) => i.gistAr == null);
-      await pumpCard(tester, latte, locale: const Locale('ar'));
-      final sentence = latte.explanationAr.split('.').first;
-      expect(find.text('يعني $sentence'), findsOneWidget);
-    });
-
-    testWidgets('no price or calories on the card', (tester) async {
-      final item = CatalogRows.item({
-        ...sampleItems().first,
-        'price_min_egp': 70,
-        'price_max_egp': 150,
-      })!;
-      await pumpCard(tester, item, locale: const Locale('ar'));
-      expect(find.textContaining('ج.م'), findsNothing);
-      expect(find.textContaining('سعر حراري'), findsNothing);
-    });
-
-    testWidgets('cards in a row line up: the meaning takes two lines', (
-      tester,
-    ) async {
-      final items = sampleCatalogItems();
-      await tester.pumpApp(
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Two real «يعني» lines: one line long, two lines long.
-            for (final item in items.where((i) => i.gistEn != null))
-              SizedBox(width: 170, child: ItemCard(item: item)),
-          ],
-        ),
-      );
-      final heights = [
-        for (final card in find.byType(ItemCard).evaluate())
-          tester.getSize(find.byWidget(card.widget)).height,
-      ];
-      expect(heights.toSet(), hasLength(1));
-    });
-
-    testWidgets('a long «يعني» line shows whole: small phone, large text', (
-      tester,
-    ) async {
-      tester.platformDispatcher.textScaleFactorTestValue = 1.3;
-      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-      final long = '${'ق' * 20} ${'ب' * 20} ${'ن' * 18}'; // 60 chars
-      final item = CatalogRows.item({...sampleItems().first, 'gist_ar': long})!;
-      await tester.pumpApp(
-        Center(
-          child: SizedBox(width: 138, child: ItemCard(item: item)),
-        ),
-        locale: const Locale('ar'),
-      );
-      tester.view.physicalSize = const Size(960, 1704); // 320×568
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      final text = tester.widget<Text>(find.text('يعني $long'));
-      expect(text.maxLines, isNull);
-      expect(text.overflow, isNot(TextOverflow.ellipsis));
-    });
-
-    testWidgets('pressing shrinks the card, still with Reduce Motion', (
-      tester,
-    ) async {
-      Future<double> pressedScale() async {
-        final gesture = await tester.startGesture(
-          tester.getCenter(find.byType(ItemCard)),
-        );
-        await tester.pumpAndSettle();
-        final scale = tester
-            .widget<AnimatedScale>(
-              find.descendant(
-                of: find.byType(ItemCard),
-                matching: find.byType(AnimatedScale),
-              ),
-            )
-            .scale;
-        await gesture.up();
-        await tester.pumpAndSettle();
-        return scale;
+    for (final locale in const [Locale('en'), Locale('ar')]) {
+      for (final size in const [Size(1032, 1376), Size(1376, 1032)]) {
+        testWidgets('iPad ${size.width.toInt()}×${size.height.toInt()} '
+            '(${locale.languageCode}): the band, the item of the day and the '
+            'sections share their start edge', (tester) async {
+          await pumpView(tester, hub: _hub(more: true), locale: locale);
+          tester.view
+            ..physicalSize = size * 2
+            ..devicePixelRatio = 2;
+          await tester.pumpAndSettle();
+          final rtl = locale.languageCode == 'ar';
+          double start(Finder f) =>
+              rtl ? tester.getTopRight(f).dx : tester.getTopLeft(f).dx;
+          final l10n = lookupAppLocalizations(locale);
+          final edge = start(find.byKey(const Key('item_of_the_day')));
+          for (final f in [
+            find.text(l10n.appEyebrow),
+            find.byKey(const Key('home_search')),
+            find.text(l10n.hubSectionsTitle),
+            find.byKey(const Key('section_cafe')),
+          ]) {
+            expect(start(f), closeTo(edge, 0.5), reason: '$f');
+          }
+          // The item of the day and the grid also end together.
+          double end(Finder f) =>
+              rtl ? tester.getTopLeft(f).dx : tester.getTopRight(f).dx;
+          final cardEnds = [
+            for (final slug in ['cafe', 'desserts', 'terms'])
+              end(find.byKey(Key('section_$slug'))),
+          ];
+          final gridEnd = rtl
+              ? cardEnds.reduce(math.min)
+              : cardEnds.reduce(math.max);
+          expect(
+            end(find.byKey(const Key('item_of_the_day'))),
+            closeTo(gridEnd, 0.5),
+          );
+        });
       }
+    }
 
-      final item = sampleCatalogItems().first;
-      await tester.pumpApp(
-        Center(
-          child: SizedBox(
-            width: 170,
-            child: ItemCard(item: item, onTap: () {}),
-          ),
-        ),
-      );
-      expect(await pressedScale(), lessThan(1));
-
-      tester.platformDispatcher.accessibilityFeaturesTestValue =
-          const FakeAccessibilityFeatures(disableAnimations: true);
-      addTearDown(
-        tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
-      );
-      await tester.pumpAndSettle();
-      expect(await pressedScale(), 1);
-    });
-
-    testWidgets('one label for screen readers, tappable when wired', (
-      tester,
-    ) async {
-      final handle = tester.ensureSemantics();
-      var opened = 0;
-      await tester.pumpApp(
-        Center(
-          child: SizedBox(
-            width: 170,
-            child: ItemCard(
-              item: sampleCatalogItems().first,
-              onTap: () => opened++,
-            ),
-          ),
-        ),
-      );
-      expect(
-        find.bySemanticsLabel(RegExp('^Espresso، إسبريسو')),
-        findsOneWidget,
-      );
-      await tester.tap(find.byType(ItemCard));
-      expect(opened, 1);
-      handle.dispose();
-    });
+    for (final (name, size, columns) in [
+      ('iPad portrait', const Size(1032, 1376), 2),
+      ('iPad landscape', const Size(1376, 1032), 3),
+    ]) {
+      testWidgets('$name: $columns columns, search at a readable width', (
+        tester,
+      ) async {
+        await pumpView(tester, hub: _hub(more: true));
+        tester.view
+          ..physicalSize = size * 2
+          ..devicePixelRatio = 2;
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        final tops = {
+          for (final slug in ['cafe', 'desserts', 'terms'])
+            tester.getTopLeft(find.byKey(Key('section_$slug'))).dy,
+        };
+        // Cards in one row share a top: 2 columns → 2 rows for 3 cards.
+        expect(tops, hasLength(columns == 2 ? 2 : 1));
+        expect(
+          tester.getSize(find.byKey(const Key('home_search'))).width,
+          lessThanOrEqualTo(AppDimens.readableWidth),
+        );
+      });
+    }
   });
 
   group(BrowsePage, () {
-    testWidgets('reads the menu from the device; the switch opens desserts', (
-      tester,
-    ) async {
+    testWidgets('reads the sections from the device', (tester) async {
       await tester.pumpApp(
         ProviderScope(
           overrides: [
@@ -486,75 +323,8 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.text('Flat White'), findsWidgets);
-
-      await tester.tap(find.textContaining('Desserts'));
-      await tester.pumpAndSettle();
-      expect(find.byKey(const Key('browse_coming_soon')), findsOneWidget);
-      expect(find.text('Flat White'), findsNothing);
-
-      await tester.tap(find.text(l10nEn.comingSoonAction));
-      await tester.pumpAndSettle();
-      expect(find.text('Flat White'), findsWidgets);
-    });
-
-    testWidgets('drinks with clips get a play button on their card and the '
-        'drink of the day; it plays without opening the drink', (tester) async {
-      final repo = FakePronunciationRepository();
-      final player = FakeClipPlayer();
-      await tester.pumpApp(
-        ProviderScope(
-          overrides: [
-            catalogRepositoryProvider.overrideWithValue(
-              FakeCatalogRepository(
-                has: true,
-                items: sampleCatalogItems(withAudio: true),
-              ),
-            ),
-            todayProvider.overrideWithValue(_day),
-            ...pronunciationOverrides(repo, player),
-          ],
-          child: const BrowsePage(),
-        ),
-      );
-      await tester.pumpAndSettle();
-      final today = find.byKey(const Key('item_of_the_day'));
-      expect(
-        find.descendant(of: today, matching: find.byType(PlayNameButton)),
-        findsOneWidget,
-      );
-      // Affogato and Iced Mocha have no clips.
-      expect(find.byKey(const Key('play_affogato')), findsNothing);
-
-      final card = find.widgetWithText(ItemCard, 'Flat White');
-      await tester.dragUntilVisible(
-        card,
-        find.byType(Scrollable).first,
-        const Offset(0, -200),
-      );
-      // Clear of the chips pinned at the top.
-      await tester.drag(
-        find.byKey(const Key('browse_list')),
-        const Offset(0, 250),
-      );
-      await tester.pumpAndSettle();
-      final play = find.descendant(
-        of: card,
-        matching: find.byKey(const Key('play_flat_white')),
-      );
-      // Top-start corner of the card (the heart will take top-end).
-      expect(
-        tester.getTopLeft(play).dx - tester.getTopLeft(card).dx,
-        lessThan(10),
-      );
-      await tester.tap(play);
-      await tester.pump();
-      expect(player.played.single.file, '/clips/flat_white.barista.m4a');
-      // Still on Home.
-      expect(find.byType(BrowseView), findsOneWidget);
-      player.finish();
-      await tester.pumpAndSettle();
-      await tester.expectAccessible();
+      expect(find.byType(SectionCard), findsNWidgets(2));
+      expect(find.text(l10nEn.sectionItemCount(12)), findsOneWidget);
     });
   });
 }

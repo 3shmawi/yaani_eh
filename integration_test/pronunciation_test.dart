@@ -49,6 +49,7 @@ void main() {
     expect(app.player.played, hasLength(1));
 
     // 2. Open Flat White: the pill sits on its photo.
+    await openDrinks(tester);
     final menu = find.byKey(const Key('browse_list'));
     Future<void> open(String name) async {
       final card = find.widgetWithText(ItemCard, name);

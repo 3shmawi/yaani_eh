@@ -7,12 +7,15 @@
 #   scripts/screens.sh            # iPhone 15 (393×852 pt)
 #   scripts/screens.sh 430x932    # another size in points (Pro Max)
 #   scripts/screens.sh 375x667 --sheet   # also one contact sheet per language
+#   SCREENS_TEXT_SCALE=1.6 scripts/screens.sh   # with the phone's large text
 set -euo pipefail
 cd "$(dirname "$0")/.."
 size=${1:-393x852}
+text_scale=${SCREENS_TEXT_SCALE:-1}
 rm -rf build/screens
 flutter test test/screens --update-goldens \
-  --dart-define=SCREENS=true --dart-define=SCREENS_SIZE="$size" >/dev/null
+  --dart-define=SCREENS=true --dart-define=SCREENS_SIZE="$size" \
+  --dart-define=SCREENS_TEXT_SCALE="$text_scale" >/dev/null
 if [ "${2:-}" = --sheet ] && command -v ffmpeg >/dev/null; then
   for lang in ar en; do
     ffmpeg -y -loglevel error -pattern_type glob -i "build/screens/${lang}_*.png" \

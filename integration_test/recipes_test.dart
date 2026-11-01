@@ -21,6 +21,10 @@ void main() {
     await tester.pumpAndSettle();
     await beat(tester, 1200);
 
+    // Home lists the sections; the drinks are one tap away.
+    await openDrinks(tester);
+    await beat(tester);
+
     // 1. Long-press Flat White, in the middle of the screen.
     final card = find.widgetWithText(ItemCard, 'Flat White');
     await tester.dragUntilVisible(

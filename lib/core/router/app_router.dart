@@ -7,6 +7,7 @@ import 'package:yaani_eh/core/monitoring/monitoring.dart';
 import 'package:yaani_eh/core/router/app_routes.dart';
 import 'package:yaani_eh/core/router/not_found_page.dart';
 import 'package:yaani_eh/features/browse/presentation/browse_page.dart';
+import 'package:yaani_eh/features/browse/presentation/section_page.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_page.dart';
 import 'package:yaani_eh/features/favorites/presentation/favorites_page.dart';
 import 'package:yaani_eh/features/item_details/presentation/item_page.dart';
@@ -30,9 +31,9 @@ final appRouter = GoRouter(
     ...Analytics.navigatorObservers,
   ],
   routes: [
-    // The tabs: Menu and Favorites, each with its own navigator, so a tab
-    // keeps its scroll position. Pages pushed from a tab (a drink, search,
-    // settings) cover the tab bar.
+    // The tabs: Home, Favorites and Settings, each with its own navigator,
+    // so a tab keeps its scroll position. A section stays under the tab
+    // bar; pages pushed from a tab (an item, search) cover it.
     StatefulShellRoute(
       builder: (context, state, shell) => AppTabsShell(shell: shell),
       navigatorContainerBuilder: (context, shell, children) => IndexedStack(
@@ -63,6 +64,23 @@ final appRouter = GoRouter(
               builder: (context, state) =>
                   const CatalogSyncPage(child: BrowsePage()),
             ),
+            // One section of Home, under the tab bar. In the same branch,
+            // so a link to it opens without the welcome or Home underneath
+            // (back then goes Home).
+            GoRoute(
+              path: AppRoutes.sectionPattern,
+              // Untrusted input (deep links): anything that isn't a slug
+              // is a 404.
+              redirect: (context, state) {
+                final slug = state.pathParameters['slug'] ?? '';
+                return AppRoutes.slugPattern.hasMatch(slug)
+                    ? null
+                    : '/not-found';
+              },
+              builder: (context, state) => CatalogSyncPage(
+                child: SectionPage(slug: state.pathParameters['slug']!),
+              ),
+            ),
           ],
         ),
         StatefulShellBranch(
@@ -71,6 +89,14 @@ final appRouter = GoRouter(
               path: AppRoutes.favorites,
               builder: (context, state) =>
                   const CatalogSyncPage(child: FavoritesPage()),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: AppRoutes.settings,
+              builder: (context, state) => const SettingsPage(),
             ),
           ],
         ),
@@ -107,10 +133,6 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.welcome,
       builder: (context, state) => const WelcomePage(),
-    ),
-    GoRoute(
-      path: AppRoutes.settings,
-      builder: (context, state) => const SettingsPage(),
     ),
   ],
   errorBuilder: (context, state) => const NotFoundPage(),

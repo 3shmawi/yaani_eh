@@ -9,16 +9,20 @@ import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_theme.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
 import 'package:yaani_eh/features/browse/presentation/browse_page.dart';
+import 'package:yaani_eh/features/browse/presentation/section_view.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
 import 'package:yaani_eh/features/favorites/presentation/favorites_view.dart';
 import 'package:yaani_eh/features/item_details/presentation/item_view.dart';
 import 'package:yaani_eh/features/recipes/presentation/step_by_step_view.dart';
+import 'package:yaani_eh/features/settings/presentation/settings_controller.dart';
+import 'package:yaani_eh/features/settings/presentation/settings_view.dart';
 import 'package:yaani_eh/features/smart_search/presentation/search_page.dart';
 import 'package:yaani_eh/features/welcome/presentation/welcome_view.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
 import '../helpers/fake_catalog_repository.dart';
 import '../helpers/fake_favorites.dart';
+import '../helpers/fake_settings.dart';
 import '../helpers/fake_welcome.dart';
 
 /// Deep links are untrusted input: unknown or crafted paths must land on a
@@ -43,6 +47,9 @@ void main() {
           ),
           ...favoritesOverrides(favorites),
           ...welcomeOverrides(welcome),
+          settingsRepositoryProvider.overrideWithValue(
+            FakeSettingsRepository(),
+          ),
         ],
         child: AppUi.testWrap(
           ScreenUtilInit(
@@ -85,6 +92,18 @@ void main() {
       ],
       '/drinks/latte',
       '/drinkx/latte',
+      // Sections: only a slug, nothing under it.
+      '/section',
+      '/section/',
+      '/section/../../etc/passwd',
+      '/section/%3Cscript%3Ealert(1)%3C%2Fscript%3E',
+      "/section/cafe');DROP TABLE categories;--",
+      '/section/CAFE',
+      '/section/${'a' * 200}',
+      '/section/cafe/extra',
+      '/section/cafe/../../admin',
+      '/sections/cafe',
+      '/settings/secret',
       '/favorites/secret',
       '/favorites/../../etc/passwd',
       '/favorites%2F..%2Fadmin',
@@ -125,6 +144,10 @@ void main() {
     appRouter.go(AppRoutes.item('cortado'));
     await tester.pumpAndSettle();
     expect(find.byType(ItemView), findsOneWidget);
+    appRouter.go(AppRoutes.section('cafe'));
+    await tester.pumpAndSettle();
+    expect(find.byType(SectionView), findsOneWidget);
+    expect(find.byType(WelcomeView), findsNothing);
 
     // A crafted query on Home is ignored: still the welcome.
     appRouter.go('/?redirect=https://evil.example.com');
@@ -236,7 +259,14 @@ void main() {
     expect(find.byKey(const Key('app_tab_bar')), findsOneWidget);
     expect(find.byType(BrowsePage), findsOneWidget);
 
-    // Clear of the pinned chips and of «على ذوقك».
+    // Home is the sections; drinks are one tap away.
+    await tester.tap(find.byKey(const Key('section_cafe')));
+    await tester.pumpAndSettle();
+    expect(find.byType(SectionView), findsOneWidget);
+    // A section stays under the tab bar.
+    expect(find.byKey(const Key('app_tab_bar')), findsOneWidget);
+
+    // Clear of the pinned chips.
     final heart = find.byKey(const Key('favorite_espresso'));
     await Scrollable.ensureVisible(tester.element(heart), alignment: 0.5);
     await tester.pumpAndSettle();
@@ -277,12 +307,84 @@ void main() {
       find
           .descendant(
             of: find.byKey(const Key('app_tab_bar')),
-            matching: find.text('Menu'),
+            matching: find.text('Home'),
           )
           .first,
     );
     await tester.pumpAndSettle();
+    // The Home tab comes back where it was: the drinks section.
+    expect(find.byType(SectionView), findsOneWidget);
+    // Back from the section: Home's sections.
+    await tester.tap(find.byKey(const Key('section_back')));
+    await tester.pumpAndSettle();
     expect(find.byType(BrowsePage), findsOneWidget);
+
+    // Settings is the third tab.
+    await tester.tap(
+      find
+          .descendant(
+            of: find.byKey(const Key('app_tab_bar')),
+            matching: find.text('Settings'),
+          )
+          .first,
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(SettingsView), findsOneWidget);
+    expect(find.byKey(const Key('app_tab_bar')), findsOneWidget);
+    appRouter.go('/');
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('section links open the section, or say there is none', (
+    tester,
+  ) async {
+    await pumpRouter(tester);
+
+    for (final path in [
+      AppRoutes.section('cafe'),
+      '/section/cafe?redirect=https://evil.example.com',
+      '/section/cafe#<script>',
+    ]) {
+      appRouter.go(path);
+      await tester.pumpAndSettle();
+      expect(find.byType(SectionView), findsOneWidget, reason: path);
+      expect(find.text('Flat White'), findsWidgets, reason: path);
+      expect(tester.takeException(), isNull);
+    }
+
+    // Opened from a link, back goes Home (nothing under it).
+    await tester.tap(find.byKey(const Key('section_back')));
+    await tester.pumpAndSettle();
+    expect(find.byType(BrowsePage), findsOneWidget);
+
+    // A section without items yet, and one that doesn't exist.
+    appRouter.go(AppRoutes.section('desserts'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('browse_coming_soon')), findsOneWidget);
+    for (final slug in ['no_such_section', 'coffee']) {
+      appRouter.go(AppRoutes.section(slug));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('section_missing')), findsOneWidget);
+    }
+    await tester.tap(find.byKey(const Key('section_back')));
+    await tester.pumpAndSettle();
+    expect(find.byType(BrowsePage), findsOneWidget);
+  });
+
+  testWidgets('the settings link opens the Settings tab, nothing else', (
+    tester,
+  ) async {
+    await pumpRouter(tester);
+    for (final path in [
+      AppRoutes.settings,
+      '/settings?redirect=https://evil.example.com',
+    ]) {
+      appRouter.go(path);
+      await tester.pumpAndSettle();
+      expect(find.byType(SettingsView), findsOneWidget, reason: path);
+    }
+    appRouter.go('/');
+    await tester.pumpAndSettle();
   });
 
   testWidgets('search links: any query is shown safely, never executed', (

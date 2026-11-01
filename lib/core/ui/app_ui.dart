@@ -792,6 +792,10 @@ class _AppPressableState extends State<AppPressable> {
     return GestureDetector(
       // The card's own Semantics carries the tap and its label.
       excludeFromSemantics: true,
+      // The whole card takes the tap, padding included. Deferring to the
+      // children missed taps on the iOS simulator, where full glass draws
+      // the card and nothing inside it took the hit.
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
       onLongPress: widget.onLongPress == null
           ? null
@@ -1201,10 +1205,22 @@ class AppTabScaffold extends StatelessWidget {
                     onSelected(i);
                   },
                   barHeight: AppDimens.tabBarHeight,
+                  indicatorExpansion: AppDimens.tabIndicatorStretch,
+                  magnification: AppDimens.tabIconMagnification,
+                  pressScale: AppDimens.tabPressScale,
+                  // Frosted, like the app's other reading glass: the
+                  // package's default clear tint read as light grey over
+                  // the dark page, and the tabs on it barely showed.
+                  settings: LiquidGlassSettings(
+                    glassColor: p.glassFill,
+                    blur: AppDimens.blurGlassStrong,
+                    saturation: AppDimens.glassSaturation,
+                    lightIntensity: 0.6,
+                  ),
                   selectedIconColor: p.brand,
-                  unselectedIconColor: p.inkMuted,
+                  unselectedIconColor: p.inkMutedGlass,
                   selectedLabelColor: p.brand,
-                  unselectedLabelColor: p.inkMuted,
+                  unselectedLabelColor: p.inkMutedGlass,
                   // The app's fonts (Readex Pro for Arabic), not the
                   // package's default.
                   selectedLabelStyle: context
@@ -1212,7 +1228,7 @@ class AppTabScaffold extends StatelessWidget {
                       .copyWith(color: p.brand, fontWeight: FontWeight.w600),
                   unselectedLabelStyle: context
                       .text(TextRole.caption)
-                      .copyWith(color: p.inkMuted),
+                      .copyWith(color: p.inkMutedGlass),
                   tabs: [
                     for (final t in tabs)
                       GlassTab(

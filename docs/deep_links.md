@@ -5,10 +5,11 @@ also a deep link.
 
 | Path | Screen |
 |---|---|
-| `/` | Home |
+| `/` | Home: one card per section |
+| `/section/<slug>` | One section of Home, by its slug (e.g. `/section/cafe` for the drinks): its chips and items, under the tab bar. A section without items says «جاي قريب»; an unknown slug says the section isn't here, with a way Home; a malformed slug (or anything under it) is not-found. Opened from a link, back goes Home |
 | `/item/<slug>` | One item: a drink today, later a term or a history page (e.g. `/item/flat_white`); unknown or malformed slugs show not-found |
 | `/search?q=<text>` | Search, optionally pre-filled (`q` is cleaned: control/direction characters removed, trimmed, max 60) |
-| `/settings` | Settings |
+| `/settings` | The Settings tab |
 | `/welcome` | The first-open welcome. `/` redirects here until it's been seen (finished or skipped); other links open what they link to. Query parameters are ignored |
 | `/item/<slug>/steps` | An item's «طريقة التحضير», one step at a time, over the drink page; a drink without a recipe (or unknown) says so with a way back |
 | `/favorites` | The Favorites tab (the items saved on the phone) |

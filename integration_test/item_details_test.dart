@@ -19,6 +19,10 @@ void main() {
     await tester.pumpAndSettle();
     await beat(tester, 1200);
 
+    // Home lists the sections; the drinks are one tap away.
+    await openDrinks(tester);
+    await beat(tester);
+
     // 1. Find Flat White among the cards and open it.
     final menu = find.byKey(const Key('browse_list'));
     final flatWhite = find.widgetWithText(ItemCard, 'Flat White');

@@ -28,6 +28,10 @@ import '../helpers/screens.dart';
 void main() {
   const size = String.fromEnvironment('SCREENS_SIZE', defaultValue: '393x852');
   final points = size.split('x').map(double.parse).toList();
+  // The phone's text size setting (1.6 = the large accessibility sizes).
+  final textScale = double.parse(
+    const String.fromEnvironment('SCREENS_TEXT_SCALE', defaultValue: '1'),
+  );
 
   setUpAll(loadAppFonts);
 
@@ -35,7 +39,9 @@ void main() {
     tester.view
       ..physicalSize = Size(points[0] * 3, points[1] * 3)
       ..devicePixelRatio = 3;
+    tester.platformDispatcher.textScaleFactorTestValue = textScale;
     addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -88,11 +94,20 @@ void main() {
         await open(tester, lang, AppRoutes.home);
         await shoot(tester, '${lang}_01_home');
         await tester.drag(find.byType(Scrollable).first, const Offset(0, -700));
-        await shoot(tester, '${lang}_02_home_cards');
+        await shoot(tester, '${lang}_01b_home_scrolled');
+      });
+
+      testWidgets('section', (tester) async {
+        await open(tester, lang, AppRoutes.section('cafe'));
+        await shoot(tester, '${lang}_02_section');
+        await tester.drag(find.byType(Scrollable).first, const Offset(0, -700));
+        await shoot(tester, '${lang}_02b_section_cards');
+        await open(tester, lang, AppRoutes.section('desserts'));
+        await shoot(tester, '${lang}_02c_section_soon');
       });
 
       testWidgets('long press', (tester) async {
-        await open(tester, lang, AppRoutes.home);
+        await open(tester, lang, AppRoutes.section('cafe'));
         final card = find.widgetWithText(ItemCard, 'Flat White');
         await tester.dragUntilVisible(
           card,

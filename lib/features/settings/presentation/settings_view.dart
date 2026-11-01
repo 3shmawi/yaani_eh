@@ -29,7 +29,13 @@ class SettingsView extends StatelessWidget {
       // Grouped sections on cards: readable on any background (glass or
       // not) and the familiar iOS settings layout.
       body: ListView(
-        padding: EdgeInsets.symmetric(horizontal: AppDimens.space4),
+        // Clear of the floating tab bar (Settings is a tab).
+        padding: EdgeInsetsDirectional.fromSTEB(
+          AppDimens.space4,
+          0,
+          AppDimens.space4,
+          AppDimens.tabBarHeight + AppDimens.space8,
+        ),
         children: [
           SettingsSectionHeader(l10n.settingsLanguage),
           AppCard(

@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 
-import 'package:flutter/animation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -69,10 +68,22 @@ abstract final class AppDimens {
   static const touchTarget = 48.0;
   static double get controlHeight => 44.h;
   static double get chipHeight => 34.h;
-  static double get searchHeight => 48.h;
+
+  /// Never below [touchTarget]: on a short phone `48.h` is ~34.
+  static double get searchHeight => math.max(48.h, touchTarget);
   static double get icon => 24.r;
   static double get iconChip => 20.r;
   static double get tabBarHeight => 60.h;
+
+  /// The tab bar's selected pill when tapped or dragged: how far it may
+  /// stretch past its cell, and how much the icon in it grows. Small: the
+  /// package's iOS 26 defaults (12×8, 1.15×) looked like a big blob.
+  static const tabIndicatorStretch = EdgeInsets.symmetric(
+    horizontal: 4,
+    vertical: 2,
+  );
+  static const tabIconMagnification = 1.05;
+  static const tabPressScale = 1.02;
 
   /// The count on a tab's icon (saved drinks).
   static double get badgeSize => 16.r;
@@ -117,6 +128,14 @@ abstract final class AppDimens {
   /// tablet it sits centred instead of stretching edge to edge. Grids (Home,
   /// Favorites) use the full width. In points, like iPadOS's readable width.
   static const double readableWidth = 640;
+
+  /// Home's section cards: the narrowest a card may get before the grid
+  /// drops a column (1 on a phone, 2 on an iPad in portrait, 3 in
+  /// landscape), the widest the grid gets, and the card's picture.
+  static const double sectionCardMinWidth = 360;
+  static const double hubMaxWidth = 1200;
+  static double get sectionArt => 64.r;
+  static double get sectionArtIcon => 32.r;
 
   /// How tall a sheet may get, as a share of the screen.
   static const double sheetMaxShare = 0.92;

@@ -12,6 +12,10 @@ abstract final class AppRoutes {
   /// The Favorites tab.
   static const favorites = '/favorites';
 
+  /// One section of Home (drinks, terms, …), by its slug: `/section/cafe`.
+  static const sectionPattern = '/section/:slug';
+  static String section(String slug) => '/section/$slug';
+
   /// One item (a drink, a term, …): `/item/flat_white`.
   static const itemPattern = '/item/:slug';
   static String item(String slug) => '/item/$slug';

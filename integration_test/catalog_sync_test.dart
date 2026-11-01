@@ -25,8 +25,8 @@ void main() {
     await pumpUntil(tester, find.byKey(const Key('item_of_the_day')));
     await beat(tester, 1200);
     await tester.drag(
-      find.byKey(const Key('browse_list')),
-      const Offset(0, -500),
+      find.byKey(const Key('home_list')),
+      const Offset(0, -300),
     );
     await tester.pumpAndSettle();
     await beat(tester);
@@ -36,13 +36,14 @@ void main() {
     await beat(tester);
     await app.relaunch(tester);
     await app.setOnline(tester, online: false);
-    await pumpUntil(tester, find.byKey(const Key('browse_list')));
+    await pumpUntil(tester, find.byKey(const Key('home_list')));
     await tester.pumpAndSettle();
     await beat(tester, 1200);
 
     // 4. The whole menu is still there, with the offline note.
-    expect(find.byKey(const Key('browse_list')), findsOneWidget);
     expect(find.byIcon(AppIcons.wifiSlash), findsOneWidget);
+    await openDrinks(tester);
+    expect(find.byKey(const Key('browse_list')), findsOneWidget);
     await tester.dragUntilVisible(
       find.text('Iced Mocha'),
       find.byKey(const Key('browse_list')),
