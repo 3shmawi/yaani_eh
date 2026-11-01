@@ -99,9 +99,7 @@ void main() {
       menuNameAr: base.menuNameAr,
       explanationAr: base.explanationAr,
       explanationEn: base.explanationEn,
-      calories: 5,
-      priceMinEgp: 40,
-      priceMaxEgp: 70,
+      traits: const {'calories': 5},
     );
     await tester.pumpApp(Material(child: ResultRow(item: priced)));
     expect(find.text(l10nEn.calories(5)), findsOneWidget);

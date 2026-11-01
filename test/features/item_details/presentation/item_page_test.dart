@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:yaani_eh/core/config/app_content.dart';
 import 'package:yaani_eh/core/widgets/item_card.dart';
 import 'package:yaani_eh/features/browse/presentation/browse_controller.dart';
 import 'package:yaani_eh/features/catalog_sync/data/models/catalog_rows.dart';
@@ -20,16 +19,16 @@ import '../../../helpers/pump_app.dart';
 
 final _now = DateTime(2026, 10, 30);
 
-CatalogItem _flatWhite({
-  int? min = 70,
-  int? max = 150,
-  String? checked = '2026-10-01',
-}) => CatalogRows.item({
+CatalogItem _flatWhite() => CatalogRows.item({
   ...sampleItems()[2],
-  'price_min_egp': min,
-  'price_max_egp': max,
-  'price_updated_at': checked,
-  'traits': {'temp': 'hot', 'sweetness': 0, 'milk': true, 'caffeine': 3},
+  'traits': {
+    'temp': 'hot',
+    'sweetness': 0,
+    'milk': true,
+    'caffeine': 3,
+    'calories': 110,
+    'size_ml': 180,
+  },
 })!;
 
 void main() {
@@ -98,16 +97,9 @@ void main() {
     testWidgets('no prices: the app says what a drink is, not its cost', (
       tester,
     ) async {
-      // A drink with a known, old price still shows none of it.
-      await pumpView(tester, item: _flatWhite(checked: '2026-05-01'));
-      expect(AppContent.showPrices, isFalse);
-      expect(find.text(l10nEn.priceAtCafes), findsNothing);
-      expect(find.text(l10nEn.priceStale), findsNothing);
+      await pumpView(tester, item: _flatWhite());
       expect(find.textContaining(l10nEn.currency), findsNothing);
       expect(find.text(l10nEn.approximateCalories), findsOneWidget);
-
-      await pumpView(tester, item: _flatWhite(min: null, max: null));
-      expect(find.text(l10nEn.priceMissing), findsNothing);
     });
 
     testWidgets('back and similar drinks are tappable', (tester) async {
@@ -198,7 +190,7 @@ void main() {
         lessThan(tester.getTopLeft(find.text('Flat White').last).dy),
       );
 
-      await tester.tap(find.byKey(const Key('pronounce_barista')));
+      await tester.tap(find.byKey(const Key('pronounce_spoken')));
       await tester.pump();
       expect(player.played.single.file, '/clips/flat_white.barista.m4a');
       player.finish();
@@ -229,7 +221,7 @@ void main() {
     testWidgets('a drink without clips has no pill', (tester) async {
       await pumpPage(tester, 'cortado');
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('pronounce_barista')), findsNothing);
+      expect(find.byKey(const Key('pronounce_spoken')), findsNothing);
     });
 
     testWidgets('an unknown drink shows a friendly message', (tester) async {

@@ -30,6 +30,13 @@ abstract final class CatalogRows {
       nameEn: nameEn,
       icon: _text(row['icon'], 40),
       traitSchema: schema == null ? null : List<Object?>.of(schema as List),
+      detailKind: parent == null ? DetailKind.parse(row['detail_kind']) : null,
+      detailsTitleAr: parent == null
+          ? _text(row['details_title_ar'], 40)
+          : null,
+      detailsTitleEn: parent == null
+          ? _text(row['details_title_en'], 40)
+          : null,
       sortOrder: _int(row['sort_order']) ?? 0,
     );
   }
@@ -48,14 +55,6 @@ abstract final class CatalogRows {
     if (menuName == null || menuNameAr == null) return null;
     if (explanationAr == null || explanationEn == null) return null;
 
-    final calories = _optionalInt(row, 'calories', 0, 3000);
-    final sizeMl = _optionalInt(row, 'size_ml', 1, 3000);
-    final priceMin = _optionalInt(row, 'price_min_egp', 0, 100000);
-    final priceMax = _optionalInt(row, 'price_max_egp', 0, 100000);
-    if ([calories, sizeMl, priceMin, priceMax].contains(_invalid)) return null;
-    if (priceMin != null && priceMax != null && priceMax < priceMin) {
-      return null;
-    }
     final traits = row['traits'];
     if (traits != null && traits is! Map) return null;
 
@@ -69,13 +68,8 @@ abstract final class CatalogRows {
       explanationEn: explanationEn,
       gistAr: _text(row['gist_ar'], 60),
       gistEn: _text(row['gist_en'], 60),
-      calories: calories,
-      sizeMl: sizeMl,
-      priceMinEgp: priceMin,
-      priceMaxEgp: priceMax,
-      priceUpdatedAt: _date(row['price_updated_at']),
       imagePath: _path(row['image_path']),
-      audioBaristaPath: _path(row['audio_barista_path']),
+      audioSpokenPath: _path(row['audio_spoken_path']),
       audioOriginalPath: _path(row['audio_original_path']),
       traits: traits == null
           ? const {}
@@ -84,12 +78,145 @@ abstract final class CatalogRows {
                 if (e.key is String) e.key as String: e.value,
             },
       sortOrder: _int(row['sort_order']) ?? 0,
-      // A broken recipe hides «طريقة التحضير», never the drink.
-      recipe: recipe(row['recipe']),
+      // Broken details hide the details, never the item.
+      details: details(row['details']),
     );
   }
 
-  /// «طريقة التحضير» from `items.recipe`, or null when it's missing or
+  /// An item's details from `items.details` (`{kind, …}`), or null when
+  /// missing or anything in it is off. A kind this app doesn't know is
+  /// [UnknownDetails], so the page can ask for an update.
+  static ItemDetails? details(Object? value) {
+    if (value is! Map) return null;
+    final kind = value['kind'];
+    if (kind is! String || !_kind.hasMatch(kind)) return null;
+    switch (DetailKind.parse(kind)) {
+      case DetailKind.recipe:
+        final parsed = recipe(value);
+        return parsed == null ? null : RecipeDetails(parsed);
+      case DetailKind.story:
+        final steps = _steps(value['steps'], icons: false);
+        final sections = _sections(value['sections'], optional: true);
+        if (steps == null || steps.isEmpty || sections == null) return null;
+        return StoryDetails(steps: steps, sections: sections);
+      case DetailKind.usage:
+        final sections = _sections(value['sections']);
+        if (sections == null || sections.isEmpty) return null;
+        return UsageDetails(sections: sections);
+      case null:
+        return UnknownDetails(kind);
+    }
+  }
+
+  static final _kind = RegExp(r'^[a-z_]{1,20}$');
+
+  /// Steps in order (at most 12), or null when anything is off.
+  static List<DetailStep>? _steps(Object? value, {required bool icons}) {
+    if (value is! List || value.length > 12) return null;
+    final steps = <DetailStep>[];
+    for (final s in value) {
+      if (s is! Map) return null;
+      final titleAr = _text(s['title_ar'], 60);
+      final titleEn = _text(s['title_en'], 60);
+      if (titleAr == null || titleEn == null) return null;
+      steps.add(
+        DetailStep(
+          icon: icons || s['icon'] != null ? StepIcon.parse(s['icon']) : null,
+          titleAr: titleAr,
+          titleEn: titleEn,
+          noteAr: _text(s['note_ar'], 160),
+          noteEn: _text(s['note_en'], 160),
+          amountAr: _text(s['amount_ar'], 40),
+          amountEn: _text(s['amount_en'], 40),
+          dateAr: _text(s['date_ar'], 40),
+          dateEn: _text(s['date_en'], 40),
+        ),
+      );
+    }
+    return steps;
+  }
+
+  /// Titled sections (at most 6, each 1–8 lines), or null when anything is
+  /// off. [optional]: a missing list is an empty one.
+  static List<DetailSection>? _sections(
+    Object? value, {
+    bool optional = false,
+  }) {
+    if (value == null && optional) return const [];
+    if (value is! List || value.length > 6) return null;
+    final sections = <DetailSection>[];
+    for (final s in value) {
+      if (s is! Map) return null;
+      final titleAr = _text(s['title_ar'], 40);
+      final titleEn = _text(s['title_en'], 40);
+      final linesAr = _lines(s['lines_ar']);
+      final linesEn = _lines(s['lines_en']);
+      if (titleAr == null || titleEn == null) return null;
+      if (linesAr == null || linesEn == null) return null;
+      sections.add(
+        DetailSection(
+          titleAr: titleAr,
+          titleEn: titleEn,
+          linesAr: linesAr,
+          linesEn: linesEn,
+        ),
+      );
+    }
+    return sections;
+  }
+
+  static List<String>? _lines(Object? value) {
+    if (value is! List || value.isEmpty || value.length > 8) return null;
+    final lines = <String>[];
+    for (final l in value) {
+      final line = _text(l, 200);
+      if (line == null) return null;
+      lines.add(line);
+    }
+    return lines;
+  }
+
+  /// Details in the server's shape, for local storage ([details] reads it
+  /// back). Unknown details keep only their kind: the page asks for an
+  /// update, and the next sync after it brings the rest.
+  static Map<String, Object?> detailsJson(ItemDetails details) =>
+      switch (details) {
+        RecipeDetails(:final recipe) => {
+          'kind': 'recipe',
+          ...recipeJson(recipe),
+        },
+        StoryDetails(:final steps, :final sections) => {
+          'kind': 'story',
+          'steps': [for (final s in steps) _stepJson(s)],
+          'sections': [for (final s in sections) _sectionJson(s)],
+        },
+        UsageDetails(:final sections) => {
+          'kind': 'usage',
+          'sections': [for (final s in sections) _sectionJson(s)],
+        },
+        UnknownDetails(:final kind) => {'kind': kind},
+      };
+
+  static Map<String, Object?> _stepJson(DetailStep s) => {
+    if (s.icon case final icon?) 'icon': snakeCase(icon.name),
+    'title_ar': s.titleAr,
+    'title_en': s.titleEn,
+    'note_ar': ?s.noteAr,
+    'note_en': ?s.noteEn,
+    'amount_ar': ?s.amountAr,
+    'amount_en': ?s.amountEn,
+    'date_ar': ?s.dateAr,
+    'date_en': ?s.dateEn,
+  };
+
+  static Map<String, Object?> _sectionJson(DetailSection s) => {
+    'title_ar': s.titleAr,
+    'title_en': s.titleEn,
+    'lines_ar': s.linesAr,
+    'lines_en': s.linesEn,
+  };
+
+  /// «طريقة التحضير» from a recipe's details, or null when it's missing or
   /// anything in it is off (the sheet would draw it wrong).
   static Recipe? recipe(Object? value) {
     if (value is! Map) return null;
@@ -99,6 +226,8 @@ abstract final class CatalogRows {
     if (minutes == null || minutes < 1 || minutes > 1440) return null;
     if (layers is! List || layers.isEmpty || layers.length > 6) return null;
     if (steps is! List || steps.isEmpty || steps.length > 8) return null;
+    final parsedSteps = _steps(steps, icons: true);
+    if (parsedSteps == null) return null;
     final parsedLayers = <RecipeLayer>[];
     for (final l in layers) {
       if (l is! Map) return null;
@@ -117,24 +246,6 @@ abstract final class CatalogRows {
         ),
       );
     }
-    final parsedSteps = <RecipeStep>[];
-    for (final s in steps) {
-      if (s is! Map) return null;
-      final titleAr = _text(s['title_ar'], 60);
-      final titleEn = _text(s['title_en'], 60);
-      if (titleAr == null || titleEn == null) return null;
-      parsedSteps.add(
-        RecipeStep(
-          icon: RecipeIcon.parse(s['icon']),
-          titleAr: titleAr,
-          titleEn: titleEn,
-          noteAr: _text(s['note_ar'], 160),
-          noteEn: _text(s['note_en'], 160),
-          amountAr: _text(s['amount_ar'], 40),
-          amountEn: _text(s['amount_en'], 40),
-        ),
-      );
-    }
     return Recipe(minutes: minutes, layers: parsedLayers, steps: parsedSteps);
   }
 
@@ -145,28 +256,14 @@ abstract final class CatalogRows {
     'layers': [
       for (final l in recipe.layers)
         {
-          'tone': _snakeName(l.tone.name),
+          'tone': snakeCase(l.tone.name),
           'ml': l.ml,
           'ar': l.nameAr,
           'en': l.nameEn,
         },
     ],
-    'steps': [
-      for (final s in recipe.steps)
-        {
-          'icon': _snakeName(s.icon.name),
-          'title_ar': s.titleAr,
-          'title_en': s.titleEn,
-          'note_ar': ?s.noteAr,
-          'note_en': ?s.noteEn,
-          'amount_ar': ?s.amountAr,
-          'amount_en': ?s.amountEn,
-        },
-    ],
+    'steps': [for (final s in recipe.steps) _stepJson(s)],
   };
-
-  static String _snakeName(String camel) =>
-      camel.replaceAllMapped(RegExp('[A-Z]'), (m) => '_${m[0]!.toLowerCase()}');
 
   /// A search term with the id of its item, or null.
   static (String itemId, ItemTerm term)? term(Object? row) {
@@ -206,8 +303,6 @@ abstract final class CatalogRows {
     }
   }
 
-  static const int _invalid = -1 << 40;
-
   static final _uuid = RegExp(
     '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-'
     r'[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
@@ -235,23 +330,6 @@ abstract final class CatalogRows {
     final double v when v == v.roundToDouble() && v.isFinite => v.toInt(),
     _ => null,
   };
-
-  /// null when absent, [_invalid] when present but wrong.
-  static int? _optionalInt(
-    Map<dynamic, dynamic> row,
-    String key,
-    int min,
-    int max,
-  ) {
-    final value = row[key];
-    if (value == null) return null;
-    final number = _int(value);
-    if (number == null || number < min || number > max) return _invalid;
-    return number;
-  }
-
-  static DateTime? _date(Object? value) =>
-      value is String ? DateTime.tryParse(value) : null;
 
   static DateTime? _timestamp(Object? value) =>
       value is String ? DateTime.tryParse(value)?.toUtc() : null;

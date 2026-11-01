@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart' show DateFormat;
-import 'package:yaani_eh/core/config/app_content.dart';
-import 'package:yaani_eh/core/text/bidi.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_icons.dart';
@@ -19,8 +16,7 @@ import 'package:yaani_eh/l10n/l10n.dart';
 
 /// One drink (Details artboard): the photo under the status bar, a
 /// floating back button, and a sheet with the name, the plain
-/// explanation, trait pills, «طريقة التحضير», the price (while
-/// [AppContent.showPrices]) and similar drinks.
+/// explanation, trait pills, «طريقة التحضير» and similar drinks.
 class ItemView extends StatelessWidget {
   const new({
     required this.item,
@@ -30,7 +26,9 @@ class ItemView extends StatelessWidget {
     required this.onOpenItem,
     this.pronounce,
     this.saveButton,
-    this.onOpenRecipe,
+    this.detailsTitle,
+    this.onOpenDetails,
+    this.onUpdateApp,
     super.key,
   });
 
@@ -47,8 +45,64 @@ class ItemView extends StatelessWidget {
   /// the sheet; scrolls with it.
   final Widget? pronounce;
 
-  /// «طريقة التحضير» (feature `recipes`); null hides the row (no recipe).
-  final VoidCallback? onOpenRecipe;
+  /// What the section calls the item's details («طريقة التحضير»,
+  /// «الحكاية»); null → the app's name for the kind.
+  final String? detailsTitle;
+
+  /// Opens the details (a recipe's sheet, a story's…); null hides the row.
+  final VoidCallback? onOpenDetails;
+
+  /// Details newer than the app: opens the store. null hides the row.
+  final VoidCallback? onUpdateApp;
+
+  /// The row for the item's kind of details, or null (none, or no way in).
+  Widget? _detailsRow(BuildContext context) {
+    final l10n = context.l10n;
+    final arabic = Localizations.localeOf(context).languageCode == 'ar';
+    final open = onOpenDetails;
+    String title(String fallback) => detailsTitle ?? fallback;
+    String? firstSections() {
+      final titles = [
+        for (final s in item.details!.sections) s.title(arabic: arabic),
+      ];
+      return titles.isEmpty ? null : titles.take(3).join(' · ');
+    }
+
+    return switch (item.details) {
+      null => null,
+      RecipeDetails(:final recipe) when open != null => _DetailsRow(
+        key: const Key('item_recipe'),
+        icon: AppIcons.recipe,
+        title: title(l10n.previewRecipe),
+        subtitle: l10n.recipeSubtitle(recipe.totalMl),
+        onTap: open,
+      ),
+      StoryDetails(:final steps) when open != null => _DetailsRow(
+        key: const Key('item_details'),
+        icon: AppIcons.detailsStory,
+        title: title(l10n.detailsStory),
+        subtitle: l10n.detailsEvents(steps.length),
+        onTap: open,
+      ),
+      UsageDetails() when open != null => _DetailsRow(
+        key: const Key('item_details'),
+        icon: AppIcons.detailsUsage,
+        title: title(l10n.detailsUsage),
+        subtitle: firstSections(),
+        onTap: open,
+      ),
+      UnknownDetails() when onUpdateApp != null => _DetailsRow(
+        key: const Key('item_update'),
+        icon: AppIcons.update,
+        title: l10n.detailsNeedUpdate,
+        subtitle: null,
+        hint: l10n.detailsNeedUpdateHint,
+        chevron: false,
+        onTap: onUpdateApp!,
+      ),
+      _ => null,
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,13 +156,9 @@ class ItemView extends StatelessWidget {
           ),
           SizedBox(height: AppDimens.space4),
           TraitPills(facts: facts),
-          if (onOpenRecipe != null && item.recipe != null) ...[
+          if (_detailsRow(context) case final row?) ...[
             SizedBox(height: AppDimens.space4),
-            _RecipeRow(recipe: item.recipe!, onTap: onOpenRecipe!),
-          ],
-          if (AppContent.showPrices) ...[
-            SizedBox(height: AppDimens.space4),
-            _PriceCard(facts: facts),
+            row,
           ],
           if (similar.isNotEmpty) ...[
             SizedBox(height: AppDimens.space6),
@@ -141,9 +191,7 @@ class ItemView extends StatelessWidget {
           ],
           SizedBox(height: AppDimens.space6),
           Text(
-            AppContent.showPrices
-                ? l10n.approximateNote
-                : l10n.approximateCalories,
+            l10n.approximateCalories,
             textAlign: TextAlign.center,
             style: context.text(TextRole.caption).copyWith(color: p.inkMuted),
           ),
@@ -240,77 +288,6 @@ class ItemView extends StatelessWidget {
   }
 }
 
-class _PriceCard extends StatelessWidget {
-  const new({required this.facts});
-
-  final ItemFacts facts;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.palette;
-    final l10n = context.l10n;
-    final muted = context.text(TextRole.caption).copyWith(color: p.inkMuted);
-    final min = facts.priceMin;
-    final checked = facts.priceCheckedAt;
-    final locale = Localizations.localeOf(context).languageCode;
-    return Container(
-      padding: EdgeInsetsDirectional.symmetric(
-        horizontal: AppDimens.space4,
-        vertical: AppDimens.space3,
-      ),
-      decoration: BoxDecoration(
-        color: p.surfaceRaised,
-        borderRadius: BorderRadius.circular(AppDimens.radiusLg),
-        boxShadow: p.cardShadow,
-      ),
-      child: min == null
-          ? Text(l10n.priceMissing, style: muted)
-          : Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(l10n.priceAtCafes, style: muted),
-                      Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: Bidi.range(min, facts.priceMax ?? min),
-                              style: AppTextStyles.latin(TextRole.title),
-                            ),
-                            const TextSpan(text: ' '),
-                            TextSpan(
-                              text: l10n.currency,
-                              style: context.text(TextRole.callout),
-                            ),
-                          ],
-                        ),
-                        style: TextStyle(color: p.ink),
-                      ),
-                    ],
-                  ),
-                ),
-                if (checked != null) ...[
-                  SizedBox(width: AppDimens.space3),
-                  Flexible(
-                    child: Text(
-                      l10n.priceChecked(
-                        // Month in words, year in Western digits (as menus).
-                        '${DateFormat.MMMM(locale).format(checked)} '
-                        '${checked.year}',
-                      ),
-                      style: muted,
-                      textAlign: TextAlign.end,
-                    ),
-                  ),
-                ],
-              ],
-            ),
-    );
-  }
-}
-
 /// No such drink (old link, removed from the menu).
 class ItemMissingView extends StatelessWidget {
   const new({required this.onBack, super.key});
@@ -340,25 +317,35 @@ class ItemLoadingView extends StatelessWidget {
       Material(color: context.palette.surface, child: const LoadingView());
 }
 
-/// The way into «طريقة التحضير»: what it is and the cup's size, then a
-/// chevron.
-class _RecipeRow extends StatelessWidget {
-  const new({required this.recipe, required this.onTap});
+/// The way into an item's details: an icon, what they're called and a
+/// short line about them, then a chevron (none for the update row).
+class _DetailsRow extends StatelessWidget {
+  const new({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+    this.hint,
+    this.chevron = true,
+    super.key,
+  });
 
-  final Recipe recipe;
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final String? hint;
+  final bool chevron;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
-    final l10n = context.l10n;
     return Semantics(
       button: true,
-      label: l10n.previewRecipe,
-      hint: l10n.recipeSubtitle(recipe.totalMl),
+      label: title,
+      hint: hint ?? subtitle,
       excludeSemantics: true,
       child: AppPressable(
-        key: const Key('item_recipe'),
         onTap: onTap,
         child: Container(
           constraints: const BoxConstraints(minHeight: AppDimens.touchTarget),
@@ -373,32 +360,36 @@ class _RecipeRow extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Icon(AppIcons.recipe, size: AppDimens.icon, color: p.brand),
+              Icon(icon, size: AppDimens.icon, color: p.brand),
               SizedBox(width: AppDimens.space3),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      l10n.previewRecipe,
-                      style: context
-                          .text(TextRole.callout)
-                          .copyWith(color: p.ink, fontWeight: FontWeight.w600),
+                      title,
+                      style: AppTextStyles.forText(
+                        title,
+                        TextRole.callout,
+                      ).copyWith(color: p.ink, fontWeight: FontWeight.w600),
                     ),
-                    Text(
-                      l10n.recipeSubtitle(recipe.totalMl),
-                      style: context
-                          .text(TextRole.caption)
-                          .copyWith(color: p.inkMuted),
-                    ),
+                    if (subtitle case final subtitle?)
+                      Text(
+                        subtitle,
+                        style: AppTextStyles.forText(
+                          subtitle,
+                          TextRole.caption,
+                        ).copyWith(color: p.inkMuted),
+                      ),
                   ],
                 ),
               ),
-              Icon(
-                AppIcons.forward,
-                size: AppDimens.iconChip,
-                color: p.inkMuted,
-              ),
+              if (chevron)
+                Icon(
+                  AppIcons.forward,
+                  size: AppDimens.iconChip,
+                  color: p.inkMuted,
+                ),
             ],
           ),
         ),

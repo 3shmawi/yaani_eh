@@ -64,7 +64,7 @@ void main() {
     expect(find.byType(PronouncePill), findsOneWidget);
 
     // 3. Like the barista says it.
-    await tester.tap(find.byKey(const Key('pronounce_barista')));
+    await tester.tap(find.byKey(const Key('pronounce_spoken')));
     await listen();
     await beat(tester);
 
@@ -81,7 +81,7 @@ void main() {
     // 5. Airplane mode: Flat White still plays, it's on the phone.
     await app.setOnline(tester, online: false);
     await beat(tester);
-    await tester.tap(find.byKey(const Key('pronounce_barista')));
+    await tester.tap(find.byKey(const Key('pronounce_spoken')));
     await listen();
     await beat(tester);
 
@@ -92,18 +92,18 @@ void main() {
     final unheard = sampleItems(withAudio: true).firstWhere(
       (d) =>
           d['slug'] != 'flat_white' &&
-          d['audio_barista_path'] != null &&
-          !app.clips.onDevice.contains(d['audio_barista_path']),
+          d['audio_spoken_path'] != null &&
+          !app.clips.onDevice.contains(d['audio_spoken_path']),
     );
     await open(unheard['menu_name']! as String);
-    await tester.tap(find.byKey(const Key('pronounce_barista')));
+    await tester.tap(find.byKey(const Key('pronounce_spoken')));
     await pumpUntil(tester, find.byKey(const Key('pronounce_failure')));
     await beat(tester, 2200);
 
     // 7. Back online: it plays.
     await app.setOnline(tester, online: true);
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('pronounce_barista')));
+    await tester.tap(find.byKey(const Key('pronounce_spoken')));
     await listen();
     await beat(tester, 1200);
     expect(

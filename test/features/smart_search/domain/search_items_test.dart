@@ -34,7 +34,6 @@ List<CatalogItem> _items() {
           menuNameAr: item.menuNameAr,
           explanationAr: item.explanationAr,
           explanationEn: item.explanationEn,
-          calories: item.calories,
           traits: item.traits,
           sortOrder: item.sortOrder,
           terms: terms[item.slug] ?? const [],

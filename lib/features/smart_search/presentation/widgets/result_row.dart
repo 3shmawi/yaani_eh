@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:yaani_eh/core/config/app_content.dart';
-import 'package:yaani_eh/core/text/bidi.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_text_styles.dart';
@@ -11,7 +9,7 @@ import 'package:yaani_eh/l10n/l10n.dart';
 
 /// One search result (Design System → ResultRow): the photo fills the
 /// row's height at the start edge, then the name, Arabic spelling, the
-/// explanation with matched words in bold `brand`, and calories / price.
+/// explanation with matched words in bold `brand`, and calories.
 class ResultRow extends StatelessWidget {
   const new({
     required this.item,
@@ -154,15 +152,8 @@ TextSpan highlighted(BuildContext context, String text, Set<String> highlight) {
   return TextSpan(children: spans);
 }
 
-/// "70–150 EGP" when prices are shown and known, else "190 kcal", else
-/// null.
+/// "190 kcal" when known, else null.
 String? itemMeta(BuildContext context, CatalogItem item) {
-  final l10n = context.l10n;
-  final min = item.priceMinEgp;
-  final max = item.priceMaxEgp ?? min;
-  if (AppContent.showPrices && min != null && max != null) {
-    return l10n.priceRange(Bidi.range(min, max));
-  }
   final calories = item.calories;
-  return calories == null ? null : l10n.calories(calories);
+  return calories == null ? null : context.l10n.calories(calories);
 }

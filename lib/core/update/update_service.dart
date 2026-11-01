@@ -17,11 +17,7 @@ abstract final class UpdateService {
   /// offline, or Supabase isn't configured.
   static Future<UpdateInfo?> check() async {
     if (kIsWeb || !Backend.isConfigured) return null;
-    final platform = switch (defaultTargetPlatform) {
-      TargetPlatform.android => 'android',
-      TargetPlatform.iOS => 'ios',
-      _ => null,
-    };
+    final platform = _platform;
     if (platform == null) return null;
 
     try {
@@ -43,4 +39,41 @@ abstract final class UpdateService {
       return null;
     }
   }
+
+  /// This platform's store page (`app_versions.store_url`), for «حدّث
+  /// التطبيق» outside the update dialog; null when offline or unknown.
+  static Future<Uri?> storeUrl() async {
+    if (kIsWeb || !Backend.isConfigured) return null;
+    final platform = _platform;
+    if (platform == null) return null;
+    try {
+      final row = await Backend.client
+          .from(table)
+          .select('store_url')
+          .eq('platform', platform)
+          .maybeSingle();
+      return safeStoreUrl(row?['store_url']);
+    } on Exception catch (error, stackTrace) {
+      unawaited(Monitoring.captureException(error, stackTrace));
+      return null;
+    }
+  }
+
+  /// [value] as a store link, or null: https only, on the App Store or
+  /// Google Play (content can't send the user anywhere else).
+  @visibleForTesting
+  static Uri? safeStoreUrl(Object? value) {
+    if (value is! String) return null;
+    final uri = Uri.tryParse(value.trim());
+    if (uri == null || uri.scheme != 'https') return null;
+    return const {'apps.apple.com', 'play.google.com'}.contains(uri.host)
+        ? uri
+        : null;
+  }
+
+  static String? get _platform => switch (defaultTargetPlatform) {
+    TargetPlatform.android => 'android',
+    TargetPlatform.iOS => 'ios',
+    _ => null,
+  };
 }

@@ -17,9 +17,30 @@ void main() {
       expect(parsed.traits['temp'], 'hot');
     });
 
-    test('numbers sent as whole doubles are accepted', () {
-      expect(CatalogRows.item({...item, 'calories': 190.0})!.calories, 190);
+    Map<String, Object?> withTraits(Map<String, Object?> traits) => {
+      ...item,
+      'traits': {...item['traits']! as Map, ...traits},
+    };
+
+    test('calories and size are traits; whole doubles are accepted', () {
+      final parsed = CatalogRows.item(withTraits({'calories': 190.0}))!;
+      expect(parsed.calories, 190);
+      expect(parsed.sizeMl, 350);
     });
+
+    final badNumbers = <String, Object?>{
+      'calories is text': 'lots',
+      'negative calories': -1,
+      'absurd calories': 99999,
+      'fractional calories': 1.5,
+    };
+    for (final MapEntry(:key, :value) in badNumbers.entries) {
+      test('a bad trait is ignored, the item kept: $key', () {
+        final parsed = CatalogRows.item(withTraits({'calories': value}));
+        expect(parsed, isNotNull);
+        expect(parsed!.calories, isNull);
+      });
+    }
 
     final hostile = <String, Map<String, Object?>>{
       'not a map': {},
@@ -31,11 +52,6 @@ void main() {
       'name too long': {...item, 'menu_name': 'A' * 81},
       'explanation too long': {...item, 'explanation_ar': 'ق' * 301},
       'name is a number': {...item, 'menu_name': 42},
-      'calories is text': {...item, 'calories': 'lots'},
-      'negative calories': {...item, 'calories': -1},
-      'absurd calories': {...item, 'calories': 99999},
-      'fractional size': {...item, 'size_ml': 1.5},
-      'upside-down price': {...item, 'price_min_egp': 90, 'price_max_egp': 10},
       'traits is a list': {
         ...item,
         'traits': <Object?>[1, 2],
@@ -61,7 +77,7 @@ void main() {
         expect(recipe.layers.first.nameAr, 'قهوة مركّزة (شوتين)');
         expect(recipe.layers.last.tone, RecipeTone.foam);
         expect(recipe.steps, hasLength(4));
-        expect(recipe.steps.first.icon, RecipeIcon.grind);
+        expect(recipe.steps.first.icon, StepIcon.grind);
         expect(recipe.steps.first.amount(arabic: true), '18 جرام بن');
       });
 
@@ -81,7 +97,7 @@ void main() {
           ],
         })!;
         expect(recipe.layers.single.tone, RecipeTone.other);
-        expect(recipe.steps.single.icon, RecipeIcon.other);
+        expect(recipe.steps.single.icon, StepIcon.other);
       });
 
       Map<String, Object?> layer([Map<String, Object?> change = const {}]) => {
@@ -145,7 +161,10 @@ void main() {
       };
       for (final MapEntry(:key, :value) in broken.entries) {
         test('a broken recipe hides only the recipe: $key', () {
-          final parsed = CatalogRows.item({...flatWhite, 'recipe': value});
+          final parsed = CatalogRows.item({
+            ...flatWhite,
+            'details': value is Map ? {'kind': 'recipe', ...value} : value,
+          });
           expect(parsed, isNotNull);
           expect(parsed!.recipe, isNull);
         });
@@ -200,11 +219,187 @@ void main() {
     });
   });
 
+  group('details by kind', () {
+    Map<String, Object?> step([Map<String, Object?> more = const {}]) => {
+      'title_ar': 'الشرارة',
+      'title_en': 'The spark',
+      'date_ar': '٢٥ يناير ٢٠١١',
+      'date_en': '25 January 2011',
+      ...more,
+    };
+    Map<String, Object?> section([Map<String, Object?> more = const {}]) => {
+      'title_ar': 'في جملة',
+      'title_en': 'In a sentence',
+      'lines_ar': ['السطر الأول'],
+      'lines_en': ['The first line'],
+      ...more,
+    };
+    ItemDetails? read(Object? details) => CatalogRows.details(details);
+
+    test('a story: events in order, then sections', () {
+      final story =
+          read({
+                'kind': 'story',
+                'steps': [
+                  step(),
+                  step({'title_en': 'Then'}),
+                ],
+                'sections': [section()],
+              })!
+              as StoryDetails;
+      expect(story.steps, hasLength(2));
+      expect(story.steps.first.date(arabic: true), '٢٥ يناير ٢٠١١');
+      expect(story.steps.first.icon, isNull, reason: 'events have no icon');
+      expect(story.sections.single.lines(arabic: false), ['The first line']);
+    });
+
+    test('a story without sections is fine', () {
+      final story = read({
+        'kind': 'story',
+        'steps': [step()],
+      });
+      expect(story, isA<StoryDetails>());
+      expect(story!.sections, isEmpty);
+    });
+
+    test('usage: sections only', () {
+      final usage = read({
+        'kind': 'usage',
+        'sections': [
+          section(),
+          section({'title_en': 'Opposite'}),
+        ],
+      });
+      expect(usage, isA<UsageDetails>());
+      expect(usage!.steps, isEmpty);
+      expect(usage.sections, hasLength(2));
+    });
+
+    test('a kind newer than the app is kept as unknown', () {
+      expect(
+        read({'kind': 'map', 'pins': <Object?>[]}),
+        const UnknownDetails('map'),
+      );
+    });
+
+    test('every kind survives the trip to the phone and back', () {
+      for (final details in [
+        read({'kind': 'recipe', ...sampleRecipes['flat_white']!}),
+        read({
+          'kind': 'story',
+          'steps': [step()],
+          'sections': [section()],
+        }),
+        read({
+          'kind': 'usage',
+          'sections': [section()],
+        }),
+        read({'kind': 'quiz'}),
+      ]) {
+        expect(read(CatalogRows.detailsJson(details!)), details);
+      }
+    });
+
+    final hostile = <String, Object?>{
+      'a string': '<script>alert(1)</script>',
+      'a list': <Object?>[1, 2],
+      'no kind': {'steps': <Object?>[]},
+      'kind is a number': {'kind': 7},
+      'kind with SQL': {'kind': "story'; DROP TABLE items;--"},
+      'a story without steps': {'kind': 'story', 'steps': <Object?>[]},
+      'a story with 13 steps': {
+        'kind': 'story',
+        'steps': [for (var i = 0; i < 13; i++) step()],
+      },
+      'a step that is a string': {
+        'kind': 'story',
+        'steps': ['oops'],
+      },
+      'a step title too long': {
+        'kind': 'story',
+        'steps': [
+          step({'title_ar': 'ق' * 61}),
+        ],
+      },
+      'usage without sections': {'kind': 'usage', 'sections': <Object?>[]},
+      'a section without lines': {
+        'kind': 'usage',
+        'sections': [
+          section({'lines_ar': <Object?>[]}),
+        ],
+      },
+      'a line that is a number': {
+        'kind': 'usage',
+        'sections': [
+          section({
+            'lines_en': [42],
+          }),
+        ],
+      },
+      'a line too long': {
+        'kind': 'usage',
+        'sections': [
+          section({
+            'lines_ar': ['ق' * 201],
+          }),
+        ],
+      },
+      'nine lines': {
+        'kind': 'usage',
+        'sections': [
+          section({'lines_ar': List.filled(9, 'سطر')}),
+        ],
+      },
+      'seven sections': {
+        'kind': 'usage',
+        'sections': List.filled(7, section()),
+      },
+    };
+    for (final MapEntry(:key, :value) in hostile.entries) {
+      test('broken details hide only the details: $key', () {
+        expect(read(value), isNull);
+        final parsed = CatalogRows.item({...item, 'details': value});
+        expect(parsed, isNotNull);
+        expect(parsed!.details, isNull);
+      });
+    }
+
+    test('injection-like text stays text', () {
+      const evil = "<img src=x onerror=alert(1)>'; DROP TABLE items;--";
+      final usage = read({
+        'kind': 'usage',
+        'sections': [
+          section({
+            'lines_ar': [evil],
+          }),
+        ],
+      })!;
+      expect(usage.sections.single.linesAr.single, evil);
+    });
+  });
+
   group('categories', () {
-    test('a section keeps its trait schema', () {
+    test('a section keeps its trait schema and kind of details', () {
       final parsed = CatalogRows.category(category)!;
       expect(parsed.isSection, isTrue);
       expect(parsed.traitSchema, isNotEmpty);
+      expect(parsed.detailKind, DetailKind.recipe);
+      expect(parsed.detailsTitle(arabic: true), 'طريقة التحضير');
+    });
+
+    test('an unknown kind of details is none; chips never have one', () {
+      expect(
+        CatalogRows.category({...category, 'detail_kind': 'map'})!.detailKind,
+        isNull,
+      );
+      final chip = CatalogRows.category({
+        ...sampleCategories()[1],
+        'detail_kind': 'recipe',
+        'details_title_ar': 'x',
+      })!;
+      expect(chip.isSection, isFalse);
+      expect(chip.detailKind, isNull);
+      expect(chip.detailsTitleAr, isNull);
     });
 
     test('rejects broken rows', () {
