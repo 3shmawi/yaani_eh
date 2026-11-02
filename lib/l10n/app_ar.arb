@@ -9,6 +9,7 @@
   "settingsTheme": "الشكل",
   "settingsThemeSystem": "زي الموبايل",
   "settingsThemeLight": "فاتح",
+<<<<<<< yours
   "settingsThemeDark": "غامق",
   "updateOptionalTitle": "فيه تحديث جديد",
   "updateForceTitle": "لازم تحدّث",
@@ -153,4 +154,27 @@
   "sectionMissingBody": "يمكن اتنقل. كل الأقسام في الرئيسية.",
   "chipAll": "الكل",
   "allSections": "كل الأقسام"
+=======
+  "settingsThemeDark": "داكن",
+  "settingsAbout": "حول التطبيق",
+  "settingsVersion": "الإصدار",
+  "settingsVersionValue": "{version} ({build})",
+  "updateOptionalTitle": "يوجد تحديث جديد",
+  "updateForceTitle": "التحديث مطلوب",
+  "updateForceMessage": "هذا الإصدار لم يعد مدعوماً. من فضلك حدّث التطبيق للمتابعة.",
+  "updateVersions": "إصدارك الحالي: {current}\nالإصدار الجديد: {latest}",
+  "updateWhatsNew": "الجديد في هذا الإصدار",
+  "updateNow": "تحديث",
+  "updateLater": "لاحقاً",
+  "notFoundTitle": "الصفحة غير موجودة",
+  "notFoundGoHome": "الرجوع للرئيسية",
+  "retry": "حاول مرة أخرى",
+  "offlineBanner": "أنت غير متصل بالإنترنت. قد لا يكون بعض المحتوى محدثاً.",
+  "errorNetwork": "لا يوجد اتصال بالإنترنت. تحقق من الاتصال وحاول مرة أخرى.",
+  "errorTimeout": "العملية تستغرق وقتاً طويلاً. حاول مرة أخرى.",
+  "errorUnauthorized": "ليس لديك صلاحية لهذا. سجّل الدخول مرة أخرى.",
+  "errorNotFound": "لم نجد ما تبحث عنه.",
+  "errorValidation": "هناك خطأ في البيانات. راجعها وحاول مرة أخرى.",
+  "errorUnknown": "حدث خطأ ما. حاول مرة أخرى."
+>>>>>>> kit 1928c02
 }

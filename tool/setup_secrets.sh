@@ -29,6 +29,14 @@ REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner) ||
   die "run this inside a GitHub repo, after 'gh auth login'"
 APP_DIR="$DIR/apps/${REPO#*/}"
 
+# Merged PR branches are deleted automatically (projects made by the kit
+# already have this; it also fixes older ones).
+if ! $DRY_RUN; then
+  gh repo edit "$REPO" --delete-branch-on-merge >/dev/null 2>&1 &&
+    echo "ok            merged branches are deleted automatically" ||
+    echo "skipped       couldn't enable 'delete branch on merge' (Settings → General)"
+fi
+
 umask 077
 mkdir -p "$DIR" "$APP_DIR"
 
@@ -61,6 +69,11 @@ PLAY_SERVICE_ACCOUNT_JSON_PATH=~/.app-secrets/play-service-account.json
 # release. One token can cover all your repos.
 RELEASE_TOKEN=
 
+# Optional. Fine-grained GitHub token for the weekly kit-sync PR: Contents,
+# Pull requests and Workflows: read & write. One token can cover all your
+# repos. Empty = the weekly run opens an issue instead of a PR.
+KIT_SYNC_TOKEN=
+
 # Supabase personal access token (Account → Access Tokens): lets CI deploy
 # migrations and Edge Functions for every app. Using several Supabase
 # accounts? Leave it empty here and set SUPABASE_ACCESS_TOKEN per app in
@@ -89,6 +102,15 @@ SUPABASE_REGION=eu-central-1
 # org's first team), SENTRY_URL (default https://sentry.io; EU: https://de.sentry.io).
 SENTRY_AUTH_TOKEN=
 SENTRY_ORG=
+
+# PostHog: Settings -> Personal API keys, scope project:read (it never
+# leaves this Mac). Fills POSTHOG_API_KEY + POSTHOG_HOST in env/*.json from
+# the project named like the repo (or your only project). Override per app
+# with POSTHOG_PROJECT in apps/<repo>/app.env. POSTHOG_REGION: eu or us --
+# where your PostHog account lives (eu.posthog.com or us.posthog.com).
+# Without the key the env files are still checked against PostHog.
+POSTHOG_PERSONAL_API_KEY=
+POSTHOG_REGION=eu
 
 # Codemagic (only for repos with codemagic.yaml): personal account →
 # Settings → Integrations → Codemagic API → Show. Leave the team id empty to
@@ -241,6 +263,7 @@ set_value IOS_CERTIFICATE_PASSWORD         "${IOS_CERTIFICATE_PASSWORD:-}"
 set_file  MACOS_DEVELOPER_ID_P12_BASE64    "${MACOS_DEVELOPER_ID_P12_PATH:-}" base64
 set_value MACOS_DEVELOPER_ID_P12_PASSWORD  "${MACOS_DEVELOPER_ID_P12_PASSWORD:-}"
 set_value RELEASE_TOKEN                    "${RELEASE_TOKEN:-}"
+set_value KIT_SYNC_TOKEN                   "${KIT_SYNC_TOKEN:-}"
 
 # --- flutter-project-kit additions ------------------------------------------
 # Sentry: create this app's project if it's missing and fill SENTRY_DSN in
@@ -258,9 +281,28 @@ if grep -q '^sentry:' pubspec.yaml 2>/dev/null; then
       echo "skip          Sentry project (see the message above; set SENTRY_DSN by hand)"
   fi
 fi
+# PostHog: fill the project key + host in env/*.json where still empty,
+# then check every file's key against its host (EU vs US mix-ups drop
+# every event silently).
+if ls env/*.json >/dev/null 2>&1; then
+  if command -v python3 >/dev/null; then
+    DRY_RUN=$DRY_RUN POSTHOG_PERSONAL_API_KEY="${POSTHOG_PERSONAL_API_KEY:-}" \
+      POSTHOG_REGION="${POSTHOG_REGION:-eu}" POSTHOG_PROJECT="${POSTHOG_PROJECT:-${REPO#*/}}" \
+      python3 "$(dirname "$0")/posthog_project.py" env/*.json ||
+      echo "skip          PostHog check (see the message above)"
+  else
+    echo "skip          PostHog check (python3 not installed)"
+  fi
+fi
 # App config for the release build (Supabase/PostHog/Sentry keys).
 # Names any key that is still empty (the app turns that service off).
+<<<<<<< yours
 [[ -f env/prod.json ]] && "$(dirname "$0")/../scripts/check_env.sh" env/prod.json
+=======
+for f in env/prod.json env/staging.json; do
+  [[ -f $f ]] && "$(dirname "$0")/../scripts/check_env.sh" "$f"
+done
+>>>>>>> kit 1928c02
 set_file  ENV_PROD_JSON                    "env/prod.json"
 set_file  ENV_STAGING_JSON                 "env/staging.json"
 # Supabase: announce updates (secret key) and deploy migrations/functions.
