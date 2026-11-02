@@ -296,13 +296,9 @@ if ls env/*.json >/dev/null 2>&1; then
 fi
 # App config for the release build (Supabase/PostHog/Sentry keys).
 # Names any key that is still empty (the app turns that service off).
-<<<<<<< yours
-[[ -f env/prod.json ]] && "$(dirname "$0")/../scripts/check_env.sh" env/prod.json
-=======
 for f in env/prod.json env/staging.json; do
   [[ -f $f ]] && "$(dirname "$0")/../scripts/check_env.sh" "$f"
 done
->>>>>>> kit 1928c02
 set_file  ENV_PROD_JSON                    "env/prod.json"
 set_file  ENV_STAGING_JSON                 "env/staging.json"
 # Supabase: announce updates (secret key) and deploy migrations/functions.
