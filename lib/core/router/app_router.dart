@@ -24,12 +24,20 @@ final rootNavigatorKey = GlobalKey<NavigatorState>();
 final appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
   initialLocation: AppRoutes.home,
+<<<<<<< yours
   // Old `/drink/...` links (shared before items were general) keep working.
   redirect: (context, state) => AppRoutes.fromLegacy(state.uri),
+=======
+  // Root navigator only. Tabs added later (StatefulShellBranch) need their
+  // own `observers: Analytics.navigatorObservers` to be tracked.
+>>>>>>> kit 1928c02
   observers: [
     ...Monitoring.navigatorObservers,
     ...Analytics.navigatorObservers,
   ],
+  // Every route has a `name`: it is the screen name in analytics ($screen)
+  // and monitoring. Without one a nested route reports only its own path
+  // piece (e.g. ':exerciseId'). Names are stable; never put ids in them.
   routes: [
     // The tabs: Home, Favorites and Settings, each with its own navigator,
     // so a tab keeps its scroll position. A section stays under the tab
@@ -129,6 +137,7 @@ final appRouter = GoRouter(
       ],
     ),
     GoRoute(
+<<<<<<< yours
       path: AppRoutes.search,
       builder: (context, state) => CatalogSyncPage(
         child: SearchPage(
@@ -139,6 +148,16 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.welcome,
       builder: (context, state) => const WelcomePage(),
+=======
+      path: AppRoutes.home,
+      name: 'home',
+      builder: (context, state) => const HomePage(),
+    ),
+    GoRoute(
+      path: AppRoutes.settings,
+      name: 'settings',
+      builder: (context, state) => const SettingsPage(),
+>>>>>>> kit 1928c02
     ),
   ],
   errorBuilder: (context, state) => const NotFoundPage(),

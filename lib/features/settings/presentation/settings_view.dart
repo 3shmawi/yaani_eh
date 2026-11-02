@@ -6,8 +6,9 @@ import 'package:yaani_eh/features/settings/domain/entities/app_settings.dart';
 import 'package:yaani_eh/features/settings/presentation/widgets/settings_tiles.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
 
-/// Language and theme settings. Pure UI: state comes in, changes go out
-/// through callbacks, so it works with any state-management choice.
+/// Language, theme and app version settings. Pure UI: state comes in,
+/// changes go out through callbacks, so it works with any state-management
+/// choice.
 class SettingsView extends StatelessWidget {
   const new({
     required this.settings,
@@ -77,7 +78,13 @@ class SettingsView extends StatelessWidget {
                 ],
               ),
             ),
+<<<<<<< yours
           ],
+=======
+          ),
+          SettingsSectionHeader(l10n.settingsAbout),
+          const AppCard(child: SettingsVersionTile()),
+>>>>>>> kit 1928c02
         ],
       ),
     );
