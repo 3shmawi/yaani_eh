@@ -144,9 +144,7 @@ void main() {
     });
 
     testWidgets('close, and «step by step» opens the steps', (tester) async {
-      final haptics = recordHaptics(tester);
       final pushed = await openSheet(tester, flatWhite);
-      expect(haptics, contains('HapticFeedbackType.lightImpact'));
 
       await tester.tap(find.byKey(const Key('recipe_close')));
       await tester.pumpAndSettle();

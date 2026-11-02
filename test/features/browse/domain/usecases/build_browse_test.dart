@@ -33,26 +33,21 @@ void main() {
   group(BuildHub, () {
     const hub = BuildHub();
 
-    test('one card per section, in order, with count and examples', () {
-      final model = hub(items: items, categories: categories, today: day);
+    test('one tab per section, in order, with its count', () {
+      final model = hub(items: items, categories: categories);
 
       expect(model.sections.map((s) => s.section.slug), ['cafe', 'desserts']);
       final cafe = model.sections.first;
       expect(cafe.count, 12);
       expect(cafe.hasItems, isTrue);
-      expect(cafe.examples, hasLength(BuildHub.examples));
-      // The first items in menu order: the first category's first items.
-      expect(cafe.examples.first.slug, items.first.slug);
-      expect(model.itemOfTheDay, isNotNull);
       expect(model.isEmpty, isFalse);
     });
 
     test('a section without items is coming soon, still listed', () {
-      final model = hub(items: items, categories: categories, today: day);
+      final model = hub(items: items, categories: categories);
       final desserts = model.sections.last;
       expect(desserts.hasItems, isFalse);
       expect(desserts.count, 0);
-      expect(desserts.examples, isEmpty);
     });
 
     test('a new section shows up with no code change', () {
@@ -67,7 +62,6 @@ void main() {
       final model = hub(
         items: [...items, cheesecake],
         categories: [...categories, cakes, terms],
-        today: day,
       );
       expect(model.sections.map((s) => s.section.slug), [
         'cafe',
@@ -78,33 +72,10 @@ void main() {
       expect(model.sections[2].hasItems, isFalse);
     });
 
-    test('the item of the day comes from any section', () {
-      final picks = {
-        for (var d = 0; d < 60; d++)
-          hub(
-            items: [...items, cheesecake],
-            categories: [...categories, cakes],
-            today: DateTime(2026, 11, 1 + d),
-          ).itemOfTheDay!.slug,
-      };
-      expect(picks, contains('cheesecake'));
-    });
-
-    test('stable all day, changes daily', () {
-      CatalogItem? pick(DateTime t) =>
-          hub(items: items, categories: categories, today: t).itemOfTheDay;
-      expect(pick(DateTime(2026, 10, 30, 8)), pick(DateTime(2026, 10, 30, 23)));
-      final week = {
-        for (var d = 0; d < 7; d++) pick(DateTime(2026, 11, 1 + d))!.slug,
-      };
-      expect(week.length, greaterThan(1));
-    });
-
-    test('nothing on the device: empty, no item of the day', () {
-      final model = hub(items: const [], categories: categories, today: day);
+    test('nothing on the device: empty', () {
+      final model = hub(items: const [], categories: categories);
       expect(model.isEmpty, isTrue);
-      expect(model.itemOfTheDay, isNull);
-      final none = hub(items: const [], categories: const [], today: day);
+      final none = hub(items: const [], categories: const []);
       expect(none.sections, isEmpty);
     });
 
@@ -118,11 +89,7 @@ void main() {
         explanationAr: '.',
         explanationEn: '.',
       );
-      final model = hub(
-        items: [...items, orphan],
-        categories: categories,
-        today: day,
-      );
+      final model = hub(items: [...items, orphan], categories: categories);
       expect(model.sections.first.count, 12);
     });
   });
@@ -200,6 +167,97 @@ void main() {
         today: day,
       )!;
       expect(menu.chips.map((c) => c.slug), isNot(contains('smoothies')));
+    });
+
+    test('the item of the day is stable all day and changes daily', () {
+      CatalogItem? pick(DateTime t) => build(
+        slug: 'cafe',
+        items: items,
+        categories: categories,
+        today: t,
+      )!.itemOfTheDay;
+      expect(pick(DateTime(2026, 10, 30, 8)), pick(DateTime(2026, 10, 30, 23)));
+      final week = {
+        for (var d = 0; d < 7; d++) pick(DateTime(2026, 11, 1 + d))!.slug,
+      };
+      expect(week.length, greaterThan(1));
+    });
+
+    group('pages', () {
+      // 40 coffees then 30 iced coffees: 70 items, three pages of 24.
+      final many = [
+        for (var i = 0; i < 70; i++)
+          CatalogItem(
+            id: fakeId(1000 + i),
+            categoryId: i < 40 ? coffeeId : coldId,
+            slug: 'item_$i',
+            menuName: 'Item $i',
+            menuNameAr: 'صنف $i',
+            explanationAr: '.',
+            explanationEn: '.',
+          ),
+      ];
+      final model = build(
+        slug: 'cafe',
+        items: many,
+        categories: categories,
+        today: day,
+      )!;
+      const page = BrowseModel.pageSize;
+
+      List<int> sizes(int limit) => [
+        for (final s in model.firstItems(limit)) s.items.length,
+      ];
+
+      test('the first page is cut at the page size, in menu order', () {
+        expect(model.count, 70);
+        expect(sizes(page), [page]);
+        expect(model.firstItems(page).single.items.first.slug, 'item_0');
+        expect(model.firstItems(page).single.items.last.slug, 'item_23');
+      });
+
+      test('a page that crosses a category continues in the next one', () {
+        expect(sizes(page * 2), [40, page * 2 - 40]);
+        expect(model.firstItems(page * 2).last.items.first.slug, 'item_40');
+      });
+
+      test('a limit past the end shows everything, nothing twice', () {
+        expect(sizes(1000), [40, 30]);
+        expect(sizes(70), [40, 30]);
+      });
+
+      test('nothing for a limit of zero or less', () {
+        expect(model.firstItems(0), isEmpty);
+        expect(model.firstItems(-5), isEmpty);
+      });
+
+      test('a chip past the built items asks for enough to reach it', () {
+        final cold = model.chips.last;
+        // 40 items come before it: its heading is built at 40 + a page.
+        expect(model.limitFor(cold.id), 40 + page);
+        expect(model.limitFor(model.chips.first.id), page);
+        // The first category is always inside the first page.
+        expect(model.firstItems(page).map((s) => s.category.id), [
+          model.chips.first.id,
+        ]);
+        expect(
+          model.firstItems(model.limitFor(cold.id)).map((s) => s.category.id),
+          contains(cold.id),
+        );
+        // An id that isn't a chip needs nothing more.
+        expect(model.limitFor('no-such-category'), page);
+      });
+
+      test('a small section fits in its first page', () {
+        final small = build(
+          slug: 'cafe',
+          items: items,
+          categories: categories,
+          today: day,
+        )!;
+        expect(small.count, lessThan(page));
+        expect(small.firstItems(page).map((s) => s.items.length), [8, 4]);
+      });
     });
   });
 }

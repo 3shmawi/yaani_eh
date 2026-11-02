@@ -25,7 +25,7 @@ void main() {
     await pumpUntil(tester, find.byKey(const Key('item_of_the_day')));
     await beat(tester, 1200);
     await tester.drag(
-      find.byKey(const Key('home_list')),
+      find.byKey(const Key('browse_list')),
       const Offset(0, -300),
     );
     await tester.pumpAndSettle();
@@ -36,7 +36,7 @@ void main() {
     await beat(tester);
     await app.relaunch(tester);
     await app.setOnline(tester, online: false);
-    await pumpUntil(tester, find.byKey(const Key('home_list')));
+    await pumpUntil(tester, find.byKey(const Key('browse_list')));
     await tester.pumpAndSettle();
     await beat(tester, 1200);
 

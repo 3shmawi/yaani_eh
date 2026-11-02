@@ -209,13 +209,9 @@
       }
     }
   },
-  "comingSoonBadge": "Coming soon",
   "comingSoonTitle": "{section}: coming soon",
   "comingSoonMessage": "Explained the same way: the word as you see it, how to say it, and what it means.",
   "comingSoonAction": "Back to sections",
-  "@comingSoonBadge": {
-    "description": "Tag on a Home section that has no items yet."
-  },
   "@comingSoonTitle": {
     "description": "Title of a Home section that has no items yet.",
     "placeholders": {
@@ -471,14 +467,9 @@
   "@stepsDone": {
     "description": "Last button of step by step for anything that isn't a recipe."
   },
-  "hubSectionsTitle": "Sections",
   "sectionItemCount": "{count, plural, =0{Nothing yet} =1{1 item} other{{count} items}}",
-  "sectionCardLabel": "{section}, {detail}",
   "sectionMissingTitle": "This section isn't here",
   "sectionMissingBody": "It may have moved. Every section is on Home.",
-  "@hubSectionsTitle": {
-    "description": "Home: the heading above the section cards."
-  },
   "@sectionItemCount": {
     "description": "Home: how many items a section has, under its name on its card and its page.",
     "placeholders": {
@@ -487,23 +478,18 @@
       }
     }
   },
-  "@sectionCardLabel": {
-    "description": "Screen-reader label of a section card on Home: its name and how many items it has (or that it is coming soon).",
-    "placeholders": {
-      "section": {
-        "type": "String",
-        "example": "Drinks"
-      },
-      "detail": {
-        "type": "String",
-        "example": "41 items"
-      }
-    }
-  },
   "@sectionMissingTitle": {
     "description": "A /section link to a section that does not exist."
   },
   "@sectionMissingBody": {
     "description": "Under sectionMissingTitle."
+  },
+  "chipAll": "All",
+  "@chipAll": {
+    "description": "The first category chip on Home: scrolls the list back to the top."
+  },
+  "allSections": "All sections",
+  "@allSections": {
+    "description": "Home's button that lists every section, and that sheet's title."
   }
 }

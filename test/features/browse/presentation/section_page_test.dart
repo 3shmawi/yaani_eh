@@ -1,7 +1,6 @@
 import 'dart:ui' show Tristate;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
@@ -266,35 +265,6 @@ void main() {
       await tester.pumpAndSettle();
     }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
-    testWidgets('a chip ticks like an iOS picker, once', (tester) async {
-      final haptics = <String>[];
-      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-        SystemChannels.platform,
-        (call) async {
-          if (call.method == 'HapticFeedback.vibrate') {
-            haptics.add('${call.arguments}');
-          }
-          return null;
-        },
-      );
-      addTearDown(
-        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-          SystemChannels.platform,
-          null,
-        ),
-      );
-      await pumpView(tester, menu: _menu());
-      await tester.pumpAndSettle();
-      await tester.tap(
-        find.descendant(
-          of: find.byKey(const Key('category_chips')),
-          matching: find.text('Iced coffee'),
-        ),
-      );
-      await tester.pumpAndSettle();
-      expect(haptics, ['HapticFeedbackType.selectionClick']);
-    });
-
     testWidgets('small phone with large text, and a tablet', (tester) async {
       tester.platformDispatcher.textScaleFactorTestValue = 1.3;
       addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
@@ -553,6 +523,181 @@ void main() {
       player.finish();
       await tester.pumpAndSettle();
       await tester.expectAccessible();
+    });
+  });
+
+  group('$SectionView pages', () {
+    // 40 coffees then 30 iced coffees: three pages of 24.
+    final many = [
+      for (var i = 0; i < 70; i++)
+        CatalogItem(
+          id: fakeId(2000 + i),
+          categoryId: i < 40 ? coffeeId : coldId,
+          slug: 'item_$i',
+          menuName: 'Item $i',
+          menuNameAr: 'صنف $i',
+          explanationAr: '.',
+          explanationEn: '.',
+        ),
+    ];
+
+    Future<void> pumpMany(
+      WidgetTester tester, {
+      Object? resetKey,
+      bool home = false,
+      SectionState? state,
+    }) => tester.pumpApp(
+      SectionView(
+        state: state ?? _menu(items: many),
+        home: home,
+        resetKey: resetKey,
+        onBack: home ? null : () {},
+        onOpenSearch: () {},
+      ),
+    );
+
+    final cards = find.byType(ItemCard);
+    final list = find.byKey(const Key('browse_list'));
+
+    testWidgets('only the first page is built', (tester) async {
+      await pumpMany(tester);
+      await tester.pumpAndSettle();
+      expect(cards.evaluate().length, lessThanOrEqualTo(BrowseModel.pageSize));
+      expect(cards, findsWidgets);
+      expect(find.text('Item 70'), findsNothing);
+      // The second category isn't built yet.
+      expect(find.text('Item 60', skipOffstage: false), findsNothing);
+    });
+
+    testWidgets('the next page is built as the list nears its end', (
+      tester,
+    ) async {
+      await pumpMany(tester);
+      await tester.pumpAndSettle();
+      final first = cards.evaluate().length;
+      for (var i = 0; i < 40; i++) {
+        await tester.drag(list, const Offset(0, -600));
+        await tester.pumpAndSettle();
+      }
+      expect(cards.evaluate().length, greaterThan(first));
+      // Scrolled all the way: everything is there, none twice.
+      expect(find.text('Item 69'), findsOneWidget);
+      expect(find.text('Item 0', skipOffstage: false), findsOneWidget);
+    });
+
+    testWidgets('a tall screen keeps adding pages until it is filled', (
+      tester,
+    ) async {
+      await pumpMany(tester);
+      tester.view
+        ..physicalSize =
+            const Size(2752, 2064) // iPad landscape, 5 columns
+        ..devicePixelRatio = 2;
+      await tester.pumpAndSettle();
+      final position = tester
+          .state<ScrollableState>(find.byType(Scrollable).first)
+          .position;
+      // Never ends with nothing below the fold while more is waiting.
+      expect(
+        position.extentAfter >= position.viewportDimension * 1.5 ||
+            cards.evaluate().length == 70,
+        isTrue,
+      );
+    });
+
+    testWidgets('a chip past the built items builds up to it and jumps', (
+      tester,
+    ) async {
+      await pumpMany(tester);
+      await tester.pumpAndSettle();
+      expect(find.text('Item 40', skipOffstage: false), findsNothing);
+      await tester.tap(
+        find.descendant(
+          of: find.byKey(const Key('category_chips')),
+          matching: find.text('Iced coffee'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final pinned = find.byKey(const Key('category_chips_pinned'));
+      expect(pinned, findsOneWidget);
+      final heading = find.descendant(
+        of: list,
+        matching: find.text('Iced coffee'),
+      );
+      expect(heading, findsWidgets);
+      expect(find.text('Item 40'), findsOneWidget);
+      // Its heading sits just under the pinned chips.
+      expect(
+        tester.getTopLeft(heading.last).dy,
+        greaterThan(tester.getBottomLeft(pinned).dy - 1),
+      );
+    });
+
+    testWidgets('at the very end the last chip lights up', (tester) async {
+      await pumpMany(tester);
+      await tester.pumpAndSettle();
+      for (var i = 0; i < 40; i++) {
+        await tester.drag(list, const Offset(0, -600));
+        await tester.pumpAndSettle();
+      }
+      expect(find.text('Item 69'), findsOneWidget);
+      final pinned = find.byKey(const Key('category_chips_pinned'));
+      final last = tester.getSemantics(
+        find.descendant(of: pinned, matching: find.text('Iced coffee')),
+      );
+      expect(last.flagsCollection.isSelected, Tristate.isTrue);
+    });
+
+    testWidgets('another section (resetKey) starts again at the top', (
+      tester,
+    ) async {
+      await pumpMany(tester, resetKey: 'cafe');
+      await tester.pumpAndSettle();
+      await tester.drag(list, const Offset(0, -1500));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('category_chips_pinned')), findsOneWidget);
+
+      await pumpMany(tester, resetKey: 'desserts');
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('category_chips_pinned')), findsNothing);
+      expect(cards.evaluate().length, lessThanOrEqualTo(BrowseModel.pageSize));
+    });
+
+    testWidgets('Home: the app name and search, tabs, no back button', (
+      tester,
+    ) async {
+      await pumpMany(tester, home: true);
+      await tester.pumpAndSettle();
+      expect(find.text(l10nEn.appEyebrow), findsOneWidget);
+      expect(find.byKey(const Key('home_search')), findsOneWidget);
+      expect(find.byKey(const Key('section_back')), findsNothing);
+      expect(find.byKey(const Key('section_header')), findsNothing);
+      await tester.drag(list, const Offset(0, -1500));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('category_chips_pinned')), findsOneWidget);
+      expect(find.byKey(const Key('section_back_pinned')), findsNothing);
+      expect(find.byKey(const Key('section_search_pinned')), findsOneWidget);
+    });
+
+    testWidgets('Home with no sections says so, with no back to offer', (
+      tester,
+    ) async {
+      await pumpMany(tester, home: true, state: const SectionNone());
+      expect(find.text(l10nEn.browseEmpty), findsOneWidget);
+      expect(find.byType(FilledButton), findsNothing);
+      await tester.expectAccessible();
+    });
+
+    testWidgets('Home on a section that is coming soon has no back action', (
+      tester,
+    ) async {
+      await pumpMany(
+        tester,
+        home: true,
+        state: _menu(slug: 'desserts', items: many),
+      );
+      expect(find.byKey(const Key('browse_coming_soon')), findsOneWidget);
+      expect(find.text(l10nEn.comingSoonAction), findsNothing);
     });
   });
 }

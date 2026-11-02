@@ -1197,9 +1197,7 @@ class AppTabScaffold extends StatelessWidget {
                 child: GlassTabBar.bottom(
                   key: const Key('app_tab_bar'),
                   selectedIndex: selectedIndex,
-                  onTabSelected: (i) {
-                    onSelected(i);
-                  },
+                  onTabSelected: onSelected,
                   barHeight: AppDimens.tabBarHeight,
                   indicatorExpansion: AppDimens.tabIndicatorStretch,
                   magnification: AppDimens.tabIconMagnification,
@@ -1296,7 +1294,7 @@ class _TabIcon extends StatelessWidget {
 /// time. Wrap the app once; individual widgets don't add their own tap
 /// haptics.
 class AppTapHaptics extends StatefulWidget {
-  const AppTapHaptics({required this.child, super.key});
+  const new({required this.child, super.key});
 
   final Widget child;
 

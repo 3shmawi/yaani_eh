@@ -32,6 +32,7 @@ abstract final class AppIcons {
   static const IconData sliders = CupertinoIcons.slider_horizontal_3;
   static const IconData wifiSlash = CupertinoIcons.wifi_slash;
   static const IconData plus = CupertinoIcons.plus;
+  static const IconData grid = CupertinoIcons.square_grid_2x2;
   static const IconData close = CupertinoIcons.xmark;
   static const IconData checkCircle = CupertinoIcons.checkmark_circle;
   static const IconData warningCircle = CupertinoIcons.exclamationmark_circle;
