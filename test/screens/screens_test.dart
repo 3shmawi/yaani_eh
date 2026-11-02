@@ -95,6 +95,13 @@ void main() {
         await shoot(tester, '${lang}_01_home');
         await tester.drag(find.byType(Scrollable).first, const Offset(0, -700));
         await shoot(tester, '${lang}_01b_home_scrolled');
+        // The tabs scrolled away with the band; back up, then a section
+        // with no items yet.
+        await tester.drag(find.byType(Scrollable).first, const Offset(0, 3000));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(lang == 'ar' ? 'حلويات' : 'Desserts'));
+        await tester.pumpAndSettle();
+        await shoot(tester, '${lang}_01c_home_soon');
       });
 
       testWidgets('section', (tester) async {

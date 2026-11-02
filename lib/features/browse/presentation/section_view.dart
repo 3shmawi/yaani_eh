@@ -9,7 +9,9 @@ import 'package:yaani_eh/core/widgets/category_chips.dart';
 import 'package:yaani_eh/core/widgets/header_band.dart';
 import 'package:yaani_eh/core/widgets/item_grid.dart';
 import 'package:yaani_eh/core/widgets/offline_banner.dart';
+import 'package:yaani_eh/core/widgets/search_field.dart';
 import 'package:yaani_eh/core/widgets/state_views.dart';
+import 'package:yaani_eh/features/browse/domain/usecases/build_browse.dart';
 import 'package:yaani_eh/features/browse/presentation/browse_controller.dart';
 import 'package:yaani_eh/features/browse/presentation/widgets/item_of_the_day.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
@@ -21,10 +23,22 @@ import 'package:yaani_eh/l10n/l10n.dart';
 /// scrolls to its category, and the highlighted chip follows the list.
 /// Once the band scrolls away, a slim bar stays at the top: back, the
 /// chips and search. A section without items yet says it's coming soon.
+///
+/// Home is this same view with [home] on and the section [tabs] in the
+/// band (docs/decisions/0006-home-section-tabs.md): the app's name and
+/// search field instead of back, and no back button.
+///
+/// Items come a page at a time ([BrowseModel.pageSize]): the next page is
+/// added as the list nears its end, or when a chip jumps past what is
+/// built, so a section with hundreds of items opens as fast as one with a
+/// few.
 class SectionView extends StatefulWidget {
   const new({
     required this.state,
-    required this.onBack,
+    this.onBack,
+    this.home = false,
+    this.tabs,
+    this.resetKey,
     this.onJumpToCategory,
     this.onOpenItem,
     this.onOpenSearch,
@@ -35,7 +49,19 @@ class SectionView extends StatefulWidget {
   });
 
   final SectionState state;
-  final VoidCallback onBack;
+
+  /// Back (a section page). Null on Home, which has no back.
+  final VoidCallback? onBack;
+
+  /// Home: the app's name, tagline and search field in the band.
+  final bool home;
+
+  /// Home's section tabs, in the band above the chips.
+  final Widget? tabs;
+
+  /// When it changes (another section on Home) the list goes back to the
+  /// top and its first page.
+  final Object? resetKey;
 
   /// A chip was tapped (the list scrolls by itself; this is for analytics).
   final ValueChanged<CatalogCategory>? onJumpToCategory;
@@ -71,6 +97,9 @@ class _SectionViewState extends State<SectionView> {
   /// The band's chips have scrolled away, so the pinned bar shows.
   bool _pinned = false;
 
+  /// How many items are built so far, across the section's categories.
+  int _limit = BrowseModel.pageSize;
+
   @override
   void initState() {
     super.initState();
@@ -78,10 +107,27 @@ class _SectionViewState extends State<SectionView> {
   }
 
   @override
+  void didUpdateWidget(SectionView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.resetKey != oldWidget.resetKey) {
+      _limit = BrowseModel.pageSize;
+      _active = null;
+      _pinned = false;
+      _sectionKeys.clear();
+      if (_scroll.hasClients) _scroll.jumpTo(0);
+    }
+  }
+
+  @override
   void dispose() {
     _scroll.dispose();
     super.dispose();
   }
+
+  BrowseModel? get _model => switch (widget.state) {
+    SectionReady(:final model) => model,
+    _ => null,
+  };
 
   List<CatalogCategory> get _chips => switch (widget.state) {
     SectionReady(:final model) => model.chips,
@@ -107,7 +153,19 @@ class _SectionViewState extends State<SectionView> {
         .offset;
   }
 
+  /// Builds the next page when the list is within a screen and a half of
+  /// its end (or hasn't filled the screen yet).
+  void _loadMore() {
+    final model = _model;
+    if (model == null || _limit >= model.count || !_scroll.hasClients) return;
+    final position = _scroll.position;
+    if (position.extentAfter < position.viewportDimension * 1.5) {
+      setState(() => _limit += BrowseModel.pageSize);
+    }
+  }
+
   void _follow() {
+    _loadMore();
     final chips = _chips;
     if (chips.isEmpty || !_scroll.hasClients) return;
     final position = _scroll.position;
@@ -118,7 +176,8 @@ class _SectionViewState extends State<SectionView> {
             chipsAt + AppDimens.touchTarget - MediaQuery.paddingOf(context).top;
 
     var active = chips.first.id;
-    if (position.pixels >= position.maxScrollExtent - 1) {
+    if (position.pixels >= position.maxScrollExtent - 1 &&
+        _limit >= (_model?.count ?? 0)) {
       // The last categories may never reach the top: at the end, it's
       // the last one.
       active = chips.last.id;
@@ -141,6 +200,23 @@ class _SectionViewState extends State<SectionView> {
 
   void _jumpTo(CatalogCategory category) {
     widget.onJumpToCategory?.call(category);
+    // A category past the built pages: build up to it first, then jump.
+    final model = _model;
+    final needed = model?.limitFor(category.id) ?? _limit;
+    if (needed - BrowseModel.pageSize >= _limit) {
+      setState(() {
+        _limit = needed;
+        _active = category.id;
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _scrollTo(category);
+      });
+      return;
+    }
+    _scrollTo(category);
+  }
+
+  void _scrollTo(CatalogCategory category) {
     final at = _offsetOf(_keyFor(category.id));
     if (at == null || !_scroll.hasClients) return;
     setState(() => _active = category.id);
@@ -160,13 +236,15 @@ class _SectionViewState extends State<SectionView> {
     }
   }
 
-  Widget _backButton({Key? key}) => AppIconButton(
-    key: key,
-    icon: AppIcons.back,
-    tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-    tone: GlassTone.dark,
-    onPressed: widget.onBack,
-  );
+  Widget? _backButton({Key? key}) => widget.onBack == null
+      ? null
+      : AppIconButton(
+          key: key,
+          icon: AppIcons.back,
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+          tone: GlassTone.dark,
+          onPressed: widget.onBack!,
+        );
 
   Widget? _searchButton({Key? key}) => widget.onOpenSearch == null
       ? null
@@ -197,30 +275,55 @@ class _SectionViewState extends State<SectionView> {
       onSelected: (id) => _jumpTo(chips.firstWhere((c) => c.id == id)),
     );
 
-    final header = HeaderBand(
-      key: const Key('section_header'),
-      compact: true,
-      leading: _backButton(key: const Key('section_back')),
-      title: model == null ? null : name(model.section),
-      subtitle: model == null || model.comingSoon
-          ? null
-          : l10n.sectionItemCount(model.count),
-      trailing: _searchButton(key: const Key('section_search')),
-      bottom: chips.isEmpty
-          ? null
-          : KeyedSubtree(
-              key: _chipsKey,
-              // Runs under the band's side padding, edge to edge.
-              child: _EdgeToEdge(
-                child: chipRow(key: const Key('category_chips')),
-              ),
+    final search = widget.onOpenSearch;
+    final chipsInBand = chips.isEmpty
+        ? null
+        : KeyedSubtree(
+            key: _chipsKey,
+            // Runs under the band's side padding, edge to edge.
+            child: _EdgeToEdge(
+              child: chipRow(key: const Key('category_chips')),
             ),
-    );
+          );
+    final header = widget.home
+        ? HeaderBand(
+            key: const Key('home_header'),
+            title: l10n.appEyebrow,
+            subtitle: l10n.browseTagline,
+            bottom: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (search != null) ...[
+                  SearchField(key: const Key('home_search'), onTap: search),
+                  SizedBox(height: AppDimens.space2),
+                ],
+                if (widget.tabs case final tabs?)
+                  _EdgeToEdge(key: const Key('section_tabs'), child: tabs),
+                ?chipsInBand,
+              ],
+            ),
+          )
+        : HeaderBand(
+            key: const Key('section_header'),
+            compact: true,
+            leading: _backButton(key: const Key('section_back')),
+            title: model == null ? null : name(model.section),
+            subtitle: model == null || model.comingSoon
+                ? null
+                : l10n.sectionItemCount(model.count),
+            trailing: _searchButton(key: const Key('section_search')),
+            bottom: chipsInBand,
+          );
 
     final Widget body;
     switch (widget.state) {
       case SectionLoading():
         body = const SliverFillRemaining(child: LoadingView());
+      case SectionNone():
+        body = SliverFillRemaining(
+          hasScrollBody: false,
+          child: EmptyView(message: l10n.browseEmpty),
+        );
       case SectionMissing():
         body = SliverFillRemaining(
           hasScrollBody: false,
@@ -229,7 +332,7 @@ class _SectionViewState extends State<SectionView> {
             icon: AppIcons.section,
             title: l10n.sectionMissingTitle,
             message: l10n.sectionMissingBody,
-            actionLabel: l10n.notFoundGoHome,
+            actionLabel: widget.onBack == null ? null : l10n.notFoundGoHome,
             onAction: widget.onBack,
           ),
         );
@@ -241,14 +344,20 @@ class _SectionViewState extends State<SectionView> {
             icon: AppIcons.forSection(model.section.icon),
             title: l10n.comingSoonTitle(name(model.section)),
             message: l10n.comingSoonMessage,
-            actionLabel: l10n.comingSoonAction,
+            actionLabel: widget.onBack == null ? null : l10n.comingSoonAction,
             onAction: widget.onBack,
           ),
         );
       case SectionReady(:final model):
+        // A page of items at a time; a chip past what is built builds up
+        // to it (_jumpTo) and the highlight follows what is built.
+        final shown = model.firstItems(_limit);
+        if (_limit < model.count) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) _loadMore();
+          });
+        }
         body = SliverToBoxAdapter(
-          // Built at once (not lazily) so a chip can scroll to any category
-          // and the highlight can follow them all; a section is ~40 cards.
           child: Padding(
             padding: EdgeInsetsDirectional.fromSTEB(
               AppDimens.space4,
@@ -271,7 +380,7 @@ class _SectionViewState extends State<SectionView> {
                   ),
                   SizedBox(height: AppDimens.space6),
                 ],
-                for (final (i, section) in model.sections.indexed) ...[
+                for (final (i, section) in shown.indexed) ...[
                   KeyedSubtree(
                     key: _keyFor(section.category.id),
                     child: _CategoryHeader(title: name(section.category)),
@@ -280,7 +389,7 @@ class _SectionViewState extends State<SectionView> {
                   ItemGrid(
                     items: section.items,
                     // Card number on the screen, for the entry stagger.
-                    firstIndex: model.sections
+                    firstIndex: shown
                         .take(i)
                         .fold(0, (n, s) => n + s.items.length),
                     onOpenItem: widget.onOpenItem,
@@ -328,7 +437,7 @@ class _SectionViewState extends State<SectionView> {
                 child: Row(
                   children: [
                     SizedBox(width: AppDimens.space2),
-                    _backButton(key: const Key('section_back_pinned')),
+                    ?_backButton(key: const Key('section_back_pinned')),
                     Expanded(
                       child: SizedBox(
                         height: AppDimens.touchTarget,
@@ -349,7 +458,7 @@ class _SectionViewState extends State<SectionView> {
 
 /// Lets the chips run under the band's side padding.
 class _EdgeToEdge extends StatelessWidget {
-  const new({required this.child});
+  const new({required this.child, super.key});
 
   final Widget child;
 

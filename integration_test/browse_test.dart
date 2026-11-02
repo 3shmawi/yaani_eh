@@ -7,10 +7,11 @@ import 'helpers/demo.dart';
 import 'helpers/demo_app.dart';
 
 /// Demo: "Everything you don't get, one tap away."
-/// Home lists the sections; search is always on top. Open the drinks:
-/// the cards rise in, each saying what it is in everyday words («فلات
-/// وايت يعني قهوة باللبن تقيلة في فنجان صغير»). Open one and come back; a
-/// chip scrolls to its category; back Home, desserts say «جاي قريب».
+/// Home opens on the drinks, with the section tabs on top and search always
+/// there: the cards rise in, each saying what it is in everyday words
+/// («فلات وايت يعني قهوة باللبن تقيلة في فنجان صغير»). Open one and come
+/// back; a chip scrolls to its category; the «حلويات» tab says «جاي قريب»
+/// and «مشروبات» brings the drinks back.
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -19,32 +20,24 @@ void main() {
     (w) => w is Text && [en, ar].contains(w.data ?? w.textSpan?.toPlainText()),
   );
 
-  testWidgets('Home lists the sections; open drinks, a chip, desserts', (
+  testWidgets('Home opens on the drinks; a chip, then the desserts tab', (
     tester,
   ) async {
     await DemoApp.start(pageSize: 100);
 
-    // 1. Home: search on top, the item of the day, then one card per
-    // section.
+    // 1. Home: search and the section tabs on top, the drink of the day,
+    // then the cards.
     await pumpUntil(tester, find.byKey(const Key('item_of_the_day')));
     await tester.pumpAndSettle();
+    expect(find.byKey(const Key('section_tabs')), findsOneWidget);
     await beat(tester, 1800);
-    final home = find.byKey(const Key('home_list'));
-    final drinks = find.byKey(const Key('section_cafe'));
-    await tester.dragUntilVisible(drinks, home, const Offset(0, -150));
-    // In the middle, clear of the floating tab bar.
-    await Scrollable.ensureVisible(tester.element(drinks), alignment: 0.5);
-    await tester.pumpAndSettle();
-    await beat(tester, 1500);
 
-    // 2. Open the drinks: their own page, with chips.
-    await tester.tap(drinks);
-    await pumpUntil(tester, find.byKey(const Key('browse_list')));
-    await tester.pumpAndSettle();
+    // 2. The drinks need no tap: their chips are right there.
+    final list = find.byKey(const Key('browse_list'));
+    expect(find.byKey(const Key('category_chips')), findsOneWidget);
     await beat(tester, 1500);
 
     // 3. Scroll through the cards (any screen size).
-    final list = find.byKey(const Key('browse_list'));
     await tester.dragUntilVisible(
       find.byType(ItemCard).first,
       list,
@@ -99,27 +92,24 @@ void main() {
     await tester.pumpAndSettle();
     await beat(tester);
 
-    // 6. Back Home (from the pinned bar: the band has scrolled away):
-    // desserts are coming soon. Then back to the sections.
-    await tester.tap(find.byKey(const Key('section_back_pinned')));
+    // 6. The band has scrolled away: scroll back up to the section tabs.
+    // Desserts are coming soon; the Drinks tab brings the items back.
+    await tester.drag(list, const Offset(0, 3000));
     await tester.pumpAndSettle();
     await beat(tester);
-    final desserts = find.byKey(const Key('section_desserts'));
-    await tester.dragUntilVisible(desserts, home, const Offset(0, -150));
-    await Scrollable.ensureVisible(tester.element(desserts), alignment: 0.5);
-    await tester.pumpAndSettle();
-    await beat(tester, 1200);
-    await tester.tap(desserts);
+    final tabs = find.byKey(const Key('section_tabs'));
+    await tester.tap(
+      find.descendant(of: tabs, matching: either('Desserts', 'حلويات')),
+    );
     await tester.pumpAndSettle();
     await beat(tester, 1800);
     expect(find.byKey(const Key('browse_coming_soon')), findsOneWidget);
     expect(find.byType(ItemCard), findsNothing);
-    final back = either('Back to sections', 'ارجع للأقسام');
-    await tester.ensureVisible(back); // below the fold on small phones
-    await tester.pumpAndSettle();
-    await tester.tap(back);
+    await tester.tap(
+      find.descendant(of: tabs, matching: either('Drinks', 'مشروبات')),
+    );
     await tester.pumpAndSettle();
     await beat(tester, 1500);
-    expect(find.byKey(const Key('home_list')), findsOneWidget);
+    expect(find.byType(ItemCard), findsWidgets);
   });
 }

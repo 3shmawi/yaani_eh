@@ -12,7 +12,7 @@ void main() {
 
   testWidgets('starts on home and opens the settings tab', (tester) async {
     await DemoApp.start(pageSize: 100);
-    await pumpUntil(tester, find.byKey(const Key('home_list')));
+    await pumpUntil(tester, find.byKey(const Key('browse_list')));
     await tester.pumpAndSettle();
     await beat(tester, 1500);
 

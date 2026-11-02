@@ -1,19 +1,16 @@
-import 'dart:math' as math;
+import 'dart:ui' show Tristate;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:yaani_eh/core/theme/app_dimens.dart';
-import 'package:yaani_eh/core/widgets/search_field.dart';
+import 'package:yaani_eh/core/widgets/item_card.dart';
 import 'package:yaani_eh/features/browse/domain/usecases/build_browse.dart';
 import 'package:yaani_eh/features/browse/presentation/browse_controller.dart';
 import 'package:yaani_eh/features/browse/presentation/browse_page.dart';
-import 'package:yaani_eh/features/browse/presentation/browse_view.dart';
-import 'package:yaani_eh/features/browse/presentation/widgets/section_card.dart';
+import 'package:yaani_eh/features/browse/presentation/widgets/section_tabs.dart';
 import 'package:yaani_eh/features/catalog_sync/data/models/catalog_rows.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
-import 'package:yaani_eh/l10n/l10n.dart';
 
 import '../../../helpers/fake_catalog_remote.dart';
 import '../../../helpers/fake_catalog_repository.dart';
@@ -24,293 +21,141 @@ final List<CatalogCategory> _categories = [
   for (final r in sampleCategories()) CatalogRows.category(r)!,
 ];
 
-/// Two more sections from the backend, so the grid has something to lay out.
-const _terms = CatalogCategory(
-  id: '00000000-0000-4000-8000-0000000c0010',
-  slug: 'terms',
-  nameAr: 'مصطلحات',
-  nameEn: 'Terms',
-  icon: 'book',
-  sortOrder: 2,
-);
-const _history = CatalogCategory(
-  id: '00000000-0000-4000-8000-0000000c0011',
-  slug: 'history',
-  nameAr: 'تاريخ',
-  nameEn: 'History',
-  icon: 'history',
-  sortOrder: 3,
-);
+/// [n] more sections from the backend after Drinks and Desserts.
+List<CatalogCategory> _sections(int n) => [
+  ..._categories,
+  for (var i = 0; i < n; i++)
+    CatalogCategory(
+      id: fakeId(3000 + i),
+      slug: 'extra_$i',
+      nameAr: 'قسم $i',
+      nameEn: 'Section $i',
+      icon: 'book',
+      sortOrder: 2 + i,
+    ),
+];
 
-HubModel _hub({List<CatalogItem>? items, bool more = false}) =>
-    const BuildHub()(
-      items: items ?? sampleCatalogItems(),
-      categories: [
-        ..._categories,
-        if (more) ...[_terms, _history],
+HubModel _hub({int more = 0}) =>
+    const BuildHub()(items: sampleCatalogItems(), categories: _sections(more));
+
+Future<void> _pumpHome(
+  WidgetTester tester, {
+  Locale locale = const Locale('en'),
+  ThemeMode mode = ThemeMode.light,
+  List<CatalogItem>? items,
+}) async {
+  await tester.pumpApp(
+    ProviderScope(
+      overrides: [
+        catalogRepositoryProvider.overrideWithValue(
+          FakeCatalogRepository(has: true, items: items),
+        ),
+        todayProvider.overrideWithValue(_day),
       ],
-      today: _day,
-    );
+      child: const BrowsePage(),
+    ),
+    locale: locale,
+    themeMode: mode,
+  );
+  await tester.pumpAndSettle();
+}
+
+Finder _tab(String label) => find.descendant(
+  of: find.byKey(const Key('section_tabs')),
+  matching: find.text(label),
+);
 
 void main() {
-  group(BrowseView, () {
-    Future<void> pumpView(
+  group(SectionTabs, () {
+    Future<void> pumpTabs(
       WidgetTester tester, {
-      HubModel? hub,
+      required HubModel hub,
+      String? selected,
+      ValueChanged<HubSection>? onSelected,
       Locale locale = const Locale('en'),
-      ThemeMode mode = ThemeMode.light,
-      ValueChanged<HubSection>? onOpen,
-      VoidCallback? onSearch,
     }) => tester.pumpApp(
-      BrowseView(
-        hub: hub,
-        onOpenSection: onOpen ?? (_) {},
-        onOpenSearch: onSearch ?? () {},
+      SectionTabs(
+        sections: hub.sections,
+        selectedSlug: selected,
+        onSelected: onSelected ?? (_) {},
       ),
       locale: locale,
-      themeMode: mode,
     );
 
-    testWidgets('a short band with search, then a card per section', (
-      tester,
-    ) async {
-      await pumpView(tester, hub: _hub());
-      expect(find.text(l10nEn.appEyebrow), findsOneWidget);
-      expect(find.byKey(const Key('home_search')), findsOneWidget);
-      // Search is the band's one action: no settings button, no switch.
-      expect(find.byKey(const Key('home_settings_button')), findsNothing);
-      expect(find.byKey(const Key('browse_sections')), findsNothing);
-      expect(find.byKey(const Key('item_of_the_day')), findsOneWidget);
-      expect(find.text(l10nEn.hubSectionsTitle), findsOneWidget);
-      expect(find.byType(SectionCard), findsNWidgets(2));
+    testWidgets('a tab per section, the picked one selected', (tester) async {
+      await pumpTabs(tester, hub: _hub(), selected: 'cafe');
       expect(find.text('Drinks'), findsOneWidget);
-      expect(find.text(l10nEn.sectionItemCount(12)), findsOneWidget);
-      await tester.expectAccessible();
+      expect(find.text('Desserts'), findsOneWidget);
+      expect(
+        tester.getSemantics(find.text('Drinks')).flagsCollection.isSelected,
+        Tristate.isTrue,
+      );
+      expect(
+        tester.getSemantics(find.text('Desserts')).flagsCollection.isSelected,
+        Tristate.isFalse,
+      );
     });
 
-    testWidgets('an empty section says «coming soon» and still opens', (
+    testWidgets('tapping a tab reports its section, coming soon included', (
       tester,
     ) async {
-      final opened = <String>[];
-      await pumpView(
+      final picked = <String>[];
+      await pumpTabs(
         tester,
         hub: _hub(),
-        onOpen: (s) => opened.add(s.section.slug),
+        selected: 'cafe',
+        onSelected: (s) => picked.add(s.section.slug),
       );
-      final desserts = find.byKey(const Key('section_desserts'));
-      await tester.ensureVisible(desserts);
-      expect(
-        find.descendant(
-          of: desserts,
-          matching: find.text(l10nEn.comingSoonBadge),
-        ),
-        findsOneWidget,
-      );
-      await tester.tap(desserts);
-      await tester.tap(find.byKey(const Key('section_cafe')));
-      expect(opened, ['desserts', 'cafe']);
+      await tester.tap(find.text('Desserts'));
+      await tester.tap(find.text('Drinks'));
+      expect(picked, ['desserts', 'cafe']);
     });
 
-    testWidgets('the whole card takes the tap, padding included', (
+    testWidgets('eight sections scroll sideways, the last one is reachable', (
       tester,
     ) async {
-      final opened = <String>[];
-      await pumpView(
+      final picked = <String>[];
+      await pumpTabs(
+        tester,
+        hub: _hub(more: 6),
+        selected: 'cafe',
+        onSelected: (s) => picked.add(s.section.slug),
+      );
+      expect(tester.takeException(), isNull);
+      // Past the screen's edge: not even built until the row is dragged.
+      expect(find.text('Section 5'), findsNothing);
+      await tester.dragUntilVisible(
+        find.text('Section 5'),
+        find.byType(ListView),
+        const Offset(-120, 0),
+      );
+      // Dragged on, clear of the screen's edge.
+      await tester.drag(find.byType(ListView), const Offset(-100, 0));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Section 5'));
+      expect(picked, ['extra_5']);
+    });
+
+    testWidgets('Arabic: names in Arabic, the first tab at the right', (
+      tester,
+    ) async {
+      await pumpTabs(
         tester,
         hub: _hub(),
-        onOpen: (s) => opened.add(s.section.slug),
+        selected: 'cafe',
+        locale: const Locale('ar'),
       );
-      final card = find.byKey(const Key('section_cafe'));
-      // Just inside the top-start corner: no text or icon there.
-      await tester.tapAt(tester.getTopRight(card) + const Offset(-3, 3));
-      await tester.tapAt(tester.getBottomLeft(card) + const Offset(3, -3));
-      expect(opened, ['cafe', 'cafe']);
-    });
-
-    testWidgets('a card reads as one button: name and count', (tester) async {
-      final handle = tester.ensureSemantics();
-      await pumpView(tester, hub: _hub());
-      expect(
-        find.bySemanticsLabel(
-          l10nEn.sectionCardLabel('Drinks', l10nEn.sectionItemCount(12)),
-        ),
-        findsOneWidget,
-      );
-      expect(
-        find.bySemanticsLabel(
-          l10nEn.sectionCardLabel('Desserts', l10nEn.comingSoonBadge),
-        ),
-        findsOneWidget,
-      );
-      handle.dispose();
-    });
-
-    testWidgets('search opens; it stays pinned on top when scrolled', (
-      tester,
-    ) async {
-      var searches = 0;
-      await pumpView(tester, hub: _hub(more: true), onSearch: () => searches++);
-      await tester.tap(find.byKey(const Key('home_search')));
-      expect(searches, 1);
-
-      final list = find.byKey(const Key('home_list'));
-      await tester.drag(list, const Offset(0, -400));
-      await tester.pumpAndSettle();
-      final pinned = find.byKey(const Key('home_search_pinned'));
-      expect(pinned, findsOneWidget);
-      await tester.tap(
-        find.descendant(of: pinned, matching: find.byType(SearchField)),
-      );
-      expect(searches, 2);
-
-      await tester.drag(list, const Offset(0, 2000));
-      await tester.pumpAndSettle();
-      expect(pinned, findsNothing);
-    });
-
-    testWidgets('loading, and no sections at all', (tester) async {
-      await pumpView(tester);
-      expect(find.bySemanticsLabel(l10nEn.loading), findsOneWidget);
-
-      await pumpView(
-        tester,
-        hub: const BuildHub()(
-          items: const [],
-          categories: const [],
-          today: _day,
-        ),
-      );
-      expect(find.text(l10nEn.browseEmpty), findsOneWidget);
-      await tester.expectAccessible();
-    });
-
-    testWidgets('nothing published yet: every section is coming soon', (
-      tester,
-    ) async {
-      await pumpView(tester, hub: _hub(items: const []));
-      expect(find.byKey(const Key('item_of_the_day')), findsNothing);
-      expect(find.byKey(const Key('section_soon_badge')), findsNWidgets(2));
-    });
-
-    for (final (name, locale, mode) in [
-      ('Arabic', const Locale('ar'), ThemeMode.light),
-      ('dark', const Locale('en'), ThemeMode.dark),
-      ('Arabic dark', const Locale('ar'), ThemeMode.dark),
-    ]) {
-      testWidgets('works in $name', (tester) async {
-        await pumpView(
-          tester,
-          hub: _hub(more: true),
-          locale: locale,
-          mode: mode,
-        );
-        expect(tester.takeException(), isNull);
-        await tester.expectAccessible();
-      });
-    }
-
-    testWidgets('Arabic: names in Arabic, RTL, «جاي قريب»', (tester) async {
-      await pumpView(tester, hub: _hub(), locale: const Locale('ar'));
       expect(find.text('مشروبات'), findsOneWidget);
-      expect(find.text('جاي قريب'), findsOneWidget);
-      expect(
-        Directionality.of(tester.element(find.text('مشروبات'))),
-        TextDirection.rtl,
-      );
-      // The card's picture is at the start: the right edge in Arabic.
-      final card = find.byKey(const Key('section_cafe'));
+      expect(find.text('حلويات'), findsOneWidget);
       expect(
         tester.getCenter(find.text('مشروبات')).dx,
-        lessThan(tester.getCenter(card).dx + tester.getSize(card).width / 2),
+        greaterThan(tester.getCenter(find.text('حلويات')).dx),
       );
     });
-
-    testWidgets('small phone with 1.6× text: no overflow', (tester) async {
-      tester.platformDispatcher.textScaleFactorTestValue = 1.6;
-      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-      await pumpView(tester, hub: _hub(more: true), locale: const Locale('ar'));
-      tester.view.physicalSize = const Size(960, 1704); // 320×568
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      // Cards stack in one column on a phone.
-      final cafe = tester.getTopLeft(find.byKey(const Key('section_cafe')));
-      final desserts = tester.getTopLeft(
-        find.byKey(const Key('section_desserts')),
-      );
-      expect(desserts.dy, greaterThan(cafe.dy));
-      await tester.expectAccessible();
-    });
-
-    for (final locale in const [Locale('en'), Locale('ar')]) {
-      for (final size in const [Size(1032, 1376), Size(1376, 1032)]) {
-        testWidgets('iPad ${size.width.toInt()}×${size.height.toInt()} '
-            '(${locale.languageCode}): the band, the item of the day and the '
-            'sections share their start edge', (tester) async {
-          await pumpView(tester, hub: _hub(more: true), locale: locale);
-          tester.view
-            ..physicalSize = size * 2
-            ..devicePixelRatio = 2;
-          await tester.pumpAndSettle();
-          final rtl = locale.languageCode == 'ar';
-          double start(Finder f) =>
-              rtl ? tester.getTopRight(f).dx : tester.getTopLeft(f).dx;
-          final l10n = lookupAppLocalizations(locale);
-          final edge = start(find.byKey(const Key('item_of_the_day')));
-          for (final f in [
-            find.text(l10n.appEyebrow),
-            find.byKey(const Key('home_search')),
-            find.text(l10n.hubSectionsTitle),
-            find.byKey(const Key('section_cafe')),
-          ]) {
-            expect(start(f), closeTo(edge, 0.5), reason: '$f');
-          }
-          // The item of the day and the grid also end together.
-          double end(Finder f) =>
-              rtl ? tester.getTopLeft(f).dx : tester.getTopRight(f).dx;
-          final cardEnds = [
-            for (final slug in ['cafe', 'desserts', 'terms'])
-              end(find.byKey(Key('section_$slug'))),
-          ];
-          final gridEnd = rtl
-              ? cardEnds.reduce(math.min)
-              : cardEnds.reduce(math.max);
-          expect(
-            end(find.byKey(const Key('item_of_the_day'))),
-            closeTo(gridEnd, 0.5),
-          );
-        });
-      }
-    }
-
-    for (final (name, size, columns) in [
-      ('iPad portrait', const Size(1032, 1376), 2),
-      ('iPad landscape', const Size(1376, 1032), 3),
-    ]) {
-      testWidgets('$name: $columns columns, search at a readable width', (
-        tester,
-      ) async {
-        await pumpView(tester, hub: _hub(more: true));
-        tester.view
-          ..physicalSize = size * 2
-          ..devicePixelRatio = 2;
-        await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull);
-        final tops = {
-          for (final slug in ['cafe', 'desserts', 'terms'])
-            tester.getTopLeft(find.byKey(Key('section_$slug'))).dy,
-        };
-        // Cards in one row share a top: 2 columns → 2 rows for 3 cards.
-        expect(tops, hasLength(columns == 2 ? 2 : 1));
-        expect(
-          tester.getSize(find.byKey(const Key('home_search'))).width,
-          lessThanOrEqualTo(AppDimens.readableWidth),
-        );
-      });
-    }
   });
 
   group(BrowsePage, () {
-    testWidgets('reads the sections from the device', (tester) async {
+    testWidgets('loading, then the first section with items', (tester) async {
       await tester.pumpApp(
         ProviderScope(
           overrides: [
@@ -322,9 +167,153 @@ void main() {
           child: const BrowsePage(),
         ),
       );
+      expect(find.bySemanticsLabel(l10nEn.loading), findsOneWidget);
       await tester.pumpAndSettle();
-      expect(find.byType(SectionCard), findsNWidgets(2));
-      expect(find.text(l10nEn.sectionItemCount(12)), findsOneWidget);
+      expect(find.bySemanticsLabel(l10nEn.loading), findsNothing);
     });
+
+    testWidgets('the band, the section tabs, then that section’s items', (
+      tester,
+    ) async {
+      await _pumpHome(tester);
+      expect(find.text(l10nEn.appEyebrow), findsOneWidget);
+      expect(find.byKey(const Key('home_search')), findsOneWidget);
+      // Both sections have a tab; Drinks (the first with items) is picked.
+      expect(_tab('Drinks'), findsOneWidget);
+      expect(_tab('Desserts'), findsOneWidget);
+      expect(
+        tester.getSemantics(_tab('Drinks')).flagsCollection.isSelected,
+        Tristate.isTrue,
+      );
+      // The body is the section’s: item of the day, its chips and cards.
+      expect(find.byKey(const Key('item_of_the_day')), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('category_chips')),
+          matching: find.text('Coffee'),
+        ),
+        findsOneWidget,
+      );
+      expect(find.byType(ItemCard), findsWidgets);
+      // Home has no back button.
+      expect(find.byKey(const Key('section_back')), findsNothing);
+      await tester.expectAccessible();
+    });
+
+    testWidgets('a coming-soon tab says so, and Drinks brings the items back', (
+      tester,
+    ) async {
+      await _pumpHome(tester);
+      await tester.tap(_tab('Desserts'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('browse_coming_soon')), findsOneWidget);
+      expect(find.byType(ItemCard), findsNothing);
+      expect(find.byKey(const Key('item_of_the_day')), findsNothing);
+      expect(find.byKey(const Key('section_back')), findsNothing);
+      // The tabs stay, so there is always a way out.
+      expect(_tab('Drinks'), findsOneWidget);
+      expect(
+        tester.getSemantics(_tab('Desserts')).flagsCollection.isSelected,
+        Tristate.isTrue,
+      );
+      await tester.expectAccessible();
+
+      await tester.tap(_tab('Drinks'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('browse_coming_soon')), findsNothing);
+      expect(find.byType(ItemCard), findsWidgets);
+    });
+
+    testWidgets('picking another section starts it again at the top', (
+      tester,
+    ) async {
+      await _pumpHome(tester);
+      final list = find.byKey(const Key('browse_list'));
+      await tester.drag(list, const Offset(0, -1500));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('category_chips_pinned')), findsOneWidget);
+
+      // The tabs scrolled away with the band: scroll up to reach them.
+      await tester.drag(list, const Offset(0, 3000));
+      await tester.pumpAndSettle();
+      await tester.tap(_tab('Desserts'));
+      await tester.pumpAndSettle();
+      await tester.tap(_tab('Drinks'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('category_chips_pinned')), findsNothing);
+      expect(find.byKey(const Key('item_of_the_day')), findsOneWidget);
+    });
+
+    testWidgets('a chip still scrolls to its category on Home', (tester) async {
+      await _pumpHome(tester);
+      await tester.tap(
+        find.descendant(
+          of: find.byKey(const Key('category_chips')),
+          matching: find.text('Iced coffee'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('category_chips_pinned')), findsOneWidget);
+      expect(find.byKey(const Key('section_back_pinned')), findsNothing);
+      expect(find.byKey(const Key('section_search_pinned')), findsOneWidget);
+    });
+
+    testWidgets('nothing published yet: every section is coming soon', (
+      tester,
+    ) async {
+      await _pumpHome(tester, items: const []);
+      expect(find.byKey(const Key('browse_coming_soon')), findsOneWidget);
+      expect(find.byKey(const Key('item_of_the_day')), findsNothing);
+      expect(_tab('Drinks'), findsOneWidget);
+      expect(_tab('Desserts'), findsOneWidget);
+    });
+
+    for (final (name, locale, mode) in [
+      ('Arabic', const Locale('ar'), ThemeMode.light),
+      ('dark', const Locale('en'), ThemeMode.dark),
+      ('Arabic dark', const Locale('ar'), ThemeMode.dark),
+    ]) {
+      testWidgets('works in $name', (tester) async {
+        await _pumpHome(tester, locale: locale, mode: mode);
+        expect(tester.takeException(), isNull);
+        await tester.expectAccessible();
+      });
+    }
+
+    testWidgets('Arabic: names in Arabic, RTL', (tester) async {
+      await _pumpHome(tester, locale: const Locale('ar'));
+      expect(_tab('مشروبات'), findsOneWidget);
+      expect(_tab('حلويات'), findsOneWidget);
+      expect(
+        Directionality.of(tester.element(_tab('مشروبات'))),
+        TextDirection.rtl,
+      );
+    });
+
+    testWidgets('small phone with 1.6× text: no overflow', (tester) async {
+      tester.platformDispatcher.textScaleFactorTestValue = 1.6;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await _pumpHome(tester, locale: const Locale('ar'));
+      tester.view.physicalSize = const Size(960, 1704); // 320×568
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      await tester.expectAccessible();
+    });
+
+    for (final (name, size) in [
+      ('iPad portrait', const Size(1032, 1376)),
+      ('iPad landscape', const Size(1376, 1032)),
+    ]) {
+      testWidgets('$name: no overflow, tabs and cards in view', (tester) async {
+        await _pumpHome(tester);
+        tester.view
+          ..physicalSize = size * 2
+          ..devicePixelRatio = 2;
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(_tab('Drinks'), findsOneWidget);
+        expect(find.byType(ItemCard), findsWidgets);
+      });
+    }
   });
 }
