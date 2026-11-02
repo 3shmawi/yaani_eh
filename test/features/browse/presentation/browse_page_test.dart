@@ -4,39 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yaani_eh/core/widgets/item_card.dart';
-import 'package:yaani_eh/features/browse/domain/usecases/build_browse.dart';
 import 'package:yaani_eh/features/browse/presentation/browse_controller.dart';
 import 'package:yaani_eh/features/browse/presentation/browse_page.dart';
-import 'package:yaani_eh/features/browse/presentation/widgets/section_tabs.dart';
-import 'package:yaani_eh/features/catalog_sync/data/models/catalog_rows.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
 
-import '../../../helpers/fake_catalog_remote.dart';
 import '../../../helpers/fake_catalog_repository.dart';
 import '../../../helpers/pump_app.dart';
 
 final _day = DateTime(2026, 10, 30);
-final List<CatalogCategory> _categories = [
-  for (final r in sampleCategories()) CatalogRows.category(r)!,
-];
-
-/// [n] more sections from the backend after Drinks and Desserts.
-List<CatalogCategory> _sections(int n) => [
-  ..._categories,
-  for (var i = 0; i < n; i++)
-    CatalogCategory(
-      id: fakeId(3000 + i),
-      slug: 'extra_$i',
-      nameAr: 'قسم $i',
-      nameEn: 'Section $i',
-      icon: 'book',
-      sortOrder: 2 + i,
-    ),
-];
-
-HubModel _hub({int more = 0}) =>
-    const BuildHub()(items: sampleCatalogItems(), categories: _sections(more));
 
 Future<void> _pumpHome(
   WidgetTester tester, {
@@ -66,94 +42,6 @@ Finder _tab(String label) => find.descendant(
 );
 
 void main() {
-  group(SectionTabs, () {
-    Future<void> pumpTabs(
-      WidgetTester tester, {
-      required HubModel hub,
-      String? selected,
-      ValueChanged<HubSection>? onSelected,
-      Locale locale = const Locale('en'),
-    }) => tester.pumpApp(
-      SectionTabs(
-        sections: hub.sections,
-        selectedSlug: selected,
-        onSelected: onSelected ?? (_) {},
-      ),
-      locale: locale,
-    );
-
-    testWidgets('a tab per section, the picked one selected', (tester) async {
-      await pumpTabs(tester, hub: _hub(), selected: 'cafe');
-      expect(find.text('Drinks'), findsOneWidget);
-      expect(find.text('Desserts'), findsOneWidget);
-      expect(
-        tester.getSemantics(find.text('Drinks')).flagsCollection.isSelected,
-        Tristate.isTrue,
-      );
-      expect(
-        tester.getSemantics(find.text('Desserts')).flagsCollection.isSelected,
-        Tristate.isFalse,
-      );
-    });
-
-    testWidgets('tapping a tab reports its section, coming soon included', (
-      tester,
-    ) async {
-      final picked = <String>[];
-      await pumpTabs(
-        tester,
-        hub: _hub(),
-        selected: 'cafe',
-        onSelected: (s) => picked.add(s.section.slug),
-      );
-      await tester.tap(find.text('Desserts'));
-      await tester.tap(find.text('Drinks'));
-      expect(picked, ['desserts', 'cafe']);
-    });
-
-    testWidgets('eight sections scroll sideways, the last one is reachable', (
-      tester,
-    ) async {
-      final picked = <String>[];
-      await pumpTabs(
-        tester,
-        hub: _hub(more: 6),
-        selected: 'cafe',
-        onSelected: (s) => picked.add(s.section.slug),
-      );
-      expect(tester.takeException(), isNull);
-      // Past the screen's edge: not even built until the row is dragged.
-      expect(find.text('Section 5'), findsNothing);
-      await tester.dragUntilVisible(
-        find.text('Section 5'),
-        find.byType(ListView),
-        const Offset(-120, 0),
-      );
-      // Dragged on, clear of the screen's edge.
-      await tester.drag(find.byType(ListView), const Offset(-100, 0));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Section 5'));
-      expect(picked, ['extra_5']);
-    });
-
-    testWidgets('Arabic: names in Arabic, the first tab at the right', (
-      tester,
-    ) async {
-      await pumpTabs(
-        tester,
-        hub: _hub(),
-        selected: 'cafe',
-        locale: const Locale('ar'),
-      );
-      expect(find.text('مشروبات'), findsOneWidget);
-      expect(find.text('حلويات'), findsOneWidget);
-      expect(
-        tester.getCenter(find.text('مشروبات')).dx,
-        greaterThan(tester.getCenter(find.text('حلويات')).dx),
-      );
-    });
-  });
-
   group(BrowsePage, () {
     testWidgets('loading, then the first section with items', (tester) async {
       await tester.pumpApp(
@@ -246,12 +134,19 @@ void main() {
 
     testWidgets('a chip still scrolls to its category on Home', (tester) async {
       await _pumpHome(tester);
-      await tester.tap(
-        find.descendant(
-          of: find.byKey(const Key('category_chips')),
-          matching: find.text('Iced coffee'),
-        ),
+      // One row with the section tabs: the categories are further along it.
+      final iced = find.descendant(
+        of: find.byKey(const Key('category_chips')),
+        matching: find.text('Iced coffee'),
       );
+      await tester.dragUntilVisible(
+        iced,
+        find.byKey(const Key('category_chips')),
+        const Offset(-120, 0),
+      );
+      await tester.ensureVisible(iced);
+      await tester.pumpAndSettle();
+      await tester.tap(iced);
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('category_chips_pinned')), findsOneWidget);
       expect(find.byKey(const Key('section_back_pinned')), findsNothing);

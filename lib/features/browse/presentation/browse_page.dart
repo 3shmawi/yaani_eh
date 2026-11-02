@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:yaani_eh/core/router/app_routes.dart';
 import 'package:yaani_eh/features/browse/presentation/browse_controller.dart';
 import 'package:yaani_eh/features/browse/presentation/section_view.dart';
-import 'package:yaani_eh/features/browse/presentation/widgets/section_tabs.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/favorites/presentation/favorites_controller.dart';
 import 'package:yaani_eh/features/favorites/presentation/item_preview.dart';
@@ -25,6 +24,7 @@ class BrowsePage extends ConsumerWidget {
         unawaited(context.push<void>(AppRoutes.item(item.slug)));
     final hub = ref.watch(hubProvider);
     final slug = ref.watch(homeSectionSlugProvider);
+    final arabic = Localizations.localeOf(context).languageCode == 'ar';
     return SectionView(
       home: true,
       resetKey: slug,
@@ -33,18 +33,23 @@ class BrowsePage extends ConsumerWidget {
         (_, null) => const SectionNone(),
         (_, final slug?) => ref.watch(sectionProvider(slug)),
       },
-      tabs: hub == null || hub.sections.isEmpty
+      tabs: hub == null
           ? null
-          : SectionTabs(
-              sections: hub.sections,
-              selectedSlug: slug,
-              onSelected: (section) {
-                trackSectionOpened(section);
-                ref
-                    .read(homePickedSectionProvider.notifier)
-                    .pick(section.section.slug);
-              },
-            ),
+          : [
+              for (final section in hub.sections)
+                (
+                  id: section.section.slug,
+                  label: arabic
+                      ? section.section.nameAr
+                      : section.section.nameEn,
+                ),
+            ],
+      selectedTab: slug,
+      onTabSelected: (slug) {
+        final section = hub?.sections.firstWhere((s) => s.section.slug == slug);
+        if (section != null) trackSectionOpened(section);
+        ref.read(homePickedSectionProvider.notifier).pick(slug);
+      },
       onJumpToCategory: trackCategoryJump,
       onOpenSearch: () => unawaited(context.push<void>(AppRoutes.search)),
       onOpenItem: open,

@@ -6,6 +6,7 @@ import 'package:yaani_eh/core/theme/app_icons.dart';
 import 'package:yaani_eh/core/theme/app_text_styles.dart';
 import 'package:yaani_eh/core/ui/app_ui.dart';
 import 'package:yaani_eh/core/widgets/category_chips.dart';
+import 'package:yaani_eh/core/widgets/expanding_search_bar.dart';
 import 'package:yaani_eh/core/widgets/header_band.dart';
 import 'package:yaani_eh/core/widgets/item_grid.dart';
 import 'package:yaani_eh/core/widgets/offline_banner.dart';
@@ -38,6 +39,8 @@ class SectionView extends StatefulWidget {
     this.onBack,
     this.home = false,
     this.tabs,
+    this.selectedTab,
+    this.onTabSelected,
     this.resetKey,
     this.onJumpToCategory,
     this.onOpenItem,
@@ -56,8 +59,10 @@ class SectionView extends StatefulWidget {
   /// Home: the app's name, tagline and search field in the band.
   final bool home;
 
-  /// Home's section tabs, in the band above the chips.
-  final Widget? tabs;
+  /// Home's section tabs: drawn in the same row as the chips, before them.
+  final List<ChipOption>? tabs;
+  final String? selectedTab;
+  final ValueChanged<String>? onTabSelected;
 
   /// When it changes (another section on Home) the list goes back to the
   /// top and its first page.
@@ -268,11 +273,16 @@ class _SectionViewState extends State<SectionView> {
     };
     final active = _active ?? chips.firstOrNull?.id;
 
-    Widget chipRow({Key? key}) => CategoryChips(
+    Widget chipRow({Key? key, bool withTabs = false}) => CategoryChips(
       key: key,
       options: [for (final c in chips) (id: c.id, label: name(c))],
       selectedId: active,
       onSelected: (id) => _jumpTo(chips.firstWhere((c) => c.id == id)),
+      leading: withTabs ? widget.tabs ?? const [] : const [],
+      leadingSelectedId: widget.selectedTab,
+      onLeadingSelected: (id) {
+        if (id != null) widget.onTabSelected?.call(id);
+      },
     );
 
     final search = widget.onOpenSearch;
@@ -297,9 +307,17 @@ class _SectionViewState extends State<SectionView> {
                   SearchField(key: const Key('home_search'), onTap: search),
                   SizedBox(height: AppDimens.space2),
                 ],
-                if (widget.tabs case final tabs?)
-                  _EdgeToEdge(key: const Key('section_tabs'), child: tabs),
-                ?chipsInBand,
+                // The section tabs and the chips are one row.
+                _EdgeToEdge(
+                  key: const Key('section_tabs'),
+                  child: KeyedSubtree(
+                    key: _chipsKey,
+                    child: chipRow(
+                      key: const Key('category_chips'),
+                      withTabs: true,
+                    ),
+                  ),
+                ),
               ],
             ),
           )
@@ -434,20 +452,35 @@ class _SectionViewState extends State<SectionView> {
               end: 0,
               child: PinnedBar(
                 key: const Key('section_pinned'),
-                child: Row(
-                  children: [
-                    SizedBox(width: AppDimens.space2),
-                    ?_backButton(key: const Key('section_back_pinned')),
-                    Expanded(
-                      child: SizedBox(
-                        height: AppDimens.touchTarget,
-                        child: chipRow(key: const Key('category_chips_pinned')),
+                child: widget.onOpenSearch == null
+                    ? Row(
+                        children: [
+                          SizedBox(width: AppDimens.space2),
+                          ?_backButton(key: const Key('section_back_pinned')),
+                          Expanded(
+                            child: SizedBox(
+                              height: AppDimens.touchTarget,
+                              child: chipRow(
+                                key: const Key('category_chips_pinned'),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: AppDimens.space2),
+                        ],
+                      )
+                    // The search button grows into the field, like iOS.
+                    : ExpandingSearchBar(
+                        leading: _backButton(
+                          key: const Key('section_back_pinned'),
+                        ),
+                        chips: SizedBox(
+                          height: AppDimens.touchTarget,
+                          child: chipRow(
+                            key: const Key('category_chips_pinned'),
+                          ),
+                        ),
+                        onOpen: widget.onOpenSearch!,
                       ),
-                    ),
-                    ?_searchButton(key: const Key('section_search_pinned')),
-                    SizedBox(width: AppDimens.space2),
-                  ],
-                ),
               ),
             ),
         ],

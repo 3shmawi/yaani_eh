@@ -11,11 +11,18 @@ typedef ChipOption = ({String? id, String label});
 /// CategoryChips). Over the header band: clear glass, selected = solid
 /// warm milk (`AppColors.selected`). Scrolls edge to edge; RTL starts from
 /// the right.
+///
+/// Home puts its section tabs in the same row: [leading] is a second
+/// single-select group drawn first, a thin divider between the two, so
+/// both scroll together as one row.
 class CategoryChips extends StatelessWidget {
   const new({
     required this.options,
     required this.selectedId,
     required this.onSelected,
+    this.leading = const [],
+    this.leadingSelectedId,
+    this.onLeadingSelected,
     this.tone = GlassTone.dark,
     super.key,
   });
@@ -23,31 +30,61 @@ class CategoryChips extends StatelessWidget {
   final List<ChipOption> options;
   final String? selectedId;
   final ValueChanged<String?> onSelected;
+
+  /// A first group before the divider (Home's sections).
+  final List<ChipOption> leading;
+  final String? leadingSelectedId;
+  final ValueChanged<String?>? onLeadingSelected;
   final GlassTone tone;
 
   @override
   Widget build(BuildContext context) {
+    // One row: the leading group, a divider, then the options.
+    final items = <Widget Function()>[
+      for (final option in leading)
+        () => _Chip(
+          label: option.label,
+          selected: option.id == leadingSelectedId,
+          tone: tone,
+          onTap: () => onLeadingSelected?.call(option.id),
+        ),
+      if (leading.isNotEmpty && options.isNotEmpty)
+        () => const _Divider(key: Key('chips_divider')),
+      for (final option in options)
+        () => _Chip(
+          label: option.label,
+          selected: option.id == selectedId,
+          tone: tone,
+          onTap: () => onSelected(option.id),
+        ),
+    ];
     return SizedBox(
       height: AppDimens.touchTarget,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsetsDirectional.symmetric(horizontal: AppDimens.space4),
-        itemCount: options.length,
+        itemCount: items.length,
         separatorBuilder: (_, _) => SizedBox(width: AppDimens.space2),
-        itemBuilder: (context, i) {
-          final option = options[i];
-          return _Chip(
-            label: option.label,
-            selected: option.id == selectedId,
-            tone: tone,
-            onTap: () {
-              onSelected(option.id);
-            },
-          );
-        },
+        itemBuilder: (context, i) => items[i](),
       ),
     );
   }
+}
+
+/// A thin line between two groups of chips.
+class _Divider extends StatelessWidget {
+  const new({super.key});
+
+  @override
+  Widget build(BuildContext context) => ExcludeSemantics(
+    child: Center(
+      child: Container(
+        width: 1,
+        height: AppDimens.chipHeight * 0.6,
+        color: AppColors.onHeaderMuted.withValues(alpha: 0.5),
+      ),
+    ),
+  );
 }
 
 class _Chip extends StatelessWidget {

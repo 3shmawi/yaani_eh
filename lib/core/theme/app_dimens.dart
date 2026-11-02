@@ -150,6 +150,9 @@ abstract final class AppMotion {
   /// A list scrolling to a category after its chip is tapped.
   static const jump = Duration(milliseconds: 300);
 
+  /// The pinned bar's search button growing into the search field.
+  static const searchExpand = Duration(milliseconds: 260);
+
   /// The long-press preview growing into place.
   static const previewFrom = 0.94;
 

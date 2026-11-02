@@ -254,7 +254,11 @@ class ItemView extends StatelessWidget {
                           AppDimens.space4,
                           AppDimens.space6,
                         ),
-                        child: pronounce,
+                        // Full width, like the text column below it.
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: pronounce,
+                        ),
                       ),
                     ),
                   ),

@@ -74,6 +74,7 @@ class ItemOfTheDay extends StatelessWidget {
                       ),
                       SizedBox(height: 56.h),
                       Padding(
+                        // A small label at the bottom; the photo is the star.
                         padding: EdgeInsetsDirectional.fromSTEB(
                           AppDimens.space2,
                           0,
@@ -81,23 +82,23 @@ class ItemOfTheDay extends StatelessWidget {
                           AppDimens.space2,
                         ),
                         child: AppGlass(
-                          radius: AppDimens.radiusMd,
+                          radius: AppDimens.radiusSm,
                           padding: EdgeInsetsDirectional.symmetric(
-                            horizontal: AppDimens.space3,
-                            vertical: AppDimens.space2,
+                            horizontal: AppDimens.space2,
+                            vertical: AppDimens.space1,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Wrap(
-                                spacing: AppDimens.space2,
+                                spacing: AppDimens.space1,
                                 crossAxisAlignment: WrapCrossAlignment.end,
                                 children: [
                                   Text(
                                     item.menuName,
                                     style: AppTextStyles.forText(
                                       item.menuName,
-                                      TextRole.headline,
+                                      TextRole.cardTitle,
                                     ),
                                   ),
                                   Text(
@@ -113,7 +114,7 @@ class ItemOfTheDay extends StatelessWidget {
                                 explanation,
                                 style: AppTextStyles.forText(
                                   explanation,
-                                  TextRole.callout,
+                                  TextRole.cardBody,
                                 ),
                               ),
                             ],
