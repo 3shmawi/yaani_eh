@@ -8,10 +8,10 @@ environment:
 
 dependencies:
   audio_session: 0.2.4
-  cached_network_image: 4.0.4
+  cached_network_image: 4.0.6
   flutter_cache_manager: 3.4.6
   connectivity_plus: ^7.3.2
-  drift: 2.35.2
+  drift: 2.35.3
   drift_flutter: 0.3.1
   flutter:
     sdk: flutter
@@ -19,10 +19,10 @@ dependencies:
     sdk: flutter
   flutter_riverpod: ^3.4.3
   flutter_screenutil: ^5.9.3
-  go_router: ^18.1.1
+  go_router: ^18.1.2
   intl: ^0.20.3
   just_audio: 0.10.6
-  liquid_glass_widgets: ^1.16.0
+  liquid_glass_widgets: ^1.16.1
   meta: ^1.19.0
   package_info_plus: ^10.2.2
   posthog_flutter: ^5.58.0
@@ -44,8 +44,8 @@ dev_dependencies:
   sentry_dart_plugin: ^3.4.0
   flutter_native_splash: ^2.4.8
   flutter_launcher_icons: ^0.14.4
-  drift_dev: 2.35.1
-  build_runner: 2.16.2
+  drift_dev: 2.35.2
+  build_runner: 2.17.1
 
 flutter:
   assets:
