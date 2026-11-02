@@ -20,8 +20,11 @@ tabs; a preview row per section; and each again at eight sections):
 
 ## Decision
 **A.** Home opens on the first section with items. The band holds the app's
-name, search and **one** sideways-scrolling row: the section tabs, a thin
-divider, then that section's category chips (`CategoryChips(leading:)`). The body below is the section page's body, unchanged: item of the
+name, search and the section tabs (with a grid button that lists all
+sections); the open section's category chips sit under the band, on the
+page, outlined, with «الكل» first (back to the top). Sections and
+categories are different things, so they don't share a row (tried, and
+dropped: the categories ended up past the screen's edge). The body below is the section page's body, unchanged: item of the
 day, categories, cards.
 
 - A section is still data. One with no items has its tab and says
@@ -44,9 +47,5 @@ don't change, only what sits above them.
 
 ## Not done
 - A second chip style for the tabs (they look like the category chips: the
-  selected one is warm milk, the others clear glass). The divider tells the
-  two groups apart for now. On a phone the categories can sit past the
-  screen's edge while there are several sections: the row scrolls, and the
-  chips are also in the pinned bar once the band scrolls away.
-- «كل الأقسام» grid button (opens every section at once): not needed until
-  the row needs it.
+  selected one is warm milk, the others clear glass). Position (the row
+  above) tells them apart for now; to be reviewed with real content.

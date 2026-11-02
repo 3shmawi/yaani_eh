@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:yaani_eh/core/theme/app_colors.dart';
@@ -59,7 +61,7 @@ class SectionView extends StatefulWidget {
   /// Home: the app's name, tagline and search field in the band.
   final bool home;
 
-  /// Home's section tabs: drawn in the same row as the chips, before them.
+  /// Home's section tabs: a row of their own above the chips.
   final List<ChipOption>? tabs;
   final String? selectedTab;
   final ValueChanged<String>? onTabSelected;
@@ -180,7 +182,7 @@ class _SectionViewState extends State<SectionView> {
         position.pixels >
             chipsAt + AppDimens.touchTarget - MediaQuery.paddingOf(context).top;
 
-    var active = chips.first.id;
+    var active = widget.home ? null : chips.first.id;
     if (position.pixels >= position.maxScrollExtent - 1 &&
         _limit >= (_model?.count ?? 0)) {
       // The last categories may never reach the top: at the end, it's
@@ -221,6 +223,17 @@ class _SectionViewState extends State<SectionView> {
     _scrollTo(category);
   }
 
+  /// «الكل»: back to the top of the list.
+  void _jumpToTop() {
+    if (!_scroll.hasClients) return;
+    setState(() => _active = null);
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _scroll.jumpTo(0);
+    } else {
+      _scroll.animateTo(0, duration: AppMotion.jump, curve: AppMotion.enter);
+    }
+  }
+
   void _scrollTo(CatalogCategory category) {
     final at = _offsetOf(_keyFor(category.id));
     if (at == null || !_scroll.hasClients) return;
@@ -251,6 +264,25 @@ class _SectionViewState extends State<SectionView> {
           onPressed: widget.onBack!,
         );
 
+  /// The button before the tabs: every section in a list.
+  void _showSections(List<ChipOption> tabs) {
+    unawaited(
+      showAppSheet(
+        context,
+        closeLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+        builder: (sheet) => _SectionsList(
+          title: context.l10n.allSections,
+          tabs: tabs,
+          selected: widget.selectedTab,
+          onPick: (id) {
+            Navigator.of(sheet).pop();
+            widget.onTabSelected?.call(id);
+          },
+        ),
+      ),
+    );
+  }
+
   Widget? _searchButton({Key? key}) => widget.onOpenSearch == null
       ? null
       : AppIconButton(
@@ -271,19 +303,23 @@ class _SectionViewState extends State<SectionView> {
       SectionReady(:final model) => model,
       _ => null,
     };
-    final active = _active ?? chips.firstOrNull?.id;
+    // Home starts on «الكل» (the top of the list); a section page on its
+    // first category.
+    final active = _active ?? (widget.home ? null : chips.firstOrNull?.id);
 
-    Widget chipRow({Key? key, bool withTabs = false}) => CategoryChips(
-      key: key,
-      options: [for (final c in chips) (id: c.id, label: name(c))],
-      selectedId: active,
-      onSelected: (id) => _jumpTo(chips.firstWhere((c) => c.id == id)),
-      leading: withTabs ? widget.tabs ?? const [] : const [],
-      leadingSelectedId: widget.selectedTab,
-      onLeadingSelected: (id) {
-        if (id != null) widget.onTabSelected?.call(id);
-      },
-    );
+    Widget chipRow({Key? key, ChipsStyle style = ChipsStyle.band}) =>
+        CategoryChips(
+          key: key,
+          style: style,
+          options: [
+            if (widget.home) (id: null, label: l10n.chipAll),
+            for (final c in chips) (id: c.id, label: name(c)),
+          ],
+          selectedId: active,
+          onSelected: (id) => id == null
+              ? _jumpToTop()
+              : _jumpTo(chips.firstWhere((c) => c.id == id)),
+        );
 
     final search = widget.onOpenSearch;
     final chipsInBand = chips.isEmpty
@@ -307,17 +343,34 @@ class _SectionViewState extends State<SectionView> {
                   SearchField(key: const Key('home_search'), onTap: search),
                   SizedBox(height: AppDimens.space2),
                 ],
-                // The section tabs and the chips are one row.
-                _EdgeToEdge(
-                  key: const Key('section_tabs'),
-                  child: KeyedSubtree(
-                    key: _chipsKey,
-                    child: chipRow(
-                      key: const Key('category_chips'),
-                      withTabs: true,
+                // The sections: a grid button that lists them all, then the
+                // tabs, in a row that scrolls sideways.
+                if (widget.tabs case final tabs?)
+                  _EdgeToEdge(
+                    key: const Key('section_tabs'),
+                    child: Row(
+                      children: [
+                        SizedBox(width: AppDimens.space4),
+                        AppIconButton(
+                          key: const Key('all_sections'),
+                          icon: AppIcons.grid,
+                          tooltip: l10n.allSections,
+                          tone: GlassTone.dark,
+                          onPressed: () => _showSections(tabs),
+                        ),
+                        Expanded(
+                          child: CategoryChips(
+                            options: tabs,
+                            selectedId: widget.selectedTab,
+                            height: AppDimens.controlHeight,
+                            onSelected: (id) {
+                              if (id != null) widget.onTabSelected?.call(id);
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
               ],
             ),
           )
@@ -441,6 +494,22 @@ class _SectionViewState extends State<SectionView> {
               slivers: [
                 SliverToBoxAdapter(child: header),
                 const SliverToBoxAdapter(child: OfflineBanner()),
+                // Home: the categories sit on the page, under the band.
+                if (widget.home && chips.isNotEmpty)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsetsDirectional.only(
+                        top: AppDimens.space3,
+                      ),
+                      child: KeyedSubtree(
+                        key: _chipsKey,
+                        child: chipRow(
+                          key: const Key('category_chips'),
+                          style: ChipsStyle.surface,
+                        ),
+                      ),
+                    ),
+                  ),
                 body,
               ],
             ),
@@ -524,4 +593,95 @@ class _CategoryHeader extends StatelessWidget {
       ).copyWith(color: context.palette.ink),
     ),
   );
+}
+
+/// «كل الأقسام»: the sections as a list, the open one ticked.
+class _SectionsList extends StatelessWidget {
+  const new({
+    required this.title,
+    required this.tabs,
+    required this.selected,
+    required this.onPick,
+  });
+
+  final String title;
+  final List<ChipOption> tabs;
+  final String? selected;
+  final ValueChanged<String> onPick;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: EdgeInsetsDirectional.fromSTEB(
+            AppDimens.space5,
+            AppDimens.space2,
+            AppDimens.space5,
+            AppDimens.space2,
+          ),
+          child: Semantics(
+            header: true,
+            child: Text(
+              title,
+              style: context.text(TextRole.headline).copyWith(color: p.ink),
+            ),
+          ),
+        ),
+        Flexible(
+          child: ListView(
+            shrinkWrap: true,
+            padding: EdgeInsetsDirectional.only(bottom: AppDimens.space4),
+            children: [
+              for (final tab in tabs)
+                Semantics(
+                  button: true,
+                  selected: tab.id == selected,
+                  label: tab.label,
+                  onTap: () => onPick(tab.id!),
+                  child: ExcludeSemantics(
+                    child: InkWell(
+                      key: Key('sections_${tab.id}'),
+                      onTap: () => onPick(tab.id!),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          minHeight: AppDimens.touchTarget,
+                        ),
+                        child: Padding(
+                          padding: EdgeInsetsDirectional.symmetric(
+                            horizontal: AppDimens.space5,
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  tab.label,
+                                  style: AppTextStyles.forText(
+                                    tab.label,
+                                    TextRole.body,
+                                  ).copyWith(color: p.ink),
+                                ),
+                              ),
+                              if (tab.id == selected)
+                                Icon(
+                                  AppIcons.check,
+                                  size: AppDimens.icon,
+                                  color: p.brand,
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 }

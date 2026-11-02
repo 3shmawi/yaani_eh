@@ -46,7 +46,11 @@ void main() {
       ProviderScope(
         overrides: [
           catalogRepositoryProvider.overrideWithValue(
-            FakeCatalogRepository(has: true),
+            FakeCatalogRepository(
+              has: true,
+              // With clips, so the pronounce pill is on the drink screens.
+              items: sampleCatalogItems(withAudio: true),
+            ),
           ),
           ...welcomeOverrides(),
           ...favoritesOverrides(FakeFavoritesRepository()),

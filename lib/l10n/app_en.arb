@@ -483,5 +483,13 @@
   },
   "@sectionMissingBody": {
     "description": "Under sectionMissingTitle."
+  },
+  "chipAll": "All",
+  "@chipAll": {
+    "description": "The first category chip on Home: scrolls the list back to the top."
+  },
+  "allSections": "All sections",
+  "@allSections": {
+    "description": "Home's button that lists every section, and that sheet's title."
   }
 }

@@ -4,11 +4,13 @@
 
 ## What it does
 Home opens on the items (docs/decisions/0006-home-section-tabs.md): the
-espresso band with the app's name and search, then **one row** that
-scrolls sideways: the section tabs («مشروبات»، «حلويات»، later «مصطلحات»،
-«تاريخ»…), a thin divider, and the open section's category chips; then its
+espresso band with the app's name, search and the **section tabs**
+(«مشروبات»، «حلويات»، later «مصطلحات»، «تاريخ»…) in a row that scrolls
+sideways, with a grid button before them that lists every section; under
+the band, on the page, the open section's **category chips** («الكل» first,
+which goes back to the top); then its
 item of the day (its name and «يعني» line in a small label at the bottom
-of the photo) and its items as cards. The first section with items is
+edge of the photo) and its items as cards. The first section with items is
 open at launch, so there's no tap before the first drink. Sections come
 from the backend, so a new one is a new tab with no app update; one
 without items yet says «جاي قريب».
@@ -28,7 +30,7 @@ No price anywhere: the app explains what a thing is, not its cost.
 1. Open the app → Home: search, the section tabs, the open section's chips,
    its item of the day and its first cards. Scroll on: the next page of
    cards is added before you reach the end.
-2. Tap a chip (further along the same row) → the list scrolls to that category (a category past the
+2. Tap the grid button → a sheet with every section; tap a chip → the list scrolls to that category (a category past the
    cards built so far is built first). Scrolling on, the highlighted chip
    follows; once the band has scrolled away, the chips and search stay
    pinned at the top. Tap the pinned search button: it grows into a

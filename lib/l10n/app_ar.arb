@@ -150,5 +150,7 @@
   "stepsDone": "خلصت",
   "sectionItemCount": "{count, plural, =0{لسه مفيش} =1{حاجة واحدة} =2{حاجتين} few{{count} حاجات} other{{count} حاجة}}",
   "sectionMissingTitle": "القسم ده مش موجود",
-  "sectionMissingBody": "يمكن اتنقل. كل الأقسام في الرئيسية."
+  "sectionMissingBody": "يمكن اتنقل. كل الأقسام في الرئيسية.",
+  "chipAll": "الكل",
+  "allSections": "كل الأقسام"
 }

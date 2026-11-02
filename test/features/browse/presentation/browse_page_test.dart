@@ -153,6 +153,92 @@ void main() {
       expect(find.byKey(const Key('section_search_pinned')), findsOneWidget);
     });
 
+    testWidgets('the categories are a row of their own, under the band', (
+      tester,
+    ) async {
+      await _pumpHome(tester);
+      final chips = find.byKey(const Key('category_chips'));
+      // Not inside the sections row, and below it.
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('section_tabs')),
+          matching: find.text('Coffee'),
+        ),
+        findsNothing,
+      );
+      expect(
+        tester.getTopLeft(chips).dy,
+        greaterThan(
+          tester.getBottomLeft(find.byKey(const Key('section_tabs'))).dy,
+        ),
+      );
+      // «All» first, then the section's categories.
+      expect(
+        find.descendant(of: chips, matching: find.text(l10nEn.chipAll)),
+        findsOneWidget,
+      );
+      expect(
+        tester
+            .getSemantics(
+              find.descendant(of: chips, matching: find.text(l10nEn.chipAll)),
+            )
+            .flagsCollection
+            .isSelected,
+        Tristate.isTrue,
+      );
+      // On the page, not on the band: outlined chips.
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('home_header')),
+          matching: find.text('Coffee'),
+        ),
+        findsNothing,
+      );
+    });
+
+    testWidgets('«All» takes the list back to the top', (tester) async {
+      await _pumpHome(tester);
+      await tester.tap(
+        find.descendant(
+          of: find.byKey(const Key('category_chips')),
+          matching: find.text('Iced coffee'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('category_chips_pinned')), findsOneWidget);
+
+      await tester.tap(
+        find.descendant(
+          of: find.byKey(const Key('category_chips_pinned')),
+          matching: find.text(l10nEn.chipAll),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('category_chips_pinned')), findsNothing);
+      expect(find.byKey(const Key('item_of_the_day')), findsOneWidget);
+    });
+
+    testWidgets('the grid button lists every section; picking one opens it', (
+      tester,
+    ) async {
+      await _pumpHome(tester);
+      await tester.tap(find.byKey(const Key('all_sections')));
+      await tester.pumpAndSettle();
+      expect(find.text(l10nEn.allSections), findsOneWidget);
+      expect(find.byKey(const Key('sections_cafe')), findsOneWidget);
+      expect(find.byKey(const Key('sections_desserts')), findsOneWidget);
+      await tester.expectAccessible();
+
+      await tester.tap(find.byKey(const Key('sections_desserts')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('sections_cafe')), findsNothing);
+      expect(find.byKey(const Key('browse_coming_soon')), findsOneWidget);
+      expect(
+        tester.getSemantics(_tab('Desserts')).flagsCollection.isSelected,
+        Tristate.isTrue,
+      );
+    });
+
     testWidgets('nothing published yet: every section is coming soon', (
       tester,
     ) async {
