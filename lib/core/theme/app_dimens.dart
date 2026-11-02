@@ -129,14 +129,6 @@ abstract final class AppDimens {
   /// Favorites) use the full width. In points, like iPadOS's readable width.
   static const double readableWidth = 640;
 
-  /// Home's section cards: the narrowest a card may get before the grid
-  /// drops a column (1 on a phone, 2 on an iPad in portrait, 3 in
-  /// landscape), the widest the grid gets, and the card's picture.
-  static const double sectionCardMinWidth = 360;
-  static const double hubMaxWidth = 1200;
-  static double get sectionArt => 64.r;
-  static double get sectionArtIcon => 32.r;
-
   /// How tall a sheet may get, as a share of the screen.
   static const double sheetMaxShare = 0.92;
 
@@ -157,6 +149,9 @@ abstract final class AppMotion {
 
   /// A list scrolling to a category after its chip is tapped.
   static const jump = Duration(milliseconds: 300);
+
+  /// The pinned bar's search button growing into the search field.
+  static const searchExpand = Duration(milliseconds: 260);
 
   /// The long-press preview growing into place.
   static const previewFrom = 0.94;

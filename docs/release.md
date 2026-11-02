@@ -27,11 +27,19 @@ A manual run (Actions → Release → Run workflow) can force patch/minor/major.
    a change is Android-specific.
    The iOS integration job is the slow one, so it runs only when the PR
    changes something the app is built from (`lib/`, `ios/`,
-   `integration_test/`, `assets/`, `env/`, pubspec, `.fvmrc`, `ci.yml`);
+   `integration_test/`, `assets/`, `env/`, pubspec, `.fvmrc`, `ci.yml`,
+   `.github/actions/`);
    otherwise it is skipped (a skipped job counts as passed). It caches Swift
    packages, DerivedData and `build/ios` (`actions/cache` v6.1.0, checked
    2026-11-01; saved after green runs only), so later builds are
    incremental.
+   Every job sets up Flutter through one shared action,
+   `.github/actions/setup-flutter`: the version from `.fvmrc`, the SDK and
+   pub packages cached (`subosito/flutter-action` v2.23.0), and for Android
+   Java 17. PR builds also cache Gradle (`actions/setup-java` v6.1.0
+   `cache: gradle`, checked 2026-11-01). Release and staging builds don't
+   (see `docs/security.md` → "CI and secrets"). Change caching or versions in
+   that one file; it reaches other projects through `kit_sync.sh`.
 2. **Android** — signed release AAB (prod) → Play track `PLAY_TRACK`
    (default `internal`).
 3. **iOS** — signing files fetched from App Store Connect with the API key →
@@ -60,9 +68,26 @@ Arabic) to `app_versions` in Supabase; the in-app dialog does the rest.
 Needs the `SUPABASE_SECRET_KEY` secret.
 
 ## Staging builds
-Push to `develop` → `staging.yml`: Android APK attached to a `staging-…`
-pre-release (last 3 kept) and iOS to TestFlight of `com.mohager.yaanieh.stg`
-(create that app record in App Store Connect once). Uses `ENV_STAGING_JSON`.
+Push to `develop` → `staging.yml`:
+- **Android** — signed APK attached to a `staging-…` pre-release (last 3
+  kept), and a signed AAB uploaded to the Play track `PLAY_STAGING_TRACK`
+  (default `internal`) of the separate staging app `com.mohager.yaanieh.stg`
+  (installs next to the store app).
+- **iOS** — TestFlight of `com.mohager.yaanieh.stg`.
+
+Uses `ENV_STAGING_JSON` and the same keystore and `PLAY_SERVICE_ACCOUNT_JSON`
+as prod. One-time setup for the Play upload:
+1. Play Console → **Create app** with package `com.mohager.yaanieh.stg`.
+2. Play Console → **Users and permissions** → give the Play service account
+   release access to that app too.
+3. Upload its first AAB by hand (Google only accepts API uploads after
+   that): the first run fails and keeps it as the
+   `play-staging-aab-for-manual-upload` artifact → Test and release →
+   Internal testing → create release → upload it → roll out. Add your
+   testers to the internal testing list.
+
+Without `PLAY_SERVICE_ACCOUNT_JSON` the Play step is skipped (APK only).
+`ENABLE_PLAY_STAGING=false` turns it off.
 
 ## Backend deploys
 Changes under `supabase/` merged to `main` → `supabase.yml` runs
@@ -92,6 +117,29 @@ review answers are in `store/submission.md`.
 Both stores raise these every year (Apple in spring, Google in August).
 When a deadline is announced, update this table and the workflows in the
 kit, then `scripts/kit_sync.sh` in each app.
+
+## Kit sync
+`.github/workflows/kit-sync.yml` runs every Monday (or Actions → Kit sync →
+Run workflow) and compares this app with the latest flutter-project-kit
+using `scripts/kit_sync.sh` (3-way merge, your changes are kept).
+
+- **With `KIT_SYNC_TOKEN`**: it opens a `chore/kit-sync-…` PR with the
+  kit's changes; if some files conflict it is a draft with `<<<<<<<`
+  markers to resolve. A newer sync closes an older unmerged one. A kit
+  version you closed on purpose is not re-opened.
+- **Without it**: it opens (and keeps updating) a "Kit update available"
+  issue, and you run `scripts/kit_sync.sh` by hand.
+
+Why a token: GitHub's built-in token cannot change files in
+`.github/workflows`, and PRs it opens do not start CI. Create a fine-grained
+token for this repo only (Contents, Pull requests, Workflows: read & write),
+put it in `KIT_SYNC_TOKEN` in `~/.app-secrets/shared.env` (or
+`apps/<repo>/app.env`) and run `tool/setup_secrets.sh`, or
+`gh secret set KIT_SYNC_TOKEN`. Also allow Actions to open PRs: repo
+Settings → Actions → General → "Allow GitHub Actions to create and approve
+pull requests".
+
+Always review the PR: kit changes can add packages or change workflows.
 
 ## Crash symbols (Sentry)
 Release builds are obfuscated; `scripts/upload_symbols.sh` sends the symbols
@@ -143,6 +191,7 @@ doesn't stop the run halfway; re-running the script is always safe.
 | `IOS_CERTIFICATE_P12_BASE64`, `IOS_CERTIFICATE_PASSWORD` | your Apple Distribution certificate (.p12) |
 | `APPLE_TEAM_ID` | Team ID |
 | `ENV_PROD_JSON` | contents of `env/prod.json` (re-upload after changing a key; the release run warns about empty keys — `scripts/check_env.sh`) |
+| `KIT_SYNC_TOKEN` | optional, see "Kit sync" below |
 
 A store whose secrets are missing is skipped (with a warning), not failed.
 iOS signing imports your .p12 and lets App Store Connect create/refresh the
@@ -151,6 +200,9 @@ provisioning profile with the API key — no new certificate is created.
 Repository variables: `PLAY_TRACK` (default `internal`), `PLAY_RELEASE_STATUS`
 (`draft` until the first review, then `completed`), optional
 `ENABLE_ANDROID=false` / `ENABLE_IOS=false`, `BUILD_NUMBER_OFFSET`.
+Staging (Play): `PLAY_STAGING_TRACK` (default `internal`),
+`PLAY_STAGING_RELEASE_STATUS` (default `completed`), `ENABLE_PLAY_STAGING=false`
+to skip it.
 
 ### Codemagic
 Fully automated through the Codemagic API — nothing to click in the UI:

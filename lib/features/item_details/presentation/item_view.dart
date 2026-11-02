@@ -109,7 +109,9 @@ class ItemView extends StatelessWidget {
     final p = context.palette;
     final l10n = context.l10n;
     final top = MediaQuery.paddingOf(context).top;
-    final photoHeight = 452.h;
+    // The photo is a bit shorter than before (452), so the text comes up
+    // sooner.
+    final photoHeight = 360.h;
     final arabic = Localizations.localeOf(context).languageCode == 'ar';
     final explanation = arabic ? item.explanationAr : item.explanationEn;
 
@@ -254,7 +256,11 @@ class ItemView extends StatelessWidget {
                           AppDimens.space4,
                           AppDimens.space6,
                         ),
-                        child: pronounce,
+                        // Full width, like the text column below it.
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: pronounce,
+                        ),
                       ),
                     ),
                   ),

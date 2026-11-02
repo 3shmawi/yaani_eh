@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/widgets/item_card.dart';
 import 'package:yaani_eh/features/browse/presentation/browse_controller.dart';
 import 'package:yaani_eh/features/catalog_sync/data/models/catalog_rows.dart';
@@ -184,6 +185,13 @@ void main() {
         'flat_white.barista.m4a',
         'flat_white.original.m4a',
       ]);
+      // The pill spans the photo's width (less the page margins).
+      final screen =
+          tester.view.physicalSize.width / tester.view.devicePixelRatio;
+      expect(
+        tester.getSize(find.byType(PronouncePill)).width,
+        closeTo(screen - 2 * AppDimens.space4, 1),
+      );
       // On the photo, above the sheet with the name.
       expect(
         tester.getBottomLeft(find.byType(PronouncePill)).dy,

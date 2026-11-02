@@ -10,6 +10,9 @@
   "settingsThemeSystem": "زي الموبايل",
   "settingsThemeLight": "فاتح",
   "settingsThemeDark": "غامق",
+  "settingsAbout": "عن التطبيق",
+  "settingsVersion": "الإصدار",
+  "settingsVersionValue": "{version} ({build})",
   "updateOptionalTitle": "فيه تحديث جديد",
   "updateForceTitle": "لازم تحدّث",
   "updateForceMessage": "النسخة دي مبقتش شغالة. حدّث التطبيق عشان تكمّل.",
@@ -79,7 +82,6 @@
   "pronounceMissing": "التسجيل ده مش متاح دلوقتي.",
   "pronounceError": "مقدرناش نشغّل الاسم. جرّب تاني.",
   "cardMeaning": "يعني {gist}",
-  "comingSoonBadge": "جاي قريب",
   "comingSoonTitle": "{section}: جاي قريب",
   "comingSoonMessage": "هنشرحها بنفس الطريقة: الكلمة زي ما بتشوفها، بتتقال إزاي، ويعني إيه.",
   "comingSoonAction": "ارجع للأقسام",
@@ -149,9 +151,9 @@
   "detailsNeedUpdate": "حدّث التطبيق عشان تشوف التفاصيل",
   "detailsNeedUpdateHint": "بيفتح المتجر",
   "stepsDone": "خلصت",
-  "hubSectionsTitle": "الأقسام",
   "sectionItemCount": "{count, plural, =0{لسه مفيش} =1{حاجة واحدة} =2{حاجتين} few{{count} حاجات} other{{count} حاجة}}",
-  "sectionCardLabel": "{section}، {detail}",
   "sectionMissingTitle": "القسم ده مش موجود",
-  "sectionMissingBody": "يمكن اتنقل. كل الأقسام في الرئيسية."
+  "sectionMissingBody": "يمكن اتنقل. كل الأقسام في الرئيسية.",
+  "chipAll": "الكل",
+  "allSections": "كل الأقسام"
 }

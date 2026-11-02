@@ -5,7 +5,7 @@ also a deep link.
 
 | Path | Screen |
 |---|---|
-| `/` | Home: one card per section |
+| `/` | Home: the section tabs, and the open section's chips and items (the first section with items opens first) |
 | `/section/<slug>` | One section of Home, by its slug (e.g. `/section/cafe` for the drinks): its chips and items, under the tab bar. A section without items says «جاي قريب»; an unknown slug says the section isn't here, with a way Home; a malformed slug (or anything under it) is not-found. Opened from a link, back goes Home |
 | `/item/<slug>` | One item: a drink today, later a term or a history page (e.g. `/item/flat_white`); unknown or malformed slugs show not-found |
 | `/search?q=<text>` | Search, optionally pre-filled (`q` is cleaned: control/direction characters removed, trimmed, max 60) |

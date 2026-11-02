@@ -26,10 +26,15 @@ final appRouter = GoRouter(
   initialLocation: AppRoutes.home,
   // Old `/drink/...` links (shared before items were general) keep working.
   redirect: (context, state) => AppRoutes.fromLegacy(state.uri),
+  // Root navigator only. Tabs added later (StatefulShellBranch) need their
+  // own `observers: Analytics.navigatorObservers` to be tracked.
   observers: [
     ...Monitoring.navigatorObservers,
     ...Analytics.navigatorObservers,
   ],
+  // Every route has a `name`: it is the screen name in analytics ($screen)
+  // and monitoring. Without one a nested route reports only its own path
+  // piece (e.g. ':exerciseId'). Names are stable; never put ids in them.
   routes: [
     // The tabs: Home, Favorites and Settings, each with its own navigator,
     // so a tab keeps its scroll position. A section stays under the tab
@@ -53,6 +58,7 @@ final appRouter = GoRouter(
           routes: [
             GoRoute(
               path: AppRoutes.home,
+              name: 'home',
               // The menu, once the catalog is on the device (first launch
               // downloads it; see docs/features/catalog_sync.md).
               // The welcome comes first, once (docs/features/welcome.md).
@@ -72,6 +78,7 @@ final appRouter = GoRouter(
             // (back then goes Home).
             GoRoute(
               path: AppRoutes.sectionPattern,
+              name: 'section',
               // Untrusted input (deep links): anything that isn't a slug
               // is a 404.
               redirect: (context, state) {
@@ -93,6 +100,7 @@ final appRouter = GoRouter(
           routes: [
             GoRoute(
               path: AppRoutes.favorites,
+              name: 'favorites',
               builder: (context, state) =>
                   const CatalogSyncPage(child: FavoritesPage()),
             ),
@@ -102,6 +110,7 @@ final appRouter = GoRouter(
           routes: [
             GoRoute(
               path: AppRoutes.settings,
+              name: 'settings',
               builder: (context, state) => const SettingsPage(),
             ),
           ],
@@ -110,6 +119,7 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.itemPattern,
+      name: 'item',
       // Untrusted input (deep links): anything that isn't a slug is a 404.
       redirect: (context, state) {
         final slug = state.pathParameters['slug'] ?? '';
@@ -120,6 +130,7 @@ final appRouter = GoRouter(
       routes: [
         GoRoute(
           path: AppRoutes.itemStepsSegment,
+          name: 'item_steps',
           pageBuilder: (context, state) => MaterialPage(
             key: state.pageKey,
             fullscreenDialog: true,
@@ -130,6 +141,7 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.search,
+      name: 'search',
       builder: (context, state) => CatalogSyncPage(
         child: SearchPage(
           initialQuery: AppRoutes.cleanQuery(state.uri.queryParameters['q']),
@@ -138,6 +150,7 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.welcome,
+      name: 'welcome',
       builder: (context, state) => const WelcomePage(),
     ),
   ],

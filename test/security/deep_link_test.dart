@@ -259,11 +259,9 @@ void main() {
     expect(find.byKey(const Key('app_tab_bar')), findsOneWidget);
     expect(find.byType(BrowsePage), findsOneWidget);
 
-    // Home is the sections; drinks are one tap away.
-    await tester.tap(find.byKey(const Key('section_cafe')));
-    await tester.pumpAndSettle();
+    // Home opens on the drinks, with the section tabs on top.
     expect(find.byType(SectionView), findsOneWidget);
-    // A section stays under the tab bar.
+    expect(find.byKey(const Key('section_tabs')), findsOneWidget);
     expect(find.byKey(const Key('app_tab_bar')), findsOneWidget);
 
     // Clear of the pinned chips.
@@ -312,12 +310,9 @@ void main() {
           .first,
     );
     await tester.pumpAndSettle();
-    // The Home tab comes back where it was: the drinks section.
-    expect(find.byType(SectionView), findsOneWidget);
-    // Back from the section: Home's sections.
-    await tester.tap(find.byKey(const Key('section_back')));
-    await tester.pumpAndSettle();
+    // The Home tab comes back where it was: the drinks, tabs on top.
     expect(find.byType(BrowsePage), findsOneWidget);
+    expect(find.byKey(const Key('section_tabs')), findsOneWidget);
 
     // Settings is the third tab.
     await tester.tap(

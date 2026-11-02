@@ -52,7 +52,7 @@ class PronouncePill extends StatelessWidget {
     final l10n = context.l10n;
     final failure = this.failure;
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: [
         AppGlass(
@@ -62,11 +62,11 @@ class PronouncePill extends StatelessWidget {
           padding: EdgeInsetsDirectional.symmetric(
             horizontal: AppDimens.space1,
           ),
+          // Full width: the voices share it, the speed toggle sits at the end.
           child: Row(
-            mainAxisSize: MainAxisSize.min,
             children: [
               for (final voice in voices)
-                Flexible(
+                Expanded(
                   child: _Segment(
                     key: Key('pronounce_${voice.name}'),
                     label: switch (voice) {
@@ -203,7 +203,11 @@ class _Segment extends StatelessWidget {
     );
     final face = AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      constraints: BoxConstraints(minHeight: AppDimens.pronounceSegment),
+      constraints: BoxConstraints(
+        minHeight: AppDimens.pronounceSegment,
+        minWidth: double.infinity,
+      ),
+      alignment: Alignment.center,
       padding: EdgeInsetsDirectional.only(
         start: AppDimens.space3,
         end: AppDimens.space4,
@@ -232,7 +236,7 @@ class _Segment extends StatelessWidget {
           onTap: onTap,
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: AppDimens.touchTarget),
-            child: Center(widthFactor: 1, child: face),
+            child: Center(child: face),
           ),
         ),
       ),

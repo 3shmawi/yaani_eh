@@ -48,79 +48,84 @@ class ItemOfTheDay extends StatelessWidget {
                       size: PhotoSize.thumbnail,
                     ),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Padding(
-                        padding: EdgeInsetsDirectional.all(AppDimens.space3),
-                        child: Align(
-                          alignment: AlignmentDirectional.centerStart,
+                  // The name and meaning sit at the bottom edge of the photo.
+                  ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: 190.h),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: EdgeInsetsDirectional.all(AppDimens.space3),
+                          child: Align(
+                            alignment: AlignmentDirectional.centerStart,
+                            child: AppGlass(
+                              kind: GlassKind.clear,
+                              tone: GlassTone.dark,
+                              radius: AppDimens.radiusPill,
+                              padding: EdgeInsetsDirectional.symmetric(
+                                horizontal: AppDimens.space3,
+                                vertical: AppDimens.space1,
+                              ),
+                              child: Text(
+                                l10n.itemOfTheDay,
+                                style: context
+                                    .text(TextRole.caption)
+                                    .copyWith(fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          // A small label at the bottom; the photo is the star.
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                            AppDimens.space2,
+                            0,
+                            AppDimens.space2,
+                            AppDimens.space2,
+                          ),
                           child: AppGlass(
-                            kind: GlassKind.clear,
-                            tone: GlassTone.dark,
-                            radius: AppDimens.radiusPill,
+                            radius: AppDimens.radiusSm,
                             padding: EdgeInsetsDirectional.symmetric(
-                              horizontal: AppDimens.space3,
+                              horizontal: AppDimens.space2,
                               vertical: AppDimens.space1,
                             ),
-                            child: Text(
-                              l10n.itemOfTheDay,
-                              style: context
-                                  .text(TextRole.caption)
-                                  .copyWith(fontWeight: FontWeight.w600),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Wrap(
+                                  spacing: AppDimens.space1,
+                                  crossAxisAlignment: WrapCrossAlignment.end,
+                                  children: [
+                                    Text(
+                                      item.menuName,
+                                      style: AppTextStyles.forText(
+                                        item.menuName,
+                                        TextRole.cardTitle,
+                                      ),
+                                    ),
+                                    Text(
+                                      item.menuNameAr,
+                                      style: AppTextStyles.forText(
+                                        item.menuNameAr,
+                                        TextRole.caption,
+                                      ).copyWith(color: p.inkMutedGlass),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  explanation,
+                                  style: AppTextStyles.forText(
+                                    explanation,
+                                    TextRole.cardBody,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(height: 56.h),
-                      Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
-                          AppDimens.space2,
-                          0,
-                          AppDimens.space2,
-                          AppDimens.space2,
-                        ),
-                        child: AppGlass(
-                          radius: AppDimens.radiusMd,
-                          padding: EdgeInsetsDirectional.symmetric(
-                            horizontal: AppDimens.space3,
-                            vertical: AppDimens.space2,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Wrap(
-                                spacing: AppDimens.space2,
-                                crossAxisAlignment: WrapCrossAlignment.end,
-                                children: [
-                                  Text(
-                                    item.menuName,
-                                    style: AppTextStyles.forText(
-                                      item.menuName,
-                                      TextRole.headline,
-                                    ),
-                                  ),
-                                  Text(
-                                    item.menuNameAr,
-                                    style: AppTextStyles.forText(
-                                      item.menuNameAr,
-                                      TextRole.caption,
-                                    ).copyWith(color: p.inkMutedGlass),
-                                  ),
-                                ],
-                              ),
-                              Text(
-                                explanation,
-                                style: AppTextStyles.forText(
-                                  explanation,
-                                  TextRole.callout,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:yaani_eh/core/theme/app_theme.dart';
 import 'package:yaani_eh/features/settings/domain/entities/app_settings.dart';
 import 'package:yaani_eh/features/settings/presentation/settings_view.dart';
@@ -7,7 +8,30 @@ import 'package:yaani_eh/features/settings/presentation/settings_view.dart';
 import '../../../helpers/pump_app.dart';
 
 void main() {
+  setUp(() {
+    PackageInfo.setMockInitialValues(
+      appName: 'app',
+      packageName: 'com.example.app',
+      version: '1.2.3',
+      buildNumber: '45',
+      buildSignature: '',
+    );
+  });
+
   group(SettingsView, () {
+    testWidgets('shows the app version and build number', (tester) async {
+      await tester.pumpApp(
+        SettingsView(
+          settings: const AppSettings(),
+          onLocaleChanged: (_) {},
+          onThemeModeChanged: (_) {},
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('1.2.3 (45)'), findsOneWidget);
+    });
+
     testWidgets('reports language choices', (tester) async {
       Locale? locale = const Locale('x');
       await tester.pumpApp(
