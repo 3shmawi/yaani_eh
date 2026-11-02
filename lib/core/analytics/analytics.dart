@@ -15,16 +15,10 @@ abstract final class Analytics {
   static bool get isEnabled => _enabled;
 
   static Future<void> init() async {
-<<<<<<< yours
-    if (Env.posthogApiKey.isEmpty) {
-      // Easy to miss: a build without the key runs fine but sends nothing.
-      debugPrint('Analytics off: POSTHOG_API_KEY is empty in the env file.');
-=======
     final problem = configProblem(Env.posthogApiKey, Env.posthogHost);
     if (problem != null) {
       // Says why the dashboard stays empty; never prints the key itself.
       debugPrint('Analytics off: $problem');
->>>>>>> kit 1928c02
       return;
     }
     final config = PostHogConfig(Env.posthogApiKey)

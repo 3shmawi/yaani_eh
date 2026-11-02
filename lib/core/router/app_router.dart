@@ -24,13 +24,10 @@ final rootNavigatorKey = GlobalKey<NavigatorState>();
 final appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
   initialLocation: AppRoutes.home,
-<<<<<<< yours
   // Old `/drink/...` links (shared before items were general) keep working.
   redirect: (context, state) => AppRoutes.fromLegacy(state.uri),
-=======
   // Root navigator only. Tabs added later (StatefulShellBranch) need their
   // own `observers: Analytics.navigatorObservers` to be tracked.
->>>>>>> kit 1928c02
   observers: [
     ...Monitoring.navigatorObservers,
     ...Analytics.navigatorObservers,
@@ -61,6 +58,7 @@ final appRouter = GoRouter(
           routes: [
             GoRoute(
               path: AppRoutes.home,
+              name: 'home',
               // The menu, once the catalog is on the device (first launch
               // downloads it; see docs/features/catalog_sync.md).
               // The welcome comes first, once (docs/features/welcome.md).
@@ -80,6 +78,7 @@ final appRouter = GoRouter(
             // (back then goes Home).
             GoRoute(
               path: AppRoutes.sectionPattern,
+              name: 'section',
               // Untrusted input (deep links): anything that isn't a slug
               // is a 404.
               redirect: (context, state) {
@@ -101,6 +100,7 @@ final appRouter = GoRouter(
           routes: [
             GoRoute(
               path: AppRoutes.favorites,
+              name: 'favorites',
               builder: (context, state) =>
                   const CatalogSyncPage(child: FavoritesPage()),
             ),
@@ -110,6 +110,7 @@ final appRouter = GoRouter(
           routes: [
             GoRoute(
               path: AppRoutes.settings,
+              name: 'settings',
               builder: (context, state) => const SettingsPage(),
             ),
           ],
@@ -118,6 +119,7 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.itemPattern,
+      name: 'item',
       // Untrusted input (deep links): anything that isn't a slug is a 404.
       redirect: (context, state) {
         final slug = state.pathParameters['slug'] ?? '';
@@ -128,6 +130,7 @@ final appRouter = GoRouter(
       routes: [
         GoRoute(
           path: AppRoutes.itemStepsSegment,
+          name: 'item_steps',
           pageBuilder: (context, state) => MaterialPage(
             key: state.pageKey,
             fullscreenDialog: true,
@@ -137,8 +140,8 @@ final appRouter = GoRouter(
       ],
     ),
     GoRoute(
-<<<<<<< yours
       path: AppRoutes.search,
+      name: 'search',
       builder: (context, state) => CatalogSyncPage(
         child: SearchPage(
           initialQuery: AppRoutes.cleanQuery(state.uri.queryParameters['q']),
@@ -147,17 +150,8 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.welcome,
+      name: 'welcome',
       builder: (context, state) => const WelcomePage(),
-=======
-      path: AppRoutes.home,
-      name: 'home',
-      builder: (context, state) => const HomePage(),
-    ),
-    GoRoute(
-      path: AppRoutes.settings,
-      name: 'settings',
-      builder: (context, state) => const SettingsPage(),
->>>>>>> kit 1928c02
     ),
   ],
   errorBuilder: (context, state) => const NotFoundPage(),

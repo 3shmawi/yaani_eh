@@ -4,34 +4,17 @@
 #   1. record: the feature's integration test on an iOS Simulator (macOS
 #      runner, full Liquid Glass via Metal; the CI Android emulator has no GPU),
 #   2. compose: a 1080×1920 video (brand background, title, handle) + the post
-<<<<<<< yours
 #      caption from the feature doc, linked in a comment on the PR, with a
 #      screenshot of every beat() shown right in the comment (published to
 #      the `demo-media` branch, so they open without downloading anything).
 # It's never a required check: a PR merges on CI alone, and the video
 # arrives when it's ready.
-# Can also be run by hand (Actions → Demo video → Run workflow).
-=======
-#      caption from the feature doc, linked in a comment on the PR.
->>>>>>> kit 1928c02
 name: Demo video
 
 on:
   # Only when the `demo` label is added (again to re-record), never on push.
   pull_request:
-<<<<<<< yours
-    types: [opened, synchronize, reopened, ready_for_review]
-    paths:
-      - 'integration_test/**'
-      - 'docs/features/**'
-      # A change to how demos are made gets a demo too, to prove it.
-      - 'scripts/record_demo_ios.sh'
-      - 'scripts/compose_demo.sh'
-      - 'scripts/publish_demo_shots.sh'
-      - '.github/workflows/demo-video.yml'
-=======
     types: [labeled]
->>>>>>> kit 1928c02
   workflow_dispatch:
     inputs:
       test:

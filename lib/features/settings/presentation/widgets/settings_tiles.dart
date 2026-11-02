@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:yaani_eh/core/adaptive/adaptive.dart';
 import 'package:yaani_eh/core/theme/app_dimens.dart';
 import 'package:yaani_eh/core/theme/app_text_styles.dart';
 import 'package:yaani_eh/l10n/l10n.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 class SettingsSectionHeader extends StatelessWidget {
   const new(this.title, {super.key});
@@ -70,7 +70,7 @@ class SettingsChoiceTile extends StatelessWidget {
 /// Read from the platform (pubspec `version: 1.2.3+45`), so it always matches
 /// what the stores and the update gate see. Empty until it loads.
 class SettingsVersionTile extends StatelessWidget {
-  const SettingsVersionTile({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -83,16 +83,18 @@ class SettingsVersionTile extends StatelessWidget {
         return ListTile(
           title: Text(
             l10n.settingsVersion,
-            style: AppTextStyles.body.copyWith(color: scheme.onSurface),
+            style: context
+                .text(TextRole.body)
+                .copyWith(color: scheme.onSurface),
           ),
           trailing: info == null
               ? null
               : Text(
                   l10n.settingsVersionValue(info.version, info.buildNumber),
                   key: const Key('settings_version'),
-                  style: AppTextStyles.body.copyWith(
-                    color: scheme.onSurfaceVariant,
-                  ),
+                  style: context
+                      .text(TextRole.body)
+                      .copyWith(color: scheme.onSurfaceVariant),
                 ),
         );
       },

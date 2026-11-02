@@ -234,21 +234,11 @@ leaks").
   real taps and typing in a natural order, with `beat(tester)` pauses
   (`integration_test/helpers/demo.dart`) between steps.
 - Fill the feature doc's "Demo & post" section (hook, scenario, captions in
-<<<<<<< yours
-  English and Egyptian Arabic, hashtags). Any PR that changes an
-  integration test or a feature doc gets its demo automatically: the
-  **Demo video** workflow records the test on an iOS Simulator (full glass)
-  and comments a 1080×1920 video + caption on the PR. No label, no manual step.
-  It records the feature whose doc **and** `<name>_test.dart` both changed
-  (so a PR that also touches other features' docs keeps its own caption),
-  else the first changed test and doc.
-=======
   English and Egyptian Arabic, hashtags). The demo is made on demand, not
   on every PR (it is a second ~20-min macOS run): add the **`demo`** label
   to the PR (or Actions → **Demo video** → Run workflow) and the workflow
   records the feature's integration test on an iOS Simulator (full glass)
   and comments a 1080×1920 video + caption on the PR.
->>>>>>> kit 1928c02
   The build and install before the test is cut out: the video starts a
   second before the test does (`scripts/record_demo_ios.sh` →
   `compose_demo.sh`).

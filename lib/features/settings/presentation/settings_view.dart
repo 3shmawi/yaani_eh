@@ -78,13 +78,9 @@ class SettingsView extends StatelessWidget {
                 ],
               ),
             ),
-<<<<<<< yours
           ],
-=======
-          ),
           SettingsSectionHeader(l10n.settingsAbout),
           const AppCard(child: SettingsVersionTile()),
->>>>>>> kit 1928c02
         ],
       ),
     );

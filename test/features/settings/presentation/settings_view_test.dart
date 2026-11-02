@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-<<<<<<< yours
-import 'package:yaani_eh/core/theme/app_theme.dart';
-=======
 import 'package:package_info_plus/package_info_plus.dart';
->>>>>>> kit 1928c02
+import 'package:yaani_eh/core/theme/app_theme.dart';
 import 'package:yaani_eh/features/settings/domain/entities/app_settings.dart';
 import 'package:yaani_eh/features/settings/presentation/settings_view.dart';
 
@@ -22,10 +19,6 @@ void main() {
   });
 
   group(SettingsView, () {
-<<<<<<< yours
-    testWidgets('reports language choices', (tester) async {
-      Locale? locale = const Locale('x');
-=======
     testWidgets('shows the app version and build number', (tester) async {
       await tester.pumpApp(
         SettingsView(
@@ -39,10 +32,8 @@ void main() {
       expect(find.text('1.2.3 (45)'), findsOneWidget);
     });
 
-    testWidgets('reports theme and language choices', (tester) async {
-      ThemeMode? themeMode;
-      Locale? locale;
->>>>>>> kit 1928c02
+    testWidgets('reports language choices', (tester) async {
+      Locale? locale = const Locale('x');
       await tester.pumpApp(
         SettingsView(
           settings: const AppSettings(),
