@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderFamily;
 import 'package:yaani_eh/core/analytics/analytics.dart';
+import 'package:yaani_eh/core/di/dependencies.dart';
 import 'package:yaani_eh/features/browse/domain/usecases/build_browse.dart';
 import 'package:yaani_eh/features/catalog_sync/domain/entities/catalog.dart';
 import 'package:yaani_eh/features/catalog_sync/presentation/catalog_sync_controller.dart';
@@ -22,7 +23,7 @@ void trackCategoryJump(CatalogCategory category) => unawaited(
 );
 
 /// Overridable clock, so "item of the day" is testable.
-final todayProvider = Provider<DateTime>((ref) => DateTime.now());
+final todayProvider = Provider<DateTime>((ref) => Dependencies.clock());
 
 /// Home's section tabs, rebuilt whenever the catalog syncs. Null while
 /// the device copy is still loading.

@@ -28,7 +28,13 @@ abstract final class Dependencies {
   static late FavoritesRepository favoritesRepository;
   static late WelcomeRepository welcomeRepository;
 
+  /// "Now" for date-based content (the item of the day). Real time unless
+  /// [DependencyOverrides.today] fixes it, so demos show the same day.
+  static DateTime Function() clock = DateTime.now;
+
   static Future<void> init([DependencyOverrides? overrides]) async {
+    final today = overrides?.today;
+    clock = today == null ? DateTime.now : () => today;
     final prefs = await SharedPreferences.getInstance();
     settingsRepository = SharedPrefsSettingsRepository(prefs);
     welcomeRepository =
@@ -62,6 +68,7 @@ class DependencyOverrides {
     this.clipPlayer,
     this.favoritesDatabase,
     this.welcomeRepository,
+    this.today,
   });
 
   final CatalogRemoteDataSource? catalogRemote;
@@ -82,4 +89,8 @@ class DependencyOverrides {
   /// Whether the first-open welcome was seen: demos skip it, except the
   /// welcome's own.
   final WelcomeRepository? welcomeRepository;
+
+  /// A fixed "today": the item of the day depends on the date, so demos
+  /// and integration tests pin it to a day whose drink has a clip.
+  final DateTime? today;
 }
