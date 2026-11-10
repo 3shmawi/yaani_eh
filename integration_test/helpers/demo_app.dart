@@ -53,6 +53,10 @@ class DemoApp {
         clipPlayer: player,
         favoritesDatabase: FavoritesDatabase(NativeDatabase.memory()),
         welcomeRepository: FakeWelcomeRepository(seen: welcomed),
+        // The item of the day changes daily. On this day it is Iced Spanish
+        // Latte, which has clips; on an Iced Mocha day (no clip, and its
+        // name twice on Home) the demos would fail.
+        today: demoDay,
       ),
     );
     return DemoApp._(remote, online, clips, player);

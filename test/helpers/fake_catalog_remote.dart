@@ -303,6 +303,10 @@ List<Map<String, Object?>> sampleItems({bool withAudio = false}) {
 
 const _noAudio = {'affogato', 'iced_mocha'};
 
+/// The day the integration tests and demos run on. Its item of the day
+/// (Iced Spanish Latte) has clips; checked by `today_provider_test.dart`.
+final demoDay = DateTime(2026, 10, 30);
+
 /// The «يعني» line of some drinks; the others fall back to the first
 /// sentence of their explanation.
 const _gists = {
