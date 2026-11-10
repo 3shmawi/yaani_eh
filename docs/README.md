@@ -9,8 +9,9 @@ Start with [`../CLAUDE.md`](../CLAUDE.md) (rules + stack), then:
 - [Content guide](content_guide.md) — writing any item: «يعني» rules, details by kind (recipe, story, usage), adding a section
 - [Deep links](deep_links.md)
 - [Security](security.md) — what is tested and how
-<<<<<<< yours
 - [Decisions](decisions/) — why the stack looks the way it does; [photo thumbnails](decisions/0002-photo-thumbnails.md); [drink cards say what a drink is](decisions/0003-drink-card-meaning.md); [Home header for many sections](decisions/0004-home-header.md); [Home section tabs, a page at a time](decisions/0006-home-section-tabs.md)
+- [Designs](designs/) — approved specs for big features, reviewed with EGM
+  ([getting started](getting_started.md) → "Design reviews")
 
 ## Roadmap
 Build in this order, one feature per PR (each with tests, doc and demo):
@@ -27,11 +28,6 @@ Build in this order, one feature per PR (each with tests, doc and demo):
 | 8 | `welcome` — the first-open welcome: three pages, then Home | ✅ |
 
 Update the status here when a feature merges.
-=======
-- [Decisions](decisions/) — why the stack looks the way it does
-- [Designs](designs/) — approved specs for big features, reviewed with EGM
-  ([getting started](getting_started.md) → "Design reviews")
->>>>>>> kit fb68bc5
 
 ## Features
 - [Catalog sync (offline menu)](features/catalog_sync.md)
