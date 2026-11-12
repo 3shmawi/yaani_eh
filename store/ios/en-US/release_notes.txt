@@ -1,2 +1,1 @@
-A short welcome the first time you open the app.
-Now on iPad.
+First release: every drink explained in plain words, how it is made, step by step, hear the name, search by description. Works offline.

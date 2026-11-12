@@ -10,6 +10,19 @@ developer.apple.com that day; Google's help pages weren't reachable from the
 session that wrote this, so the Play sizes are its long-standing ones.
 Re-check both pages before the first upload.
 
+## First-release readiness (checked 2026-11-12)
+- `flutter analyze` clean; 512 tests pass (unit, widget, security, store).
+- Store pack complete in Arabic and English: texts, 512 icon, feature graphic,
+  phone / 7" / 10" Android screenshots, iPhone 6.9" and iPad 13" screenshots.
+- Launcher name: Android shows «يعني إيه؟» (Arabic) / "Yaani Eh" (other
+  languages) from `res/values*/strings.xml`; iOS shows "Yaani Eh".
+- Still manual, by the owner: create both store apps and the signing/API
+  secrets (`tool/setup_secrets.sh`), fill the privacy and rating forms below,
+  review contact details, run Actions → **Store listing**, and re-check both
+  stores' screenshot-size pages (Google's sizes are long-standing, not re-read).
+- The first release uses `0.1.0` from `pubspec.yaml`; to launch as 1.0.0, merge
+  a `feat!:` PR or run Release manually with `major`.
+
 ## Both stores
 
 | Field | Value |
