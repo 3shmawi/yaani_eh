@@ -64,8 +64,13 @@ Screens use `lib/core/ui/app_ui.dart` (`AppScaffold`, `AppGlass`, `AppCard`,
   dark, and with iOS 27's transparency slider at "clear".
 - Accessibility: Reduce Motion and Increase Contrast are respected
   automatically; tests run with solid surfaces (`AppUi.testWrap`).
-- Lite mode (`AppUi.isLite`: Reduce Transparency / Increase Contrast,
-  widget tests, a device too slow for the shader, or
+- **Android is flat by default** (`AppUi.flat`): live blur/refraction
+  shaders were too heavy there, so Android skips the shader preload and the
+  glass scope and draws the lite surfaces everywhere (cards, header band,
+  sheets, tab bar, segmented control). iOS keeps full glass. To bring glass
+  back on Android, change `AppUi.flat` in `app_ui.dart`.
+- Lite mode (`AppUi.isLite`: Android, Reduce Transparency / Increase
+  Contrast, widget tests, a device too slow for the shader, or
   `--dart-define=GLASS_LITE=true` for GPU-less devices) draws plain
   surfaces. New glass widgets in `app_ui.dart` need the same lite branch.
 - `AppScaffold` places the body **below** the glass bar

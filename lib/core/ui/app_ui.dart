@@ -33,11 +33,21 @@ abstract final class AppUi {
   /// draws the solid Reduce Transparency variant and skips the shader preload.
   static const lite = bool.fromEnvironment('GLASS_LITE');
 
-  static Future<void> initialize() => lite
+  /// Android draws flat: live blur + refraction shaders over scrolling
+  /// content cost too many frames on the huge range of Android GPUs
+  /// (Impeller/Vulkan or GLES, mid-range chips). iOS keeps full glass.
+  /// Flip this one flag to bring glass back on Android.
+  static bool get flat =>
+      lite || (!kIsWeb && defaultTargetPlatform == TargetPlatform.android);
+
+  static Future<void> initialize() => flat
       ? LiquidGlassWidgets.initialize(warmUpMode: GlassWarmUpMode.never)
       : LiquidGlassWidgets.initialize();
 
   static Widget wrap(Widget app) {
+    // Flat: no glass scope, no adaptive-quality frame sampling, no shader
+    // preload — every surface takes its solid variant.
+    if (flat) return testWrap(app);
     final glass = LiquidGlassWidgets.wrap(
       child: app,
       brightnessResolver: Theme.maybeBrightnessOf,
@@ -52,7 +62,7 @@ abstract final class AppUi {
             : GlassQuality.standard,
       ),
     );
-    return lite ? testWrap(glass) : glass;
+    return glass;
   }
 
   /// Tests (and accessibility checks) run with solid surfaces: the most
@@ -863,6 +873,61 @@ class _AppSegmentedControlState extends State<AppSegmentedControl> {
     final segments = widget.segments;
     final index = segments.indexWhere((s) => s.id == widget.selectedId);
     final text = context.text(TextRole.label);
+    if (AppUi.isLite(context)) {
+      // Flat: a solid track and a solid selected pill, no shader.
+      return Semantics(
+        container: true,
+        child: Container(
+          height: AppDimens.touchTarget + 4,
+          padding: const EdgeInsets.all(2),
+          decoration: BoxDecoration(
+            color: AppColors.glassClearDark,
+            borderRadius: BorderRadius.circular(AppDimens.radiusPill),
+          ),
+          child: Row(
+            children: [
+              for (final (i, s) in segments.indexed)
+                Expanded(
+                  child: Semantics(
+                    button: true,
+                    selected: i == index,
+                    label: _label(s),
+                    child: ExcludeSemantics(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          if (s.id == widget.selectedId) return;
+                          widget.onSelected(s.id);
+                        },
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: i == index
+                                ? AppColors.selected
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(
+                              AppDimens.radiusPill,
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              _label(s),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: i == index
+                                  ? text.copyWith(color: AppColors.onSelected)
+                                  : text.copyWith(color: AppColors.onHeader),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      );
+    }
     return Semantics(
       container: true,
       child: GlassSegmentedControl(
@@ -1176,6 +1241,7 @@ class AppTabScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
+    if (AppUi.isLite(context)) return _flat(context);
     return Stack(
       children: [
         Positioned.fill(child: body),
@@ -1239,6 +1305,100 @@ class AppTabScaffold extends StatelessWidget {
               ),
             ),
           ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Flat tab bar: the same floating pill, solid fill, no shader.
+extension on AppTabScaffold {
+  Widget _flat(BuildContext context) {
+    final p = context.palette;
+    return Stack(
+      children: [
+        Positioned.fill(child: body),
+        PositionedDirectional(
+          start: 0,
+          end: 0,
+          bottom: 0,
+          child: SafeArea(
+            top: false,
+            left: false,
+            right: false,
+            child: Padding(
+              padding: EdgeInsetsDirectional.symmetric(
+                horizontal: AppDimens.space4,
+                vertical: AppDimens.space2,
+              ),
+              child: Material(
+                key: const Key('app_tab_bar'),
+                color: p.glassFillLite,
+                shape: const StadiumBorder(),
+                clipBehavior: Clip.antiAlias,
+                child: SizedBox(
+                  height: AppDimens.tabBarHeight,
+                  child: Row(
+                    children: [
+                      for (final (i, t) in tabs.indexed)
+                        Expanded(
+                          child: Semantics(
+                            button: true,
+                            selected: i == selectedIndex,
+                            label: t.semanticLabel ?? t.label,
+                            child: ExcludeSemantics(
+                              child: InkWell(
+                                onTap: () => onSelected(i),
+                                child: _FlatTab(
+                                  tab: t,
+                                  selected: i == selectedIndex,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _FlatTab extends StatelessWidget {
+  const new({required this.tab, required this.selected});
+
+  final AppTab tab;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    final color = selected ? p.brand : p.inkMutedGlass;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconTheme.merge(
+          data: IconThemeData(color: color),
+          child: _TabIcon(
+            icon: selected ? tab.activeIcon : tab.icon,
+            badge: tab.badge,
+          ),
+        ),
+        Text(
+          tab.label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: context
+              .text(TextRole.caption)
+              .copyWith(
+                color: color,
+                fontWeight: selected ? FontWeight.w600 : null,
+              ),
         ),
       ],
     );
