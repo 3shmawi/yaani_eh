@@ -8,18 +8,18 @@ const path = require('path');
 
 const CAPTIONS = {
   ar: {
-    '1_home': ['منيو الكافيه… بس مفهوم', 'كل مشروب بالاسم زي ما هو مكتوب، ويعني إيه'],
+    '1_home': ['أي حاجة… بس مفهومة', 'اسمها زي ما بتشوفه، ويعني إيه بكلام بسيط'],
     '2_drink': ['يعني إيه؟ بكلام إنت عارفه', 'من غير ولا كلمة غريبة'],
-    '3_preview': ['دوس مطوّل… واعرف على طول', 'من غير ما تسيب المنيو'],
+    '3_preview': ['دوس مطوّل… واعرف على طول', 'من غير ما تسيب الصفحة'],
     '4_recipe': ['الفنجان بطبقاته بالمقاس', 'شوف فيه إيه قبل ما تطلبه'],
     '5_steps': ['اعمله في البيت', 'خطوة بخطوة، بخط كبير'],
     '6_search': ['دوّر بالوصف', 'اكتب اللي نفسك فيه، مش لازم الاسم'],
     '7_favorites': ['احفظ اللي عجبك', 'على موبايلك، من غير حساب ولا نت'],
   },
   en: {
-    '1_home': ['Café menus that make sense', 'Every drink as the menu prints it, and what it is'],
-    '2_drink': ['What is it? In plain words', 'No jargon, no other menu words'],
-    '3_preview': ['Long-press for a quick look', 'Without leaving the menu'],
+    '1_home': ['Anything, made simple', 'The name as you see it, and what it means'],
+    '2_drink': ['What is it? In plain words', 'No jargon, no strange words'],
+    '3_preview': ['Long-press for a quick look', 'Without leaving the page'],
     '4_recipe': ["What's in the cup, to scale", 'See it before you order it'],
     '5_steps': ['Make it at home', 'Step by step, in big text'],
     '6_search': ['Search by description', 'Describe what you want, no name needed'],
