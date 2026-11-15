@@ -51,3 +51,5 @@ done
 
 node tool/store/graphics.js
 echo "✓ store graphics"
+node tool/store/app_store_creative.js
+echo "✓ App Store header and search results art"
