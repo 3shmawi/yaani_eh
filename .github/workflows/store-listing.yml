@@ -59,11 +59,24 @@ jobs:
           # Icon and feature graphic, once they're in store/android/<locale>/images/.
           images=true
           ls store/android/*/images/featureGraphic.png >/dev/null 2>&1 && images=false
+          # supply hangs the listing on one release of the track; with more
+          # than one there ("More than one release found") it needs the
+          # version code, so pick the newest on the track.
+          code=$(fastlane run google_play_track_version_codes \
+              package_name:com.mohager.yaanieh json_key:"$RUNNER_TEMP/play.json" \
+              track:"$PLAY_TRACK" | sed 's/\x1b\[[0-9;]*m//g' |
+            grep -o 'Result: \[[0-9, ]*\]' | grep -o '[0-9]\+' | sort -n | tail -1)
+          if [ -z "$code" ]; then
+            echo "::error::No build on the $PLAY_TRACK track yet; upload the first AAB by hand (docs/release.md)."
+            exit 1
+          fi
+          echo "Listing goes with version code $code on $PLAY_TRACK"
           fastlane supply \
             --package_name "com.mohager.yaanieh" \
             --json_key "$RUNNER_TEMP/play.json" \
             --metadata_path store/android \
             --track "$PLAY_TRACK" \
+            --version_code "$code" \
             --skip_upload_apk true --skip_upload_aab true \
             --skip_upload_changelogs true \
             --changes_not_sent_for_review true \
