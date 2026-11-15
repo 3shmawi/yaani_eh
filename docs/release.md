@@ -112,6 +112,9 @@ review answers are in `store/submission.md`.
   so the workflow uses the `PLAY_TRACK` track (default `internal`). That
   track needs at least one build (the first AAB is uploaded by hand), or
   the job fails with "Could not find release for version code ''".
+  When the track has more than one release (a release build since the last
+  listing upload), supply needs a version code; the job reads the track's
+  codes (`google_play_track_version_codes`) and uses the newest.
   The service account needs **Manage store presence** for this app. Without
   it, every upload is staged but the final save fails with "The caller does
   not have permission" (Google checks permissions only when the edit is
