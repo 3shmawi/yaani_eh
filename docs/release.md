@@ -108,6 +108,13 @@ listing** (fastlane supply/deliver) — see `store/README.md`. Screenshots are
 made from the app with `./scripts/store_shots.sh`; the privacy, rating and
 review answers are in `store/submission.md`.
 
+- **Google Play**: fastlane supply only updates a listing through a release,
+  so the workflow uses the `PLAY_TRACK` track (default `internal`). That
+  track needs at least one build (the first AAB is uploaded by hand), or
+  the job fails with "Could not find release for version code ''".
+- **App Store**: the job writes an empty `Deliverfile` first; without one,
+  deliver asks an interactive setup question and crashes in CI.
+
 ## Store requirements (check each year)
 | Store | Requirement | Where it's handled |
 |---|---|---|

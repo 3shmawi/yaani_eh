@@ -42,6 +42,10 @@ jobs:
       - name: Upload to Google Play
         env:
           PLAY_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          # supply needs a release on a track even for a listing-only upload
+          # (it defaults to production, which has none before launch), so
+          # point it at the track release.yml uploads to.
+          PLAY_TRACK: ${{ vars.PLAY_TRACK || 'internal' }}
         run: |
           printf '%s' "$PLAY_JSON" > "$RUNNER_TEMP/play.json"
           ./scripts/mask_secrets.sh "$RUNNER_TEMP/play.json"
@@ -54,6 +58,7 @@ jobs:
             --package_name "com.mohager.yaanieh" \
             --json_key "$RUNNER_TEMP/play.json" \
             --metadata_path store/android \
+            --track "$PLAY_TRACK" \
             --skip_upload_apk true --skip_upload_aab true \
             --skip_upload_changelogs true \
             --skip_upload_images "$images" \
@@ -67,6 +72,10 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0
+        with:
+          ruby-version: '3.3'
+      - run: gem install fastlane --no-document --version 2.241.2 # zizmor: ignore[adhoc-packages] pinned; one tool, no Gemfile
       - name: Upload to App Store Connect
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
@@ -77,6 +86,9 @@ jobs:
           ./scripts/mask_secrets.sh "$RUNNER_TEMP/asc.p8"
           jq -n --arg id "$ASC_KEY_ID" --arg issuer "$ASC_ISSUER_ID" --rawfile key "$RUNNER_TEMP/asc.p8" \
             '{key_id: $id, issuer_id: $issuer, key: $key, in_house: false}' > "$RUNNER_TEMP/asc.json"
+          # Without a Deliverfile, deliver asks "setup deliver?" and crashes
+          # in CI (non-interactive). An empty one is enough: options are flags.
+          printf '# Options are passed as flags in store-listing.yml\n' > Deliverfile
           shots=true
           ls store/ios/screenshots/*/*.{png,jpg} >/dev/null 2>&1 && shots=false
           fastlane deliver \
