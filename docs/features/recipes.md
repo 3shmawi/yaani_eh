@@ -18,7 +18,8 @@ Designed in https://claude.ai/artifact/5pzpJCAdghkuTqHCNBotax (screens 2–4).
 2. Drink page → the «طريقة التحضير» row (under the trait pills, with the
    cup's size) → the same sheet.
 3. In the sheet → «خطوة بخطوة» → one step per page; swipe or «الخطوة
-   الجاية»; the back chevron goes one step back; the last button is «خلصت،
+   الجاية»; the back chevron goes one step back (none on the first step,
+   where «الخطوة الجاية» spans the width); the last button is «خلصت،
    بالهنا» and closes it. The ✕ closes it any time.
 4. A link `yaanieh://item/flat_white/steps` opens step by step over the
    drink page.

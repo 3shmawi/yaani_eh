@@ -257,6 +257,21 @@ void main() {
       expect(find.text('Next step'), findsOneWidget);
       await tester.expectAccessible();
 
+      // First step: no back button, and «next» takes its room too.
+      expect(find.byKey(const Key('steps_previous')), findsNothing);
+      final row = tester.getRect(
+        find
+            .ancestor(
+              of: find.byKey(const Key('steps_next')),
+              matching: find.byType(Row),
+            )
+            .first,
+      );
+      expect(
+        tester.getRect(find.byKey(const Key('steps_next'))).width,
+        row.width,
+      );
+
       await tester.tap(find.byKey(const Key('steps_next')));
       await tester.pumpAndSettle();
       expect(find.text('Pull two strong shots'), findsOneWidget);
