@@ -32,7 +32,8 @@ const CAPTIONS = {
   const w = Number(W), h = Number(H);
   const [title, sub] = CAPTIONS[lang][shot];
   const root = path.resolve(__dirname, '../..');
-  const font = (f) => 'file://' + path.join(root, 'assets/fonts', f);
+  // Fonts inline: a page opened with setContent can't load file:// fonts.
+  const font = (f) => 'data:font/ttf;base64,' + fs.readFileSync(path.join(root, 'assets/fonts', f)).toString('base64');
   const img = 'data:image/png;base64,' + fs.readFileSync(path.join(raw, shot + '.png')).toString('base64');
   const landscape = w > h;
   // Caption band takes the top; the screen fills the rest, keeping its ratio.

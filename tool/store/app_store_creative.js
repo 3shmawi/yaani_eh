@@ -15,7 +15,8 @@ const path = require('path');
 const root = path.resolve(__dirname, '../..');
 const file = (p) => path.join(root, p);
 const b64 = (p) => 'data:image/png;base64,' + fs.readFileSync(file(p)).toString('base64');
-const font = (f) => 'file://' + file('assets/fonts/' + f);
+// Fonts inline: a page opened with setContent can't load file:// fonts.
+const font = (f) => 'data:font/ttf;base64,' + fs.readFileSync(file('assets/fonts/' + f)).toString('base64');
 
 const TEXT = {
   'ar-SA': { lang: 'ar', dir: 'rtl', title: 'يعني إيه؟', line: 'أي حاجة… بس مفهومة', family: 'Readex' },
