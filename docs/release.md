@@ -112,12 +112,18 @@ review answers are in `store/submission.md`.
   so the workflow uses the `PLAY_TRACK` track (default `internal`). That
   track needs at least one build (the first AAB is uploaded by hand), or
   the job fails with "Could not find release for version code ''".
-  The service account needs **Manage store presence**. The upload uses
-  `--changes_not_sent_for_review true`: changes are saved but not sent for
-  review, so the account doesn't need permission to release to production
-  (without it, sending for review fails with "The caller does not have
-  permission"). Send them yourself: Play Console → **Publishing overview**
-  → Send changes for review.
+  The service account needs **Manage store presence** for this app. Without
+  it, every upload is staged but the final save fails with "The caller does
+  not have permission" (Google checks permissions only when the edit is
+  committed). A permission just granted can take hours to apply: on
+  2026-11-15 the same upload failed at 08:28 UTC and worked at 12:50 UTC
+  with no change on our side.
+  The upload uses `--changes_not_sent_for_review true`: changes are saved,
+  not sent for review. Send them yourself: Play Console → **Publishing
+  overview** → Send changes for review.
+- **Screenshots** are uploaded only when files exist; the check uses
+  `compgen -G` per extension (`ls *.{png,jpg}` fails if either pattern
+  matches nothing, and skipped them all until 2026-11-15).
 - **App Store**: the job writes an empty `Deliverfile` first; without one,
   deliver asks an interactive setup question and crashes in CI. It passes
   `--ignore_language_directory_validation` because `store/ios/screenshots`

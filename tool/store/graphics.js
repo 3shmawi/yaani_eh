@@ -15,8 +15,8 @@ const b64 = (p) => 'data:image/png;base64,' + fs.readFileSync(file(p)).toString(
 const font = (f) => 'file://' + file('assets/fonts/' + f);
 
 const TEXT = {
-  ar: { dir: 'rtl', title: 'يعني إيه؟', line: 'منيو الكافيه… بس مفهوم', sub: 'كل مشروب بكلام إنت عارفه، وإزاي بيتعمل', family: 'Readex' },
-  'en-US': { dir: 'ltr', title: 'Yaani Eh', line: 'Café menus that make sense', sub: 'Every drink in plain words, and how it’s made', family: 'Jakarta' },
+  ar: { dir: 'rtl', title: 'يعني إيه؟', line: 'أي حاجة… بس مفهومة', sub: 'معناها إيه، بكلام إنت عارفه', family: 'Readex' },
+  'en-US': { dir: 'ltr', title: 'Yaani Eh', line: 'Anything, made simple', sub: 'What it means, in plain words', family: 'Jakarta' },
 };
 
 (async () => {
