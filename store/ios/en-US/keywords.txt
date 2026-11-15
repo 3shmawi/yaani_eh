@@ -1,1 +1,1 @@
-coffee,cafe,menu,drinks,latte,cappuccino,espresso,frappe,recipe,barista,arabic,egypt,offline
+meaning,explain,words,coffee,cafe,menu,drinks,latte,cappuccino,recipe,pronunciation,arabic,egypt
