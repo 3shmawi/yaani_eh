@@ -3,9 +3,10 @@
 
     python3 tool/store/catalog_fixture.py build/store/catalog.json
 
-Same content the app ships (supabase/content: drinks.csv, the «يعني» lines,
-recipes.json, explanations.json), in the shape CatalogRows reads, so the
-screenshots show real drinks and words instead of test data.
+Same content the app ships (supabase/content/drinks: drinks.csv with the
+«يعني» lines, recipes.json, explanations.json), in the shape CatalogRows
+reads (migration 0009: details by section kind, calories and size as
+traits), so the screenshots show real drinks and words instead of test data.
 """
 
 import csv
@@ -17,6 +18,7 @@ import uuid
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 CONTENT = ROOT / "supabase" / "content"
+DRINKS = CONTENT / "drinks"
 
 spec = importlib.util.spec_from_file_location("seed", CONTENT / "build_seed.py")
 seed = importlib.util.module_from_spec(spec)
@@ -28,14 +30,15 @@ def uid(name):
 
 
 def main(out):
-    rows = list(csv.DictReader(open(CONTENT / "drinks.csv", encoding="utf-8-sig")))
-    recipes = json.loads((CONTENT / "recipes.json").read_text(encoding="utf-8"))
-    explain = json.loads((CONTENT / "explanations.json").read_text(encoding="utf-8"))
+    rows = list(csv.DictReader(open(DRINKS / "drinks.csv", encoding="utf-8-sig")))
+    recipes = json.loads((DRINKS / "recipes.json").read_text(encoding="utf-8"))
+    explain = json.loads((DRINKS / "explanations.json").read_text(encoding="utf-8"))
     stamp = "2026-10-31T00:00:00Z"
     categories = [
         {"id": uid("cafe"), "parent_id": None, "slug": "cafe", "name_ar": "مشروبات",
          "name_en": "Drinks", "icon": "coffee", "trait_schema": seed.TRAIT_SCHEMA,
-         "sort_order": 0, "updated_at": stamp},
+         "detail_kind": "recipe", "details_title_ar": "طريقة التحضير",
+         "details_title_en": "How it's made", "sort_order": 0, "updated_at": stamp},
         {"id": uid("desserts"), "parent_id": None, "slug": "desserts", "name_ar": "حلويات",
          "name_en": "Desserts", "icon": "cake", "trait_schema": None, "sort_order": 1,
          "updated_at": stamp},
@@ -52,13 +55,14 @@ def main(out):
             "menu_name": r["menu_name"], "menu_name_ar": r["menu_name_ar"],
             "explanation_ar": explain[s][0], "explanation_en": explain[s][1],
             "gist_ar": r["gist_ar"], "gist_en": r["gist_en"],
-            "calories": int(r["calories_approx"]) if r["calories_approx"] else None,
-            "size_ml": int(r["size_ml"]) if r["size_ml"] else None,
             "traits": {"temp": r["temp"], "sweetness": int(r["sweetness_0_3"]),
                        "milk": r["milk"].strip().lower() == "true",
-                       "caffeine": int(r["caffeine_0_3"])},
+                       "caffeine": int(r["caffeine_0_3"]),
+                       **({"calories": int(r["calories_approx"])} if r["calories_approx"] else {}),
+                       **({"size_ml": int(r["size_ml"])} if r["size_ml"] else {})},
             "sort_order": i,
-            "recipe": seed.recipe_json(s, recipes[s], int(r["size_ml"])),
+            "details": {"kind": "recipe",
+                        **seed.recipe_json(s, recipes[s], int(r["size_ml"]))},
             "updated_at": stamp,
         })
     pathlib.Path(out).parent.mkdir(parents=True, exist_ok=True)
