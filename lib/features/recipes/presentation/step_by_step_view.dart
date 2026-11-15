@@ -134,24 +134,28 @@ class _StepByStepViewState extends State<StepByStepView> {
                       ),
                       Row(
                         children: [
-                          AnimatedOpacity(
-                            opacity: _index == 0 ? 0 : 1,
-                            duration: AppMotion.select,
-                            child: IgnorePointer(
-                              ignoring: _index == 0,
-                              child: ExcludeSemantics(
-                                excluding: _index == 0,
-                                child: AppIconButton(
-                                  key: const Key('steps_previous'),
-                                  icon: AppIcons.back,
-                                  tooltip: l10n.stepPrevious,
-                                  tone: GlassTone.dark,
-                                  onPressed: () => _go(_index - 1),
-                                ),
-                              ),
-                            ),
+                          // No back on the first step: the button and its
+                          // gap take no room, so «next» spans the width.
+                          AnimatedSize(
+                            duration: MediaQuery.disableAnimationsOf(context)
+                                ? Duration.zero
+                                : AppMotion.select,
+                            curve: Curves.easeOutCubic,
+                            child: _index == 0
+                                ? const SizedBox.shrink()
+                                : Padding(
+                                    padding: EdgeInsetsDirectional.only(
+                                      end: AppDimens.space3,
+                                    ),
+                                    child: AppIconButton(
+                                      key: const Key('steps_previous'),
+                                      icon: AppIcons.back,
+                                      tooltip: l10n.stepPrevious,
+                                      tone: GlassTone.dark,
+                                      onPressed: () => _go(_index - 1),
+                                    ),
+                                  ),
                           ),
-                          SizedBox(width: AppDimens.space3),
                           Expanded(
                             child: AppButton(
                               key: const Key('steps_next'),
