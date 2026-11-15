@@ -112,8 +112,16 @@ review answers are in `store/submission.md`.
   so the workflow uses the `PLAY_TRACK` track (default `internal`). That
   track needs at least one build (the first AAB is uploaded by hand), or
   the job fails with "Could not find release for version code ''".
+  The service account needs **Manage store presence**. The upload uses
+  `--changes_not_sent_for_review true`: changes are saved but not sent for
+  review, so the account doesn't need permission to release to production
+  (without it, sending for review fails with "The caller does not have
+  permission"). Send them yourself: Play Console → **Publishing overview**
+  → Send changes for review.
 - **App Store**: the job writes an empty `Deliverfile` first; without one,
-  deliver asks an interactive setup question and crashes in CI.
+  deliver asks an interactive setup question and crashes in CI. It passes
+  `--ignore_language_directory_validation` because `store/ios/screenshots`
+  is next to the locale folders (deliver skips it, it is not a language).
 
 ## Store requirements (check each year)
 | Store | Requirement | Where it's handled |

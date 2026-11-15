@@ -44,7 +44,9 @@ jobs:
           PLAY_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           # supply needs a release on a track even for a listing-only upload
           # (it defaults to production, which has none before launch), so
-          # point it at the track release.yml uploads to.
+          # point it at the track release.yml uploads to. Changes are saved
+          # but not sent for review, so the account needs no production
+          # release permission; send them from Play Console → Publishing overview.
           PLAY_TRACK: ${{ vars.PLAY_TRACK || 'internal' }}
         run: |
           printf '%s' "$PLAY_JSON" > "$RUNNER_TEMP/play.json"
@@ -61,6 +63,7 @@ jobs:
             --track "$PLAY_TRACK" \
             --skip_upload_apk true --skip_upload_aab true \
             --skip_upload_changelogs true \
+            --changes_not_sent_for_review true \
             --skip_upload_images "$images" \
             --skip_upload_screenshots "$shots"
 
@@ -88,6 +91,8 @@ jobs:
             '{key_id: $id, issuer_id: $issuer, key: $key, in_house: false}' > "$RUNNER_TEMP/asc.json"
           # Without a Deliverfile, deliver asks "setup deliver?" and crashes
           # in CI (non-interactive). An empty one is enough: options are flags.
+          # store/ios/screenshots sits next to the locale folders, so deliver's
+          # folder-name check is off; it still only reads valid locale folders.
           printf '# Options are passed as flags in store-listing.yml\n' > Deliverfile
           shots=true
           ls store/ios/screenshots/*/*.{png,jpg} >/dev/null 2>&1 && shots=false
@@ -98,6 +103,7 @@ jobs:
             --screenshots_path store/ios/screenshots \
             --skip_binary_upload true \
             --skip_screenshots "$shots" \
+            --ignore_language_directory_validation true \
             --overwrite_screenshots true \
             --submit_for_review false \
             --run_precheck_before_submit false \
