@@ -1,8 +1,8 @@
 // App Store "Header and Search Results" artwork (App Store Connect →
 // Product Page Information). fastlane can't upload these, so they're made
 // here and uploaded by hand:
-//   store/assets/app_store_creative/<ar-SA|en-US>/header.jpg          3840×1646 (21:9)
-//   store/assets/app_store_creative/<ar-SA|en-US>/search_results.jpg  3840×2560 (3:2)
+//   store/assets/app_store_creative/<ar-SA|en-US>/header.png          3840×1646 (21:9)
+//   store/assets/app_store_creative/<ar-SA|en-US>/search_results.png  3840×2560 (3:2)
 // Apple's spec (developer.apple.com → Creative assets specifications,
 // checked 2026-11-15): JPEG or PNG, no alpha. Key art stays inside the
 // Art Safe Area (header 1646×661 at 1097,493; search results 2168×1030 at
@@ -85,7 +85,7 @@ function html(t, p) {
       if (!fits) throw new Error(`${locale} ${name}: key art overflows the safe area`);
       const dir = file(`store/assets/app_store_creative/${locale}`);
       fs.mkdirSync(dir, { recursive: true });
-      await page.screenshot({ path: path.join(dir, `${name}.jpg`), type: 'jpeg', quality: 92 });
+      await page.screenshot({ path: path.join(dir, `${name}.png`), type: 'png' });
       await page.close();
     }
   }
