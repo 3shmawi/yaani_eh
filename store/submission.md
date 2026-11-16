@@ -110,8 +110,10 @@ is used for advertising.
   - Processed ephemerally: No. Collection is required: Yes, it can't be
     turned off in the app yet.
   - Encrypted in transit: Yes.
-  - Can users request deletion: Yes, by email
-    (https://3shmawi.github.io/yaani_eh/delete-account.html).
+  - Can users request deletion: Yes, by email from the «Your data» page
+    (https://3shmawi.github.io/yaani_eh/delete-account.html). There are no
+    accounts: data on the phone goes with the app, and what we hold isn't
+    linked to anyone.
 - **News, health, finance, government apps:** No to all.
 
 ## Re-making the screenshots
