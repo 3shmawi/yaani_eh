@@ -72,6 +72,12 @@ abstract final class AppDimens {
   /// Never below [touchTarget]: on a short phone `48.h` is ~34.
   static double get searchHeight => math.max(48.h, touchTarget);
   static double get icon => 24.r;
+
+  /// A settings row's height (never below [touchTarget]).
+  static double get settingsRow => 52.h;
+
+  /// The widest a settings row's value gets before it wraps.
+  static double get settingsValue => 150.w;
   static double get iconChip => 20.r;
   static double get tabBarHeight => 60.h;
 

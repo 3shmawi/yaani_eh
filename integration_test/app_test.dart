@@ -10,24 +10,44 @@ import 'helpers/demo_app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('starts on home and opens the settings tab', (tester) async {
-    await DemoApp.start(pageSize: 100);
-    await pumpUntil(tester, find.byKey(const Key('browse_list')));
-    await tester.pumpAndSettle();
-    await beat(tester, 1500);
+  testWidgets(
+    'starts on home, opens the settings tab and switches the language',
+    (tester) async {
+      await DemoApp.start(pageSize: 100);
+      await pumpUntil(tester, find.byKey(const Key('browse_list')));
+      await tester.pumpAndSettle();
+      await beat(tester, 1500);
 
-    await tester.tap(
-      find
-          .descendant(
-            of: find.byKey(const Key('app_tab_bar')),
-            matching: find.byIcon(AppIcons.settings),
-          )
-          .first,
-    );
-    await tester.pumpAndSettle();
-    await beat(tester);
+      await tester.tap(
+        find
+            .descendant(
+              of: find.byKey(const Key('app_tab_bar')),
+              matching: find.byIcon(AppIcons.settings),
+            )
+            .first,
+      );
+      await tester.pumpAndSettle();
+      await beat(tester);
 
-    expect(find.byType(SettingsView), findsOneWidget);
-    await beat(tester, 1500);
-  });
+      expect(find.byType(SettingsView), findsOneWidget);
+      await beat(tester);
+
+      // Language: the row opens a sheet; English switches the whole app.
+      await tester.tap(find.byKey(const Key('settings_language')));
+      await tester.pumpAndSettle();
+      await beat(tester);
+      await tester.tap(find.byKey(const Key('settings_choice_1')));
+      await tester.pumpAndSettle();
+      expect(find.text('Settings'), findsWidgets);
+      await beat(tester);
+
+      // And back to Arabic.
+      await tester.tap(find.byKey(const Key('settings_language')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('settings_choice_2')));
+      await tester.pumpAndSettle();
+      expect(find.text('الإعدادات'), findsWidgets);
+      await beat(tester, 1500);
+    },
+  );
 }
