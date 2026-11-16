@@ -29,7 +29,7 @@ Re-check both pages before the first upload.
 |---|---|
 | App name | iOS `store/ios/<locale>/name.txt`, Play `store/android/<locale>/title.txt` |
 | Price | Free, no in-app purchases, no ads |
-| Category | Food & Drink (iOS secondary: Reference) |
+| Category | iOS: Reference (secondary: Food & Drink). Play: Books & Reference. The app explains anything in plain words (docs/decisions/0005-generic-items.md); drinks are only the first section |
 | Languages | Arabic (default for Egypt), English |
 | Privacy policy | https://3shmawi.github.io/yaani_eh/privacy.html |
 | Support / marketing site | https://3shmawi.github.io/yaani_eh |
