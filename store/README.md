@@ -37,6 +37,10 @@ the workflow uploads from:
 Captions live in `tool/store/frame.js`. The workflow uploads screenshots
 and images only when those files exist.
 
+## Brand video
+A vertical motion video of every feature (Reels, TikTok, Shorts, store preview
+source) is generated from code: see `tool/brand_video/README.md`.
+
 ## Everything else the stores ask
 Privacy labels, Data safety, age and content rating, export compliance and
 review notes: [submission.md](submission.md).
