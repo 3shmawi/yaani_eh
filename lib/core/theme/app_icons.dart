@@ -65,6 +65,14 @@ abstract final class AppIcons {
   static const IconData detailsStory = CupertinoIcons.book;
   static const IconData detailsUsage = CupertinoIcons.chat_bubble_text;
   static const IconData update = CupertinoIcons.arrow_down_circle;
+
+  /// Settings rows: language, theme and the About group.
+  static const IconData language = CupertinoIcons.globe;
+  static const IconData theme = CupertinoIcons.circle_lefthalf_fill;
+  static const IconData info = CupertinoIcons.info_circle;
+  static const IconData privacy = CupertinoIcons.lock_shield;
+  static const IconData terms = CupertinoIcons.doc_text;
+  static const IconData licenses = CupertinoIcons.doc_plaintext;
   static const coffee = IconData(0xe1c2, fontFamily: _phosphor);
   static const cake = IconData(0xe780, fontFamily: _phosphor);
   static const IconData book = CupertinoIcons.book;
