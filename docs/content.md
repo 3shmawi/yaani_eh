@@ -61,18 +61,22 @@ The app works the thumbnail's name out from `image_path`
 (`MediaUrls.thumbnailPath`), so the database only holds the photo's path.
 
 **Adding or changing a photo:**
-1. The photo: WebP, 1200×1600, < 300 KB — own photos or
-   Pexels/Unsplash-licensed; no café logos, branded cups or faces.
+1. The photo: WebP, 1200×1600, < 300 KB — own photos, or CC0 / public
+   domain (the WordPress Photo Directory is all CC0; Openverse can filter
+   by license); no café logos, branded cups, text or faces. Put it in
+   `supabase/content/media/item-images/` and add its source to
+   `supabase/content/media/SOURCES.md`.
 2. Make its thumbnail (needs `cwebp`: `brew install webp` / `apt install webp`):
    ```bash
-   ./scripts/make_thumbnails.sh path/to/photos      # a folder, or files
+   ./scripts/make_thumbnails.sh supabase/content/media/item-images
    ```
    It writes `<name>.thumb.webp` next to each photo (400 px wide, metadata
    removed, quality lowered until ≤ 40 KB), skips thumbnails that are newer
    than their photo (`--force` remakes them) and warns about any that stay
    over 40 KB.
 3. Upload **both** files to `item-images` (same folder), then put the
-   photo's path (e.g. `latte.webp`) in `image_path`. Changing a photo: upload
+   photo's path (e.g. `latte.webp`) in `image_path` with a new migration
+   (like `0010_item_media_first_batch.sql`), merged **after** the upload. Changing a photo: upload
    both again under the same names.
 
 **A thumbnail is missing:** cards fall back to the full photo (slower, more
@@ -96,7 +100,17 @@ pronounce pill (docs/features/pronunciation.md):
 - **Format:** M4A (AAC) or MP3, mono, about 64 kbps, 1–3 seconds, under
   50 KB. Not Ogg: the bucket accepts it but iPhones can't play it.
 - **Recording:** the name alone, said once, clearly, no music or "it's
-  pronounced…". Trim silence at both ends. Own recordings only.
+  pronounced…". Trim silence at both ends. «زي الباريستا» clips are own
+  recordings only (no computer voice says them the Egyptian way).
+  «الأصلي» clips may be generated with [Piper](https://github.com/OHF-Voice/piper1-gpl)
+  using a voice whose training data is CC0, public domain or CC BY (not
+  NC, SA or AGPL: read its MODEL_CARD); check each one with a speech
+  recognizer or by ear and drop the ones it gets wrong. List every clip
+  and its voice in `supabase/content/media/SOURCES.md`.
+- **Files in the repo:** `supabase/content/media/item-audio/`, uploaded to
+  the bucket by hand, then a migration sets the paths (merge it after the
+  upload). `test/content/media_test.dart` checks names, sizes, sources and
+  that every path a migration sets has its file.
 - **Naming:** `<slug>.barista.m4a` and `<slug>.original.m4a`, e.g.
   `flat_white.barista.m4a`. Upload to the `item-audio` bucket, then put the
   path in the column. A path with `..`, a leading `/` or `//` is ignored by
