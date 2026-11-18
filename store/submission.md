@@ -51,7 +51,7 @@ is used for advertising.
 
 ## App Store Connect
 
-- **Screenshots:** `store/ios/screenshots/<ar-SA|en-US>/`, JPEG, 8 per size:
+- **Screenshots:** `store/ios/screenshots/<ar-SA|en-US>/`, JPEG, 7 per size:
   iPhone 6.9" (`<n>_iphone69.jpg`, 1320×2868) and iPad 13" (`<n>_ipad13.jpg`,
   2064×2752, required because the app runs on iPad). fastlane deliver
   2.241.2 recognises both by their size. Sizes checked on
