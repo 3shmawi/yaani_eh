@@ -77,16 +77,54 @@ is used for advertising.
   content it has no rights to. Drink names are generic. There are no photos
   yet; check this again when photos are added.
 - **Sign-in required:** No.
-- **Review notes:**
+- **Review notes** (App Review Information → Notes). Apple asked for all
+  of this on the first submission (Guideline 2.1 - Information Needed,
+  2026-11-18), so send it with every new-app submission. Fill in the
+  bracketed parts; keep it under 4,000 characters. Attach the screen
+  recording in App Review Information → Attachment, or link it (unlisted
+  YouTube or a Drive link anyone can open).
 
-  > No account needed. On first launch a three-page welcome explains the
-  > app (Skip / «تخطّي» leaves it) while the drink menu downloads once
-  > (internet needed for that); then it works offline. Try: long-press a drink
-  > card for a quick look; open Flat White → «طريقة التحضير» / "How it's
-  > made" → «خطوة بخطوة» / "Step by step"; search "something cold with
-  > chocolate". The app's language defaults to Arabic; switch it in
-  > Settings (gear icon, top of Home).
+  ```text
+  1. SCREEN RECORDING
+  [link to video, or "attached below"]. Recorded on [iPhone model], iOS [version], starting from launching the app. The app has no account registration or login (so no account deletion), no user-generated content, and no paid content, in-app purchases or ads.
 
+  2. PURPOSE AND AUDIENCE
+  Yaani Eh ("What does it mean?") explains café menu items in plain Egyptian Arabic and English. Café menus in Egypt are full of Italian and English names (Flat White, Cortado, Affogato) that many customers can't read, pronounce or understand. For each drink the app gives its Arabic spelling, a short line that says what it really is, approximate calories, a to-scale picture of the cup's layers, preparation steps, and a recording of how the name is said. Audience: adults and teens (13+) in Egypt and Arabic speakers anywhere who order at cafés or want to make drinks at home.
+
+  3. HOW TO USE IT
+  No login, credentials or sample files are needed.
+  - First launch: a three-page welcome explains the app (tap Skip / «تخطّي» to leave it) while the drink menu downloads once. Internet is needed for this first download; after that the app works offline.
+  - The app opens in Arabic. To switch to English: gear icon at the top of Home → Language.
+  - Home: category chips and drink cards. Tap a card to open the drink.
+  - Drink page: tap «زي الباريستا» (barista pronunciation) or «الأصلي» (original) to hear the name; 0.75× slows it down.
+  - Open Flat White → «طريقة التحضير» / "How it's made" to see the cup drawn to scale, then «خطوة بخطوة» / "Step by step".
+  - Search (field at the top of Home): type a name ("cortado") or a description ("something cold with chocolate").
+  - Tap the heart to save a favorite; it appears in the Favorites tab. Long-press any card for a quick preview.
+
+  4. EXTERNAL SERVICES
+  - Supabase: hosts the read-only menu content (drink text, photos, pronunciation audio). It is not used for sign-in; the app has no accounts.
+  - PostHog: anonymous product analytics and feature flags (no personal data, no advertising, no tracking).
+  - Sentry: crash and error reporting.
+  The app uses no AI services, payment processors, authentication providers or ad networks. Search runs entirely on the device.
+
+  5. REGIONAL DIFFERENCES
+  The app works the same in every region. Nothing is restricted or changed by country. The content is written for Egypt (Egyptian Arabic, how baristas in Egypt say the names), but every feature is available everywhere. The app does not show prices.
+
+  6. REGULATED INDUSTRY / THIRD-PARTY MATERIAL
+  Not applicable. The app is not in a regulated industry and doesn't sell or deliver anything. All drink descriptions, recipes and pronunciation recordings are our own. Photos are our own or licensed from Pexels/Unsplash, with no café brands, logos or people. Drink names are generic. Calories are approximate and shown for general information, not as health advice.
+  ```
+
+  Keep items 4 and 6 true: a new service (an AI or text-to-speech tool
+  included) goes in item 4; if the drinks still have no photos, say so in
+  item 6 instead of the photo sentence.
+- **Screen recording:** a real iPhone (not the Simulator) on the latest
+  iOS, iOS screen recording from Control Center, starting with the app
+  deleted so the video opens on launch and the first menu download. About
+  2 minutes: welcome (or Skip) → Home, a category chip → a drink, both
+  pronunciations → "How it's made" → Step by step → search "something cold
+  with chocolate", open a result → a heart, the Favorites tab, a long-press
+  preview → Settings, switch to English → (optional) airplane mode, still
+  works.
 - **Contact for review:** your name, phone and email (only App Review sees them).
 
 ## Google Play Console
@@ -111,7 +149,9 @@ is used for advertising.
     turned off in the app yet.
   - Encrypted in transit: Yes.
   - Can users request deletion: Yes, by email
-    (https://3shmawi.github.io/yaani_eh/delete-account.html).
+    (https://3shmawi.github.io/yaani_eh/delete-account.html). The app has no
+    accounts, so that page says how: delete the app for what's on the phone,
+    email for what we hold.
 - **News, health, finance, government apps:** No to all.
 
 ## Re-making the screenshots
