@@ -52,6 +52,10 @@ would be printed in full by any tool that echoes it in an error.
   upload" into "… manual ***").
 - Pass passwords through environment variables the tool reads, not as
   command-line arguments.
+- Media upload (`scripts/upload_media.sh` in `supabase.yml`): the Supabase
+  CLI fetches the project's service key from `SUPABASE_ACCESS_TOKEN` in
+  memory and never prints it; the script only prints file names. Never add
+  `--debug` to it, and never fetch the key into a variable or file.
 - Workflows start with `permissions: contents: read`; a job that must write
   asks for exactly that. (The Demo video's `compose` job has
   `contents: write` only to publish screenshots to the `demo-media` branch,

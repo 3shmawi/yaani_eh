@@ -1,6 +1,6 @@
 -- First photos and «الأصلي» clips (supabase/content/media/, sources in
--- supabase/content/media/SOURCES.md). Upload the files to their buckets
--- BEFORE this reaches main: the app starts asking for them on the next sync.
+-- supabase/content/media/SOURCES.md). The Supabase deploy workflow uploads
+-- the files (scripts/upload_media.sh) before it runs this migration.
 --
 -- Only empty paths are filled, so a photo or clip already set in Studio is
 -- kept. Each update bumps updated_at, so phones pick the change up on their

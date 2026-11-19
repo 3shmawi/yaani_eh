@@ -74,9 +74,11 @@ The app works the thumbnail's name out from `image_path`
    removed, quality lowered until ≤ 40 KB), skips thumbnails that are newer
    than their photo (`--force` remakes them) and warns about any that stay
    over 40 KB.
-3. Upload **both** files to `item-images` (same folder), then put the
-   photo's path (e.g. `latte.webp`) in `image_path` with a new migration
-   (like `0010_item_media_first_batch.sql`), merged **after** the upload. Changing a photo: upload
+3. Set the photo's path (e.g. `latte.webp`) in `image_path` with a new
+   migration (like `0010_item_media_first_batch.sql`). On merge, the
+   **Supabase deploy** workflow uploads both files to `item-images`
+   (`scripts/upload_media.sh`) before it runs the migration. (Editing in
+   Studio instead: upload both files by hand first, then set the path.) Changing a photo: upload
    both again under the same names.
 
 **A thumbnail is missing:** cards fall back to the full photo (slower, more
@@ -107,9 +109,9 @@ pronounce pill (docs/features/pronunciation.md):
   NC, SA or AGPL: read its MODEL_CARD); check each one with a speech
   recognizer or by ear and drop the ones it gets wrong. List every clip
   and its voice in `supabase/content/media/SOURCES.md`.
-- **Files in the repo:** `supabase/content/media/item-audio/`, uploaded to
-  the bucket by hand, then a migration sets the paths (merge it after the
-  upload). `test/content/media_test.dart` checks names, sizes, sources and
+- **Files in the repo:** `supabase/content/media/item-audio/`; a migration
+  sets the paths, and the **Supabase deploy** workflow uploads the files
+  before it runs the migration. `test/content/media_test.dart` checks names, sizes, sources and
   that every path a migration sets has its file.
 - **Naming:** `<slug>.barista.m4a` and `<slug>.original.m4a`, e.g.
   `flat_white.barista.m4a`. Upload to the `item-audio` bucket, then put the
