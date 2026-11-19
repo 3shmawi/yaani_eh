@@ -98,12 +98,23 @@ and deploys Edge Functions. Needs
 `SUPABASE_ACCESS_TOKEN` + `SUPABASE_DB_PASSWORD` (the project ref is read
 from `SUPABASE_URL`). PRs touching `supabase/` run the RLS tests first.
 
-If `SUPABASE_ACCESS_TOKEN` is a scoped token, it must have **API Keys:
-read-write**: `supabase link` reads the project's API keys, and without that
-scope every deploy fails at the link step (prod went un-migrated from
-2026-10-31 until the token was fixed on 2026-11-01). After changing the
-token, re-run Actions → **Supabase deploy** (workflow_dispatch) so nothing
-merged in the meantime is skipped.
+`SUPABASE_ACCESS_TOKEN` is best a scoped token for this project only, with
+(Supabase docs → Personal Access Tokens, checked 2026-11-19):
+
+| Permission | Access | Used by |
+|---|---|---|
+| Project Settings | Read | `supabase link` |
+| API Keys | Read | `supabase link`, media upload (the CLI reads the service key) |
+| API Key Secrets | Read | `supabase link`, media upload |
+| Edge Functions | Read-write | only once `supabase/functions/` exists |
+
+`db push` uses `SUPABASE_DB_PASSWORD`, not the token's permissions. A
+missing permission or an expired token fails the deploy at the link step,
+before anything is uploaded or migrated (prod went un-migrated from
+2026-10-31 to 2026-11-01, and the token was invalid again on 2026-11-19).
+After changing the token, re-run Actions → **Supabase deploy**
+(workflow_dispatch, or re-run the failed run) so nothing merged in the
+meantime is skipped.
 
 ## Store listing
 Texts, screenshots and graphics in `store/`, uploaded by Actions → **Store
