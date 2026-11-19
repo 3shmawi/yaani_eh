@@ -90,8 +90,11 @@ Without `PLAY_SERVICE_ACCOUNT_JSON` the Play step is skipped (APK only).
 `ENABLE_PLAY_STAGING=false` turns it off.
 
 ## Backend deploys
-Changes under `supabase/` merged to `main` → `supabase.yml` runs
-`supabase db push` (migrations) and deploys Edge Functions. Needs
+Changes under `supabase/` merged to `main` → `supabase.yml` links the
+project, uploads `supabase/content/media/` to the `item-images` /
+`item-audio` buckets (`scripts/upload_media.sh`, **before** the migrations,
+so no path points at a missing file), runs `supabase db push` (migrations)
+and deploys Edge Functions. Needs
 `SUPABASE_ACCESS_TOKEN` + `SUPABASE_DB_PASSWORD` (the project ref is read
 from `SUPABASE_URL`). PRs touching `supabase/` run the RLS tests first.
 

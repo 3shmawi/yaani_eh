@@ -54,12 +54,23 @@ jobs:
 
       # The CLI reads SUPABASE_DB_PASSWORD from the environment, so the
       # password never appears in a command line.
-      - name: Push migrations
+      - name: Link project
         if: steps.ref.outputs.ready == 'true'
         run: |
           [ -f supabase/config.toml ] || supabase init </dev/null
           supabase link --project-ref "$PROJECT_REF"
-          supabase db push
+
+      # Before the migrations: a migration that points a drink at a photo or
+      # clip must never reach the app before the file is in its bucket. The
+      # CLI gets the project's service key from SUPABASE_ACCESS_TOKEN itself
+      # and never prints it (docs/content.md → media).
+      - name: Upload media
+        if: steps.ref.outputs.ready == 'true'
+        run: ./scripts/upload_media.sh
+
+      - name: Push migrations
+        if: steps.ref.outputs.ready == 'true'
+        run: supabase db push
 
       - name: Deploy Edge Functions
         if: steps.ref.outputs.ready == 'true' && hashFiles('supabase/functions/**') != ''

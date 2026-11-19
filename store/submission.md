@@ -74,8 +74,10 @@ is used for advertising.
   App Store Connect doesn't ask on each build (confirmed by the owner on
   2026-11-01).
 - **Content rights:** the app doesn't contain, show or access third-party
-  content it has no rights to. Drink names are generic. There are no photos
-  yet; check this again when photos are added.
+  content it has no rights to. Drink names are generic. Photos are CC0 /
+  public domain (sources in `supabase/content/media/SOURCES.md`); the
+  «الأصلي» clips are generated with Piper voices trained on CC0, public
+  domain or CC BY data. Check this again when new media is added.
 - **Sign-in required:** No.
 - **Review notes** (App Review Information → Notes). Apple asked for all
   of this on the first submission (Guideline 2.1 - Information Needed,
@@ -105,18 +107,19 @@ is used for advertising.
   - Supabase: hosts the read-only menu content (drink text, photos, pronunciation audio). It is not used for sign-in; the app has no accounts.
   - PostHog: anonymous product analytics and feature flags (no personal data, no advertising, no tracking).
   - Sentry: crash and error reporting.
-  The app uses no AI services, payment processors, authentication providers or ad networks. Search runs entirely on the device.
+  - Piper (open-source text-to-speech, run offline by us): generated some of the "original" pronunciation clips ahead of time. The app itself makes no calls to it or to any AI service.
+  The app uses no payment processors, authentication providers or ad networks. Search runs entirely on the device.
 
   5. REGIONAL DIFFERENCES
   The app works the same in every region. Nothing is restricted or changed by country. The content is written for Egypt (Egyptian Arabic, how baristas in Egypt say the names), but every feature is available everywhere. The app does not show prices.
 
   6. REGULATED INDUSTRY / THIRD-PARTY MATERIAL
-  Not applicable. The app is not in a regulated industry and doesn't sell or deliver anything. All drink descriptions, recipes and pronunciation recordings are our own. Photos are our own or licensed from Pexels/Unsplash, with no café brands, logos or people. Drink names are generic. Calories are approximate and shown for general information, not as health advice.
+  Not applicable. The app is not in a regulated industry and doesn't sell or deliver anything. All drink descriptions and recipes are our own. Any "barista" pronunciation recordings are our own; the "original" pronunciation clips were generated with Piper voices trained on CC0, public-domain or CC BY data. Drink photos are CC0 (public domain) from the WordPress Photo Directory, with no café brands, logos or people. Drink names are generic. Calories are approximate and shown for general information, not as health advice.
   ```
 
   Keep items 4 and 6 true: a new service (an AI or text-to-speech tool
-  included) goes in item 4; if the drinks still have no photos, say so in
-  item 6 instead of the photo sentence.
+  included) goes in item 4, and new media sources go in item 6 and
+  `supabase/content/media/SOURCES.md`.
 - **Screen recording:** a real iPhone (not the Simulator) on the latest
   iOS, iOS screen recording from Control Center, starting with the app
   deleted so the video opens on launch and the first menu download. About
@@ -165,5 +168,5 @@ This renders the app's screens from the real launch content
 each one with its caption (`tool/store/frame.js`), and makes the feature
 graphic and icons (`tool/store/graphics.js`). It takes about 9 minutes.
 
-Run it again after a UI change or when drink photos arrive: the drinks have
-no photos yet, so their tiles show the drink's initial.
+Run it again after a UI change or when drink photos arrive: only some drinks
+have photos (`supabase/content/media/`); the rest show the drink's initial.
