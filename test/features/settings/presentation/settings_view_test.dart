@@ -21,13 +21,21 @@ void main() {
   Widget view({
     AppSettings settings = const AppSettings(),
     ValueChanged<Locale?>? onLocaleChanged,
+<<<<<<< yours
+=======
+    ValueChanged<ThemeMode>? onThemeModeChanged,
+>>>>>>> kit 765ff42
     VoidCallback? onOpenPrivacy,
     VoidCallback? onOpenTerms,
     VoidCallback? onOpenLicenses,
   }) => SettingsView(
     settings: settings,
     onLocaleChanged: onLocaleChanged ?? (_) {},
+<<<<<<< yours
     onThemeModeChanged: (_) {},
+=======
+    onThemeModeChanged: onThemeModeChanged ?? (_) {},
+>>>>>>> kit 765ff42
     onOpenPrivacy: onOpenPrivacy,
     onOpenTerms: onOpenTerms,
     onOpenLicenses: onOpenLicenses,
@@ -45,6 +53,7 @@ void main() {
         find.byKey(const Key('settings_version')),
       );
       expect(value.textDirection, TextDirection.ltr);
+<<<<<<< yours
     });
 
     testWidgets('the language row shows the current choice', (tester) async {
@@ -55,6 +64,42 @@ void main() {
         find.descendant(
           of: find.byKey(const Key('settings_language')),
           matching: find.text(l10nEn.languageEnglish),
+=======
+    });
+
+    testWidgets('rows show the current choices', (tester) async {
+      await tester.pumpApp(
+        view(
+          settings: const AppSettings(
+            locale: Locale('en'),
+            themeMode: ThemeMode.dark,
+          ),
+        ),
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('settings_language')),
+          matching: find.text(l10nEn.languageEnglish),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('settings_theme')),
+          matching: find.text(l10nEn.settingsThemeDark),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('picks a language and a theme from the sheet', (tester) async {
+      Locale? locale = const Locale('x');
+      ThemeMode? themeMode;
+      await tester.pumpApp(
+        view(
+          onLocaleChanged: (value) => locale = value,
+          onThemeModeChanged: (value) => themeMode = value,
+>>>>>>> kit 765ff42
         ),
         findsOneWidget,
       );
@@ -66,6 +111,7 @@ void main() {
 
       await tester.tap(find.byKey(const Key('settings_language')));
       await tester.pumpAndSettle();
+<<<<<<< yours
       await tester.tap(find.byKey(const Key('settings_choice_1')));
       await tester.pumpAndSettle();
       expect(locale, const Locale('en'));
@@ -76,6 +122,18 @@ void main() {
       await tester.tap(find.byKey(const Key('settings_choice_0')));
       await tester.pumpAndSettle();
       expect(locale, isNull);
+=======
+      await tester.tap(find.byKey(const Key('settings_choice_2')));
+      await tester.pumpAndSettle();
+      expect(locale, const Locale('ar'));
+      expect(find.byKey(const Key('settings_choice_2')), findsNothing);
+
+      await tester.tap(find.byKey(const Key('settings_theme')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('settings_choice_2')));
+      await tester.pumpAndSettle();
+      expect(themeMode, ThemeMode.dark);
+>>>>>>> kit 765ff42
     });
 
     testWidgets('closing the sheet changes nothing', (tester) async {
@@ -84,6 +142,7 @@ void main() {
 
       await tester.tap(find.byKey(const Key('settings_language')));
       await tester.pumpAndSettle();
+<<<<<<< yours
       expect(find.byKey(const Key('settings_choice_2')), findsOneWidget);
       await tester.tapAt(const Offset(10, 10));
       await tester.pumpAndSettle();
@@ -140,11 +199,69 @@ void main() {
     testWidgets('meets accessibility guidelines', (tester) async {
       await tester.pumpApp(
         view(onOpenPrivacy: () {}, onOpenTerms: () {}, onOpenLicenses: () {}),
+=======
+      expect(find.byKey(const Key('settings_choice_1')), findsOneWidget);
+      await tester.tapAt(const Offset(10, 10));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('settings_choice_1')), findsNothing);
+      expect(calls, 0);
+    });
+
+    testWidgets('the sheet marks the current choice', (tester) async {
+      await tester.pumpApp(
+        view(settings: const AppSettings(themeMode: ThemeMode.light)),
+      );
+      await tester.tap(find.byKey(const Key('settings_theme')));
+      await tester.pumpAndSettle();
+
+      bool selected(int i) => tester
+          .getSemantics(find.byKey(Key('settings_choice_$i')))
+          .flagsCollection
+          .isSelected
+          .toBoolOrNull()!;
+      expect(selected(1), isTrue);
+      expect(selected(2), isFalse);
+    });
+
+    testWidgets('opens the privacy policy, terms and licenses', (tester) async {
+      final opened = <String>[];
+      await tester.pumpApp(
+        view(
+          onOpenPrivacy: () => opened.add('privacy'),
+          onOpenTerms: () => opened.add('terms'),
+          onOpenLicenses: () => opened.add('licenses'),
+        ),
+>>>>>>> kit 765ff42
       );
       await tester.pumpAndSettle();
       await tester.expectAccessible();
     });
 
+<<<<<<< yours
+=======
+      await tester.tap(find.text(l10nEn.settingsPrivacy));
+      await tester.tap(find.text(l10nEn.settingsTerms));
+      await tester.tap(find.text(l10nEn.settingsLicenses));
+      expect(opened, ['privacy', 'terms', 'licenses']);
+    });
+
+    testWidgets('hides the About links without callbacks', (tester) async {
+      await tester.pumpApp(view());
+      expect(find.byKey(const Key('settings_privacy')), findsNothing);
+      expect(find.byKey(const Key('settings_terms')), findsNothing);
+      expect(find.byKey(const Key('settings_licenses')), findsNothing);
+    });
+
+    testWidgets('meets accessibility guidelines', (tester) async {
+      await tester.pumpApp(
+        view(onOpenPrivacy: () {}, onOpenTerms: () {}, onOpenLicenses: () {}),
+      );
+      await tester.pumpAndSettle();
+      await tester.expectAccessible();
+    });
+
+>>>>>>> kit 765ff42
     testWidgets('the choice sheet meets accessibility guidelines', (
       tester,
     ) async {

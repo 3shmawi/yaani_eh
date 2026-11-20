@@ -9,12 +9,20 @@
   "settingsTheme": "الشكل",
   "settingsThemeSystem": "زي الموبايل",
   "settingsThemeLight": "فاتح",
+<<<<<<< yours
   "settingsThemeDark": "غامق",
+=======
+  "settingsThemeDark": "داكن",
+>>>>>>> kit 765ff42
   "settingsAppearance": "الشكل",
   "settingsPrivacy": "سياسة الخصوصية",
   "settingsTerms": "شروط الاستخدام",
   "settingsLicenses": "تراخيص المصادر المفتوحة",
+<<<<<<< yours
   "settingsAbout": "عن التطبيق",
+=======
+  "settingsAbout": "حول التطبيق",
+>>>>>>> kit 765ff42
   "settingsVersion": "الإصدار",
   "settingsVersionValue": "{version} ({build})",
   "updateOptionalTitle": "فيه تحديث جديد",
