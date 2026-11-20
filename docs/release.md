@@ -157,7 +157,6 @@ After changing the token, re-run Actions → **Supabase deploy**
 meantime is skipped.
 
 ## Store listing
-<<<<<<< yours
 Texts, screenshots and graphics in `store/`, uploaded by Actions → **Store
 listing** (fastlane supply/deliver) — see `store/README.md`. Screenshots are
 made from the app with `./scripts/store_shots.sh`; the privacy, rating and
@@ -182,18 +181,10 @@ review answers are in `store/submission.md`.
 - **Screenshots** are uploaded only when files exist; the check uses
   `compgen -G` per extension (`ls *.{png,jpg}` fails if either pattern
   matches nothing, and skipped them all until 2026-11-15).
-- **App Store**: the job writes an empty `Deliverfile` first; without one,
+- **App Store**: the job writes a `Deliverfile` first; without one,
   deliver asks an interactive setup question and crashes in CI. It passes
   `--ignore_language_directory_validation` because `store/ios/screenshots`
   is next to the locale folders (deliver skips it, it is not a language).
-=======
-Texts and images in `store/`, uploaded by Actions → **Store listing**
-(fastlane supply/deliver) — see `store/README.md`.
-- **iOS:** the job writes a `Deliverfile` before `fastlane deliver`.
-  Without one (and without a `./metadata` folder) deliver asks "Do you want
-  to setup deliver?" and crashes in CI. It also passes
-  `--ignore_language_directory_validation`, because `store/ios/` holds the
-  `screenshots/` folder next to the locale folders.
   `store/ios/review_information/notes.txt` (App Review notes) must be
   filled: deliver reads the version's App Review Information while
   uploading and crashes with "No data" when the version has none; with the
@@ -202,11 +193,6 @@ Texts and images in `store/`, uploaded by Actions → **Store listing**
   `Deliverfile` sends it from the `APP_REVIEW_*` secrets (read from the
   environment, never written to disk). Without those secrets the notes are
   skipped with a warning and the contact stays as set in App Store Connect.
-- **Android:** the edit is saved with `--changes_not_sent_for_review true`
-  (changes wait in Play Console → **Publishing overview** → **Send changes
-  for review**), so the service account needs no production permission.
-  The Play images (feature graphic, icon, tablet screenshots) are uploaded
-  when `featureGraphic.png` exists.
 - **What's new:** `store/ios/<locale>/release_notes.txt` and
   `store/android/<locale>/changelogs/default.txt` are uploaded too; on Play
   they go on the latest release of `PLAY_TRACK` (default `internal`). A
@@ -228,7 +214,6 @@ Texts and images in `store/`, uploaded by Actions → **Store listing**
     After the first production release, check whether Store presence alone
     is enough and drop it.
   - Not needed: Admin, Release to production, financial data.
->>>>>>> kit 765ff42
 
 ## Store requirements (check each year)
 | Store | Requirement | Where it's handled |

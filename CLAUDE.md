@@ -249,7 +249,7 @@ reviewers read only the spec and the code, so they catch what you assumed.
 - "Prepare the stores" means: every text in `store/` in Arabic and English
   (no placeholders), and the screenshots, feature graphic and icon made with
   the steps in `store/README.md` → "Screenshots and graphics" from the app's
-  real screens, the App Store header and search images (`node hero.js`) and
+  real screens (`./scripts/store_shots.sh`), the App Store header and search images (`store/assets/app_store_creative/`) and
   the "What's new" texts. Describe and show only what is live for every user in prod
   (check the feature flags). Check the store sizes in Apple's and Google's
   current docs first, and look at every image before committing.
@@ -296,13 +296,21 @@ reviewers read only the spec and the code, so they catch what you assumed.
   The build and install before the test is cut out: the video starts a
   second before the test does (`scripts/record_demo_ios.sh` →
   `compose_demo.sh`).
-<<<<<<< yours
 - Every `beat()` is also a simulator screenshot: the comment shows them
   as pictures (published to the `demo-media` branch by
   `scripts/publish_demo_shots.sh`), so the UI can be checked without
   downloading the video.
 - The Demo video is **never a required check**: a PR merges on CI alone
   and doesn't wait for the video.
+- Releases are announced on LinkedIn, Facebook and YouTube by
+  `.github/workflows/social.yml` (3shmawi/social-publisher): Claude (or,
+  without a Claude token, templates filled from the store "What's new" text)
+  writes the posts, the owner approves them in the `social` environment.
+  Clear `feat:`/`fix:` PR titles and an up-to-date What's new make better posts. To keep
+  something out: `[skip social]` in the release notes, or (for the
+  two-weekly posts) the `skip-social` label on the PR. A release video goes
+  in `marketing/videos/v<version>.mp4` or as a `*.mp4` release asset
+  (docs/release.md → "Social posts").
 
 **Review by screenshot (before every UI PR)**
 - Run `./scripts/screens.sh` (add `430x932` for a Pro Max, `--sheet` for
@@ -313,17 +321,6 @@ reviewers read only the spec and the code, so they catch what you assumed.
 - After the Demo video comment lands, look at its iPhone screenshots (full
   glass), and fix anything there too. New screens get a case in
   `test/screens/screens_test.dart`.
-=======
-- Releases are announced on LinkedIn, Facebook and YouTube by
-  `.github/workflows/social.yml` (3shmawi/social-publisher): Claude (or,
-  without a Claude token, templates filled from the store "What's new" text)
-  writes the posts, the owner approves them in the `social` environment.
-  Clear `feat:`/`fix:` PR titles and an up-to-date What's new make better posts. To keep
-  something out: `[skip social]` in the release notes, or (for the
-  two-weekly posts) the `skip-social` label on the PR. A release video goes
-  in `marketing/videos/v<version>.mp4` or as a `*.mp4` release asset
-  (docs/release.md → "Social posts").
->>>>>>> kit 765ff42
 
 **Git & releases**
 - Conventional Commits (enforced by `.githooks/commit-msg`):

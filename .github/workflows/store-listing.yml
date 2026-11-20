@@ -42,22 +42,18 @@ jobs:
       - name: Upload to Google Play
         env:
           PLAY_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-<<<<<<< yours
           # supply needs a release on a track even for a listing-only upload
           # (it defaults to production, which has none before launch), so
           # point it at the track release.yml uploads to. Changes are saved
           # but not sent for review, so the account needs no production
           # release permission; send them from Play Console → Publishing overview.
-=======
-          # "What's new" goes on the latest release of the track release.yml
-          # uploads to (supply edits that release's notes; it needs one).
->>>>>>> kit 765ff42
+          # "What's new" (store/android/<locale>/changelogs/default.txt) goes
+          # on that same release.
           PLAY_TRACK: ${{ vars.PLAY_TRACK || 'internal' }}
         run: |
           printf '%s' "$PLAY_JSON" > "$RUNNER_TEMP/play.json"
           ./scripts/mask_secrets.sh "$RUNNER_TEMP/play.json"
           shots=true
-<<<<<<< yours
           # compgen, not ls: `ls *.{png,jpg}` fails when either pattern matches
           # nothing (we only have .jpg), so screenshots were always skipped.
           if compgen -G 'store/android/*/images/*Screenshots/*.png' >/dev/null ||
@@ -65,6 +61,8 @@ jobs:
           # Icon and feature graphic, once they're in store/android/<locale>/images/.
           images=true
           ls store/android/*/images/featureGraphic.png >/dev/null 2>&1 && images=false
+          notes=true
+          ls store/android/*/changelogs/default.txt >/dev/null 2>&1 && notes=false
           # supply hangs the listing on one release of the track; with more
           # than one there ("More than one release found") it needs the
           # version code, so pick the newest on the track.
@@ -77,23 +75,6 @@ jobs:
             exit 1
           fi
           echo "Listing goes with version code $code on $PLAY_TRACK"
-=======
-          ls store/android/*/images/phoneScreenshots/*.png >/dev/null 2>&1 && shots=false
-          images=true
-          ls store/android/*/images/featureGraphic.png >/dev/null 2>&1 && images=false
-          notes=true
-          ls store/android/*/changelogs/default.txt >/dev/null 2>&1 && notes=false
-          # A track can hold several releases (completed, draft...): supply
-          # then needs the version code. Take the newest on the track.
-          code=$(fastlane run google_play_track_version_codes \
-              package_name:"com.mohager.yaanieh" track:"$PLAY_TRACK" json_key:"$RUNNER_TEMP/play.json" \
-            | sed 's/\x1b\[[0-9;]*m//g' | grep -o 'Result: \[[0-9, ]*\]' | grep -o '[0-9]\+' | sort -n | tail -n 1)
-          if [ -z "$code" ]; then
-            echo "::error::No release on the $PLAY_TRACK track: upload a build first (release.yml)."
-            exit 1
-          fi
-          echo "Store listing for version code $code on $PLAY_TRACK"
->>>>>>> kit 765ff42
           fastlane supply \
             --package_name "com.mohager.yaanieh" \
             --json_key "$RUNNER_TEMP/play.json" \
@@ -101,17 +82,10 @@ jobs:
             --track "$PLAY_TRACK" \
             --version_code "$code" \
             --skip_upload_apk true --skip_upload_aab true \
-<<<<<<< yours
-            --skip_upload_changelogs true \
+            --skip_upload_changelogs "$notes" \
             --changes_not_sent_for_review true \
             --skip_upload_images "$images" \
             --skip_upload_screenshots "$shots"
-=======
-            --skip_upload_changelogs "$notes" \
-            --skip_upload_images "$images" \
-            --skip_upload_screenshots "$shots" \
-            --changes_not_sent_for_review true
->>>>>>> kit 765ff42
 
   ios:
     needs: check
@@ -140,17 +114,11 @@ jobs:
           ./scripts/mask_secrets.sh "$RUNNER_TEMP/asc.p8"
           jq -n --arg id "$ASC_KEY_ID" --arg issuer "$ASC_ISSUER_ID" --rawfile key "$RUNNER_TEMP/asc.p8" \
             '{key_id: $id, issuer_id: $issuer, key: $key, in_house: false}' > "$RUNNER_TEMP/asc.json"
-          # Without a Deliverfile, deliver asks "setup deliver?" and crashes
-          # in CI (non-interactive). An empty one is enough: options are flags.
           # store/ios/screenshots sits next to the locale folders, so deliver's
           # folder-name check is off; it still only reads valid locale folders.
-          printf '# Options are passed as flags in store-listing.yml\n' > Deliverfile
           shots=true
-<<<<<<< yours
           if compgen -G 'store/ios/screenshots/*/*.png' >/dev/null ||
              compgen -G 'store/ios/screenshots/*/*.jpg' >/dev/null; then shots=false; fi
-=======
-          ls store/ios/screenshots/*/*.png >/dev/null 2>&1 && shots=false
           # deliver asks "Do you want to setup deliver?" when it finds no
           # Deliverfile and no ./metadata folder, and crashes in CI, so one is
           # always written. It carries the App Review contact (read from the
@@ -163,7 +131,6 @@ jobs:
             : > Deliverfile
             rm -rf store/ios/review_information
           fi
->>>>>>> kit 765ff42
           fastlane deliver \
             --api_key_path "$RUNNER_TEMP/asc.json" \
             --app_identifier "com.mohager.yaanieh" \
@@ -172,7 +139,6 @@ jobs:
             --ignore_language_directory_validation true \
             --skip_binary_upload true \
             --skip_screenshots "$shots" \
-            --ignore_language_directory_validation true \
             --overwrite_screenshots true \
             --submit_for_review false \
             --run_precheck_before_submit false \
