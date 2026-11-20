@@ -10,7 +10,6 @@ import 'helpers/demo_app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-<<<<<<< yours
   testWidgets(
     'starts on home, opens the settings tab and switches the language',
     (tester) async {
@@ -18,14 +17,6 @@ void main() {
       await pumpUntil(tester, find.byKey(const Key('browse_list')));
       await tester.pumpAndSettle();
       await beat(tester, 1500);
-=======
-  testWidgets('starts on home, opens settings and switches the language', (
-    tester,
-  ) async {
-    await app.main();
-    await tester.pumpAndSettle();
-    await beat(tester, 1500);
->>>>>>> kit 765ff42
 
       await tester.tap(
         find
@@ -41,7 +32,6 @@ void main() {
       expect(find.byType(SettingsView), findsOneWidget);
       await beat(tester);
 
-<<<<<<< yours
       // Language: the row opens a sheet; English switches the whole app.
       await tester.tap(find.byKey(const Key('settings_language')));
       await tester.pumpAndSettle();
@@ -60,21 +50,4 @@ void main() {
       await beat(tester, 1500);
     },
   );
-=======
-    expect(find.byType(SettingsView), findsOneWidget);
-    await beat(tester);
-
-    // Language: the row opens a sheet; Arabic turns the app right-to-left.
-    await tester.tap(find.byKey(const Key('settings_language')));
-    await tester.pumpAndSettle();
-    await beat(tester);
-    await tester.tap(find.byKey(const Key('settings_choice_2')));
-    await tester.pumpAndSettle();
-    expect(
-      Directionality.of(tester.element(find.byType(SettingsView))),
-      TextDirection.rtl,
-    );
-    await beat(tester, 1500);
-  });
->>>>>>> kit 765ff42
 }

@@ -20,23 +20,15 @@ class SettingsSectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsetsDirectional.fromSTEB(
-<<<<<<< yours
         AppDimens.space4,
         AppDimens.space6,
         AppDimens.space4,
         AppDimens.space2,
-=======
-        AppDimens.md,
-        AppDimens.lg,
-        AppDimens.md,
-        AppDimens.sm,
->>>>>>> kit 765ff42
       ),
       child: Semantics(
         header: true,
         child: Text(
           title,
-<<<<<<< yours
           style: context
               .text(TextRole.label)
               .copyWith(color: context.palette.inkMuted),
@@ -165,141 +157,6 @@ class SettingsRow extends StatelessWidget {
 /// keeps full contrast on glass.
 class SettingsChoiceRow extends StatelessWidget {
   const new({
-=======
-          style: AppTextStyles.label.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// A card of [SettingsRow]s with hairlines between them.
-class SettingsGroup extends StatelessWidget {
-  const SettingsGroup({required this.children, super.key});
-
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return AppCard(
-      child: Padding(
-        padding: EdgeInsetsDirectional.symmetric(horizontal: AppDimens.sm),
-        child: Column(
-          children: [
-            for (final (i, child) in children.indexed) ...[
-              if (i > 0)
-                Divider(
-                  height: 1,
-                  thickness: 1,
-                  indent: AppDimens.iconMd + AppDimens.md,
-                  color: scheme.outlineVariant,
-                ),
-              child,
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// One settings row, at least a touch target high: an icon, the label at
-/// the start, the current value at the end, and a chevron when it opens
-/// something.
-class SettingsRow extends StatelessWidget {
-  const SettingsRow({
-    required this.label,
-    this.icon,
-    this.value,
-    this.valueKey,
-    this.valueDirection,
-    this.onTap,
-    super.key,
-  });
-
-  final String label;
-  final IconData? icon;
-  final String? value;
-
-  /// For tests that read the value.
-  final Key? valueKey;
-
-  /// LTR for numbers like `1.2.3 (45)`, which would read reversed in Arabic.
-  final TextDirection? valueDirection;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final row = ConstrainedBox(
-      constraints: BoxConstraints(
-        minHeight: math.max(kMinInteractiveDimension, AppDimens.buttonHeight),
-      ),
-      child: Padding(
-        padding: EdgeInsetsDirectional.symmetric(vertical: AppDimens.sm),
-        child: Row(
-          spacing: AppDimens.md,
-          children: [
-            if (icon case final icon?)
-              Icon(icon, size: AppDimens.iconMd, color: scheme.primary),
-            Expanded(
-              child: Text(
-                label,
-                style: AppTextStyles.body.copyWith(
-                  color: scheme.onSurface,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            // Next to the chevron at the end edge; a long value wraps.
-            if (value case final value?)
-              ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: AppDimens.settingsValue),
-                child: Text(
-                  value,
-                  key: valueKey,
-                  textDirection: valueDirection,
-                  textAlign: TextAlign.end,
-                  style: AppTextStyles.body.copyWith(
-                    color: scheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
-            // chevron_right mirrors itself in RTL (matchTextDirection): it
-            // points to the end edge in both languages.
-            if (onTap != null)
-              Icon(
-                Icons.chevron_right,
-                size: AppDimens.iconMd,
-                color: scheme.onSurfaceVariant,
-              ),
-          ],
-        ),
-      ),
-    );
-    if (onTap == null) return MergeSemantics(child: row);
-    return MergeSemantics(
-      child: Semantics(
-        button: true,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(AppDimens.radiusMd),
-          child: row,
-        ),
-      ),
-    );
-  }
-}
-
-/// A row of the choice sheet: the label, and a check mark when [selected].
-/// Selection is shown by the check and weight, not by colour, so the label
-/// keeps full contrast on any surface (glass included).
-class SettingsChoiceRow extends StatelessWidget {
-  const SettingsChoiceRow({
->>>>>>> kit 765ff42
     required this.label,
     required this.selected,
     required this.onTap,
@@ -312,11 +169,7 @@ class SettingsChoiceRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< yours
     final p = context.palette;
-=======
-    final scheme = Theme.of(context).colorScheme;
->>>>>>> kit 765ff42
     return MergeSemantics(
       child: Semantics(
         button: true,
@@ -326,7 +179,6 @@ class SettingsChoiceRow extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppDimens.radiusMd),
           child: ConstrainedBox(
             constraints: BoxConstraints(
-<<<<<<< yours
               minHeight: math.max(AppDimens.touchTarget, AppDimens.settingsRow),
             ),
             child: Padding(
@@ -335,24 +187,10 @@ class SettingsChoiceRow extends StatelessWidget {
               ),
               child: Row(
                 spacing: AppDimens.space3,
-=======
-              minHeight: math.max(
-                kMinInteractiveDimension,
-                AppDimens.buttonHeight,
-              ),
-            ),
-            child: Padding(
-              padding: EdgeInsetsDirectional.symmetric(
-                horizontal: AppDimens.sm,
-              ),
-              child: Row(
-                spacing: AppDimens.md,
->>>>>>> kit 765ff42
                 children: [
                   Expanded(
                     child: Text(
                       label,
-<<<<<<< yours
                       style: context
                           .text(TextRole.body)
                           .copyWith(
@@ -365,18 +203,6 @@ class SettingsChoiceRow extends StatelessWidget {
                   ),
                   if (selected)
                     Icon(AppIcons.check, size: AppDimens.icon, color: p.brand),
-=======
-                      style: AppTextStyles.body.copyWith(
-                        color: scheme.onSurface,
-                        fontWeight: selected
-                            ? FontWeight.w600
-                            : FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                  if (selected)
-                    Icon(AdaptiveIcons.check(context), color: scheme.primary),
->>>>>>> kit 765ff42
                 ],
               ),
             ),
@@ -394,7 +220,6 @@ Future<int?> showSettingsChoice(
   required String title,
   required List<String> choices,
   required int selected,
-<<<<<<< yours
 }) async {
   int? picked;
   await showAppSheet(
@@ -446,51 +271,6 @@ Future<int?> showSettingsChoice(
   );
   return picked;
 }
-=======
-}) => showModalBottomSheet<int>(
-  context: context,
-  useSafeArea: true,
-  showDragHandle: true,
-  isScrollControlled: true,
-  builder: (sheet) => SingleChildScrollView(
-    padding: EdgeInsetsDirectional.fromSTEB(
-      AppDimens.md,
-      0,
-      AppDimens.md,
-      AppDimens.lg,
-    ),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      spacing: AppDimens.xs,
-      children: [
-        Padding(
-          padding: EdgeInsetsDirectional.symmetric(
-            horizontal: AppDimens.sm,
-            vertical: AppDimens.sm,
-          ),
-          child: Semantics(
-            header: true,
-            child: Text(
-              title,
-              style: AppTextStyles.title.copyWith(
-                color: Theme.of(sheet).colorScheme.onSurface,
-              ),
-            ),
-          ),
-        ),
-        for (final (i, label) in choices.indexed)
-          SettingsChoiceRow(
-            key: Key('settings_choice_$i'),
-            label: label,
-            selected: i == selected,
-            onTap: () => Navigator.of(sheet).pop(i),
-          ),
-      ],
-    ),
-  ),
-);
->>>>>>> kit 765ff42
 
 /// The installed app version and build number, e.g. `1.2.3 (45)`. Read from
 /// the platform (pubspec `version: 1.2.3+45`), so it always matches what the
@@ -507,11 +287,7 @@ class SettingsVersionTile extends StatelessWidget {
         final info = snapshot.data;
         return SettingsRow(
           label: l10n.settingsVersion,
-<<<<<<< yours
           icon: AppIcons.info,
-=======
-          icon: Icons.info_outline,
->>>>>>> kit 765ff42
           valueKey: const Key('settings_version'),
           valueDirection: TextDirection.ltr,
           value: info == null

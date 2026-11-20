@@ -8,11 +8,7 @@ import 'package:yaani_eh/features/settings/presentation/widgets/settings_tiles.d
 import 'package:yaani_eh/l10n/l10n.dart';
 
 /// Language, theme and About. Pure UI: state comes in, changes go out
-<<<<<<< yours
 /// through callbacks.
-=======
-/// through callbacks, so it works with any state-management choice.
->>>>>>> kit 765ff42
 ///
 /// Groups of compact rows on cards, each group's name above it (the iOS
 /// settings layout): a row shows its current value at the end and opens a
@@ -61,20 +57,12 @@ class SettingsView extends StatelessWidget {
     return AppScaffold(
       title: l10n.settingsTitle,
       body: ListView(
-<<<<<<< yours
         // Clear of the floating tab bar (Settings is a tab).
         padding: EdgeInsetsDirectional.fromSTEB(
           AppDimens.space4,
           0,
           AppDimens.space4,
           AppDimens.tabBarHeight + AppDimens.space8,
-=======
-        padding: EdgeInsetsDirectional.fromSTEB(
-          AppDimens.md,
-          0,
-          AppDimens.md,
-          AppDimens.xl,
->>>>>>> kit 765ff42
         ),
         children: [
           SettingsSectionHeader(l10n.settingsAppearance),
@@ -83,11 +71,7 @@ class SettingsView extends StatelessWidget {
               SettingsRow(
                 key: const Key('settings_language'),
                 label: l10n.settingsLanguage,
-<<<<<<< yours
                 icon: AppIcons.language,
-=======
-                icon: Icons.translate,
->>>>>>> kit 765ff42
                 value: languages[languageIndex].$1,
                 onTap: () async {
                   final picked = await showSettingsChoice(
@@ -99,7 +83,6 @@ class SettingsView extends StatelessWidget {
                   if (picked != null) onLocaleChanged(languages[picked].$2);
                 },
               ),
-<<<<<<< yours
               if (AppTheme.lightModeReady)
                 SettingsRow(
                   key: const Key('settings_theme'),
@@ -147,52 +130,6 @@ class SettingsView extends StatelessWidget {
                   icon: AppIcons.licenses,
                   onTap: onOpenLicenses,
                 ),
-=======
-              SettingsRow(
-                key: const Key('settings_theme'),
-                label: l10n.settingsTheme,
-                icon: Icons.contrast,
-                value: themeLabel(settings.themeMode),
-                onTap: () async {
-                  final picked = await showSettingsChoice(
-                    context,
-                    title: l10n.settingsTheme,
-                    choices: [for (final m in ThemeMode.values) themeLabel(m)],
-                    selected: settings.themeMode.index,
-                  );
-                  if (picked != null) {
-                    onThemeModeChanged(ThemeMode.values[picked]);
-                  }
-                },
-              ),
-            ],
-          ),
-          SettingsSectionHeader(l10n.settingsAbout),
-          SettingsGroup(
-            children: [
-              const SettingsVersionTile(),
-              if (onOpenPrivacy != null)
-                SettingsRow(
-                  key: const Key('settings_privacy'),
-                  label: l10n.settingsPrivacy,
-                  icon: Icons.privacy_tip_outlined,
-                  onTap: onOpenPrivacy,
-                ),
-              if (onOpenTerms != null)
-                SettingsRow(
-                  key: const Key('settings_terms'),
-                  label: l10n.settingsTerms,
-                  icon: Icons.gavel_outlined,
-                  onTap: onOpenTerms,
-                ),
-              if (onOpenLicenses != null)
-                SettingsRow(
-                  key: const Key('settings_licenses'),
-                  label: l10n.settingsLicenses,
-                  icon: Icons.description_outlined,
-                  onTap: onOpenLicenses,
-                ),
->>>>>>> kit 765ff42
             ],
           ),
         ],

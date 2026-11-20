@@ -187,13 +187,5 @@ abstract final class AppMotion {
   /// scrolling never waits for them.
   static const revealStaggered = 8;
 
-<<<<<<< yours
   static const Curve enter = Curves.easeOutCubic;
-=======
-  static double get iconMd => 24.r;
-
-  /// The widest a settings row's value gets before it wraps.
-  static double get settingsValue => 150.w;
-  static double get buttonHeight => 48.h;
->>>>>>> kit 765ff42
 }
