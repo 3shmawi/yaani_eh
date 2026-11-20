@@ -103,7 +103,11 @@ pronounce pill (docs/features/pronunciation.md):
   50 KB. Not Ogg: the bucket accepts it but iPhones can't play it.
 - **Recording:** the name alone, said once, clearly, no music or "it's
   pronounced…". Trim silence at both ends. «زي الباريستا» clips are own
-  recordings only (no computer voice says them the Egyptian way).
+  recordings, or [ElevenLabs](https://elevenlabs.io) with an Egyptian Arabic
+  voice (generated on a paid plan, so the audio can be used commercially):
+  put every name in one text in `drinks.csv` order, one per line ending with
+  «.», then split the take at its pauses and check each clip by ear and with
+  a speech recognizer (Piper's Arabic voices don't say them the Egyptian way).
   «الأصلي» clips may be generated with [Piper](https://github.com/OHF-Voice/piper1-gpl)
   using a voice whose training data is CC0, public domain or CC BY (not
   NC, SA or AGPL: read its MODEL_CARD); check each one with a speech
