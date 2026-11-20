@@ -62,6 +62,13 @@ IOS_CERTIFICATE_PASSWORD=
 MACOS_DEVELOPER_ID_P12_PATH=~/.app-secrets/developer_id.p12
 MACOS_DEVELOPER_ID_P12_PASSWORD=
 
+# App Review contact on every App Store version (Apple requires all four to
+# send review notes). Phone with + and country code, e.g. +20 100 000 0000.
+APP_REVIEW_FIRST_NAME=
+APP_REVIEW_LAST_NAME=
+APP_REVIEW_EMAIL=
+APP_REVIEW_PHONE=
+
 # Google Play service account JSON (one per developer account)
 PLAY_SERVICE_ACCOUNT_JSON_PATH=~/.app-secrets/play-service-account.json
 
@@ -120,6 +127,25 @@ CODEMAGIC_TEAM_ID=
 
 # Who new Android keystores are issued to
 KEYSTORE_DNAME="CN=Your Name, O=Your Company, C=EG"
+
+# Social posts (.github/workflows/social.yml → 3shmawi/social-publisher; its
+# README has the steps for each value). Empty = that platform is skipped.
+# A different Facebook Page or LinkedIn page per app? Put FB_PAGE_ID,
+# FB_PAGE_TOKEN or LINKEDIN_ORG_URN in apps/<repo>/app.env instead.
+# Claude writes the posts on your Pro/Max plan: run `claude setup-token`
+# (lasts a year). Empty = fixed templates write them, no AI.
+CLAUDE_CODE_OAUTH_TOKEN=
+FB_PAGE_ID=
+FB_PAGE_TOKEN=
+LINKEDIN_TOKEN=
+LINKEDIN_AUTHOR_URN=
+LINKEDIN_ORG_URN=
+LINKEDIN_CLIENT_ID=
+LINKEDIN_CLIENT_SECRET=
+LINKEDIN_REFRESH_TOKEN=
+YT_CLIENT_ID=
+YT_CLIENT_SECRET=
+YT_REFRESH_TOKEN=
 TEMPLATE
   echo "Created $SHARED -- fill it in, then run this again."
   exit 0
@@ -264,6 +290,10 @@ set_file  MACOS_DEVELOPER_ID_P12_BASE64    "${MACOS_DEVELOPER_ID_P12_PATH:-}" ba
 set_value MACOS_DEVELOPER_ID_P12_PASSWORD  "${MACOS_DEVELOPER_ID_P12_PASSWORD:-}"
 set_value RELEASE_TOKEN                    "${RELEASE_TOKEN:-}"
 set_value KIT_SYNC_TOKEN                   "${KIT_SYNC_TOKEN:-}"
+set_value APP_REVIEW_FIRST_NAME            "${APP_REVIEW_FIRST_NAME:-}"
+set_value APP_REVIEW_LAST_NAME             "${APP_REVIEW_LAST_NAME:-}"
+set_value APP_REVIEW_EMAIL                 "${APP_REVIEW_EMAIL:-}"
+set_value APP_REVIEW_PHONE                 "${APP_REVIEW_PHONE:-}"
 
 # --- flutter-project-kit additions ------------------------------------------
 # Sentry: create this app's project if it's missing and fill SENTRY_DSN in
@@ -311,6 +341,18 @@ if grep -q '^sentry:' pubspec.yaml 2>/dev/null; then
   set_value SENTRY_ORG                     "${SENTRY_ORG:-}"
   set_value SENTRY_PROJECT                 "${SENTRY_PROJECT:-${REPO#*/}}"
 fi
+
+# Social posts run on GitHub Actions in every project (Codemagic ones too),
+# so these always go to GitHub. Older shared.env files lack these lines:
+# add them (see the template above) to use social.yml.
+SAVED_TARGET=$TARGET
+TARGET=github
+for name in CLAUDE_CODE_OAUTH_TOKEN FB_PAGE_ID FB_PAGE_TOKEN LINKEDIN_TOKEN LINKEDIN_AUTHOR_URN \
+  LINKEDIN_ORG_URN LINKEDIN_CLIENT_ID LINKEDIN_CLIENT_SECRET LINKEDIN_REFRESH_TOKEN \
+  YT_CLIENT_ID YT_CLIENT_SECRET YT_REFRESH_TOKEN; do
+  set_value "$name" "${!name:-}"
+done
+TARGET=$SAVED_TARGET
 
 if [[ $TARGET == codemagic ]]; then
   if ! $DRY_RUN; then
