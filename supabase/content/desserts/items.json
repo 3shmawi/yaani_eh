@@ -1,0 +1,1876 @@
+[
+  {
+    "slug": "brownies",
+    "category": "cakes",
+    "menu_name": "Brownies",
+    "menu_name_ar": "براونيز",
+    "gist_ar": "كيكة شوكولاتة تقيلة وطرية من جوه",
+    "gist_en": "Dense, fudgy chocolate cake squares",
+    "explanation_ar": "مربعات شوكولاتة مخبوزة، أتقل من الكيك العادي، طرية ولزجة شوية من جوه ووشها مقرمش خفيف. ساعات بيبقى فيها مكسرات.",
+    "explanation_en": "Baked chocolate squares, denser than ordinary cake: soft and a little gooey inside with a thin crisp top. Sometimes with nuts.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "شوكولاتة أو كاكاو، زبدة، سكر، بيض، وشوية دقيق."
+          ],
+          "lines_en": [
+            "Chocolate or cocoa, butter, sugar, eggs and a little flour."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "شوكولاتة قوية وحلوة، تقيلة ولزجة شوية."
+          ],
+          "lines_en": [
+            "Rich, sweet chocolate, dense and a little chewy."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "مربعات لوحدها، أو سخنة مع آيس كريم فانيليا."
+          ],
+          "lines_en": [
+            "As squares on their own, or warm with vanilla ice cream."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "براوني",
+        "lang": "ar"
+      },
+      {
+        "term": "كيكة شوكولاتة",
+        "lang": "ar"
+      },
+      {
+        "term": "brownie",
+        "lang": "en"
+      },
+      {
+        "term": "chocolate cake",
+        "lang": "en"
+      },
+      {
+        "term": "brownies",
+        "lang": "franco"
+      },
+      {
+        "term": "brawnez",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Chocolate_brownie"
+    ]
+  },
+  {
+    "slug": "red_velvet",
+    "category": "cakes",
+    "menu_name": "Red Velvet",
+    "menu_name_ar": "ريد فيلفت",
+    "gist_ar": "كيكة حمرا طرية بطبقة جبنة كريمي",
+    "gist_en": "Soft red cake with cream cheese frosting",
+    "explanation_ar": "كيكة لونها أحمر غامق، فيها كاكاو خفيف ولبن رايب فبتطلع طرية جدًا. بتتغطى بكريمة معمولة من الجبنة الكريمي والزبدة والسكر.",
+    "explanation_en": "A deep red cake with a little cocoa and buttermilk, so it comes out very soft. Covered in a frosting of cream cheese, butter and sugar.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "دقيق، كاكاو خفيف، لبن رايب، لون أحمر، وكريمة جبنة كريمي."
+          ],
+          "lines_en": [
+            "Flour, a little cocoa, buttermilk, red colouring and cream cheese frosting."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "طعم كاكاو خفيف جدًا مع الجبنة الكريمي الحلوة والمالحة شوية."
+          ],
+          "lines_en": [
+            "A faint cocoa taste with sweet, slightly tangy cream cheese."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "شريحة تورتة أو كب صغير، وساعات في كوباية طبقات."
+          ],
+          "lines_en": [
+            "As a slice of layer cake, a small cupcake, or layered in a cup."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "ريد فلفت",
+        "lang": "ar"
+      },
+      {
+        "term": "كيكة حمرا",
+        "lang": "ar"
+      },
+      {
+        "term": "red velvet cake",
+        "lang": "en"
+      },
+      {
+        "term": "red velvet",
+        "lang": "franco"
+      },
+      {
+        "term": "red velvet cake",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Red_velvet_cake"
+    ]
+  },
+  {
+    "slug": "molten_cake",
+    "category": "cakes",
+    "menu_name": "Molten Cake",
+    "menu_name_ar": "مولتن كيك",
+    "gist_ar": "كيكة شوكولاتة صغيرة سخنة وقلبها سايح",
+    "gist_en": "Small warm chocolate cake with a runny middle",
+    "explanation_ar": "كيكة شوكولاتة صغيرة بتتخبز وقت قصير، فوشها بيستوي وقلبها بيفضل سايح. أول ما تقطعها الشوكولاتة السخنة بتسيل.",
+    "explanation_en": "A small chocolate cake baked only briefly, so the outside sets and the centre stays liquid. Cut into it and warm chocolate runs out.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "شوكولاتة، زبدة، بيض، سكر، وشوية دقيق."
+          ],
+          "lines_en": [
+            "Chocolate, butter, eggs, sugar and a little flour."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "شوكولاتة سخنة وغنية، بره كيك وجوه صوص."
+          ],
+          "lines_en": [
+            "Warm, rich chocolate: cake outside, sauce inside."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "سخنة على طول، غالبًا مع آيس كريم فانيليا."
+          ],
+          "lines_en": [
+            "Straight from the oven, usually with vanilla ice cream."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "لافا كيك",
+        "lang": "ar"
+      },
+      {
+        "term": "فوندان",
+        "lang": "ar"
+      },
+      {
+        "term": "كيكة لافا",
+        "lang": "ar"
+      },
+      {
+        "term": "lava cake",
+        "lang": "en"
+      },
+      {
+        "term": "fondant",
+        "lang": "en"
+      },
+      {
+        "term": "chocolate fondant",
+        "lang": "en"
+      },
+      {
+        "term": "lava cake",
+        "lang": "franco"
+      },
+      {
+        "term": "molten",
+        "lang": "franco"
+      },
+      {
+        "term": "fondant",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Molten_chocolate_cake"
+    ]
+  },
+  {
+    "slug": "carrot_cake",
+    "category": "cakes",
+    "menu_name": "Carrot Cake",
+    "menu_name_ar": "كاروت كيك",
+    "gist_ar": "كيكة بالجزر المبشور والقرفة",
+    "gist_en": "Cake made with grated carrot and cinnamon",
+    "explanation_ar": "كيكة طرية معمولة بجزر مبشور وقرفة وساعات عين جمل، والجزر بيخليها مبلولة ومش ناشفة. غالبًا عليها طبقة جبنة كريمي.",
+    "explanation_en": "A moist cake made with grated carrot, cinnamon and often walnuts; the carrot keeps it soft. Usually topped with cream cheese frosting.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "جزر مبشور، دقيق، سكر، قرفة، زيت، وساعات عين جمل."
+          ],
+          "lines_en": [
+            "Grated carrot, flour, sugar, cinnamon, oil and often walnuts."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "حلوة وريحة قرفة، والجزر طعمه مش باين قوي."
+          ],
+          "lines_en": [
+            "Sweet and spiced with cinnamon; the carrot barely shows."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "شريحة تورتة عليها جبنة كريمي."
+          ],
+          "lines_en": [
+            "As a slice with cream cheese frosting."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "كيكة الجزر",
+        "lang": "ar"
+      },
+      {
+        "term": "كيكة جزر",
+        "lang": "ar"
+      },
+      {
+        "term": "carrot",
+        "lang": "en"
+      },
+      {
+        "term": "carrot cake",
+        "lang": "franco"
+      },
+      {
+        "term": "keket gazar",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Carrot_cake"
+    ]
+  },
+  {
+    "slug": "cheesecake",
+    "category": "cakes",
+    "menu_name": "Cheesecake",
+    "menu_name_ar": "تشيز كيك",
+    "gist_ar": "تورتة جبنة كريمي على بسكوت مطحون",
+    "gist_en": "Cream cheese cake on a crushed biscuit base",
+    "explanation_ar": "طبقة تقيلة من الجبنة الكريمي بالسكر والبيض، على قاعدة بسكوت مطحون بالزبدة. بتتقدم ساقعة، وغالبًا عليها صوص فراولة أو توت أو كراميل.",
+    "explanation_en": "A thick layer of cream cheese, sugar and egg on a base of crushed biscuits and butter. Served cold, often with strawberry, berry or caramel sauce.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "جبنة كريمي، سكر، بيض، وقاعدة بسكوت بالزبدة."
+          ],
+          "lines_en": [
+            "Cream cheese, sugar, eggs and a buttery biscuit base."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "كريمية وتقيلة، حلوة ومالحة شوية من الجبنة."
+          ],
+          "lines_en": [
+            "Creamy and rich, sweet with a little tang from the cheese."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "شريحة ساقعة وعليها صوص فراولة أو توت أو كراميل أو بسكوت مطحون."
+          ],
+          "lines_en": [
+            "A cold slice topped with strawberry, berry or caramel sauce, or crushed biscuits."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "تشيزكيك",
+        "lang": "ar"
+      },
+      {
+        "term": "كيكة الجبنة",
+        "lang": "ar"
+      },
+      {
+        "term": "لوتس",
+        "lang": "ar"
+      },
+      {
+        "term": "cheese cake",
+        "lang": "en"
+      },
+      {
+        "term": "new york cheesecake",
+        "lang": "en"
+      },
+      {
+        "term": "lotus",
+        "lang": "en"
+      },
+      {
+        "term": "cheesecake",
+        "lang": "franco"
+      },
+      {
+        "term": "cheese cake",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Cheesecake"
+    ]
+  },
+  {
+    "slug": "san_sebastian",
+    "category": "cakes",
+    "menu_name": "San Sebastian",
+    "menu_name_ar": "سان سيباستيان",
+    "gist_ar": "تورتة جبنة وشها غامق وقلبها كريمي",
+    "gist_en": "Cheese cake with a dark top and a creamy middle",
+    "explanation_ar": "تورتة جبنة كريمي من غير قاعدة بسكوت، بتتخبز على نار عالية فوشها بيغمق لحد ما يبان محروق، وقلبها بيفضل طري وكريمي. أصلها من مدينة سان سيباستيان في إسبانيا.",
+    "explanation_en": "A cream cheese cake with no biscuit base, baked very hot so the top darkens until it looks burnt while the middle stays soft and creamy. It comes from San Sebastián in Spain.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "جبنة كريمي، كريمة لباني، بيض، سكر، وشوية دقيق."
+          ],
+          "lines_en": [
+            "Cream cheese, cream, eggs, sugar and a little flour."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "وشها طعمه كراميل خفيف وجوه طري جدًا وكريمي."
+          ],
+          "lines_en": [
+            "A lightly caramelised top over a very soft, creamy inside."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "شريحة لوحدها، وساعات مع صوص شوكولاتة أو فواكه."
+          ],
+          "lines_en": [
+            "As a plain slice, sometimes with chocolate sauce or fruit."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "سان سباستيان",
+        "lang": "ar"
+      },
+      {
+        "term": "باسك تشيز كيك",
+        "lang": "ar"
+      },
+      {
+        "term": "تشيز كيك محروقة",
+        "lang": "ar"
+      },
+      {
+        "term": "basque cheesecake",
+        "lang": "en"
+      },
+      {
+        "term": "burnt cheesecake",
+        "lang": "en"
+      },
+      {
+        "term": "san sebastian cheesecake",
+        "lang": "en"
+      },
+      {
+        "term": "san sebastian",
+        "lang": "franco"
+      },
+      {
+        "term": "basque",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Basque_cheesecake"
+    ]
+  },
+  {
+    "slug": "cupcake",
+    "category": "cakes",
+    "menu_name": "Cupcake",
+    "menu_name_ar": "كب كيك",
+    "gist_ar": "كيكة صغيرة لفرد واحد وفوقها كريمة",
+    "gist_en": "A small single cake topped with frosting",
+    "explanation_ar": "كيكة صغيرة بتتخبز في ورقة على شكل كوباية، تكفي فرد واحد. فوقها كريمة ملونة أو شوكولاتة، وساعات زينة.",
+    "explanation_en": "A small cake baked in a paper cup, enough for one person. Topped with coloured frosting or chocolate, sometimes sprinkles.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "كيك فانيليا أو شوكولاتة، وفوقه كريمة زبدة أو جبنة كريمي."
+          ],
+          "lines_en": [
+            "Vanilla or chocolate sponge with buttercream or cream cheese frosting."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "كيك طري وكريمة حلوة قوي."
+          ],
+          "lines_en": [
+            "Soft sponge with very sweet frosting."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "واحدة واحدة في ورقتها، وكتير في أعياد الميلاد."
+          ],
+          "lines_en": [
+            "One at a time in its paper case; popular at birthdays."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "كاب كيك",
+        "lang": "ar"
+      },
+      {
+        "term": "كيكة صغيرة",
+        "lang": "ar"
+      },
+      {
+        "term": "cup cake",
+        "lang": "en"
+      },
+      {
+        "term": "cupcake",
+        "lang": "franco"
+      },
+      {
+        "term": "cup cake",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Cupcake"
+    ]
+  },
+  {
+    "slug": "banoffee",
+    "category": "cakes",
+    "menu_name": "Banoffee",
+    "menu_name_ar": "بانوفي",
+    "gist_ar": "موز وكراميل وكريمة على بسكوت مطحون",
+    "gist_en": "Banana, caramel and cream on a biscuit base",
+    "explanation_ar": "قاعدة بسكوت مطحون بالزبدة، عليها كراميل تقيل معمول من اللبن المكثف، وبعدين شرايح موز وكريمة شانتيه. الاسم جاي من banana وtoffee.",
+    "explanation_en": "A crushed biscuit base topped with thick caramel made from condensed milk, then banana slices and whipped cream. The name is banana + toffee.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "بسكوت وزبدة، لبن مكثف مطبوخ لحد ما يبقى كراميل، موز، وكريمة شانتيه."
+          ],
+          "lines_en": [
+            "Biscuits and butter, condensed milk cooked into caramel, banana and whipped cream."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "حلوة أوي: كراميل وموز وكريمة خفيفة."
+          ],
+          "lines_en": [
+            "Very sweet: caramel, banana and light cream."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "شريحة ساقعة أو في كوباية طبقات."
+          ],
+          "lines_en": [
+            "As a cold slice or layered in a cup."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "بانوفى",
+        "lang": "ar"
+      },
+      {
+        "term": "موز بالكراميل",
+        "lang": "ar"
+      },
+      {
+        "term": "banoffee pie",
+        "lang": "en"
+      },
+      {
+        "term": "banoffi",
+        "lang": "en"
+      },
+      {
+        "term": "banoffee",
+        "lang": "franco"
+      },
+      {
+        "term": "banofi",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Banoffee_pie"
+    ]
+  },
+  {
+    "slug": "tiramisu",
+    "category": "spoon_desserts",
+    "menu_name": "Tiramisu",
+    "menu_name_ar": "تيراميسو",
+    "gist_ar": "طبقات بسكوت بالقهوة وكريمة بالجبنة",
+    "gist_en": "Layers of coffee-soaked biscuits and cream",
+    "explanation_ar": "حلوى إيطالي: صوابع بسكوت مغموسة في قهوة مركّزة، وبينها طبقات كريمة معمولة من جبنة الماسكاربوني والبيض والسكر، وفوقها كاكاو. بتتقدم ساقعة.",
+    "explanation_en": "An Italian dessert: finger biscuits dipped in strong coffee, layered with a cream of mascarpone cheese, egg and sugar, dusted with cocoa. Served cold.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "صوابع بسكوت، قهوة مركّزة، جبنة ماسكاربوني، بيض، سكر، وكاكاو."
+          ],
+          "lines_en": [
+            "Finger biscuits, strong coffee, mascarpone cheese, eggs, sugar and cocoa."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "قهوة وكريمة خفيفة وحلوة، وفيها كافيين من القهوة."
+          ],
+          "lines_en": [
+            "Coffee and light, sweet cream; it has caffeine from the coffee."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "ساقعة، في طبق أو كوباية، وفوقها كاكاو."
+          ],
+          "lines_en": [
+            "Cold, in a dish or a glass, dusted with cocoa."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "تيرامسو",
+        "lang": "ar"
+      },
+      {
+        "term": "تراميسو",
+        "lang": "ar"
+      },
+      {
+        "term": "tiramisù",
+        "lang": "en"
+      },
+      {
+        "term": "tiramisu",
+        "lang": "franco"
+      },
+      {
+        "term": "tiramiso",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Tiramisu"
+    ]
+  },
+  {
+    "slug": "panna_cotta",
+    "category": "spoon_desserts",
+    "menu_name": "Panna Cotta",
+    "menu_name_ar": "بانا كوتا",
+    "gist_ar": "كريمة لبن متماسكة بتترج زي الجيلي",
+    "gist_en": "Set sweet cream that wobbles like jelly",
+    "explanation_ar": "حلوى إيطالي من كريمة لباني ولبن وسكر وفانيليا، بتتماسك بالجيلاتين في كوباية أو قالب. بتترج زي الجيلي، وغالبًا عليها صوص فراولة أو توت.",
+    "explanation_en": "An Italian dessert of cream, milk, sugar and vanilla, set with gelatin in a glass or mould. It wobbles like jelly and usually comes with strawberry or berry sauce.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "كريمة لباني، لبن، سكر، فانيليا، وجيلاتين."
+          ],
+          "lines_en": [
+            "Cream, milk, sugar, vanilla and gelatin."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "ناعمة وكريمية وطعمها لبن وفانيليا."
+          ],
+          "lines_en": [
+            "Smooth and creamy, tasting of milk and vanilla."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "ساقعة، وفوقها صوص فراولة أو توت أو كراميل."
+          ],
+          "lines_en": [
+            "Cold, with strawberry, berry or caramel sauce on top."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "باناكوتا",
+        "lang": "ar"
+      },
+      {
+        "term": "بنا كوتا",
+        "lang": "ar"
+      },
+      {
+        "term": "pannacotta",
+        "lang": "en"
+      },
+      {
+        "term": "panna cotta",
+        "lang": "franco"
+      },
+      {
+        "term": "pannacotta",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Panna_cotta"
+    ]
+  },
+  {
+    "slug": "creme_brulee",
+    "category": "spoon_desserts",
+    "menu_name": "Crème Brûlée",
+    "menu_name_ar": "كريم بروليه",
+    "gist_ar": "كاسترد بارد وفوقه سكر محروق مقرمش",
+    "gist_en": "Cold custard under a crackly burnt-sugar top",
+    "explanation_ar": "كريمة بيض ولبن وفانيليا مخبوزة في طبق صغير. قبل التقديم بيرشوا عليها سكر ويحرقوه لحد ما يبقى طبقة مقرمشة بتتكسر بالمعلقة.",
+    "explanation_en": "Egg, cream and vanilla custard baked in a small dish. Before serving, sugar is sprinkled on top and burnt into a crisp layer you crack with the spoon.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "صفار بيض، كريمة لباني، سكر، وفانيليا."
+          ],
+          "lines_en": [
+            "Egg yolks, cream, sugar and vanilla."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "كاسترد ناعم وساقع تحت طبقة كراميل مقرمشة."
+          ],
+          "lines_en": [
+            "Smooth, cool custard under a crunchy caramel crust."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "في طبق صغير، وبتكسر الطبقة اللي فوق بالمعلقة."
+          ],
+          "lines_en": [
+            "In a small dish; you crack the top with your spoon."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "كريم بروليه",
+        "lang": "ar"
+      },
+      {
+        "term": "كريم برولي",
+        "lang": "ar"
+      },
+      {
+        "term": "كريمة محروقة",
+        "lang": "ar"
+      },
+      {
+        "term": "creme brulee",
+        "lang": "en"
+      },
+      {
+        "term": "burnt cream",
+        "lang": "en"
+      },
+      {
+        "term": "creme brulee",
+        "lang": "franco"
+      },
+      {
+        "term": "crem brulee",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Crème_brûlée"
+    ]
+  },
+  {
+    "slug": "chocolate_mousse",
+    "category": "spoon_desserts",
+    "menu_name": "Chocolate Mousse",
+    "menu_name_ar": "موس شوكولاتة",
+    "gist_ar": "شوكولاتة خفيفة ومنفوشة بالمعلقة",
+    "gist_en": "Light, airy chocolate cream",
+    "explanation_ar": "شوكولاتة مدوبة متقلبة مع بياض بيض أو كريمة متضربة لحد ما تبقى خفيفة ومليانة هوا. بتتقدم ساقعة في كوباية.",
+    "explanation_en": "Melted chocolate folded with whipped egg whites or cream until light and airy. Served cold in a glass.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "شوكولاتة، بيض أو كريمة لباني، وشوية سكر."
+          ],
+          "lines_en": [
+            "Chocolate, eggs or cream, and a little sugar."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "شوكولاتة قوية بس خفيفة زي الرغوة."
+          ],
+          "lines_en": [
+            "Deep chocolate, but light as foam."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "ساقعة في كوباية، وساعات فوقها كريمة أو برش شوكولاتة."
+          ],
+          "lines_en": [
+            "Cold in a glass, sometimes with cream or chocolate shavings."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "موس",
+        "lang": "ar"
+      },
+      {
+        "term": "موس الشوكولاتة",
+        "lang": "ar"
+      },
+      {
+        "term": "mousse",
+        "lang": "en"
+      },
+      {
+        "term": "chocolate mousse",
+        "lang": "en"
+      },
+      {
+        "term": "mousse",
+        "lang": "franco"
+      },
+      {
+        "term": "mos chocolate",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Mousse"
+    ]
+  },
+  {
+    "slug": "profiteroles",
+    "category": "spoon_desserts",
+    "menu_name": "Profiteroles",
+    "menu_name_ar": "بروفيترول",
+    "gist_ar": "كور عجينة منفوخة بكريمة وعليها شوكولاتة",
+    "gist_en": "Puff balls filled with cream, covered in chocolate",
+    "explanation_ar": "كور صغيرة من عجينة الشو، بتنفخ في الفرن وتبقى فاضية من جوه، بتتحشي كريمة أو آيس كريم وبيتصب عليها صوص شوكولاتة سخن.",
+    "explanation_en": "Small balls of choux pastry that puff up hollow in the oven, filled with cream or ice cream and topped with warm chocolate sauce.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "عجينة الشو (زبدة، دقيق، بيض)، كريمة، وصوص شوكولاتة."
+          ],
+          "lines_en": [
+            "Choux pastry (butter, flour, eggs), cream and chocolate sauce."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "عجينة خفيفة وكريمة باردة وشوكولاتة سخنة."
+          ],
+          "lines_en": [
+            "Light pastry, cool cream and warm chocolate."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "كام كورة في طبق وعليها صوص الشوكولاتة."
+          ],
+          "lines_en": [
+            "A few balls on a plate under chocolate sauce."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "بروفترول",
+        "lang": "ar"
+      },
+      {
+        "term": "بروفيتيرول",
+        "lang": "ar"
+      },
+      {
+        "term": "profiterole",
+        "lang": "en"
+      },
+      {
+        "term": "cream puffs",
+        "lang": "en"
+      },
+      {
+        "term": "profiterole",
+        "lang": "franco"
+      },
+      {
+        "term": "profiteroles",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Profiterole"
+    ]
+  },
+  {
+    "slug": "waffle",
+    "category": "warm_desserts",
+    "menu_name": "Waffle",
+    "menu_name_ar": "وافل",
+    "gist_ar": "عجينة مخبوزة مربعات، مقرمشة وعليها صوصات",
+    "gist_en": "Crisp grid-patterned batter cake with toppings",
+    "explanation_ar": "عجينة سايلة بتتخبز بين لوحين حديد عليهم مربعات، فتطلع مقرمشة من بره وطرية من جوه. بتتقدم سخنة بشوكولاتة أو عسل أو فواكه أو آيس كريم.",
+    "explanation_en": "A batter cooked between two hot grid-patterned plates, crisp outside and soft inside. Served warm with chocolate, honey, fruit or ice cream.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "دقيق، بيض، لبن، زبدة، وسكر."
+          ],
+          "lines_en": [
+            "Flour, eggs, milk, butter and sugar."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "مقرمشة من بره وطرية من جوه، والطعم على حسب اللي فوقها."
+          ],
+          "lines_en": [
+            "Crisp outside, soft inside; the taste depends on the toppings."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "سخنة وعليها شوكولاتة أو عسل أو فواكه أو آيس كريم."
+          ],
+          "lines_en": [
+            "Warm, topped with chocolate, honey, fruit or ice cream."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "وافلز",
+        "lang": "ar"
+      },
+      {
+        "term": "وافيل",
+        "lang": "ar"
+      },
+      {
+        "term": "waffles",
+        "lang": "en"
+      },
+      {
+        "term": "belgian waffle",
+        "lang": "en"
+      },
+      {
+        "term": "waffle",
+        "lang": "franco"
+      },
+      {
+        "term": "wafel",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Waffle"
+    ]
+  },
+  {
+    "slug": "crepe",
+    "category": "warm_desserts",
+    "menu_name": "Crêpe",
+    "menu_name_ar": "كريب",
+    "gist_ar": "رقاقة عجينة رفيعة ملفوفة على حشو",
+    "gist_en": "A paper-thin batter sheet folded around a filling",
+    "explanation_ar": "عجينة سايلة بتتفرد رقيقة جدًا على صاج سخن، وبتتحشي حلو (شوكولاتة، موز، بسكوت مطحون) أو حادق (جبنة، فراخ).",
+    "explanation_en": "A runny batter spread paper-thin on a hot griddle, filled sweet (chocolate, banana, crushed biscuits) or savoury (cheese, chicken).",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "دقيق، بيض، لبن، وشوية زبدة."
+          ],
+          "lines_en": [
+            "Flour, eggs, milk and a little butter."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "عجينة رقيقة وطرية، والطعم من الحشو."
+          ],
+          "lines_en": [
+            "Thin and soft; the taste comes from the filling."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "سخنة، ملفوفة أو مطبقة، والحلو غالبًا بالشوكولاتة."
+          ],
+          "lines_en": [
+            "Warm, rolled or folded; sweet ones usually with chocolate."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "كريبه",
+        "lang": "ar"
+      },
+      {
+        "term": "كريب حلو",
+        "lang": "ar"
+      },
+      {
+        "term": "crepe",
+        "lang": "en"
+      },
+      {
+        "term": "crepes",
+        "lang": "en"
+      },
+      {
+        "term": "crepe",
+        "lang": "franco"
+      },
+      {
+        "term": "krep",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Crêpe"
+    ]
+  },
+  {
+    "slug": "pancakes",
+    "category": "warm_desserts",
+    "menu_name": "Pancakes",
+    "menu_name_ar": "بان كيك",
+    "gist_ar": "أقراص عجينة طرية ومنفوشة على الطاسة",
+    "gist_en": "Soft, fluffy rounds of batter cooked in a pan",
+    "explanation_ar": "أقراص عجينة طرية ومنفوشة بتتعمل على الطاسة، بتترص فوق بعض ويتحط عليها عسل أو شوكولاتة أو فواكه أو زبدة.",
+    "explanation_en": "Soft, fluffy rounds of batter cooked in a pan, stacked and topped with syrup, chocolate, fruit or butter.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "دقيق، بيض، لبن، بيكنج باودر، وسكر."
+          ],
+          "lines_en": [
+            "Flour, eggs, milk, baking powder and sugar."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "طرية ومنفوشة، والطعم من العسل أو الصوص."
+          ],
+          "lines_en": [
+            "Soft and fluffy; the taste comes from the syrup or sauce."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "سخنة، كذا واحدة فوق بعض وعليها عسل أو شوكولاتة."
+          ],
+          "lines_en": [
+            "Warm, in a stack with syrup or chocolate."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "بانكيك",
+        "lang": "ar"
+      },
+      {
+        "term": "بان كيكس",
+        "lang": "ar"
+      },
+      {
+        "term": "pancake",
+        "lang": "en"
+      },
+      {
+        "term": "hotcakes",
+        "lang": "en"
+      },
+      {
+        "term": "pancake",
+        "lang": "franco"
+      },
+      {
+        "term": "pan cake",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Pancake"
+    ]
+  },
+  {
+    "slug": "churros",
+    "category": "warm_desserts",
+    "menu_name": "Churros",
+    "menu_name_ar": "تشوروز",
+    "gist_ar": "أصابع عجينة مقلية بالسكر والقرفة",
+    "gist_en": "Fried dough sticks with cinnamon sugar",
+    "explanation_ar": "أصابع عجينة مخرّمة بتتقلي لحد ما تبقى مقرمشة، وبتتغطى بسكر وقرفة، وبتتغمس في صوص شوكولاتة سخن. أصلها من إسبانيا.",
+    "explanation_en": "Ridged sticks of dough fried until crisp, rolled in cinnamon sugar and dipped in warm chocolate sauce. From Spain.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "دقيق، مية، زيت للقلي، سكر، وقرفة."
+          ],
+          "lines_en": [
+            "Flour, water, oil for frying, sugar and cinnamon."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "مقرمشة من بره وطرية من جوه، حلوة وريحة قرفة."
+          ],
+          "lines_en": [
+            "Crisp outside, soft inside, sweet with cinnamon."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "سخنة، ومعاها صوص شوكولاتة للغمس."
+          ],
+          "lines_en": [
+            "Warm, with chocolate sauce for dipping."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "تشورو",
+        "lang": "ar"
+      },
+      {
+        "term": "شوروز",
+        "lang": "ar"
+      },
+      {
+        "term": "churro",
+        "lang": "en"
+      },
+      {
+        "term": "churros",
+        "lang": "franco"
+      },
+      {
+        "term": "shoros",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Churro"
+    ]
+  },
+  {
+    "slug": "croissant",
+    "category": "pastries",
+    "menu_name": "Croissant",
+    "menu_name_ar": "كرواسون",
+    "gist_ar": "عيش زبدة هش طبقات على شكل هلال",
+    "gist_en": "Flaky, buttery crescent-shaped bread",
+    "explanation_ar": "عجينة بتتطبق مع زبدة كذا مرة، فلما تتخبز بتطلع طبقات رقيقة هشة. بتيجي سادة أو محشية شوكولاتة أو جبنة.",
+    "explanation_en": "Dough folded with butter many times, so it bakes into thin, flaky layers. Plain or filled with chocolate or cheese.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "دقيق، زبدة كتير، خميرة، لبن، وسكر."
+          ],
+          "lines_en": [
+            "Flour, lots of butter, yeast, milk and sugar."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "هش وطعمه زبدة، مش حلو قوي لوحده."
+          ],
+          "lines_en": [
+            "Flaky and buttery, not very sweet on its own."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "سادة مع القهوة الصبح، أو محشي شوكولاتة أو جبنة."
+          ],
+          "lines_en": [
+            "Plain with morning coffee, or filled with chocolate or cheese."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "كرواسان",
+        "lang": "ar"
+      },
+      {
+        "term": "كرواسو",
+        "lang": "ar"
+      },
+      {
+        "term": "croissants",
+        "lang": "en"
+      },
+      {
+        "term": "croissant",
+        "lang": "franco"
+      },
+      {
+        "term": "krwason",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Croissant"
+    ]
+  },
+  {
+    "slug": "cinnamon_roll",
+    "category": "pastries",
+    "menu_name": "Cinnamon Roll",
+    "menu_name_ar": "سينامون رول",
+    "gist_ar": "عجينة ملفوفة بالقرفة والسكر وعليها صوص",
+    "gist_en": "Rolled sweet bread with cinnamon and icing",
+    "explanation_ar": "عجينة طرية بتتفرد ويترش عليها زبدة وسكر بني وقرفة، وبعدين تتلف وتتقطع دواير وتتخبز. فوقها صوص سكر أو جبنة كريمي.",
+    "explanation_en": "Soft dough spread with butter, brown sugar and cinnamon, rolled up, cut into spirals and baked. Topped with sugar or cream cheese icing.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "عجينة بالخميرة، زبدة، سكر بني، قرفة، وصوص سكر."
+          ],
+          "lines_en": [
+            "Yeast dough, butter, brown sugar, cinnamon and icing."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "طرية وحلوة وريحة القرفة واضحة."
+          ],
+          "lines_en": [
+            "Soft and sweet, with a strong cinnamon smell."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "سخنة أو دافية، وعليها الصوص الأبيض."
+          ],
+          "lines_en": [
+            "Warm, under white icing."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "سينابون",
+        "lang": "ar"
+      },
+      {
+        "term": "رول القرفة",
+        "lang": "ar"
+      },
+      {
+        "term": "cinnamon bun",
+        "lang": "en"
+      },
+      {
+        "term": "cinnabon",
+        "lang": "en"
+      },
+      {
+        "term": "cinnamon roll",
+        "lang": "franco"
+      },
+      {
+        "term": "sinabon",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Cinnamon_roll"
+    ]
+  },
+  {
+    "slug": "eclair",
+    "category": "pastries",
+    "menu_name": "Éclair",
+    "menu_name_ar": "إكلير",
+    "gist_ar": "صباع عجينة منفوخ بكريمة وعليه شوكولاتة",
+    "gist_en": "A long hollow pastry filled with cream, iced with chocolate",
+    "explanation_ar": "صباع طويل من عجينة الشو، بيتخبز لحد ما يبقى فاضي من جوه، وبيتحشي كاسترد أو كريمة وعليه طبقة شوكولاتة.",
+    "explanation_en": "A long finger of choux pastry baked hollow, filled with custard or cream and topped with chocolate icing.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "عجينة الشو (زبدة، دقيق، بيض)، كاسترد أو كريمة، وشوكولاتة."
+          ],
+          "lines_en": [
+            "Choux pastry (butter, flour, eggs), custard or cream, and chocolate."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "عجينة خفيفة وحشو كريمي وشوكولاتة حلوة."
+          ],
+          "lines_en": [
+            "Light pastry, creamy filling and sweet chocolate."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "ساقع، واحد واحد زي الجاتوه."
+          ],
+          "lines_en": [
+            "Cold, one at a time, like a small cake."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "اكلير",
+        "lang": "ar"
+      },
+      {
+        "term": "إكلير شوكولاتة",
+        "lang": "ar"
+      },
+      {
+        "term": "eclair",
+        "lang": "en"
+      },
+      {
+        "term": "éclairs",
+        "lang": "en"
+      },
+      {
+        "term": "eclair",
+        "lang": "franco"
+      },
+      {
+        "term": "ekler",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Éclair_(pastry)"
+    ]
+  },
+  {
+    "slug": "mille_feuille",
+    "category": "pastries",
+    "menu_name": "Mille-feuille",
+    "menu_name_ar": "ميل فاي",
+    "gist_ar": "طبقات عجينة هشة بينها كاسترد",
+    "gist_en": "Flaky pastry layers with custard between",
+    "explanation_ar": "طبقات رقيقة من عجينة مورقة مقرمشة، بينها كاسترد أو كريمة، ووشها سكر بودرة أو صوص سكر. اسمها بالفرنساوي معناه «ألف ورقة».",
+    "explanation_en": "Thin layers of crisp puff pastry with custard or cream between them, topped with icing sugar or glaze. The French name means 'a thousand leaves'.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "عجينة مورقة، كاسترد أو كريمة، وسكر بودرة."
+          ],
+          "lines_en": [
+            "Puff pastry, custard or cream, and icing sugar."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "مقرمشة وكريمية مع بعض، وحلوة."
+          ],
+          "lines_en": [
+            "Crisp and creamy at once, and sweet."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "قطعة مستطيلة ساقعة."
+          ],
+          "lines_en": [
+            "A cold rectangular slice."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "ميلفاي",
+        "lang": "ar"
+      },
+      {
+        "term": "ميل فوي",
+        "lang": "ar"
+      },
+      {
+        "term": "ميلفيه",
+        "lang": "ar"
+      },
+      {
+        "term": "mille feuille",
+        "lang": "en"
+      },
+      {
+        "term": "napoleon",
+        "lang": "en"
+      },
+      {
+        "term": "vanilla slice",
+        "lang": "en"
+      },
+      {
+        "term": "mille feuille",
+        "lang": "franco"
+      },
+      {
+        "term": "milfay",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Mille-feuille"
+    ]
+  },
+  {
+    "slug": "macaron",
+    "category": "pastries",
+    "menu_name": "Macaron",
+    "menu_name_ar": "ماكرون",
+    "gist_ar": "بسكوتتين لوز ملونين بينهم حشو كريمي",
+    "gist_en": "Two coloured almond biscuits with a filling",
+    "explanation_ar": "بسكوتة صغيرة معمولة من دقيق اللوز وبياض البيض والسكر، وشها ناعم ومقرمش وجوهها طري، وبيتلزق اتنين منهم بكريمة أو شوكولاتة. بتيجي بألوان وطعوم كتير.",
+    "explanation_en": "Small, smooth biscuits of ground almonds, egg white and sugar, crisp outside and chewy inside, sandwiched in pairs with cream or chocolate. Many colours and flavours.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "دقيق لوز، بياض بيض، سكر، وحشو كريمة أو شوكولاتة."
+          ],
+          "lines_en": [
+            "Ground almonds, egg whites, sugar and a cream or chocolate filling."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "حلوة، مقرمشة خفيف من بره وطرية من جوه."
+          ],
+          "lines_en": [
+            "Sweet, lightly crisp outside and chewy inside."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "حتت صغيرة بالعدد، في علبة أو طبق ملون."
+          ],
+          "lines_en": [
+            "Small pieces, by the piece, in a box or on a plate."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "ماكارون",
+        "lang": "ar"
+      },
+      {
+        "term": "مكارون",
+        "lang": "ar"
+      },
+      {
+        "term": "macarons",
+        "lang": "en"
+      },
+      {
+        "term": "french macaron",
+        "lang": "en"
+      },
+      {
+        "term": "macaron",
+        "lang": "franco"
+      },
+      {
+        "term": "makaron",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Macaron"
+    ]
+  },
+  {
+    "slug": "muffin",
+    "category": "pastries",
+    "menu_name": "Muffin",
+    "menu_name_ar": "مافن",
+    "gist_ar": "كيكة صغيرة منفوخة من غير كريمة",
+    "gist_en": "A small domed cake without frosting",
+    "explanation_ar": "كيكة صغيرة لفرد واحد، وشها عالي ومقبب ومن غير كريمة فوقها. بيبقى فيها قطع شوكولاتة أو توت أو موز.",
+    "explanation_en": "A small single-serving cake with a high domed top and no frosting, often with chocolate chips, blueberries or banana.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "دقيق، بيض، لبن، زيت أو زبدة، سكر، وقطع شوكولاتة أو توت."
+          ],
+          "lines_en": [
+            "Flour, eggs, milk, oil or butter, sugar, and chocolate chips or berries."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "طري وحلو بشكل معقول، والطعم من الإضافات."
+          ],
+          "lines_en": [
+            "Soft and moderately sweet; the add-ins give the flavour."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "واحدة في ورقتها، غالبًا مع القهوة."
+          ],
+          "lines_en": [
+            "One in its paper case, often with coffee."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "مافنز",
+        "lang": "ar"
+      },
+      {
+        "term": "مفن",
+        "lang": "ar"
+      },
+      {
+        "term": "muffins",
+        "lang": "en"
+      },
+      {
+        "term": "blueberry muffin",
+        "lang": "en"
+      },
+      {
+        "term": "muffin",
+        "lang": "franco"
+      },
+      {
+        "term": "mafen",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Muffin"
+    ]
+  },
+  {
+    "slug": "donut",
+    "category": "pastries",
+    "menu_name": "Donut",
+    "menu_name_ar": "دونات",
+    "gist_ar": "عجينة مقلية مدورة بفتحة وعليها صوص",
+    "gist_en": "A ring of fried dough with a glaze",
+    "explanation_ar": "عجينة طرية بتتقلي على شكل حلقة أو كورة، وبتتغطى بصوص سكر أو شوكولاتة أو بتتحشي مربى أو كريمة.",
+    "explanation_en": "Soft dough fried as a ring or a ball, glazed with sugar or chocolate, or filled with jam or cream.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "عجينة بالخميرة، زيت للقلي، وصوص سكر أو شوكولاتة."
+          ],
+          "lines_en": [
+            "Yeast dough, oil for frying, and a sugar or chocolate glaze."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "طرية وخفيفة وحلوة."
+          ],
+          "lines_en": [
+            "Soft, light and sweet."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "واحدة واحدة، بألوان وصوصات كتير."
+          ],
+          "lines_en": [
+            "One at a time, in many colours and glazes."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "دونتس",
+        "lang": "ar"
+      },
+      {
+        "term": "دوناتس",
+        "lang": "ar"
+      },
+      {
+        "term": "دونت",
+        "lang": "ar"
+      },
+      {
+        "term": "doughnut",
+        "lang": "en"
+      },
+      {
+        "term": "donuts",
+        "lang": "en"
+      },
+      {
+        "term": "doughnuts",
+        "lang": "en"
+      },
+      {
+        "term": "donuts",
+        "lang": "franco"
+      },
+      {
+        "term": "donts",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Doughnut"
+    ]
+  },
+  {
+    "slug": "cookies",
+    "category": "pastries",
+    "menu_name": "Cookies",
+    "menu_name_ar": "كوكيز",
+    "gist_ar": "بسكوت كبير طري من جوه بقطع شوكولاتة",
+    "gist_en": "Large chewy biscuit with chocolate chunks",
+    "explanation_ar": "بسكوت كبير بيتخبز لحد ما أطرافه تقرمش ونصه يفضل طري. أشهره بقطع الشوكولاتة، وفيه بالشوفان أو المكسرات.",
+    "explanation_en": "A large biscuit baked until the edges crisp while the middle stays soft. The best known has chocolate chunks; others have oats or nuts.",
+    "details": {
+      "kind": "usage",
+      "sections": [
+        {
+          "title_ar": "المكونات",
+          "title_en": "Made with",
+          "lines_ar": [
+            "دقيق، زبدة، سكر بني، بيض، وقطع شوكولاتة."
+          ],
+          "lines_en": [
+            "Flour, butter, brown sugar, eggs and chocolate chunks."
+          ]
+        },
+        {
+          "title_ar": "الطعم",
+          "title_en": "Taste",
+          "lines_ar": [
+            "حلوة، أطرافها مقرمشة ونصها طري."
+          ],
+          "lines_en": [
+            "Sweet, crisp at the edges and soft in the middle."
+          ]
+        },
+        {
+          "title_ar": "بتتقدم إزاي",
+          "title_en": "How it's served",
+          "lines_ar": [
+            "واحدة كبيرة أو كام واحدة صغيرة، دافية أحسن."
+          ],
+          "lines_en": [
+            "One big or a few small, best slightly warm."
+          ]
+        }
+      ]
+    },
+    "terms": [
+      {
+        "term": "كوكيز شوكولاتة",
+        "lang": "ar"
+      },
+      {
+        "term": "كوكي",
+        "lang": "ar"
+      },
+      {
+        "term": "بسكوت شوكولاتة",
+        "lang": "ar"
+      },
+      {
+        "term": "cookie",
+        "lang": "en"
+      },
+      {
+        "term": "chocolate chip cookie",
+        "lang": "en"
+      },
+      {
+        "term": "cookies",
+        "lang": "franco"
+      },
+      {
+        "term": "kokiz",
+        "lang": "franco"
+      }
+    ],
+    "sources": [
+      "https://en.wikipedia.org/wiki/Chocolate_chip_cookie"
+    ]
+  }
+]

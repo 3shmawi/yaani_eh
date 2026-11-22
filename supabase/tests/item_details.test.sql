@@ -5,12 +5,22 @@
 -- details but never write them.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(26);
+select plan(28);
 
 -- The move: every drink kept its recipe, clip and numbers.
 select is(
   (select detail_kind || ' / ' || details_title_ar from public.categories where slug = 'cafe'),
   'recipe / طريقة التحضير', 'the drinks section carries recipes, called «طريقة التحضير»'
+);
+select is(
+  (select detail_kind || ' / ' || details_title_ar from public.categories where slug = 'desserts'),
+  'usage / جواها إيه؟', 'the desserts section explains what is inside, called «جواها إيه؟»'
+);
+select is(
+  (select count(*)::int from public.items i join public.categories c on c.id = i.category_id
+   join public.categories s on s.id = c.parent_id
+   where s.slug = 'desserts' and i.details ->> 'kind' = 'usage'),
+  25, 'every dessert carries «جواها إيه؟» details'
 );
 select is(
   (select count(*)::int from public.items where recipe is not null and details - 'kind' = recipe and details ->> 'kind' = 'recipe'),

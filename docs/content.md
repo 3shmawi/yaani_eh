@@ -8,8 +8,8 @@ syncs only what changed, so content changes never need an app release.
 
 | Table | What it holds |
 |---|---|
-| `categories` | Roots are **sections**, the Home switch: `cafe` («مشروبات / Drinks») and `desserts` («حلويات», no items yet; `0005_browse_sections.sql`). Children are the chips (Coffee, Frappés…). A section with no published items shows as «قريبًا» and goes live with its first item, no app update. The section's `trait_schema` drives the trait pills. |
-| `items` | One drink (later: dish, dessert). Menu name as written on menus + Arabic spelling, short explanations (≤ 300 chars), the «يعني» line (`gist_ar` / `gist_en`, ≤ 60 chars, `0004_item_gist.sql`), calories, size, price range in EGP, photo and audio paths, `traits`. |
+| `categories` | Roots are **sections**, the Home switch: `cafe` («مشروبات / Drinks») and `desserts` («حلويات», added empty in `0005_menu_sections.sql`, live since `0012_content_desserts.sql`; see [Desserts](#desserts)). Children are the chips (Coffee, Frappés…). A section with no published items shows as «قريبًا» and goes live with its first item, no app update. The section's `trait_schema` drives the trait pills. |
+| `items` | One drink or dessert. Menu name as written on menus + Arabic spelling, short explanations (≤ 300 chars), the «يعني» line (`gist_ar` / `gist_en`, ≤ 60 chars, `0004_item_gist.sql`), calories, size, price range in EGP, photo and audio paths, `traits`. |
 | `item_terms` | Extra search words per item: `ar`, `en` or `franco` (e.g. `2ahwa`). |
 | `catalog_tombstones` | Filled automatically when you delete a row; the app reads it through `catalog_removed_since`. |
 
@@ -180,6 +180,26 @@ one). pgTAP checks no explanation uses a menu word.
 supabase/content/build_seed.py` → `supabase/migrations/0003_seed_drinks.sql`.
 It runs once on deploy and never overwrites later edits in Studio. After
 launch, edit in Studio — not in the CSV.
+
+## Desserts
+
+The «حلويات» section (`0012_content_desserts.sql`): 25 desserts from
+Egyptian café menus in four chips, «كيك وتورت», «حلويات بالمعلقة»,
+«حلويات سخنة» and «مخبوزات».
+
+- **Source:** `supabase/content/desserts/section.json` and `items.json` →
+  `python3 supabase/content/build_seed.py --section desserts` (written once,
+  then frozen; after launch, edit in Studio). Shapes and rules:
+  [content_guide.md](content_guide.md).
+- **Details:** kind `usage`, called «جواها إيه؟ / What's inside», with three
+  sections per dessert: «المكونات», «الطعم», «بتتقدم إزاي».
+- **Words:** the «يعني» line and the explanation follow the drinks' rule:
+  everyday words, never another menu name («كيكة شوكولاتة تقيلة وطرية من
+  جوه», not «زي البراونيز»). Every dessert cites a source.
+- **Not yet:** photos and pronunciation clips (cards show the brand gradient
+  and first letter, and the pronounce pill is hidden), and traits: the
+  section has no `trait_schema`, so no trait pills or taste quiz.
+- Trademarked names (Lotus, Cinnabon) are only search terms.
 
 ## Rules that are tested (`supabase/tests/catalog_rls.test.sql`)
 

@@ -1,0 +1,40 @@
+{
+  "slug": "desserts",
+  "name_ar": "حلويات",
+  "name_en": "Desserts",
+  "icon": "cake",
+  "sort_order": 1,
+  "detail_kind": "usage",
+  "details_title_ar": "جواها إيه؟",
+  "details_title_en": "What's inside",
+  "categories": [
+    {
+      "slug": "cakes",
+      "name_ar": "كيك وتورت",
+      "name_en": "Cakes",
+      "icon": "cake",
+      "sort_order": 0
+    },
+    {
+      "slug": "spoon_desserts",
+      "name_ar": "حلويات بالمعلقة",
+      "name_en": "Spoon desserts",
+      "icon": "cake",
+      "sort_order": 1
+    },
+    {
+      "slug": "warm_desserts",
+      "name_ar": "حلويات سخنة",
+      "name_en": "Warm desserts",
+      "icon": "cake",
+      "sort_order": 2
+    },
+    {
+      "slug": "pastries",
+      "name_ar": "مخبوزات",
+      "name_en": "Pastries",
+      "icon": "cake",
+      "sort_order": 3
+    }
+  ]
+}
