@@ -486,6 +486,12 @@ def build_section(slug):
             "slug", "name_ar", "name_en", "icon", "sort_order",
             "detail_kind", "details_title_ar", "details_title_en")) + ")",
         "on conflict (slug) do nothing;",
+        # A section that already exists without details (desserts was added
+        # empty in 0005) gets its kind here; one already set is left alone.
+        "update public.categories set detail_kind = " + lit(kind) + ",",
+        "  details_title_ar = " + lit(section["details_title_ar"]) + ",",
+        "  details_title_en = " + lit(section["details_title_en"]),
+        f"where slug = {lit(slug)} and parent_id is null and detail_kind is null;",
         "",
     ]
     for c in section["categories"]:
