@@ -34,7 +34,7 @@ The «الأصلي» (original name) clips are computer-generated with
 generated audio isn't covered by it) on 2026-11-18, then trimmed and
 encoded to AAC mono 64 kbps with ffmpeg. Each clip was checked with a speech
 recognizer (Whisper small); names it heard wrong (Earl Grey) were dropped.
-«زي الباريستا» clips are not generated: those stay own recordings.
+The «زي الباريستا» clips are below.
 
 | Voice | Training data license |
 |---|---|
@@ -57,3 +57,59 @@ recognizer (Whisper small); names it heard wrong (Earl Grey) were dropped.
 | `mocha.original.m4a` | `en_US-ljspeech-high` |
 
 Voice model cards: https://huggingface.co/rhasspy/piper-voices
+
+### «زي الباريستا» (`<slug>.barista.m4a`)
+
+Generated with [ElevenLabs](https://elevenlabs.io) text to speech on
+2026-11-20, voice "Haytham - Energetic, Warm and Cheerful" (Egyptian Arabic,
+ElevenLabs Voice Library), from all 41 Arabic menu names read in one take
+in `drinks.csv` order. The take was split at its pauses with ffmpeg
+(`silencedetect`, -35 dB), trimmed and encoded to AAC mono 64 kbps. Each
+clip was checked against its name with a speech recognizer (Whisper small);
+it heard 38 of 41, and missed only very short clips (espresso, hot_chocolate,
+virgin_mojito) whose neighbours matched, so the split is in order. Commercial use of ElevenLabs output needs a paid plan at the time
+it is generated (ElevenLabs Terms of Service).
+
+| File | Voice |
+|---|---|
+| `espresso.barista.m4a` | ElevenLabs "Haytham" |
+| `doppio.barista.m4a` | ElevenLabs "Haytham" |
+| `americano.barista.m4a` | ElevenLabs "Haytham" |
+| `macchiato.barista.m4a` | ElevenLabs "Haytham" |
+| `cortado.barista.m4a` | ElevenLabs "Haytham" |
+| `flat_white.barista.m4a` | ElevenLabs "Haytham" |
+| `cappuccino.barista.m4a` | ElevenLabs "Haytham" |
+| `latte.barista.m4a` | ElevenLabs "Haytham" |
+| `spanish_latte.barista.m4a` | ElevenLabs "Haytham" |
+| `mocha.barista.m4a` | ElevenLabs "Haytham" |
+| `caramel_macchiato.barista.m4a` | ElevenLabs "Haytham" |
+| `white_mocha.barista.m4a` | ElevenLabs "Haytham" |
+| `turkish_coffee.barista.m4a` | ElevenLabs "Haytham" |
+| `french_coffee.barista.m4a` | ElevenLabs "Haytham" |
+| `affogato.barista.m4a` | ElevenLabs "Haytham" |
+| `iced_americano.barista.m4a` | ElevenLabs "Haytham" |
+| `iced_latte.barista.m4a` | ElevenLabs "Haytham" |
+| `iced_spanish_latte.barista.m4a` | ElevenLabs "Haytham" |
+| `iced_mocha.barista.m4a` | ElevenLabs "Haytham" |
+| `cold_brew.barista.m4a` | ElevenLabs "Haytham" |
+| `iced_caramel_macchiato.barista.m4a` | ElevenLabs "Haytham" |
+| `coffee_frappe.barista.m4a` | ElevenLabs "Haytham" |
+| `caramel_frappe.barista.m4a` | ElevenLabs "Haytham" |
+| `mocha_frappe.barista.m4a` | ElevenLabs "Haytham" |
+| `vanilla_cream_frappe.barista.m4a` | ElevenLabs "Haytham" |
+| `green_tea.barista.m4a` | ElevenLabs "Haytham" |
+| `earl_grey.barista.m4a` | ElevenLabs "Haytham" |
+| `chai_latte.barista.m4a` | ElevenLabs "Haytham" |
+| `matcha_latte.barista.m4a` | ElevenLabs "Haytham" |
+| `hibiscus.barista.m4a` | ElevenLabs "Haytham" |
+| `mint_tea.barista.m4a` | ElevenLabs "Haytham" |
+| `mango_juice.barista.m4a` | ElevenLabs "Haytham" |
+| `strawberry_juice.barista.m4a` | ElevenLabs "Haytham" |
+| `orange_juice.barista.m4a` | ElevenLabs "Haytham" |
+| `lemon_mint.barista.m4a` | ElevenLabs "Haytham" |
+| `fruit_cocktail.barista.m4a` | ElevenLabs "Haytham" |
+| `hot_chocolate.barista.m4a` | ElevenLabs "Haytham" |
+| `sahlab.barista.m4a` | ElevenLabs "Haytham" |
+| `cookies_milkshake.barista.m4a` | ElevenLabs "Haytham" |
+| `berry_smoothie.barista.m4a` | ElevenLabs "Haytham" |
+| `virgin_mojito.barista.m4a` | ElevenLabs "Haytham" |
