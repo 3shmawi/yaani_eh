@@ -8,8 +8,8 @@ syncs only what changed, so content changes never need an app release.
 
 | Table | What it holds |
 |---|---|
-| `categories` | Roots are **sections**, the Home switch: `cafe` («مشروبات / Drinks») and `desserts` («حلويات», no items yet; `0005_browse_sections.sql`). Children are the chips (Coffee, Frappés…). A section with no published items shows as «قريبًا» and goes live with its first item, no app update. The section's `trait_schema` drives the trait pills. |
-| `items` | One drink (later: dish, dessert). Menu name as written on menus + Arabic spelling, short explanations (≤ 300 chars), the «يعني» line (`gist_ar` / `gist_en`, ≤ 60 chars, `0004_item_gist.sql`), calories, size, price range in EGP, photo and audio paths, `traits`. |
+| `categories` | Roots are **sections**, the Home switch: `cafe` («مشروبات / Drinks») and `desserts` («حلويات», added empty in `0005_menu_sections.sql`, live since `0012_content_desserts.sql`; see [Desserts](#desserts)). Children are the chips (Coffee, Frappés…). A section with no published items shows as «قريبًا» and goes live with its first item, no app update. The section's `trait_schema` drives the trait pills. |
+| `items` | One drink or dessert. Menu name as written on menus + Arabic spelling, short explanations (≤ 300 chars), the «يعني» line (`gist_ar` / `gist_en`, ≤ 60 chars, `0004_item_gist.sql`), calories, size, price range in EGP, photo and audio paths, `traits`. |
 | `item_terms` | Extra search words per item: `ar`, `en` or `franco` (e.g. `2ahwa`). |
 | `catalog_tombstones` | Filled automatically when you delete a row; the app reads it through `catalog_removed_since`. |
 
@@ -61,18 +61,24 @@ The app works the thumbnail's name out from `image_path`
 (`MediaUrls.thumbnailPath`), so the database only holds the photo's path.
 
 **Adding or changing a photo:**
-1. The photo: WebP, 1200×1600, < 300 KB — own photos or
-   Pexels/Unsplash-licensed; no café logos, branded cups or faces.
+1. The photo: WebP, 1200×1600, < 300 KB — own photos, or CC0 / public
+   domain (the WordPress Photo Directory is all CC0; Openverse can filter
+   by license); no café logos, branded cups, text or faces. Put it in
+   `supabase/content/media/item-images/` and add its source to
+   `supabase/content/media/SOURCES.md`.
 2. Make its thumbnail (needs `cwebp`: `brew install webp` / `apt install webp`):
    ```bash
-   ./scripts/make_thumbnails.sh path/to/photos      # a folder, or files
+   ./scripts/make_thumbnails.sh supabase/content/media/item-images
    ```
    It writes `<name>.thumb.webp` next to each photo (400 px wide, metadata
    removed, quality lowered until ≤ 40 KB), skips thumbnails that are newer
    than their photo (`--force` remakes them) and warns about any that stay
    over 40 KB.
-3. Upload **both** files to `item-images` (same folder), then put the
-   photo's path (e.g. `latte.webp`) in `image_path`. Changing a photo: upload
+3. Set the photo's path (e.g. `latte.webp`) in `image_path` with a new
+   migration (like `0010_item_media_first_batch.sql`). On merge, the
+   **Supabase deploy** workflow uploads both files to `item-images`
+   (`scripts/upload_media.sh`) before it runs the migration. (Editing in
+   Studio instead: upload both files by hand first, then set the path.) Changing a photo: upload
    both again under the same names.
 
 **A thumbnail is missing:** cards fall back to the full photo (slower, more
@@ -96,7 +102,21 @@ pronounce pill (docs/features/pronunciation.md):
 - **Format:** M4A (AAC) or MP3, mono, about 64 kbps, 1–3 seconds, under
   50 KB. Not Ogg: the bucket accepts it but iPhones can't play it.
 - **Recording:** the name alone, said once, clearly, no music or "it's
-  pronounced…". Trim silence at both ends. Own recordings only.
+  pronounced…". Trim silence at both ends. «زي الباريستا» clips are own
+  recordings, or [ElevenLabs](https://elevenlabs.io) with an Egyptian Arabic
+  voice (generated on a paid plan, so the audio can be used commercially):
+  put every name in one text in `drinks.csv` order, one per line ending with
+  «.», then split the take at its pauses and check each clip by ear and with
+  a speech recognizer (Piper's Arabic voices don't say them the Egyptian way).
+  «الأصلي» clips may be generated with [Piper](https://github.com/OHF-Voice/piper1-gpl)
+  using a voice whose training data is CC0, public domain or CC BY (not
+  NC, SA or AGPL: read its MODEL_CARD); check each one with a speech
+  recognizer or by ear and drop the ones it gets wrong. List every clip
+  and its voice in `supabase/content/media/SOURCES.md`.
+- **Files in the repo:** `supabase/content/media/item-audio/`; a migration
+  sets the paths, and the **Supabase deploy** workflow uploads the files
+  before it runs the migration. `test/content/media_test.dart` checks names, sizes, sources and
+  that every path a migration sets has its file.
 - **Naming:** `<slug>.barista.m4a` and `<slug>.original.m4a`, e.g.
   `flat_white.barista.m4a`. Upload to the `item-audio` bucket, then put the
   path in the column. A path with `..`, a leading `/` or `//` is ignored by
@@ -160,6 +180,26 @@ one). pgTAP checks no explanation uses a menu word.
 supabase/content/build_seed.py` → `supabase/migrations/0003_seed_drinks.sql`.
 It runs once on deploy and never overwrites later edits in Studio. After
 launch, edit in Studio — not in the CSV.
+
+## Desserts
+
+The «حلويات» section (`0012_content_desserts.sql`): 25 desserts from
+Egyptian café menus in four chips, «كيك وتورت», «حلويات بالمعلقة»,
+«حلويات سخنة» and «مخبوزات».
+
+- **Source:** `supabase/content/desserts/section.json` and `items.json` →
+  `python3 supabase/content/build_seed.py --section desserts` (written once,
+  then frozen; after launch, edit in Studio). Shapes and rules:
+  [content_guide.md](content_guide.md).
+- **Details:** kind `usage`, called «جواها إيه؟ / What's inside», with three
+  sections per dessert: «المكونات», «الطعم», «بتتقدم إزاي».
+- **Words:** the «يعني» line and the explanation follow the drinks' rule:
+  everyday words, never another menu name («كيكة شوكولاتة تقيلة وطرية من
+  جوه», not «زي البراونيز»). Every dessert cites a source.
+- **Not yet:** photos and pronunciation clips (cards show the brand gradient
+  and first letter, and the pronounce pill is hidden), and traits: the
+  section has no `trait_schema`, so no trait pills or taste quiz.
+- Trademarked names (Lotus, Cinnabon) are only search terms.
 
 ## Rules that are tested (`supabase/tests/catalog_rls.test.sql`)
 

@@ -10,6 +10,7 @@ Security is tested, not assumed. Three layers run on every pull request.
 | `workflow_secrets_test.dart` | secrets pasted into CI scripts, a key written to a file without `scripts/mask_secrets.sh`, `set -x`, actions not pinned to a commit |
 | `deep_link_test.dart` | crafted/unknown deep links crashing the app or reaching unexpected screens; open redirects via query parameters |
 | `media_paths_test.dart` | photo / thumbnail / pronunciation paths from the database reaching another Storage path (`..`, `/x`, `a//b`), another host, or adding a query or fragment |
+| `agent_driver_test.dart` | the Flutter Driver extension (agents tapping the app, `test_driver/agent_app.dart`) reaching a store build: nothing under `lib/` may import `flutter_driver` |
 
 ## 2. CI `security` job
 - **gitleaks** — scans the whole git history for committed secrets.
@@ -52,6 +53,10 @@ would be printed in full by any tool that echoes it in an error.
   upload" into "… manual ***").
 - Pass passwords through environment variables the tool reads, not as
   command-line arguments.
+- Media upload (`scripts/upload_media.sh` in `supabase.yml`): the Supabase
+  CLI fetches the project's service key from `SUPABASE_ACCESS_TOKEN` in
+  memory and never prints it; the script only prints file names. Never add
+  `--debug` to it, and never fetch the key into a variable or file.
 - Workflows start with `permissions: contents: read`; a job that must write
   asks for exactly that. (The Demo video's `compose` job has
   `contents: write` only to publish screenshots to the `demo-media` branch,

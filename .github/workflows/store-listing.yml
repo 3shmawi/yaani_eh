@@ -35,7 +35,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0
+      - uses: ruby/setup-ruby@be3c7df29b3349ec6bcfc6b4792f1cf9f5237d18 # v1.343.0
         with:
           ruby-version: '3.3'
       - run: gem install fastlane --no-document --version 2.241.2 # zizmor: ignore[adhoc-packages] pinned; one tool, no Gemfile
@@ -47,6 +47,8 @@ jobs:
           # point it at the track release.yml uploads to. Changes are saved
           # but not sent for review, so the account needs no production
           # release permission; send them from Play Console → Publishing overview.
+          # "What's new" (store/android/<locale>/changelogs/default.txt) goes
+          # on that same release.
           PLAY_TRACK: ${{ vars.PLAY_TRACK || 'internal' }}
         run: |
           printf '%s' "$PLAY_JSON" > "$RUNNER_TEMP/play.json"
@@ -59,6 +61,8 @@ jobs:
           # Icon and feature graphic, once they're in store/android/<locale>/images/.
           images=true
           ls store/android/*/images/featureGraphic.png >/dev/null 2>&1 && images=false
+          notes=true
+          ls store/android/*/changelogs/default.txt >/dev/null 2>&1 && notes=false
           # supply hangs the listing on one release of the track; with more
           # than one there ("More than one release found") it needs the
           # version code, so pick the newest on the track.
@@ -78,7 +82,7 @@ jobs:
             --track "$PLAY_TRACK" \
             --version_code "$code" \
             --skip_upload_apk true --skip_upload_aab true \
-            --skip_upload_changelogs true \
+            --skip_upload_changelogs "$notes" \
             --changes_not_sent_for_review true \
             --skip_upload_images "$images" \
             --skip_upload_screenshots "$shots"
@@ -91,7 +95,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0
+      - uses: ruby/setup-ruby@be3c7df29b3349ec6bcfc6b4792f1cf9f5237d18 # v1.343.0
         with:
           ruby-version: '3.3'
       - run: gem install fastlane --no-document --version 2.241.2 # zizmor: ignore[adhoc-packages] pinned; one tool, no Gemfile
@@ -100,27 +104,41 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+          # App Review contact: Apple refuses review notes without all four.
+          REVIEW_FIRST_NAME: ${{ secrets.APP_REVIEW_FIRST_NAME }}
+          REVIEW_LAST_NAME: ${{ secrets.APP_REVIEW_LAST_NAME }}
+          REVIEW_EMAIL: ${{ secrets.APP_REVIEW_EMAIL }}
+          REVIEW_PHONE: ${{ secrets.APP_REVIEW_PHONE }}
         run: |
           printf '%s' "$ASC_KEY_P8_BASE64" | base64 --decode > "$RUNNER_TEMP/asc.p8"
           ./scripts/mask_secrets.sh "$RUNNER_TEMP/asc.p8"
           jq -n --arg id "$ASC_KEY_ID" --arg issuer "$ASC_ISSUER_ID" --rawfile key "$RUNNER_TEMP/asc.p8" \
             '{key_id: $id, issuer_id: $issuer, key: $key, in_house: false}' > "$RUNNER_TEMP/asc.json"
-          # Without a Deliverfile, deliver asks "setup deliver?" and crashes
-          # in CI (non-interactive). An empty one is enough: options are flags.
           # store/ios/screenshots sits next to the locale folders, so deliver's
           # folder-name check is off; it still only reads valid locale folders.
-          printf '# Options are passed as flags in store-listing.yml\n' > Deliverfile
           shots=true
           if compgen -G 'store/ios/screenshots/*/*.png' >/dev/null ||
              compgen -G 'store/ios/screenshots/*/*.jpg' >/dev/null; then shots=false; fi
+          # deliver asks "Do you want to setup deliver?" when it finds no
+          # Deliverfile and no ./metadata folder, and crashes in CI, so one is
+          # always written. It carries the App Review contact (read from the
+          # environment, never written out); the notes come from
+          # store/ios/review_information/notes.txt.
+          if [ -n "$REVIEW_FIRST_NAME" ] && [ -n "$REVIEW_LAST_NAME" ] && [ -n "$REVIEW_EMAIL" ] && [ -n "$REVIEW_PHONE" ]; then
+            echo 'app_review_information(first_name: ENV["REVIEW_FIRST_NAME"], last_name: ENV["REVIEW_LAST_NAME"], email_address: ENV["REVIEW_EMAIL"], phone_number: ENV["REVIEW_PHONE"])' > Deliverfile
+          else
+            echo "::warning::APP_REVIEW_* secrets not set: review notes skipped, App Review Information stays as it is in App Store Connect."
+            : > Deliverfile
+            rm -rf store/ios/review_information
+          fi
           fastlane deliver \
             --api_key_path "$RUNNER_TEMP/asc.json" \
             --app_identifier "com.mohager.yaanieh" \
             --metadata_path store/ios \
             --screenshots_path store/ios/screenshots \
+            --ignore_language_directory_validation true \
             --skip_binary_upload true \
             --skip_screenshots "$shots" \
-            --ignore_language_directory_validation true \
             --overwrite_screenshots true \
             --submit_for_review false \
             --run_precheck_before_submit false \

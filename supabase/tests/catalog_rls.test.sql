@@ -13,10 +13,10 @@ select ok((select relrowsecurity from pg_class where oid = 'public.item_terms'::
 select ok((select relrowsecurity from pg_class where oid = 'public.catalog_tombstones'::regclass), 'RLS on catalog_tombstones');
 
 -- Launch content is there.
-select is((select count(*)::int from public.items where is_published), 41, '41 published drinks');
+select is((select count(*)::int from public.items where is_published), 66, '66 published items: 41 drinks and 25 desserts');
 select is(
   (select count(*)::int from public.items where is_published and gist_ar is not null and gist_en is not null),
-  41, 'every launch drink has its «يعني» line in both languages'
+  66, 'every launch item has its «يعني» line in both languages'
 );
 select is(
   (select count(*)::int from public.items
@@ -42,8 +42,8 @@ select is(
 );
 select is(
   (select count(*)::int from public.items i join public.categories c on c.id = i.category_id
-   where c.parent_id = (select id from public.categories where slug = 'desserts')),
-  0, 'desserts has no items yet, so the app shows it as coming soon'
+   where c.parent_id = (select id from public.categories where slug = 'desserts') and i.is_published),
+  25, 'desserts is live with its 25 launch desserts'
 );
 select is(
   (select count(*)::int from public.items where menu_name ilike '%oreo%' or menu_name ilike '%frappuccino%'),
@@ -159,7 +159,7 @@ select throws_ok(
 -- As anon (the app).
 set local role anon;
 
-select is((select count(*)::int from public.items), 41, 'anon sees only published items');
+select is((select count(*)::int from public.items), 66, 'anon sees only published items');
 select is((select count(*)::int from public.items where slug = 'secret_drink'), 0, 'anon cannot see a hidden item');
 select is((select count(*)::int from public.categories where slug = 'draft_section'), 0, 'anon cannot see a hidden category');
 select is((select count(*)::int from public.item_terms where term = 'hidden term'), 0, 'anon cannot see terms of hidden items');

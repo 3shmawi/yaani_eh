@@ -37,7 +37,28 @@ dart fix --apply && dart format .        # fix lints, format
 flutter analyze                          # must be clean
 flutter gen-l10n                         # after editing .arb files
 ./scripts/new_feature.sh <name>          # scaffold feature + doc + test folders
+./scripts/agent_run.sh ios|android [env] # run on a simulator/emulator for an agent (below)
 ```
+
+**Running the app as an agent (Dart MCP server)**
+The official Dart & Flutter plugin (Dart MCP server + skills) is pinned in
+`.claude/settings.json`. To see a change on a real simulator / emulator
+(Claude Code on a Mac; cloud sessions have none):
+1. `./scripts/agent_run.sh ios` (and/or `android`) — boots a device if needed,
+   runs the app in the background with the env file and the Flutter Driver
+   extension (`test_driver/agent_app.dart`, debug only), prints a DTD URI.
+2. Dart MCP `dtd` → `connect` with that URI.
+3. Drive and check it: `flutter_driver_command` (`tap` / `enter_text` /
+   `waitFor` by `ByValueKey` or `ByText`, then `screenshot`), `widget_inspector`,
+   `get_runtime_errors`. Give widgets you need to reach a `Key`. `waitFor`
+   the result before a screenshot (sheets and pages animate).
+4. After editing `lib/**`: `hot_reload` (UI, methods) or `hot_restart`
+   (initState, globals, `main`, providers). Not for comments or files
+   outside `lib/`.
+5. `./scripts/agent_run.sh stop` when done. Logs: `build/agent/<target>.log`.
+This checks behaviour while building; it never replaces the tests
+(`flutter test`, `integration_test/`). The MCP server's `launch_app` can't
+pass the env file (it blocks `--dart-define-from-file`), so use the script.
 
 ## Project structure
 ```
@@ -224,6 +245,19 @@ reviewers read only the spec and the code, so they catch what you assumed.
   the official docs (Apple, Google Play, GitHub, the tool's own docs) when
   you change a setup step — never rely on memory for them.
 
+**Store listing (texts and images)**
+- "Prepare the stores" means: every text in `store/` in Arabic and English
+  (no placeholders), and the screenshots, feature graphic and icon made with
+  the steps in `store/README.md` → "Screenshots and graphics" from the app's
+  real screens (`./scripts/store_shots.sh`), the App Store header and search images (`store/assets/app_store_creative/`) and
+  the "What's new" texts. Describe and show only what is live for every user in prod
+  (check the feature flags). Check the store sizes in Apple's and Google's
+  current docs first, and look at every image before committing.
+- It also means filling `store/play_app_content.json` (the Play Console
+  "App content" answers, which have no API) from the code, so the owner only
+  copies them from `store/tools/app_content.html`. Keep it current when the app collects new data or adds
+  ads, sign-in, payments or health features.
+
 **Store requirements**
 - Privacy policy and terms are in `website/`; keep them accurate when adding
   data collection.
@@ -268,6 +302,15 @@ reviewers read only the spec and the code, so they catch what you assumed.
   downloading the video.
 - The Demo video is **never a required check**: a PR merges on CI alone
   and doesn't wait for the video.
+- Releases are announced on LinkedIn, Facebook and YouTube by
+  `.github/workflows/social.yml` (3shmawi/social-publisher): Claude (or,
+  without a Claude token, templates filled from the store "What's new" text)
+  writes the posts, the owner approves them in the `social` environment.
+  Clear `feat:`/`fix:` PR titles and an up-to-date What's new make better posts. To keep
+  something out: `[skip social]` in the release notes, or (for the
+  two-weekly posts) the `skip-social` label on the PR. A release video goes
+  in `marketing/videos/v<version>.mp4` or as a `*.mp4` release asset
+  (docs/release.md → "Social posts").
 
 **Review by screenshot (before every UI PR)**
 - Run `./scripts/screens.sh` (add `430x932` for a Pro Max, `--sheet` for
@@ -294,7 +337,8 @@ reviewers read only the spec and the code, so they catch what you assumed.
 PR to `main` → merge → store release with generated notes → when approved:
 Actions → **Announce update** (optional/force) → users see the update
 dialog. Backend: changes in `supabase/` deploy on merge (Supabase deploy).
-Store texts: `store/` → Actions → **Store listing**.
+Store texts and images: `store/` → Actions → **Store listing** → Play Console →
+Send changes for review.
 
 ## Definition of done
 - [ ] `flutter analyze` clean, `dart format` applied
