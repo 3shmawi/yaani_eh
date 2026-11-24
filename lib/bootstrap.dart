@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:yaani_eh/core/analytics/analytics.dart';
 import 'package:yaani_eh/core/backend/backend.dart';
+import 'package:yaani_eh/core/device/test_device.dart';
 import 'package:yaani_eh/core/di/dependencies.dart';
 import 'package:yaani_eh/core/monitoring/monitoring.dart';
 import 'package:yaani_eh/core/theme/app_fonts.dart';
@@ -16,6 +17,8 @@ Future<void> bootstrap(
 }) async {
   WidgetsFlutterBinding.ensureInitialized();
   AppFonts.registerLicenses();
+  // Before monitoring and analytics: both stay off on Google's test devices.
+  await TestDevice.detect();
   await Monitoring.run(() async {
     await Backend.init();
     await Analytics.init();
