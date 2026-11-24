@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart'
     show HttpExceptionWithStatus;
+import 'package:http/http.dart' show ClientException;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Every error the UI can show, independent of where it came from
@@ -31,7 +32,10 @@ sealed class AppFailure {
       NotFoundFailure(error),
     HttpExceptionWithStatus(:final statusCode) when statusCode >= 500 =>
       ServerFailure(error),
-    SocketException() || HttpException() => NetworkFailure(error),
+    // http's ClientException wraps "Failed host lookup" and friends.
+    SocketException() ||
+    HttpException() ||
+    ClientException() => NetworkFailure(error),
     TimeoutException() => TimeoutFailure(error),
     AuthException() => UnauthorizedFailure(error),
     PostgrestException(code: 'PGRST116') => NotFoundFailure(error),
@@ -82,4 +86,25 @@ final class ServerFailure extends AppFailure {
 
 final class UnknownFailure extends AppFailure {
   const new([super.cause]);
+}
+
+/// An error that only means "no network right now" or "the server was down
+/// for a moment": no connection, a timeout, or a gateway or server that
+/// answered 502/503/504. Not a bug: the app already shows offline or
+/// retries, so it is never sent to monitoring (core/monitoring). A 500, a
+/// permission error or anything unexpected is still reported.
+bool isOutage(Object error) {
+  const down = {502, 503, 504};
+  return switch (error) {
+    PostgrestException(:final code) => down.map((c) => '$c').contains(code),
+    HttpExceptionWithStatus(:final statusCode) => down.contains(statusCode),
+    FunctionException(:final status) => down.contains(status),
+    StorageException(:final statusCode) =>
+      down.map((c) => '$c').contains(statusCode),
+    AuthRetryableFetchException() => true,
+    _ => switch (AppFailure.from(error)) {
+      NetworkFailure() || TimeoutFailure() => true,
+      _ => false,
+    },
+  };
 }

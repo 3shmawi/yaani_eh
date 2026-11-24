@@ -74,6 +74,35 @@ would be printed in full by any tool that echoes it in an error.
 - No `pull_request_target`. Anything a PR can control (titles, branch or
   file names, step outputs) goes through `env:` and is quoted.
 
+## Monitoring: only real bugs
+Checked 2026-11-24 against Sentry (project `yaani_eh`, last 30 days).
+
+**What Sentry showed.** The top issue, `YAANI_EH-1` (`SIGSEGV`, 180 events,
+"47 users"), and many of the `PostgrestException 504` issues came only from
+Google's test devices: Android build `QKR1.191246.002`, an x86_64 emulator
+with 2 cores and a 288×448 screen, reporting a real phone's name
+(`OnePlus8Pro`). That is Firebase Test Lab, which runs Google Play's
+pre-launch report on every release. Real phones sent outages only: a
+Supabase 504 or "Failed host lookup" with no connection. Each 504 became its
+own issue, because release builds are obfuscated and the title starts with a
+minified class name (`DTa:`, `ETa:`, `mVa:`).
+
+**What the app does.**
+- **Google's test devices** (`lib/core/device/test_device.dart`): the
+  system setting `firebase.test.lab` is `"true"` there (Firebase Test Lab
+  docs, read 2026-11-24). `TestDevice.detect()` reads it at start through the
+  `yaanieh/device` channel in `MainActivity`. There, Sentry is not started
+  (so no native crash reports either) and analytics stays off.
+- **Outages are not bugs** (`isOutage` in `core/network/app_failure.dart`):
+  no network, a timeout, or a gateway or server that answered 502/503/504
+  (Supabase, file downloads, functions, storage). `Monitoring.captureException`
+  skips them, and Sentry's `beforeSend` drops them too, also the ones Sentry
+  catches by itself. The app already shows offline or retries. A 500, a
+  permission error or anything unexpected is still reported.
+- Tests: `test/core/network/outage_test.dart`,
+  `test/core/device/test_device_test.dart`,
+  `test/core/monitoring/before_send_test.dart`.
+
 ## If a key leaks (log, chat, commit)
 1. **Revoke or rotate it first**, then clean up. Logs can be copied in the
    minutes they are public.

@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:yaani_eh/core/config/app_flavor.dart';
 import 'package:yaani_eh/core/config/env.dart';
+import 'package:yaani_eh/core/device/test_device.dart';
 
 /// Product analytics (PostHog). Every call is a no-op until
 /// `POSTHOG_API_KEY` is set in the env file.
@@ -15,6 +16,11 @@ abstract final class Analytics {
   static bool get isEnabled => _enabled;
 
   static Future<void> init() async {
+    if (TestDevice.isTestLab) {
+      // Google's test devices aren't people: keep them out of the numbers.
+      debugPrint('Analytics off: Google test device');
+      return;
+    }
     final problem = configProblem(Env.posthogApiKey, Env.posthogHost);
     if (problem != null) {
       // Says why the dashboard stays empty; never prints the key itself.
