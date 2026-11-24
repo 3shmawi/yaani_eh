@@ -111,7 +111,8 @@ String? _imageProblem(File file) {
     return w == 512 && h == 512 ? null : '$w×$h, needs 512×512';
   }
   if (alpha) return 'has an alpha channel (both stores refuse it)';
-  if (name.startsWith('header_')) {
+  // App Store header art: header.png (tool/store/app_store_creative.js).
+  if (name == 'header.png' || name.startsWith('header_')) {
     return w == 3840 && h == 1646 ? null : '$w×$h, needs 3840×1646';
   }
   if (name.startsWith('search_')) {
